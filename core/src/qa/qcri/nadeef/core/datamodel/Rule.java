@@ -7,23 +7,72 @@ package qa.qcri.nadeef.core.datamodel;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.sql.Connection;
+
 /**
- * Created with IntelliJ IDEA.
- * User: si
- * Date: 4/5/13
- * Time: 9:45 PM
- * To change this template use File | Settings | File Templates.
+ * Rule input enumeration.
  */
-public abstract class Rule {
+enum RuleInputType {
+    One,
+    Two,
+    Many
+}
+
+/**
+ * Abstract base class for a rule.
+ */
+public abstract class Rule extends Primitive {
+    protected boolean isSQLSupported;
+    protected RuleInputType numberOfInput;
+
+    /**
+     * Detect rule with one tuple.
+     * @param tuple input tuple.
+     * @return Violation set.
+     */
     public Violation detect(Tuple tuple) {
         throw new NotImplementedException();
     }
 
+    /**
+     * Detect rule with two tuples.
+     * @param tuple1 tuple 1.
+     * @param tuple2 tuple 2.
+     * @return Violation set.
+     */
     public Violation detect(Tuple tuple1, Tuple tuple2) {
         throw new NotImplementedException();
     }
 
+    /**
+     * Detect rule with multiple tuples.
+     * @param tupleIterator tuple iterator.
+     * @return Violation set.
+     */
     public Violation detect(Iterable<Tuple> tupleIterator) {
         throw new NotImplementedException();
+    }
+
+    /**
+     * Detect rule which runs in SQL.
+     * @return Violation set.
+     */
+    public Violation detectInSQL(Connection conn) {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Whether this rule can be executed in SQL.
+     */
+    public boolean isSQLSupported() {
+        return this.isSQLSupported;
+    }
+
+    /**
+     * Number of inputs this rule requires.
+     * @return number of input.
+     */
+    public RuleInputType getInputType() {
+        return this.numberOfInput;
     }
 }

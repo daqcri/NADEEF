@@ -22,13 +22,14 @@ import java.util.regex.Pattern;
  */
 public class CSVDumper {
 
+    // <editor-fold desc="Public methods">
     /**
      * Dump CSV file content into a database with default schema name and generated table name.
      * @param conn JDBC connection.
      * @param fullFileName CSV file name.
      * @return new created table name.
      */
-    public static synchronized String dump(Connection conn, String fullFileName)
+    public static String dump(Connection conn, String fullFileName)
             throws IllegalAccessException, SQLException, IOException {
         File file = new File(fullFileName);
         int fileNameIndex = file.getName().indexOf('.');
@@ -51,8 +52,7 @@ public class CSVDumper {
             String fullFileName,
             String tableName,
             String schemaName
-    )
-            throws IllegalAccessException, SQLException, IOException {
+    ) throws IllegalAccessException, SQLException, IOException {
         Tracer tracer = Tracer.getInstance();
         try {
             if (conn.isClosed()) {
@@ -107,7 +107,9 @@ public class CSVDumper {
             throw ex;
         }
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Private helper">
     /**
      * Generates insert statement based on the CSV line.
      * @param line
@@ -118,8 +120,7 @@ public class CSVDumper {
      */
     private static String getInsert(
             String line, String schema, String tableName, ResultSet columnSchemas
-    )
-            throws SQLException {
+    ) throws SQLException {
         String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
         StringBuilder sqlInsert = new StringBuilder(
                 "INSERT INTO " + schema + "." + tableName  + " VALUES " + "(");
@@ -151,4 +152,5 @@ public class CSVDumper {
         columnSchemas.beforeFirst();
         return sqlInsert.toString();
     }
+    // </editor-fold>
 }
