@@ -6,11 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * Created with IntelliJ IDEA.
- * User: si
- * Date: 4/5/13
- * Time: 9:50 PM
- * To change this template use File | Settings | File Templates.
+ * CFD rule.
  */
-public class CFDRule extends CFDRule {
+public class CFDRule extends Rule {
 }
