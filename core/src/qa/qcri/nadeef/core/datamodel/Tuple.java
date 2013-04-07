@@ -52,6 +52,10 @@ public class Tuple extends Primitive {
         return dict.get(key);
     }
 
+    public String getInSQL(String key) {
+        return tableName + '.' + key;
+    }
+
     /**
      * Gets all the values in the tuple.
      * @return value collections.

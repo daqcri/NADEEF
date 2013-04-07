@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.Connection;
+import java.util.HashMap;
 
 /**
  * Rule input enumeration.
@@ -23,7 +24,8 @@ enum RuleInputType {
  */
 public abstract class Rule extends Primitive {
     protected boolean isSQLSupported;
-    protected RuleInputType numberOfInput;
+    protected RuleInputType ruleInputType;
+    protected RuleHint hint;
 
     /**
      * Detect rule with one tuple.
@@ -73,6 +75,6 @@ public abstract class Rule extends Primitive {
      * @return number of input.
      */
     public RuleInputType getInputType() {
-        return this.numberOfInput;
+        return this.ruleInputType;
     }
 }

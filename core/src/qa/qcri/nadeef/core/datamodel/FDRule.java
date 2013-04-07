@@ -19,13 +19,9 @@ public class FDRule extends TextRule {
      * Constructor.
      * @param input Input stream.
      */
-    public FDRule(StringReader input) {
+    public FDRule(StringReader input, String[] lhs, String[] rhs) {
         parse(input);
-        this.isSQLSupported = true;
-    }
-
-    public FDRule(String input) {
-        this(new StringReader(input));
+        isSQLSupported = true;
     }
 
     @Override
@@ -39,9 +35,6 @@ public class FDRule extends TextRule {
      */
     @Override
     public Violation detect(Iterable<Tuple> tupleIterator) {
-        for (Tuple tuple : tupleIterator) {
-
-        }
         return null;
     }
 
@@ -52,8 +45,6 @@ public class FDRule extends TextRule {
      */
     @Override
     public Violation detectInSQL(Connection conn) {
-        return super.detectInSQL(conn);    //To change body of overridden methods use File | Settings | File Templates.
+        return null;
     }
-
-
 }
