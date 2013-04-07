@@ -7,5 +7,4 @@ package qa.qcri.nadeef.core.operator;
 
 /**
  */
-public class Deserializer {
-}
+public class Deserializer {}
