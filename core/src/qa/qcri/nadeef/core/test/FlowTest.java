@@ -5,8 +5,8 @@
 
 package qa.qcri.nadeef.core.test;
 
-import org.junit.*;
-
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.operator.CountOperator;

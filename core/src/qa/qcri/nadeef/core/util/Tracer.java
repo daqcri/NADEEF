@@ -20,4 +20,8 @@ public class Tracer {
     public void info(String msg) {
         System.out.println(msg);
     }
+
+    public void err(String msg) {
+        System.err.println(msg);
+    }
 }
