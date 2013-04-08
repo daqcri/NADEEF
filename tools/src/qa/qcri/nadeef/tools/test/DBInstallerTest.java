@@ -7,12 +7,11 @@ package qa.qcri.nadeef.tools.test;
 
 import junit.framework.Assert;
 import org.jooq.SQLDialect;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBInstaller;
 
 import java.sql.Connection;

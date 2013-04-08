@@ -6,16 +6,6 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * Rule optimization hint type.
- */
-enum RuleHintType {
-    Project,
-    GroupBy,
-    Filter,
-    GroupFilter
-}
-
-/**
  * An optimization hint for shriking the tuple size.
  */
 public abstract class RuleHint {

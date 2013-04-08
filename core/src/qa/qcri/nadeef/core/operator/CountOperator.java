@@ -10,32 +10,17 @@ import qa.qcri.nadeef.core.util.Tracer;
 /**
  * A counter operator.
  */
-public class CountOperator extends Operator {
+public class CountOperator extends Operator<Integer, Integer> {
 
-    private static Tracer tracer = Tracer.getInstance();
+    private static Tracer tracer = Tracer.getTracer(CountOperator.class);
 
     /**
      * Execute the operator.
-     *
-     * @param inputKey
-     * @return
      */
     @Override
-    public Object execute(Object inputKey) {
-        Integer count = (Integer)inputKey;
+    public Integer execute(Integer count) {
         tracer.info("This is " + count);
         count ++;
         return count;
-    }
-
-    /**
-     * Check whether the operator is executable.
-     *
-     * @param inputKey
-     * @return
-     */
-    @Override
-    public boolean canExecute(Object inputKey) {
-        return true;
     }
 }

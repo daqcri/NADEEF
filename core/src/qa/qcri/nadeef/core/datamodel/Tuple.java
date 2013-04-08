@@ -13,6 +13,8 @@ import java.util.List;
 
 /**
  * Tuple class.
+ * TODO: consider using Trove for better hashmap performance.
+ * TODO: use better index instead of string
  */
 public class Tuple extends Primitive {
 
@@ -50,10 +52,6 @@ public class Tuple extends Primitive {
      */
     public Object get(String key) {
         return dict.get(key);
-    }
-
-    public String getInSQL(String key) {
-        return tableName + '.' + key;
     }
 
     /**

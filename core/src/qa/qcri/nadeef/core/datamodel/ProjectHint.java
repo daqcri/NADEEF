@@ -59,6 +59,10 @@ public class ProjectHint extends RuleHint {
         super(hintDescription);
     }
 
+    /**
+     * Constructor.
+     * @param attributes
+     */
     public ProjectHint(TableAttribute[] attributes) {
         super();
         this.attributes = attributes;

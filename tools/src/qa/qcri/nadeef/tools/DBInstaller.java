@@ -5,7 +5,7 @@
 
 package qa.qcri.nadeef.tools;
 
-import qa.qcri.nadeef.core.util.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Tracer;
 
 import java.sql.*;

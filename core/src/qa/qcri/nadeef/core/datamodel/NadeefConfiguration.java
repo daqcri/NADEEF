@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.core.datamodel;
 
 /**
  * Nadeef configuration class.

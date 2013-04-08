@@ -19,7 +19,7 @@ import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
  * FlowEngine test.
  */
 @RunWith(JUnit4.class)
-public class FlowTest {
+public class  FlowTest {
 
     @Test
     public void SimpleFlowTest() {

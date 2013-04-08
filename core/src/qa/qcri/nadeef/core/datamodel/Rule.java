@@ -5,36 +5,66 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.sql.Connection;
-import java.util.HashMap;
-
-/**
- * Rule input enumeration.
- */
-enum RuleInputType {
-    One,
-    Two,
-    Many
-}
+import java.util.EnumSet;
 
 /**
  * Abstract base class for a rule.
  */
 public abstract class Rule extends Primitive {
     protected boolean isSQLSupported;
-    protected RuleInputType ruleInputType;
-    protected RuleHint hint;
+    protected EnumSet<RuleInputType> signature;
+    protected RuleHintCollection hintCollection;
+    protected String id;
+
+    /**
+     * Constructor. Checks for which signatures are implemented.
+     */
+    protected Rule(String id) {
+        this.id = id;
+        signature = EnumSet.noneOf(RuleInputType.class);
+        Class ruleClass = Rule.class;
+        Class[] detect1 = {Tuple.class};
+        Class[] detect2 = {Tuple.class, Tuple.class};
+        Class[] detect3 = {Iterable.class};
+
+        try {
+            Class root = ruleClass.getMethod("detect", detect1).getDeclaringClass();
+            if (root.getName() != "Rule") {
+                signature.add(RuleInputType.One);
+            }
+
+            root = ruleClass.getMethod("detect", detect2).getDeclaringClass();
+            if (root.getName() != "Rule") {
+                signature.add(RuleInputType.Two);
+            }
+
+            root = ruleClass.getMethod("detect", detect3).getDeclaringClass();
+            if (root.getName() != "Rule") {
+                signature.add(RuleInputType.Many);
+            }
+        } catch (Exception ignore) {}
+    }
+
+    /**
+     * Gets of rule Id.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets of rule Id.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Detect rule with one tuple.
      * @param tuple input tuple.
      * @return Violation set.
      */
-    public Violation detect(Tuple tuple) {
-        throw new NotImplementedException();
-    }
+    public abstract Violation detect(Tuple tuple);
 
     /**
      * Detect rule with two tuples.
@@ -42,39 +72,51 @@ public abstract class Rule extends Primitive {
      * @param tuple2 tuple 2.
      * @return Violation set.
      */
-    public Violation detect(Tuple tuple1, Tuple tuple2) {
-        throw new NotImplementedException();
-    }
+    public abstract Violation detect(Tuple tuple1, Tuple tuple2);
 
     /**
      * Detect rule with multiple tuples.
      * @param tupleIterator tuple iterator.
      * @return Violation set.
      */
-    public Violation detect(Iterable<Tuple> tupleIterator) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Detect rule which runs in SQL.
-     * @return Violation set.
-     */
-    public Violation detectInSQL(Connection conn) {
-        throw new NotImplementedException();
-    }
+    public abstract Violation detect(Iterable<Tuple> tupleIterator);
 
     /**
      * Whether this rule can be executed in SQL.
      */
-    public boolean isSQLSupported() {
+    public boolean supportSQL() {
         return this.isSQLSupported;
     }
 
     /**
-     * Number of inputs this rule requires.
-     * @return number of input.
+     * Whether the rule implements one tuple input.
+     * @return .
      */
-    public RuleInputType getRuleInputType() {
-        return this.ruleInputType;
+    public boolean supportOneInput() {
+        return signature.contains(RuleInputType.One);
+    }
+
+    /**
+     * Whether the rule implements two tuple inputs.
+     * @return .
+     */
+    public boolean supportTwoInputs() {
+        return signature.contains(RuleInputType.Two);
+    }
+
+    /**
+     * Whether the rule implements many tuple inputs.
+     * @return .
+     */
+    public boolean supportManyInputs() {
+        return signature.contains(RuleInputType.Many);
+    }
+
+    /**
+     * Getter of hint.
+     * @return
+     */
+    public RuleHintCollection getHints() {
+        return this.hintCollection;
     }
 }

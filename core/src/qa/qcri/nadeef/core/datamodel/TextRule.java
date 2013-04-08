@@ -14,6 +14,13 @@ import java.io.StringReader;
 public abstract class TextRule extends Rule {
 
     /**
+     * Constructor. Checks for which signatures are implemented.
+     */
+    protected TextRule(String id) {
+        super(id);
+    }
+
+    /**
      * Interpret a rule from input text stream.
      * @param input Input stream.
      */

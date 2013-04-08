@@ -3,8 +3,10 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.util;
 
 /**
  */
-public class Deserializer {}
+public class Bootstrap {
+
+}
