@@ -35,7 +35,7 @@ public class DBInstaller {
      */
     public static void install(Connection conn, NadeefConfiguration configuration)
             throws SQLException {
-        Tracer tracer = Tracer.getInstance();
+        Tracer tracer = Tracer.getTracer(DBInstaller.class);
         if (isInstalled(conn, configuration)) {
             tracer.info("Nadeef is installed on the database, please try uninstall first.");
             return;

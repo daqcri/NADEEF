@@ -53,7 +53,7 @@ public class CSVDumper {
             String tableName,
             String schemaName
     ) throws IllegalAccessException, SQLException, IOException {
-        Tracer tracer = Tracer.getInstance();
+        Tracer tracer = Tracer.getTracer(CSVDumper.class);
         try {
             if (conn.isClosed()) {
                 throw new IllegalAccessException("JDBC connection is already closed.");

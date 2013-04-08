@@ -16,9 +16,26 @@ enum RuleHintType {
 }
 
 /**
- * An optimization hint for executing a rule.
+ * An optimization hint for shriking the tuple size.
  */
-public class RuleHint {
+public abstract class RuleHint {
 
+    /**
+     * Parse the hint description from a string.
+     * @param hintDescription
+     */
+    public abstract void parse(String hintDescription);
 
+    /**
+     * Constructor.
+     * @param hintDescription hint description in string.
+     */
+    protected RuleHint(String hintDescription) {
+        parse(hintDescription);
+    }
+
+    /**
+     * Default constructor.
+     */
+    protected RuleHint() {}
 }
