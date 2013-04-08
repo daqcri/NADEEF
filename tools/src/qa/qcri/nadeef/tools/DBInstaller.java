@@ -14,15 +14,16 @@ import java.sql.*;
  * Installation helper for Nadeef DB.
  */
 public class DBInstaller {
-
     /**
      * Check whether Nadeef is installed in the targeted database connection.
      * @param conn JDBC connection.
-     * @return
+     * @param configuration configuration class.
+     * @return TRUE when Nadeef is already installed on the database.
      */
-    public static boolean isInstalled(Connection conn) throws SQLException {
+    public static boolean isInstalled(Connection conn, NadeefConfiguration configuration)
+            throws SQLException {
         DatabaseMetaData metaData = conn.getMetaData();
-        ResultSet resultSet = metaData.getSchemas(null, NadeefConfiguration.getNadeefSchemaName());
+        ResultSet resultSet = metaData.getSchemas(null, configuration.getNadeefSchemaName());
         if (resultSet.next()) {
             return true;
         }
@@ -32,17 +33,18 @@ public class DBInstaller {
     /**
      * Install Nadeef in the target database.
      */
-    public static void install(Connection conn) throws SQLException {
+    public static void install(Connection conn, NadeefConfiguration configuration)
+            throws SQLException {
         Tracer tracer = Tracer.getInstance();
-        if (isInstalled(conn)) {
+        if (isInstalled(conn, configuration)) {
             tracer.info("Nadeef is installed on the database, please try uninstall first.");
             return;
         }
 
         Statement stat = conn.createStatement();
-        stat.execute("CREATE SCHEMA " + NadeefConfiguration.getNadeefSchemaName());
+        stat.execute("CREATE SCHEMA " + configuration.getNadeefSchemaName());
         stat.execute(
-                "CREATE TABLE " + NadeefConfiguration.getNadeefSchemaName() + ".violation (" +
+                "CREATE TABLE " + configuration.getNadeefSchemaName() + ".violation (" +
                 "rid varchar(255), " +
                 "tablename varchar(63), " +
                 "tupleid int, " +
@@ -55,10 +57,11 @@ public class DBInstaller {
      * Uninstall Nadeef from the target database.
      * @param conn JDBC Connection.
      */
-    public static void uninstall(Connection conn) throws SQLException {
-        if (isInstalled(conn)) {
+    public static void uninstall(Connection conn, NadeefConfiguration configuration)
+            throws SQLException {
+        if (isInstalled(conn, configuration)) {
             Statement stat = conn.createStatement();
-            stat.execute("DROP SCHEMA " + NadeefConfiguration.getNadeefSchemaName());
+            stat.execute("DROP SCHEMA " + configuration.getNadeefSchemaName() + " CASCADE");
             stat.close();
             conn.commit();
         }

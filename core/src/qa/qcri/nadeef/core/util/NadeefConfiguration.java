@@ -10,12 +10,38 @@ package qa.qcri.nadeef.core.util;
  * TODO: adds XML configuration support.
  */
 public class NadeefConfiguration {
+    private static boolean testMode;
 
-    public static String getNadeefSchemaName() {
+    //<editor-fold desc="Singleton">
+    private static NadeefConfiguration instance;
+    private NadeefConfiguration() {}
+
+    public synchronized static NadeefConfiguration getInstance() {
+        if (instance == null) {
+            instance = new NadeefConfiguration();
+        }
+        return instance;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Public methods">
+    public static void setTestMode(boolean isTestMode) {
+        testMode = isTestMode;
+    }
+
+    public static boolean isTestMode() {
+        return testMode;
+    }
+
+    public String getNadeefSchemaName() {
+        if (isTestMode()) {
+            return "nadeef_test";
+        }
         return "nadeef";
     }
 
-    public static String getNadeefVersion() {
+    public String getNadeefVersion() {
         return "1.0";
     }
+    //</editor-fold>
 }

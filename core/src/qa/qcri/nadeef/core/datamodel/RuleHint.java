@@ -19,4 +19,6 @@ enum RuleHintType {
  * An optimization hint for executing a rule.
  */
 public class RuleHint {
+
+
 }

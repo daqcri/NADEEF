@@ -74,7 +74,7 @@ public abstract class Rule extends Primitive {
      * Number of inputs this rule requires.
      * @return number of input.
      */
-    public RuleInputType getInputType() {
+    public RuleInputType getRuleInputType() {
         return this.ruleInputType;
     }
 }
