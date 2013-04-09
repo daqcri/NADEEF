@@ -7,9 +7,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 import qa.qcri.nadeef.core.datamodel.Primitive;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Tuple class.
@@ -19,9 +17,8 @@ import java.util.List;
 public class Tuple extends Primitive {
 
     //<editor-fold desc="Private Fields">
-    private HashMap<String, Object> dict;
-    private String tableName;
-
+    private HashMap<Cell, Object> dict;
+    private String[] tableNames;
     //</editor-fold>
 
     //<editor-fold desc="Public Members">
@@ -29,20 +26,21 @@ public class Tuple extends Primitive {
     /**
      * Constructor.
      */
-    public Tuple(String tableName, String[] attributeNames, Object[] values) {
-        this.tableName = tableName;
-
-        if (attributeNames == null || values == null) {
+    public Tuple(Cell[] cells, Object[] values) {
+        if (cells == null || values == null) {
             throw new IllegalArgumentException("Input attribute/value cannot be null.");
         }
-        if (attributeNames.length != values.length) {
+        if (cells.length != values.length) {
             throw new IllegalArgumentException("Incorrect input with attributes and values");
         }
 
-        dict = new HashMap(attributeNames.length);
-        for (int i = 0; i < attributeNames.length; i ++) {
-            dict.put(attributeNames[i], values[i]);
+        dict = new HashMap(cells.length);
+        HashSet<String> tableSet = new HashSet<>();
+        for (int i = 0; i < cells.length; i ++) {
+            dict.put(cells[i], values[i]);
+            tableSet.add(cells[i].getFullTableName());
         }
+        tableNames = tableSet.toArray(new String[tableSet.size()]);
     }
 
     /**
@@ -50,7 +48,7 @@ public class Tuple extends Primitive {
      * @param key The attribute key
      * @return Output Value
      */
-    public Object get(String key) {
+    public Object get(Cell key) {
         return dict.get(key);
     }
 
@@ -63,12 +61,36 @@ public class Tuple extends Primitive {
     }
 
     /**
+     * Gets all the cells in the tuple.
+     * @return Attribute collection
+     */
+    public Cell[] getCells() {
+        Set<Cell> keySet = dict.keySet();
+        return keySet.toArray(new Cell[keySet.size()]);
+    }
+
+    /**
      * Check whether the tuple has an attribute.
-     * @param attributeName Attribute name.
+     * @param cell Attribute name.
      * @return true when the attribute exists.
      */
-    public boolean hasAttribtue(String attributeName) {
-        return dict.containsKey(attributeName);
+    public boolean hasCell(Cell cell) {
+        return dict.containsKey(cell);
+    }
+
+    /**
+     * Gets the table names.
+     * @return table names.
+     */
+    public String[] getTableNames() {
+        return tableNames;
+    }
+    /**
+     * Gets whether the tuple is from multiple tables.
+     * @return True when the tuple is from multiple tables.
+     */
+    public boolean hasMoreThanOneTable() {
+        return tableNames.length > 1;
     }
     //</editor-fold>
 

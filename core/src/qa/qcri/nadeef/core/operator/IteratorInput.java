@@ -13,9 +13,19 @@ import java.sql.Connection;
  * Input information for {@link SQLIterator}.
  * TODO: find a general input type solution for all the operators.
  */
-public class SQLIteratorInput {
+public class IteratorInput {
     private Connection conn;
     private Rule rule;
+
+    public String[] getTargetTables() {
+        return targetTables;
+    }
+
+    public void setTargetTables(String[] targetTables) {
+        this.targetTables = targetTables;
+    }
+
+    private String[] targetTables;
 
     public Rule getRule() {
         return rule;
@@ -33,7 +43,7 @@ public class SQLIteratorInput {
         this.conn = conn;
     }
 
-    public SQLIteratorInput(Rule rule, Connection conn) {
+    public IteratorInput(Rule rule, Connection conn) {
         this.rule = rule;
         this.conn = conn;
     }

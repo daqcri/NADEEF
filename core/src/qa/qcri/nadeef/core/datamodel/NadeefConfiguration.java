@@ -5,6 +5,10 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import org.jooq.SQLDialect;
+
+import java.sql.Connection;
+
 /**
  * Nadeef configuration class.
  * TODO: adds XML configuration support.
@@ -25,14 +29,19 @@ public class NadeefConfiguration {
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
-    public static void setTestMode(boolean isTestMode) {
-        testMode = isTestMode;
-    }
 
+    /**
+     * Is Nadeef running in TestMode.
+     * @return True when Nadeef is running in test mode.
+     */
     public static boolean isTestMode() {
         return testMode;
     }
 
+    /**
+     * Gets the Nadeef installed schema name.
+     * @return Nadeef DB schema name.
+     */
     public String getNadeefSchemaName() {
         if (isTestMode()) {
             return "nadeef_test";
@@ -40,6 +49,10 @@ public class NadeefConfiguration {
         return "nadeef";
     }
 
+    /**
+     * Gets the Nadeef version.
+     * @return Nadeef version.
+     */
     public String getNadeefVersion() {
         return "1.0";
     }

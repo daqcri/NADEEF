@@ -5,6 +5,8 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.EnumSet;
 
 /**
@@ -64,7 +66,9 @@ public abstract class Rule extends Primitive {
      * @param tuple input tuple.
      * @return Violation set.
      */
-    public abstract Violation detect(Tuple tuple);
+    public Violation[] detect(Tuple tuple) {
+        throw new NotImplementedException();
+    };
 
     /**
      * Detect rule with two tuples.
@@ -72,14 +76,18 @@ public abstract class Rule extends Primitive {
      * @param tuple2 tuple 2.
      * @return Violation set.
      */
-    public abstract Violation detect(Tuple tuple1, Tuple tuple2);
+    public Violation[] detect(Tuple tuple1, Tuple tuple2) {
+        throw new NotImplementedException();
+    }
 
     /**
      * Detect rule with multiple tuples.
-     * @param tupleIterator tuple iterator.
-     * @return Violation set.
+     *
+     * @param tuples@return Violation set.
      */
-    public abstract Violation detect(Iterable<Tuple> tupleIterator);
+    public Violation[] detect(Tuple[] tuples) {
+        throw new NotImplementedException();
+    }
 
     /**
      * Whether this rule can be executed in SQL.
@@ -114,7 +122,7 @@ public abstract class Rule extends Primitive {
 
     /**
      * Getter of hint.
-     * @return
+     * @return opitmization hints.
      */
     public RuleHintCollection getHints() {
         return this.hintCollection;

@@ -3,8 +3,9 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.test;
 
+import qa.qcri.nadeef.core.operator.Operator;
 import qa.qcri.nadeef.core.util.Tracer;
 
 /**
