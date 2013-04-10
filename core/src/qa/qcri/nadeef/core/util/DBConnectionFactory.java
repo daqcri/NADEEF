@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.jooq.SQLDialect;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -26,7 +27,7 @@ public class DBConnectionFactory {
      * @param password Login user password.
      * @return JDBC connection.
      */
-    public static Connection getConnection(
+    public static Connection createConnection(
             SQLDialect dialect,
             String url,
             String userName,
@@ -37,9 +38,29 @@ public class DBConnectionFactory {
         String driverName = getDriverName(dialect);
         Class.forName(driverName).newInstance();
         conn = DriverManager.getConnection(url, userName, password);
-
+        conn.setAutoCommit(false);
         return conn;
     }
+
+    /**
+     * Gets source table JDBC connection from a clean plan.
+     * @param plan
+     * @return
+     */
+    public static Connection createSourceTableConnection(CleanPlan plan)
+            throws
+                ClassNotFoundException,
+                SQLException,
+                InstantiationException,
+                IllegalAccessException {
+        return createConnection(
+                plan.getSqlDialect(),
+                plan.getSourceTableUrl(),
+                plan.getSourceTableUserName(),
+                plan.getSourceTableUserPassword()
+        );
+    }
+
     // </editor-fold>
 
     private static String getDriverName(SQLDialect dialect) {

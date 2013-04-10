@@ -44,7 +44,8 @@ public class DBInstaller {
         Statement stat = conn.createStatement();
         stat.execute("CREATE SCHEMA " + configuration.getNadeefSchemaName());
         stat.execute(
-                "CREATE TABLE " + configuration.getNadeefSchemaName() + ".violation (" +
+                "CREATE TABLE " + configuration.getNadeefSchemaName() + "." +
+                configuration.getNadeefViolationTableName() + " (" +
                 "rid varchar(255), " +
                 "tablename varchar(63), " +
                 "tupleid int, " +

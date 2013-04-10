@@ -6,16 +6,26 @@
 package qa.qcri.nadeef.core.operator;
 
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Tracer;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * SQLIterator generates tuples for the rule. It also does the optimization
+ * SQLDeseralizer generates tuples for the rule. It also does the optimization
  * based on the input rule hints.
  */
-public class SQLIterator extends Operator<Rule, Tuple[]> {
+public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
+
+    /**
+     * Constructor.
+     * @param plan Clean plan.
+     */
+    public SQLDeseralizer(CleanPlan plan) {
+        super(plan);
+    }
+
     /**
      * Execute the operator.
      *
@@ -23,12 +33,17 @@ public class SQLIterator extends Operator<Rule, Tuple[]> {
      * @return output object.
      */
     @Override
-    public Tuple[] execute(Rule rule) {
-        Connection conn = input.getConnection();
+    public Tuple[] execute(Rule rule)
+            throws
+                ClassNotFoundException,
+                SQLException,
+                InstantiationException,
+                IllegalAccessException {
+        Connection conn = DBConnectionFactory.createSourceTableConnection(cleanPlan);
         Tuple[] result = null;
         try {
             if (conn == null || conn.isClosed()) {
-                throw new IllegalArgumentException("SQLIterator input has no JDBC connection.");
+                throw new IllegalArgumentException("SQLDeseralizer input has no JDBC connection.");
             }
 
             String sql = getSQLStatement(conn, rule);
@@ -61,7 +76,7 @@ public class SQLIterator extends Operator<Rule, Tuple[]> {
             }
 
         } catch (SQLException ex) {
-            Tracer tracer = Tracer.getTracer(SQLIterator.class);
+            Tracer tracer = Tracer.getTracer(SQLDeseralizer.class);
             tracer.err(ex.getMessage());
         }
         return result;
@@ -69,14 +84,13 @@ public class SQLIterator extends Operator<Rule, Tuple[]> {
 
     /**
      * Generates the SQL statement from the input.
-     * @param input Iterator input.
+     * @param conn JDBC connection.
+     * @param rule rule.
      * @return SQL statement.
      * TODO: adds a caching mechanism for SQL generation.
      */
-    public String getSQLStatement(IteratorInput input) {
-        Rule rule = input.getRule();
+    public String getSQLStatement(Connection conn, Rule rule) {
         RuleHintCollection hints = rule.getHints();
-        Connection conn = input.getConnection();
         StringBuilder sqlBuilder = new StringBuilder();
 
         // We do query optimization based on the hints.

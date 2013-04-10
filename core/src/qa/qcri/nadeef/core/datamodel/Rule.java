@@ -13,9 +13,8 @@ import java.util.EnumSet;
  * Abstract base class for a rule.
  */
 public abstract class Rule extends Primitive {
-    protected boolean isSQLSupported;
     protected EnumSet<RuleInputType> signature;
-    protected RuleHintCollection hintCollection;
+    protected RuleHintCollection hints;
     protected String id;
 
     /**
@@ -90,13 +89,6 @@ public abstract class Rule extends Primitive {
     }
 
     /**
-     * Whether this rule can be executed in SQL.
-     */
-    public boolean supportSQL() {
-        return this.isSQLSupported;
-    }
-
-    /**
      * Whether the rule implements one tuple input.
      * @return .
      */
@@ -125,6 +117,6 @@ public abstract class Rule extends Primitive {
      * @return opitmization hints.
      */
     public RuleHintCollection getHints() {
-        return this.hintCollection;
+        return this.hints;
     }
 }

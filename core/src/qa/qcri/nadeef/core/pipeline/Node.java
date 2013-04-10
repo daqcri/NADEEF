@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.operator.Operator;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -51,11 +52,16 @@ public class Node {
 
         NodeCacheManager nodeCache = NodeCacheManager.getInstance();
         Object input = nodeCache.get(key);
+        // TODO: adds exception handling on node.
         if (operator.canExecute(input)) {
-            result = operator.execute(input);
-            String newKey = generateKey();
-            nodeCache.put(newKey, result, 1);
-            return newKey;
+            try {
+                result = operator.execute(input);
+                String newKey = generateKey();
+                nodeCache.put(newKey, result, 1);
+                return newKey;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         return null;

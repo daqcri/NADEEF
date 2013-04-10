@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.test;
 
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.operator.Operator;
 import qa.qcri.nadeef.core.util.Tracer;
 
@@ -14,6 +15,10 @@ import qa.qcri.nadeef.core.util.Tracer;
 public class CountOperator extends Operator<Integer, Integer> {
 
     private static Tracer tracer = Tracer.getTracer(CountOperator.class);
+
+    public CountOperator(CleanPlan plan) {
+        super(plan);
+    }
 
     /**
      * Execute the operator.

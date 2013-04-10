@@ -5,16 +5,16 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import org.jooq.SQLDialect;
-
-import java.sql.Connection;
-
 /**
  * Nadeef configuration class.
  * TODO: adds XML configuration support.
  */
 public class NadeefConfiguration {
-    private static boolean testMode;
+    private static boolean testMode = false;
+    private String testSchemaName = "nadeef_test";
+    private String schemaName = "nadeef";
+    private String version = "1.0";
+    private String tableName = "violation";
 
     //<editor-fold desc="Singleton">
     private static NadeefConfiguration instance;
@@ -31,6 +31,14 @@ public class NadeefConfiguration {
     //<editor-fold desc="Public methods">
 
     /**
+     * Sets the test mode.
+     * @param isTestMode
+     */
+    public static void setTestMode(boolean isTestMode) {
+        testMode = isTestMode;
+    }
+
+    /**
      * Is Nadeef running in TestMode.
      * @return True when Nadeef is running in test mode.
      */
@@ -44,9 +52,17 @@ public class NadeefConfiguration {
      */
     public String getNadeefSchemaName() {
         if (isTestMode()) {
-            return "nadeef_test";
+            return testSchemaName;
         }
-        return "nadeef";
+        return schemaName;
+    }
+
+    /**
+     * Gets Nadeef violation table name.
+     * @return violation table name.
+     */
+    public String getNadeefViolationTableName() {
+        return tableName;
     }
 
     /**
@@ -54,7 +70,7 @@ public class NadeefConfiguration {
      * @return Nadeef version.
      */
     public String getNadeefVersion() {
-        return "1.0";
+        return version;
     }
     //</editor-fold>
 }

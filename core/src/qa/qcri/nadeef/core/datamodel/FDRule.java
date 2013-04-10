@@ -11,8 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.StringTokenizer;
 
 /**
  * Function Dependency (FD) Rule.
@@ -28,7 +26,6 @@ public class FDRule extends TextRule {
     public FDRule(String id, StringReader input) {
         super(id);
         parse(input);
-        isSQLSupported = true;
     }
 
     /**
@@ -42,22 +39,28 @@ public class FDRule extends TextRule {
         // Here we assume the rule comes in with one line.
         try {
             String line = reader.readLine();
-            String[] splits = line.split("|");
+            String[] splits = line.trim().split("\\|");
             if (splits.length != 2) {
-                throw new IllegalArgumentException("Invalid rule description");
+                throw new IllegalArgumentException("Invalid rule description " + line);
             }
             // parse the LHS
             String[] lhsSplits = splits[0].split(",");
             lhs = new String[lhsSplits.length];
             for (int i = 0; i < lhsSplits.length; i ++) {
                 lhs[i] = lhsSplits[i].trim();
+                if (lhs[i].isEmpty()) {
+                    throw new IllegalArgumentException("Invalid rule description " + line);
+                }
             }
 
             // parse the RHS
-            String[] rhsSplits = splits[0].split(",");
+            String[] rhsSplits = splits[1].trim().split(",");
             rhs = new String[rhsSplits.length];
             for (int i = 0; i < rhsSplits.length; i ++) {
                 rhs[i] = rhsSplits[i].trim();
+                if (rhs[i].isEmpty()) {
+                    throw new IllegalArgumentException("Invalid rule description " + line);
+                }
             }
         } catch (IOException ex) {
             Tracer tracer = Tracer.getTracer(FDRule.class);
@@ -91,5 +94,13 @@ public class FDRule extends TextRule {
             }
         }
         return violationList.toArray(new Violation[violationList.size()]);
+    }
+
+    public String[] getLhs() {
+        return lhs;
+    }
+
+    public String[] getRhs() {
+        return rhs;
     }
 }
