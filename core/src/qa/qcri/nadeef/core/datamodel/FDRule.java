@@ -10,14 +10,14 @@ import qa.qcri.nadeef.core.util.Tracer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Function Dependency (FD) Rule.
  */
 public class FDRule extends TextRule {
-    protected String[] lhs;
-    protected String[] rhs;
+    protected Set<Cell> lhs;
+    protected Set<Cell> rhs;
 
     /**
      * Constructor.
@@ -35,37 +35,77 @@ public class FDRule extends TextRule {
     @Override
     public void parse(StringReader input) {
         BufferedReader reader = new BufferedReader(input);
+        lhs = new HashSet<>(0);
+        rhs = new HashSet<>(0);
 
         // Here we assume the rule comes in with one line.
         try {
             String line = reader.readLine();
             String[] splits = line.trim().split("\\|");
+            String split;
             if (splits.length != 2) {
                 throw new IllegalArgumentException("Invalid rule description " + line);
             }
             // parse the LHS
             String[] lhsSplits = splits[0].split(",");
-            lhs = new String[lhsSplits.length];
             for (int i = 0; i < lhsSplits.length; i ++) {
-                lhs[i] = lhsSplits[i].trim();
-                if (lhs[i].isEmpty()) {
+                split = lhsSplits[i].trim();
+                if (split.isEmpty()) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
+                lhs.add(new Cell(split));
             }
 
             // parse the RHS
             String[] rhsSplits = splits[1].trim().split(",");
-            rhs = new String[rhsSplits.length];
             for (int i = 0; i < rhsSplits.length; i ++) {
-                rhs[i] = rhsSplits[i].trim();
-                if (rhs[i].isEmpty()) {
+                split = rhsSplits[i].trim();
+                if (split.isEmpty()) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
+                rhs.add(new Cell(split));
             }
         } catch (IOException ex) {
             Tracer tracer = Tracer.getTracer(FDRule.class);
             tracer.err(ex.getMessage());
         }
+    }
+
+    /**
+     * Stupid and expensive detect method.
+     * @param a left tuple
+     * @param b right tuple
+     * @return violation set.
+     */
+    @Override
+    public Violation[] detect(Tuple a, Tuple b) {
+        ArrayList<Violation> result = new ArrayList<>(0);
+        Cell[] lhsCells = lhs.toArray(new Cell[lhs.size()]);
+        boolean hasSameLhs = true;
+        for (Cell cell : lhsCells) {
+            Object value1 = a.get(cell);
+            Object value2 = b.get(cell);
+            if (!value1.equals(value2)) {
+                hasSameLhs = false;
+                break;
+            }
+        }
+
+        if (hasSameLhs) {
+            Cell[] rhsCells = rhs.toArray(new Cell[rhs.size()]);
+            for (Cell cell : rhsCells) {
+                Object value1 = a.get(cell);
+                Object value2 = b.get(cell);
+                if (!value1.equals(value2)) {
+                    result = getViolation(a);
+                    result.addAll(getViolation(b));
+                    break;
+                }
+
+            }
+        }
+
+        return result.toArray(new Violation[result.size()]);
     }
 
     /**
@@ -75,32 +115,46 @@ public class FDRule extends TextRule {
      */
     @Override
     public Violation[] detect(Tuple[] tuples) {
-        if (tuples.length == 1) {
-            // There is no violation when there is only one tuple.
-            return null;
-        }
-
         ArrayList<Violation> violationList = new ArrayList<>();
         for (Tuple tuple : tuples) {
-            Cell[] cells = tuple.getCells();
-            for (int j = 0; j < cells.length; j ++) {
-                Violation violation = new Violation();
-                // TODO: find a way to get tuple id.
-                // violation.setTupleId();
-                violation.setRuleId(this.id);
-                violation.setCell(cells[j]);
-                violation.setAttributeValue(tuple.get(cells[j]));
-                violationList.add(violation);
-            }
+            violationList.addAll(getViolation(tuple));
         }
         return violationList.toArray(new Violation[violationList.size()]);
     }
 
-    public String[] getLhs() {
+    /**
+     * Gets LHS set.
+     * @return lhs set.
+     */
+    public Set getLhs() {
         return lhs;
     }
 
-    public String[] getRhs() {
+    /**
+     * Gets RHS set.
+     * @return rhs set.
+     */
+    public Set getRhs() {
         return rhs;
+    }
+
+    private ArrayList<Violation> getViolation(Tuple tuple) {
+        Cell[] cells = tuple.getCells();
+        ArrayList<Violation> result = new ArrayList<>();
+        for (Cell cell : cells) {
+            // Only adds RHS in the violation.
+            if (lhs.contains(cell)) {
+                continue;
+            }
+
+            Violation violation = new Violation();
+            // TODO: find a way to get tuple id.
+            // violation.setTupleId();
+            violation.setRuleId(this.id);
+            violation.setCell(cell);
+            violation.setAttributeValue(tuple.get(cell));
+            result.add(violation);
+        }
+        return result;
     }
 }

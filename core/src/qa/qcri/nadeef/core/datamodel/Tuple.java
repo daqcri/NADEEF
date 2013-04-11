@@ -38,7 +38,7 @@ public class Tuple extends Primitive {
         HashSet<String> tableSet = new HashSet<>();
         for (int i = 0; i < cells.length; i ++) {
             dict.put(cells[i], values[i]);
-            tableSet.add(cells[i].getFullTableName());
+            tableSet.add(cells[i].getTableName());
         }
         tableNames = tableSet.toArray(new String[tableSet.size()]);
     }

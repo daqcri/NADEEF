@@ -20,6 +20,18 @@ public class Cell {
         this("public", tableName, attributeName);
     }
 
+    public Cell(String fullAttributeName) {
+        String[] splits = fullAttributeName.split("\\.");
+        // TODO: change to correct regexp.
+        if (splits.length != 2 || splits[0].isEmpty() || splits[1].isEmpty()) {
+            throw new IllegalArgumentException("Invalid full attribute name " + fullAttributeName);
+        }
+
+        schemaName = "public";
+        tableName = splits[0];
+        attributeName = splits[1];
+    }
+
     /**
      * Constructor.
      * @param schemaName schema.
@@ -51,47 +63,7 @@ public class Cell {
      * Generates a string with format of 'schemaName'.'tableName'.'atrributeName'.
      */
     public String getFullAttributeName() {
-        StringBuilder result = new StringBuilder();
-        boolean hasPrefix = false;
-        if (schemaName != null && !schemaName.isEmpty()) {
-            result.append(schemaName);
-            hasPrefix = true;
-        }
-
-        if (tableName != null && !tableName.isEmpty()) {
-            if (hasPrefix) {
-                result.append('.');
-            }
-            result.append(tableName);
-            hasPrefix = true;
-        }
-
-        if (hasPrefix) {
-            result.append('.');
-        }
-        result.append(attributeName);
-        return result.toString();
-    }
-
-    /**
-     * Generates a string with format of 'schemaName'.'tableName'.
-     */
-    public String getFullTableName() {
-        StringBuilder result = new StringBuilder();
-        boolean hasPrefix = false;
-        if (schemaName != null && !schemaName.isEmpty()) {
-            result.append(schemaName);
-            hasPrefix = true;
-        }
-
-        if (tableName != null && !tableName.isEmpty()) {
-            if (hasPrefix) {
-                result.append('.');
-            }
-            result.append(tableName);
-        }
-
-        return result.toString();
+        return tableName + "." + attributeName;
     }
 
     //<editor-fold desc="Custom equal / hashcode">
@@ -106,10 +78,14 @@ public class Cell {
         }
 
         Cell cell = (Cell)obj;
-        if (cell.getFullAttributeName() != this.getFullAttributeName()) {
-            return false;
+        if (
+            cell.getAttributeName().equals(attributeName) &&
+            cell.getSchemaName().equals(schemaName) &&
+            cell.getTableName().equals(this.tableName)
+        ) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

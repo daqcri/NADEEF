@@ -48,4 +48,22 @@ public class Violation extends Primitive {
         this.tupleId = tupleId;
     }
     //</editor-fold>
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof Violation)) {
+            return false;
+        }
+
+        Violation violation = (Violation)obj;
+
+        if (
+            violation.getRuleId().equals(ruleId) &&
+            violation.getCell().equals(cell) &&
+            violation.getTupleId() == tupleId
+        ) {
+            return true;
+        }
+        return false;
+    }
 }

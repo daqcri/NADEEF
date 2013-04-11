@@ -11,6 +11,8 @@ import qa.qcri.nadeef.core.util.Tracer;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * SQLDeseralizer generates tuples for the rule. It also does the optimization
@@ -97,26 +99,45 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
         // 1 - projection hint
         ProjectHint[] projects = (ProjectHint[])hints.getHint(RuleHintType.Project);
         if (projects != null) {
-            StringBuilder selectBuilder = new StringBuilder("SELECT");
+            StringBuilder selectBuilder = new StringBuilder("SELECT ");
             StringBuilder fromBuilder = new StringBuilder("FROM ");
+            HashSet<String> tableSet = new HashSet();
+            HashSet<String> attributeSet = new HashSet();
 
             for (ProjectHint hint : projects) {
                 Cell[] projectAttributes = hint.getAttributes();
-                for (Cell attribute : projectAttributes) {
-                    selectBuilder.append(" ");
-                    selectBuilder.append(attribute.getFullAttributeName());
-                    selectBuilder.append(" AS \"");
-                    selectBuilder.append(attribute.getFullTableName());
-                    selectBuilder.append("\" ");
-
-                    fromBuilder.append(" ");
-                    fromBuilder.append(attribute.getFullTableName());
-                    fromBuilder.append(" ");
+                for (int i = 0; i < projectAttributes.length; i ++) {
+                    attributeSet.add(projectAttributes[i].getFullAttributeName());
+                    tableSet.add(projectAttributes[i].getTableName());
                 }
+            }
+
+            Iterator<String> attrIterator = attributeSet.iterator();
+            // build up the select SQL.
+            int i = 0;
+            while (attrIterator.hasNext()) {
+                if (i != 0) {
+                    selectBuilder.append(",");
+                }
+                selectBuilder.append(attrIterator.next());
+                i ++;
+            }
+
+            // build up the from SQL.
+            i = 0;
+            attrIterator = tableSet.iterator();
+            while (attrIterator.hasNext()) {
+                if (i != 0) {
+                    fromBuilder.append(",");
+                }
+                fromBuilder.append(attrIterator.next());
+                i ++;
             }
         } else {
             // has no projection hint, we need to select all.
         }
+
+        // 2 - group by hint
 
         return sqlBuilder.toString();
     }

@@ -68,7 +68,7 @@ public class ViolationExport extends Operator<Violation[], Boolean> {
         sqlBuilder.append(" VALUES (");
         sqlBuilder.append("'" + violation.getRuleId() + "',");
         Cell cell = violation.getCell();
-        sqlBuilder.append("'" + cell.getFullTableName() + "',");
+        sqlBuilder.append("'" + cell.getTableName() + "',");
         sqlBuilder.append(0);
         sqlBuilder.append(",");
         sqlBuilder.append("'" + violation.getAttributeValue().toString() + "')");
