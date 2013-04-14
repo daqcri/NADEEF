@@ -13,6 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * SQLDeseralizer generates tuples for the rule. It also does the optimization
@@ -48,7 +49,7 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
                 throw new IllegalArgumentException("SQLDeseralizer input has no JDBC connection.");
             }
 
-            String sql = getSQLStatement(conn, rule);
+            String sql = getSQLStatement(rule);
             Statement stat = conn.createStatement();
             ResultSet resultSet = stat.executeQuery(sql);
             conn.commit();
@@ -86,25 +87,25 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
 
     /**
      * Generates the SQL statement from the input.
-     * @param conn JDBC connection.
      * @param rule rule.
      * @return SQL statement.
      * TODO: adds a caching mechanism for SQL generation.
      */
-    public String getSQLStatement(Connection conn, Rule rule) {
+    public String getSQLStatement(Rule rule) {
         RuleHintCollection hints = rule.getHints();
         StringBuilder sqlBuilder = new StringBuilder();
 
         // We do query optimization based on the hints.
         // 1 - projection hint
-        ProjectHint[] projects = (ProjectHint[])hints.getHint(RuleHintType.Project);
+        List<RuleHint> projects = hints.getHint(RuleHintType.Project);
         if (projects != null) {
             StringBuilder selectBuilder = new StringBuilder("SELECT ");
             StringBuilder fromBuilder = new StringBuilder("FROM ");
             HashSet<String> tableSet = new HashSet();
             HashSet<String> attributeSet = new HashSet();
 
-            for (ProjectHint hint : projects) {
+            for (RuleHint projectHint : projects) {
+                ProjectHint hint = (ProjectHint)projectHint;
                 Cell[] projectAttributes = hint.getAttributes();
                 for (int i = 0; i < projectAttributes.length; i ++) {
                     attributeSet.add(projectAttributes[i].getFullAttributeName());

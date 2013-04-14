@@ -5,31 +5,33 @@
 
 package qa.qcri.nadeef.core.operator;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import qa.qcri.nadeef.core.datamodel.Tuple;
+import qa.qcri.nadeef.core.datamodel.TuplePair;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  */
-public class PairIterator extends Operator<Tuple[], Pair<Tuple, Tuple>[]> {
+public class PairIterator extends Operator<Collection<Tuple>, Collection<TuplePair>> {
     /**
      * Execute the operator.
      *
-     * @param tuples input tuples.
+     * @param tupleCollection input tuples.
      * @return output object.
      */
     @Override
-    public Pair<Tuple, Tuple>[] execute(Tuple[] tuples) throws Exception {
-        int size = tuples.length * tuples.length / 2;
-        ArrayList<Pair<Tuple, Tuple>> result = new ArrayList(size);
-        for (int i = 0; i < tuples.length; i ++) {
-            for (int j = i + 1; j < tuples.length; j ++) {
-                Pair<Tuple, Tuple> pair = new ImmutablePair<Tuple, Tuple>(tuples[i], tuples[j]);
+    public Collection<TuplePair> execute(Collection<Tuple> tupleCollection) throws Exception {
+        int size = tupleCollection.size() * tupleCollection.size() / 2;
+        List<Tuple> tuples = (List)tupleCollection;
+        ArrayList<TuplePair> result = new ArrayList(size);
+        for (int i = 0; i < tuples.size(); i ++) {
+            for (int j = i + 1; j < tuples.size(); j ++) {
+                TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
                 result.add(pair);
             }
         }
-        return result.toArray(new Pair[result.size()]);
+        return result;
     }
 }

@@ -16,7 +16,6 @@ import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 import java.io.StringReader;
-import java.util.HashSet;
 import java.util.Set;
 
 /**

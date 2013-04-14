@@ -33,12 +33,12 @@ public class RuleHintCollection {
      * @return a list of hints.
      * TODO: use generic to solve the casting.
      */
-    public RuleHint[] getHint(RuleHintType hintType) {
-        List<RuleHint> list = ruleHints.get(hintType);
-        RuleHint[] result = null;
+    public List<RuleHint> getHint(RuleHintType hintType) {
+        ArrayList<RuleHint> list = ruleHints.get(hintType);
+        List<RuleHint> result = null;
         switch (hintType) {
             case Project:
-                result = list.toArray(new ProjectHint[list.size()]);
+                result = list;
                 break;
             case GroupBy:
                 break;

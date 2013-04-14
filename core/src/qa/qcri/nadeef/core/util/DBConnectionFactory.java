@@ -55,7 +55,7 @@ public class DBConnectionFactory {
                 IllegalAccessException {
         return createConnection(
                 plan.getSqlDialect(),
-                plan.getSourceTableUrl(),
+                plan.getSourceUrl(),
                 plan.getSourceTableUserName(),
                 plan.getSourceTableUserPassword()
         );

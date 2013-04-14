@@ -1,0 +1,19 @@
+{
+    "source" : {
+        "url" : "localhost",
+        "table" : "test",
+        "username" : "tester",
+        "password" : "pass&fail",
+        "dialect" : "postgres"
+    },
+    "target" : {
+        "table" : "output"
+    },
+    "rule" : [
+        {
+            "type" : "fd",
+            "table" : "test",
+            "value" : "zip|city, state"
+        }
+    ]
+}
