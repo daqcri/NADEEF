@@ -22,7 +22,6 @@ import java.util.List;
  * Nadeef cleaning plan.
  */
 public class CleanPlan {
-    private String sourceTableName;
     private String targetTableName;
     private String sourceUrl;
     private String sourceTableUserName;
@@ -36,7 +35,6 @@ public class CleanPlan {
      * Constructor.
      */
     public CleanPlan(
-        String sourceTableName,
         String targetTableName,
         String sourceUrl,
         String sourceTableUserName,
@@ -44,21 +42,12 @@ public class CleanPlan {
         List<Rule> rules,
         SQLDialect sqlDialect
     ) {
-        this.sourceTableName = sourceTableName;
         this.targetTableName = targetTableName;
         this.sourceUrl = sourceUrl;
         this.sourceTableUserName = sourceTableUserName;
         this.sourceTableUserPassword = sourceTableUserPassword;
         this.sqlDialect = sqlDialect;
         this.rules = rules;
-    }
-
-    /**
-     * Constructor from a JSON string.
-     * @param reader
-     * @throws IOException
-     */
-    public CleanPlan(StringReader reader) {
     }
     //</editor-fold>
 
@@ -75,7 +64,6 @@ public class CleanPlan {
         String sourceUrl = (String)src.get("url");
         String sourceTableUserName = (String)src.get("username");
         String sourceTableUserPassword = (String)src.get("password");
-        String sourceTableName = (String)src.get("table");
 
         JSONObject target = (JSONObject)jsonObject.get("target");
         String targetTableName = (String)target.get("table");
@@ -87,18 +75,20 @@ public class CleanPlan {
         // parse rules.
         JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
         ArrayList<Rule> rules = new ArrayList(0);
-        for (int i = 0; i < rules.size(); i ++) {
+        for (int i = 0; i < ruleArray.size(); i ++) {
             JSONObject ruleObj = (JSONObject)ruleArray.get(i);
             String name = (String)ruleObj.get("name");
             if (Strings.isNullOrEmpty(name)) {
                 name = "rule" + i;
             }
+
+            List<String> tableObjs = (List<String>)ruleObj.get("table");
             String type = (String)ruleObj.get("type");
             Rule rule = null;
             if (type.equalsIgnoreCase("fd")) {
                 String value = (String)ruleObj.get("value");
-                if (Strings.isNullOrEmpty(value)) {
-                    rule = new FDRule(name, new StringReader(value));
+                if (!Strings.isNullOrEmpty(value)) {
+                    rule = new FDRule(name, tableObjs, new StringReader(value));
                 }
             }
             if (rule != null) {
@@ -107,7 +97,6 @@ public class CleanPlan {
         }
         return
             new CleanPlan(
-                sourceTableName,
                 targetTableName,
                 sourceUrl,
                 sourceTableUserName,
@@ -124,10 +113,6 @@ public class CleanPlan {
 
     public String getSourceTableUserPassword() {
         return sourceTableUserPassword;
-    }
-
-    public String getSourceTableName() {
-        return sourceTableName;
     }
 
     public String getTargetTableName() {

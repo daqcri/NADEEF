@@ -5,6 +5,8 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.Tracer;
 
 import java.io.BufferedReader;
@@ -19,13 +21,19 @@ public class FDRule extends TextRule {
     protected Set<Cell> lhs;
     protected Set<Cell> rhs;
 
-    /**
-     * Constructor.
-     * @param input Input stream.
-     */
-    public FDRule(String id, StringReader input) {
-        super(id);
+    public FDRule(String id, List<String> tableNames, StringReader input) {
+        super(id, tableNames);
         parse(input);
+        createHints();
+    }
+
+    /**
+     * See @see createHints.
+     */
+    @Override
+    protected void createHints() {
+        hints.add(new ProjectHint(Lists.newArrayList(lhs)));
+        hints.add(new ProjectHint(Lists.newArrayList(rhs)));
     }
 
     /**
@@ -48,12 +56,19 @@ public class FDRule extends TextRule {
             }
             // parse the LHS
             String[] lhsSplits = splits[0].split(",");
+            // use the first one as default table name.
+            String defaultTable = tableNames.get(0);
             for (int i = 0; i < lhsSplits.length; i ++) {
                 split = lhsSplits[i].trim();
-                if (split.isEmpty()) {
+                if (Strings.isNullOrEmpty(split)) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
-                lhs.add(new Cell(split));
+
+                if (!Strings.isNullOrEmpty(defaultTable) && !Cell.isValidFullAttributeName(split)) {
+                    lhs.add(new Cell(defaultTable, split));
+                } else {
+                    lhs.add(new Cell(split));
+                }
             }
 
             // parse the RHS
@@ -63,7 +78,12 @@ public class FDRule extends TextRule {
                 if (split.isEmpty()) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
-                rhs.add(new Cell(split));
+
+                if (!Strings.isNullOrEmpty(defaultTable) && !Cell.isValidFullAttributeName(split)) {
+                    rhs.add(new Cell(defaultTable, split));
+                } else {
+                    rhs.add(new Cell(split));
+                }
             }
         } catch (IOException ex) {
             Tracer tracer = Tracer.getTracer(FDRule.class);

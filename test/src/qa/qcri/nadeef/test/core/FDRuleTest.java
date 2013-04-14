@@ -3,19 +3,19 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.test;
+package qa.qcri.nadeef.test.core;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.FDRule;
-import qa.qcri.nadeef.core.datamodel.Tuple;
-import qa.qcri.nadeef.core.datamodel.Violation;
+import qa.qcri.nadeef.core.datamodel.*;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,7 +28,8 @@ public class FDRuleTest {
         Set lhs = null;
         Set rhs = null;
 
-        FDRule rule1 = new FDRule("FD1", new StringReader("test.A, test.B,|test.C"));
+        List<String> tables = Arrays.asList("test");
+        FDRule rule1 = new FDRule("FD1", tables, new StringReader("test.A, test.B,|test.C"));
         lhs = rule1.getLhs();
         Assert.assertEquals(2, lhs.size());
         Assert.assertTrue(lhs.contains(new Cell("test.A")));
@@ -36,8 +37,14 @@ public class FDRuleTest {
         rhs = rule1.getRhs();
         Assert.assertEquals(1, rhs.size());
         Assert.assertTrue(rhs.contains(new Cell("test.C")));
+        RuleHintCollection hints = rule1.getHints();
+        Assert.assertEquals(2, hints.size(RuleHintType.Project));
+        List<RuleHint> projectHints = hints.getHint(RuleHintType.Project);
+        Assert.assertEquals(2, projectHints.size());
+        // TODO: add test for the attribute inspection
 
-        FDRule rule2 = new FDRule("FD2", new StringReader("a.ZIP   | a.CITY,  a.STATE "));
+        tables = Arrays.asList("a");
+        FDRule rule2 = new FDRule("FD2", tables, new StringReader("a.ZIP   | a.CITY,  a.STATE "));
         lhs = rule2.getLhs();
         rhs = rule2.getRhs();
         Assert.assertEquals(1, lhs.size());
@@ -62,7 +69,9 @@ public class FDRuleTest {
         tuples[2] = new Tuple(cells, new String[] {"1183JV", "Delft", "Raadstad"});
         tuples[3] = new Tuple(cells, new String[] {"1183JV", "Amsterdam", "Raadstad"});
 
-        FDRule rule = new FDRule("FD1", new StringReader("test.ZIP | test.CITY, test.STATE"));
+        List<String> tables = Arrays.asList("test");
+        FDRule rule =
+            new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
         Violation[] violations = rule.detect(tuples);
         Assert.assertEquals(8, violations.length);
     }
@@ -78,7 +87,9 @@ public class FDRuleTest {
         Tuple tupleA = new Tuple(cells, new String[] {"0001", "Brooklyn", "NY"});
         Tuple tupleB = new Tuple(cells, new String[] {"0001", "Chengdu", "Sichuan"});
 
-        FDRule rule = new FDRule("FD1", new StringReader("test.ZIP | test.CITY, test.STATE"));
+        List<String> tables = Arrays.asList("test");
+        FDRule rule =
+            new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
         Violation[] violations = rule.detect(tupleA, tupleB);
         Assert.assertEquals(4, violations.length);
     }

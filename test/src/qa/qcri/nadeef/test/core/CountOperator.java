@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.test;
+package qa.qcri.nadeef.test.core;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.operator.Operator;

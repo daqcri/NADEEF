@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Iterator which generates pair tuples.
  */
 public class PairIterator extends Operator<Collection<Tuple>, Collection<TuplePair>> {
     /**

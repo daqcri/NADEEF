@@ -10,16 +10,13 @@ import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Tracer;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * SQLDeseralizer generates tuples for the rule. It also does the optimization
  * based on the input rule hints.
  */
-public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
+public class SQLDeseralizer extends Operator<Rule, List<Tuple>> {
 
     /**
      * Constructor.
@@ -36,17 +33,17 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
      * @return output object.
      */
     @Override
-    public Tuple[] execute(Rule rule)
+    public List<Tuple> execute(Rule rule)
             throws
                 ClassNotFoundException,
                 SQLException,
                 InstantiationException,
                 IllegalAccessException {
         Connection conn = DBConnectionFactory.createSourceTableConnection(cleanPlan);
-        Tuple[] result = null;
+        List<Tuple> result = null;
         try {
             if (conn == null || conn.isClosed()) {
-                throw new IllegalArgumentException("SQLDeseralizer input has no JDBC connection.");
+                throw new IllegalArgumentException("SQLDeseralizer has no JDBC connection.");
             }
 
             String sql = getSQLStatement(rule);
@@ -55,9 +52,7 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
             conn.commit();
 
             ArrayList<Tuple> list = new ArrayList<>();
-            int rowCount = 0;
             while(resultSet.next()) {
-                rowCount ++;
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int count = metaData.getColumnCount();
                 Cell[] cells = new Cell[count];
@@ -69,15 +64,8 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
                     values[i] = resultSet.getObject(i);
                 }
 
-                list.add(
-                    new Tuple(cells, values)
-                );
+                list.add(new Tuple(cells, values));
             }
-
-            if (rowCount > 0) {
-                result = list.toArray(new Tuple[rowCount]);
-            }
-
         } catch (SQLException ex) {
             Tracer tracer = Tracer.getTracer(SQLDeseralizer.class);
             tracer.err(ex.getMessage());
@@ -94,52 +82,47 @@ public class SQLDeseralizer extends Operator<Rule, Tuple[]> {
     public String getSQLStatement(Rule rule) {
         RuleHintCollection hints = rule.getHints();
         StringBuilder sqlBuilder = new StringBuilder();
+        StringBuilder selectBuilder = new StringBuilder(" SELECT ");
+        StringBuilder fromBuilder = new StringBuilder(" FROM ");
 
         // We do query optimization based on the hints.
         // 1 - projection hint
         List<RuleHint> projects = hints.getHint(RuleHintType.Project);
         if (projects != null) {
-            StringBuilder selectBuilder = new StringBuilder("SELECT ");
-            StringBuilder fromBuilder = new StringBuilder("FROM ");
-            HashSet<String> tableSet = new HashSet();
-            HashSet<String> attributeSet = new HashSet();
+            List<String> attrList = new ArrayList<>();
 
             for (RuleHint projectHint : projects) {
                 ProjectHint hint = (ProjectHint)projectHint;
-                Cell[] projectAttributes = hint.getAttributes();
-                for (int i = 0; i < projectAttributes.length; i ++) {
-                    attributeSet.add(projectAttributes[i].getFullAttributeName());
-                    tableSet.add(projectAttributes[i].getTableName());
+                List<Cell> projectAttributes = hint.getAttributes();
+                for (int i = 0; i < projectAttributes.size(); i ++) {
+                    attrList.add(projectAttributes.get(i).getFullAttributeName());
                 }
             }
 
-            Iterator<String> attrIterator = attributeSet.iterator();
             // build up the select SQL.
-            int i = 0;
-            while (attrIterator.hasNext()) {
+            for (int i = 0; i < attrList.size(); i ++) {
                 if (i != 0) {
                     selectBuilder.append(",");
                 }
-                selectBuilder.append(attrIterator.next());
-                i ++;
-            }
-
-            // build up the from SQL.
-            i = 0;
-            attrIterator = tableSet.iterator();
-            while (attrIterator.hasNext()) {
-                if (i != 0) {
-                    fromBuilder.append(",");
-                }
-                fromBuilder.append(attrIterator.next());
-                i ++;
+                selectBuilder.append(attrList.get(i));
             }
         } else {
             // has no projection hint, we need to select all.
+            selectBuilder.append("*");
+        }
+
+        List<String> tableNames = rule.getTableNames();
+        for (int i = 0; i < tableNames.size(); i ++) {
+            if (i != 0) {
+                fromBuilder.append(",");
+            }
+            fromBuilder.append(tableNames.get(i));
         }
 
         // 2 - group by hint
 
-        return sqlBuilder.toString();
+        sqlBuilder.append(selectBuilder);
+        sqlBuilder.append(fromBuilder);
+        return sqlBuilder.toString().trim();
     }
 }

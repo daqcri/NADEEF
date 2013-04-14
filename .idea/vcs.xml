@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/console" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/core" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/test" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/tools" vcs="svn" />
   </component>
 </project>

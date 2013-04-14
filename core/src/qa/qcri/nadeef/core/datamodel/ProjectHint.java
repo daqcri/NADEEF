@@ -5,13 +5,16 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.collect.Lists;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Rule Hint : Projection
  */
 public class ProjectHint extends RuleHint {
-    private Cell[] attributes;
+    private List<Cell> attributes;
 
     /**
      * Parse the hint description from a string.
@@ -48,7 +51,6 @@ public class ProjectHint extends RuleHint {
             }
             attributeList.add(newAttribute);
         }
-        attributes = attributeList.toArray(new Cell[attributeList.size()]);
     }
 
     /**
@@ -63,7 +65,7 @@ public class ProjectHint extends RuleHint {
      * Constructor.
      * @param attributes
      */
-    public ProjectHint(Cell[] attributes) {
+    public ProjectHint(List<Cell> attributes) {
         super();
         this.attributes = attributes;
     }
@@ -72,7 +74,7 @@ public class ProjectHint extends RuleHint {
      * Getter of attributes.
      * @return Attributes.
      */
-    public Cell[] getAttributes() {
+    public List<Cell> getAttributes() {
         return attributes;
     }
 }

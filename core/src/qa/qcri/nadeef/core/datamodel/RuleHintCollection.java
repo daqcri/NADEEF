@@ -15,7 +15,22 @@ import static qa.qcri.nadeef.core.datamodel.RuleHintType.*;
  * A collection of hints.
  */
 public class RuleHintCollection {
-    public HashMap<RuleHintType, ArrayList<RuleHint>> ruleHints;
+    private HashMap<RuleHintType, ArrayList<RuleHint>> ruleHints;
+
+    /**
+     * Constructor.
+     */
+    public RuleHintCollection() {
+        ruleHints = new HashMap<>();
+        ruleHints.put(RuleHintType.Project, new ArrayList<RuleHint>());
+    }
+
+    /**
+     * Gets the size of the hints collection.
+     */
+    public int size(RuleHintType hintType) {
+        return ruleHints.get(hintType).size();
+    }
 
     /**
      * Adds a hint to the collection.
@@ -24,6 +39,7 @@ public class RuleHintCollection {
     public synchronized void add(RuleHint hint) {
         if (hint instanceof ProjectHint) {
             ArrayList<RuleHint> projects = ruleHints.get(Project);
+            projects.add(hint);
         }
     }
 

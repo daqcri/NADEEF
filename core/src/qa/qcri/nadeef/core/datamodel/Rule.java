@@ -5,9 +5,12 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Abstract base class for a rule.
@@ -16,13 +19,21 @@ public abstract class Rule extends Primitive {
     protected EnumSet<RuleInputType> signature;
     protected RuleHintCollection hints;
     protected String id;
+    protected List<String> tableNames;
 
     /**
      * Constructor. Checks for which signatures are implemented.
      */
-    protected Rule(String id) {
+    protected Rule(String id, List<String> tableNames) {
+        Preconditions.checkArgument(
+                !Strings.isNullOrEmpty(id) && tableNames != null && tableNames.size() > 0
+        );
+
         this.id = id;
-        signature = EnumSet.noneOf(RuleInputType.class);
+        this.tableNames = tableNames;
+        this.hints = new RuleHintCollection();
+        this.signature = EnumSet.noneOf(RuleInputType.class);
+
         Class ruleClass = Rule.class;
         Class[] detect1 = {Tuple.class};
         Class[] detect2 = {Tuple.class, Tuple.class};
@@ -118,5 +129,13 @@ public abstract class Rule extends Primitive {
      */
     public RuleHintCollection getHints() {
         return this.hints;
+    }
+
+    /**
+     * Gets the used table names in the rule.
+     * @return A list of table names.
+     */
+    public List<String> getTableNames() {
+        return tableNames;
     }
 }

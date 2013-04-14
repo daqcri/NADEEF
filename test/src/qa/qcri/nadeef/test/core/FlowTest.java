@@ -3,26 +3,36 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.test;
+package qa.qcri.nadeef.test.core;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.operator.SQLDeseralizer;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
+import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.test.TestDataRepository;
 
+import java.io.FileReader;
 
 /**
  * FlowEngine test.
  */
 @RunWith(JUnit4.class)
-public class  FlowTest {
+public class FlowTest {
+    @Before
+    public void setUp() {
+        Bootstrap.Start();
+    }
 
     @Test
     public void SimpleFlowTest() {
-        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
+        NodeCacheManager cacheManager = Bootstrap.getNodeCacheManager();
         CountOperator countOperator = new CountOperator(null);
         cacheManager.put("Input", 0);
 
@@ -39,5 +49,17 @@ public class  FlowTest {
 
         Assert.assertEquals("Result is not correct", result.longValue(), 5);
         Assert.assertEquals("Cache is not clean", cacheManager.getSize(), 0);
+    }
+
+    @Test
+    public void SimpleFDRuleTest() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
+            Flow flow = new Flow();
+
+            SQLDeseralizer deseralizer = new SQLDeseralizer(cleanPlan);
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
+        }
     }
 }

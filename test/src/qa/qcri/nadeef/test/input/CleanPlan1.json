@@ -1,9 +1,8 @@
 {
     "source" : {
-        "url" : "localhost",
-        "table" : "test",
+        "url" : "localhost/unittest",
         "username" : "tester",
-        "password" : "pass&fail",
+        "password" : "test",
         "dialect" : "postgres"
     },
     "target" : {
@@ -12,7 +11,7 @@
     "rule" : [
         {
             "type" : "fd",
-            "table" : "test",
+            "table" : ["location"],
             "value" : "zip|city, state"
         }
     ]

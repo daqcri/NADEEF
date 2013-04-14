@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.tools.test;
+package qa.qcri.nadeef.test.tools;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

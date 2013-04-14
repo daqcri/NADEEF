@@ -3,18 +3,19 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.tools.test;
+package qa.qcri.nadeef.test.tools;
 
-import junit.framework.Assert;
 import org.jooq.SQLDialect;
+
+import java.sql.Connection;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBInstaller;
-
-import java.sql.Connection;
 
 /**
  * DBInstaller Test.
