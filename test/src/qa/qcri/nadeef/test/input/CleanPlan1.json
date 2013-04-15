@@ -3,13 +3,14 @@
         "url" : "localhost/unittest",
         "username" : "tester",
         "password" : "tester",
-        "dialect" : "postgres"
+        "type" : "postgres"
     },
     "target" : {
         "table" : "output"
     },
     "rule" : [
         {
+            "name" : "location rule",
             "type" : "fd",
             "table" : ["location"],
             "value" : "zip|city, state"

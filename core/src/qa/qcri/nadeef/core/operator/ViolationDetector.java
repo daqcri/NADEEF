@@ -10,12 +10,13 @@ import qa.qcri.nadeef.core.datamodel.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Wrapper class for executing the violation detection.
  */
 public class ViolationDetector<T>
-        extends Operator<Collection<T>, Collection<Violation>> {
+        extends Operator<T, Collection<Violation>> {
     private Rule rule;
 
     public ViolationDetector(Rule rule) {
@@ -30,22 +31,24 @@ public class ViolationDetector<T>
      * @return list of violations.
      */
     @Override
-    public Collection<Violation> execute(Collection<T> tuples) throws Exception {
+    public Collection<Violation> execute(T tuples) throws Exception {
         ArrayList<Violation> resultCollection = new ArrayList();
         Collection<Violation> result = null;
-        for (T tuple : tuples) {
+        Collection<?> collections = (Collection)tuples;
+        Iterator iterator = collections.iterator();
+        while (iterator.hasNext()) {
             if (rule.supportOneInput()) {
-                    Tuple a = (Tuple)tuple;
+                    Tuple a = (Tuple)iterator.next();
                     result = rule.detect(a);
             }
 
             if (rule.supportTwoInputs()) {
-                TuplePair pair = (TuplePair)tuple;
+                TuplePair pair = (TuplePair)iterator.next();
                 result = rule.detect(pair);
             }
 
             if (rule.supportManyInputs()) {
-                TupleCollection collection = (TupleCollection)tuple;
+                TupleCollection collection = (TupleCollection)iterator.next();
                 result = rule.detect(collection);
             }
             resultCollection.addAll(result);

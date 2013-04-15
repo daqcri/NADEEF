@@ -5,30 +5,45 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Preconditions;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import java.io.Reader;
+
 /**
  * Nadeef configuration class.
  * TODO: adds XML configuration support.
  */
 public class NadeefConfiguration {
     private static boolean testMode = false;
-    private String testSchemaName = "nadeef_test";
-    private String schemaName = "nadeef";
-    private String version = "1.0";
-    private String tableName = "violation";
-
-    //<editor-fold desc="Singleton">
-    private static NadeefConfiguration instance;
-    private NadeefConfiguration() {}
-
-    public synchronized static NadeefConfiguration getInstance() {
-        if (instance == null) {
-            instance = new NadeefConfiguration();
-        }
-        return instance;
-    }
-    //</editor-fold>
+    private static String url;
+    private static String userName;
+    private static String password;
+    private static String type;
+    private static String violationTable;
+    private static String schemaName = "public";
+    private static String version = "1.0";
 
     //<editor-fold desc="Public methods">
+
+    /**
+     * Initialize configuration from string.
+     * @param reader configuration string.
+     */
+    public synchronized static void initialize(Reader reader) {
+        Preconditions.checkNotNull(reader);
+        JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
+        JSONObject database = (JSONObject)jsonObject.get("database");
+        url = (String)database.get("url");
+        userName = (String)database.get("username");
+        password = (String)database.get("password");
+        type = (String)database.get("type");
+        JSONObject violation = (JSONObject)jsonObject.get("violation");
+        violationTable = (String)violation.get("name");
+        JSONObject general = (JSONObject)jsonObject.get("general");
+        testMode = (Boolean)general.get("testmode");
+    }
 
     /**
      * Sets the test mode.
@@ -46,14 +61,27 @@ public class NadeefConfiguration {
         return testMode;
     }
 
+    public static String getUrl() {
+        return url;
+    }
+
+    public static String getUserName() {
+        return userName;
+    }
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static String getType() {
+        return type;
+    }
+
     /**
      * Gets the Nadeef installed schema name.
      * @return Nadeef DB schema name.
      */
-    public String getNadeefSchemaName() {
-        if (isTestMode()) {
-            return testSchemaName;
-        }
+    public static String getSchemaName() {
         return schemaName;
     }
 
@@ -61,15 +89,15 @@ public class NadeefConfiguration {
      * Gets Nadeef violation table name.
      * @return violation table name.
      */
-    public String getNadeefViolationTableName() {
-        return tableName;
+    public static String getViolationTableName() {
+        return violationTable;
     }
 
     /**
      * Gets the Nadeef version.
      * @return Nadeef version.
      */
-    public String getNadeefVersion() {
+    public static String getVersion() {
         return version;
     }
     //</editor-fold>

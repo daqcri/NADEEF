@@ -15,7 +15,6 @@ public class Tracer {
     private static boolean infoFlag = true;
 
     //<editor-fold desc="Tracer creation">
-    private Tracer() {}
     private Tracer(Class classType) {
         this.classType = classType;
     }
@@ -36,7 +35,15 @@ public class Tracer {
         System.err.println("In " + classType.getName() + " : " + msg);
     }
 
-    public void timing(String msg) {
+    /**
+     * Timing information.
+     * @param msg message.
+     * @param milliseconds elapsed time.
+     */
+    public void timing(String msg, long milliseconds) {
+        if (timingFlag) {
+            System.out.println("::" + msg + " : " + milliseconds);
+        }
     }
 
     public static void setInfo(boolean mode) {

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 import org.jooq.SQLDialect;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -38,6 +39,38 @@ public class DBConnectionFactory {
         Connection conn = DriverManager.getConnection(url, userName, password);
         conn.setAutoCommit(false);
         return conn;
+    }
+
+    /**
+     * Creates a new JDBC connection on the Nadeef database.
+     * @return new JDBC connection.
+     */
+    public static Connection createNadeefConnection()
+            throws
+            ClassNotFoundException,
+            SQLException,
+            InstantiationException,
+            IllegalAccessException {
+        String url = NadeefConfiguration.getUrl();
+        StringBuilder jdbcUrl = new StringBuilder("jdbc:");
+        String type = NadeefConfiguration.getType();
+        SQLDialect dialect;
+        switch (type) {
+            default:
+            case "postgres":
+                jdbcUrl.append("postgresql");
+                dialect = SQLDialect.POSTGRES;
+        }
+
+        jdbcUrl.append("://");
+        jdbcUrl.append(url);
+
+        return createConnection(
+                dialect,
+                jdbcUrl.toString(),
+                NadeefConfiguration.getUserName(),
+                NadeefConfiguration.getPassword()
+        );
     }
 
     /**

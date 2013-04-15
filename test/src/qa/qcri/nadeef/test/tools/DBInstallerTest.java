@@ -37,7 +37,6 @@ public class DBInstallerTest {
             Assert.fail(ex.getMessage());
         }
         NadeefConfiguration.setTestMode(true);
-        configuration = NadeefConfiguration.getInstance();
     }
 
     @Test

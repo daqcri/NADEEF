@@ -23,7 +23,9 @@ public class DBInstaller {
     public static boolean isInstalled(Connection conn, NadeefConfiguration configuration)
             throws SQLException {
         DatabaseMetaData metaData = conn.getMetaData();
-        ResultSet resultSet = metaData.getSchemas(null, configuration.getNadeefSchemaName());
+        String tableName = NadeefConfiguration.getViolationTableName();
+        ResultSet resultSet = metaData.getTables(null, null, tableName, null);
+
         if (resultSet.next()) {
             return true;
         }
@@ -42,10 +44,10 @@ public class DBInstaller {
         }
 
         Statement stat = conn.createStatement();
-        stat.execute("CREATE SCHEMA " + configuration.getNadeefSchemaName());
+        // stat.execute("CREATE SCHEMA " + configuration.getSchemaName());
         stat.execute(
-                "CREATE TABLE " + configuration.getNadeefSchemaName() + "." +
-                configuration.getNadeefViolationTableName() + " (" +
+                "CREATE TABLE " + configuration.getSchemaName() + "." +
+                configuration.getViolationTableName() + " (" +
                 "rid varchar(255), " +
                 "tablename varchar(63), " +
                 "tupleid int, " +
@@ -62,7 +64,7 @@ public class DBInstaller {
             throws SQLException {
         if (isInstalled(conn, configuration)) {
             Statement stat = conn.createStatement();
-            stat.execute("DROP SCHEMA " + configuration.getNadeefSchemaName() + " CASCADE");
+            stat.execute("DROP SCHEMA " + configuration.getSchemaName() + " CASCADE");
             stat.close();
             conn.commit();
         }

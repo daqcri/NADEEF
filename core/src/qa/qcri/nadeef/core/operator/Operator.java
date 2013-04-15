@@ -6,9 +6,12 @@
 package qa.qcri.nadeef.core.operator;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 
 /**
  * Abstract class for an Operator.
@@ -31,11 +34,19 @@ public abstract class Operator<TInput, TOutput> {
                 (ParameterizedType)getClass().getGenericSuperclass();
 
         Type[] types = parameterizedType.getActualTypeArguments();
-        if (types[0] instanceof ParameterizedType) {
-            return ((ParameterizedType)types[0]).getRawType();
-        } else {
-            return types[0];
+        // loop all the type signature to find the actual input type.
+        for (Type type : types) {
+            if (type instanceof TypeVariableImpl) {
+                continue;
+            }
+
+            if (type instanceof ParameterizedType) {
+                return ((ParameterizedType)type).getRawType();
+            } else {
+                return type;
+            }
         }
+        throw new IllegalStateException("Input type is not identified.");
     }
 
     /**

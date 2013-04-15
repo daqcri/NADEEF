@@ -69,8 +69,13 @@ public class CleanPlan {
         String targetTableName = (String)target.get("table");
 
         // TODO: make it support for multiple dialects.
-        String dialect = (String)src.get("dialect");
-        SQLDialect sqlDialect = SQLDialect.POSTGRES;
+        String type = (String)src.get("type");
+        SQLDialect sqlDialect;
+        switch (type) {
+            default:
+            case "postgres":
+                sqlDialect = SQLDialect.POSTGRES;
+        }
 
         // parse rules.
         JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
@@ -83,7 +88,7 @@ public class CleanPlan {
             }
 
             List<String> tableObjs = (List<String>)ruleObj.get("table");
-            String type = (String)ruleObj.get("type");
+            type = (String)ruleObj.get("type");
             Rule rule = null;
             if (type.equalsIgnoreCase("fd")) {
                 String value = (String)ruleObj.get("value");
@@ -129,6 +134,10 @@ public class CleanPlan {
 
     public List<Rule> getRules() {
         return rules;
+    }
+
+    public boolean isSourceDataBase() {
+        return sqlDialect != null;
     }
     //</editor-fold>
 }

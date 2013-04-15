@@ -14,11 +14,12 @@ import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 
 /**
  * Export violations into the target place.
  */
-public class ViolationExport extends Operator<Violation[], Boolean> {
+public class ViolationExport extends Operator<Collection<Violation>, Boolean> {
 
     /**
      * Constructor.
@@ -35,19 +36,20 @@ public class ViolationExport extends Operator<Violation[], Boolean> {
      * @return whether the exporting is successful or not.
      */
     @Override
-    public Boolean execute(Violation[] violations)
+    public Boolean execute(Collection<Violation> violations)
             throws
                 ClassNotFoundException,
                 SQLException,
                 InstantiationException,
                 IllegalAccessException {
-        Connection conn = DBConnectionFactory.createTargetConnection(cleanPlan);
+        Connection conn = DBConnectionFactory.createNadeefConnection();
         Statement stat = conn.createStatement();
         for (Violation violation : violations) {
             String sql = getSQLInsert(violation);
             stat.addBatch(sql);
         }
         stat.executeBatch();
+        conn.commit();
         stat.close();
         conn.close();
         return true;
@@ -59,11 +61,11 @@ public class ViolationExport extends Operator<Violation[], Boolean> {
      * @return sql statement.
      */
     private String getSQLInsert(Violation violation) {
-        NadeefConfiguration config = NadeefConfiguration.getInstance();
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO");
         sqlBuilder.append(' ');
         sqlBuilder.append(
-            config.getNadeefSchemaName() + "." + config.getNadeefViolationTableName()
+            NadeefConfiguration.getSchemaName() +
+            "." + NadeefConfiguration.getViolationTableName()
         );
         sqlBuilder.append(" VALUES (");
         sqlBuilder.append("'" + violation.getRuleId() + "',");
@@ -71,6 +73,7 @@ public class ViolationExport extends Operator<Violation[], Boolean> {
         sqlBuilder.append("'" + cell.getTableName() + "',");
         sqlBuilder.append(0);
         sqlBuilder.append(",");
+        sqlBuilder.append("'" + cell.getAttributeName() + "',");
         sqlBuilder.append("'" + violation.getAttributeValue().toString() + "')");
         return sqlBuilder.toString();
     }

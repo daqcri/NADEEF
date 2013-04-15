@@ -29,8 +29,6 @@ public class Flow {
     private String outputKey;
     private String inputKey;
 
-    //<editor-fold desc="Public methods">
-
     /**
      * Constructor.
      */
@@ -41,6 +39,7 @@ public class Flow {
         state = FlowState.Ready;
     }
 
+    //<editor-fold desc="Public methods">
     public String getInputKey() {
         return inputKey;
     }
@@ -51,6 +50,10 @@ public class Flow {
 
     public synchronized void addNode(Node node, int index) {
         nodeList.add(index, node);
+    }
+
+    public synchronized void addNode(Node node) {
+        nodeList.add(node);
     }
 
     public synchronized void removeNode(Node node, int index) {

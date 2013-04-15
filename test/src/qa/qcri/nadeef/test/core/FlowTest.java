@@ -15,13 +15,13 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.operator.PairIterator;
+import qa.qcri.nadeef.core.operator.TuplePairIterator;
 import qa.qcri.nadeef.core.operator.SQLDeseralizer;
 import qa.qcri.nadeef.core.operator.ViolationDetector;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.tools.Bootstrap;
 import qa.qcri.nadeef.test.TestDataRepository;
 
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class FlowTest {
 
     @Test
     public void SimpleFlowTest() {
-        NodeCacheManager cacheManager = Bootstrap.getNodeCacheManager();
+        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
         CountOperator countOperator = new CountOperator(null);
         cacheManager.put("Input", 0);
 
@@ -61,7 +61,7 @@ public class FlowTest {
     @Test
     public void SimpleFDRuleTest() {
         try {
-            NodeCacheManager cacheManager = Bootstrap.getNodeCacheManager();
+            NodeCacheManager cacheManager = NodeCacheManager.getInstance();
             CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
             List<Rule> rules = cleanPlan.getRules();
             String inputKey = cacheManager.put(rules.get(0));
@@ -69,7 +69,7 @@ public class FlowTest {
             Flow flow = new Flow();
             flow.setInputKey(inputKey);
             flow.addNode(new Node(new SQLDeseralizer(cleanPlan), "1"), 0);
-            flow.addNode(new Node(new PairIterator(), "2"), 1);
+            flow.addNode(new Node(new TuplePairIterator(), "2"), 1);
             flow.addNode(new Node(new ViolationDetector<TuplePair>(rules.get(0)), "3"), 2);
             flow.start();
             String resultKey = flow.getLastOutputKey();
