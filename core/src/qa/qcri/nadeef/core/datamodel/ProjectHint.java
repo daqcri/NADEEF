@@ -25,7 +25,7 @@ public class ProjectHint extends RuleHint {
     public void parse(String hintDescription) {
         String[] tokens = hintDescription.split(",");
         String defaultSchema = "public";
-        ArrayList<Cell> attributeList = new ArrayList<>(tokens.length);
+        attributes = new ArrayList<>(tokens.length);
         for (String token : tokens) {
             if (!token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$")) {
                 throw new IllegalArgumentException("Invalid hint description " + token);
@@ -49,7 +49,7 @@ public class ProjectHint extends RuleHint {
                     newAttribute = new Cell(defaultSchema, null, attrs[0].trim());
                     break;
             }
-            attributeList.add(newAttribute);
+            attributes.add(newAttribute);
         }
     }
 

@@ -10,15 +10,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.TuplePair;
+import qa.qcri.nadeef.core.datamodel.Violation;
+import qa.qcri.nadeef.core.operator.PairIterator;
 import qa.qcri.nadeef.core.operator.SQLDeseralizer;
+import qa.qcri.nadeef.core.operator.ViolationDetector;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.test.TestDataRepository;
 
-import java.io.FileReader;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * FlowEngine test.
@@ -54,10 +61,21 @@ public class FlowTest {
     @Test
     public void SimpleFDRuleTest() {
         try {
+            NodeCacheManager cacheManager = Bootstrap.getNodeCacheManager();
             CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
-            Flow flow = new Flow();
+            List<Rule> rules = cleanPlan.getRules();
+            String inputKey = cacheManager.put(rules.get(0));
 
-            SQLDeseralizer deseralizer = new SQLDeseralizer(cleanPlan);
+            Flow flow = new Flow();
+            flow.setInputKey(inputKey);
+            flow.addNode(new Node(new SQLDeseralizer(cleanPlan), "1"), 0);
+            flow.addNode(new Node(new PairIterator(), "2"), 1);
+            flow.addNode(new Node(new ViolationDetector<TuplePair>(rules.get(0)), "3"), 2);
+            flow.start();
+            String resultKey = flow.getLastOutputKey();
+            Collection<Violation> result = (Collection<Violation>)cacheManager.get(resultKey);
+
+            Assert.assertEquals(4, result.size());
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }

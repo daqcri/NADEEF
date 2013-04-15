@@ -111,7 +111,7 @@ public class CleanPlan {
         return sqlDialect;
     }
 
-    public String getSourceTableUserPassword() {
+    public String getSourceUserPassword() {
         return sourceTableUserPassword;
     }
 
@@ -123,7 +123,7 @@ public class CleanPlan {
         return sourceUrl;
     }
 
-    public String getSourceTableUserName() {
+    public String getSourceUserName() {
         return sourceTableUserName;
     }
 

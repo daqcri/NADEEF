@@ -6,11 +6,13 @@
 package qa.qcri.nadeef.core.util;
 
 /**
- * Tracer is used for debugging / profiling / diagnoising purpose.
+ * Tracer is used for debugging / profiling / benchmarking purpose.
  * TODO: adds support for log4j.
  */
 public class Tracer {
     private Class classType;
+    private static boolean timingFlag = true;
+    private static boolean infoFlag = true;
 
     //<editor-fold desc="Tracer creation">
     private Tracer() {}
@@ -25,11 +27,22 @@ public class Tracer {
 
     //<editor-fold desc="Public methods">
     public void info(String msg) {
-        System.out.println("In " + classType.getName() + " : " + msg);
+        if (infoFlag) {
+            System.out.println("In " + classType.getName() + " : " + msg);
+        }
     }
 
     public void err(String msg) {
         System.err.println("In " + classType.getName() + " : " + msg);
     }
+
+    public void timing(String msg) {
+    }
+
+    public static void setInfo(boolean mode) {
+        infoFlag = mode;
+    }
+
     //</editor-fold>
+
 }

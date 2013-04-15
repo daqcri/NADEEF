@@ -33,8 +33,8 @@ public class CleanPlanTest {
                     new FileReader(TestDataRepository.getFDFileName())
                 );
             Assert.assertEquals("localhost/unittest", cleanPlan.getSourceUrl());
-            Assert.assertEquals("tester", cleanPlan.getSourceTableUserName());
-            Assert.assertEquals("test", cleanPlan.getSourceTableUserPassword());
+            Assert.assertEquals("tester", cleanPlan.getSourceUserName());
+            Assert.assertEquals("tester", cleanPlan.getSourceUserPassword());
             Assert.assertEquals(SQLDialect.POSTGRES, cleanPlan.getSqlDialect());
             Assert.assertEquals("output", cleanPlan.getTargetTableName());
             Assert.assertEquals(1, cleanPlan.getRules().size());

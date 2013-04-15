@@ -2,7 +2,7 @@
     "source" : {
         "url" : "localhost/unittest",
         "username" : "tester",
-        "password" : "test",
+        "password" : "tester",
         "dialect" : "postgres"
     },
     "target" : {

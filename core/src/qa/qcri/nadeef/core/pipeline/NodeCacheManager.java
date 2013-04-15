@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Node Cache manager manages the input/output of the node execution.
@@ -42,6 +43,19 @@ public class NodeCacheManager {
         cachePool.put(key, value);
         refPool.put(key, 1);
     }
+
+    /**
+     * Add a value with generated unique key.
+     * @param value new object.
+     * @return generated key.
+     */
+    public synchronized String put(Object value) {
+        UUID uuId = UUID.randomUUID();
+        String key = uuId.toString();
+        put(key, value);
+        return key;
+    }
+
     /**
      * Add key-value pair in the container.
      * @param key value key.
@@ -91,6 +105,10 @@ public class NodeCacheManager {
         return result;
     }
 
+    /**
+     * Gets the size of the cache pool.
+     * @return size of the cache pool.
+     */
     public int getSize() {
         return cachePool.size();
     }

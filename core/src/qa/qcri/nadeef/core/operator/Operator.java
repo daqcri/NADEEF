@@ -31,18 +31,11 @@ public abstract class Operator<TInput, TOutput> {
                 (ParameterizedType)getClass().getGenericSuperclass();
 
         Type[] types = parameterizedType.getActualTypeArguments();
-        return types[0];
-    }
-
-    /**
-    * Gets the generic output class information at runtime.
-    */
-    public Type getOutputType() {
-        ParameterizedType parameterizedType =
-                (ParameterizedType)getClass().getGenericSuperclass();
-
-        Type[] types = parameterizedType.getActualTypeArguments();
-        return types[1];
+        if (types[0] instanceof ParameterizedType) {
+            return ((ParameterizedType)types[0]).getRawType();
+        } else {
+            return types[0];
+        }
     }
 
     /**
@@ -58,7 +51,7 @@ public abstract class Operator<TInput, TOutput> {
      * @return True when the operator can execute on the given input object.
      */
     public boolean canExecute(Object input) {
-        Type inputType = getInputType();
-        return ((Class)inputType).isInstance(input);
+        Type inputClass = getInputType();
+        return ((Class)inputClass).isInstance(input);
     }
 }

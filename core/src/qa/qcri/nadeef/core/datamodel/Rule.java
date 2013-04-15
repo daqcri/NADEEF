@@ -7,19 +7,20 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.EnumSet;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Abstract base class for a rule.
  */
-public abstract class Rule extends Primitive {
-    protected EnumSet<RuleInputType> signature;
+public abstract class Rule<T> {
     protected RuleHintCollection hints;
     protected String id;
     protected List<String> tableNames;
+    protected Class inputType;
 
     /**
      * Constructor. Checks for which signatures are implemented.
@@ -32,29 +33,13 @@ public abstract class Rule extends Primitive {
         this.id = id;
         this.tableNames = tableNames;
         this.hints = new RuleHintCollection();
-        this.signature = EnumSet.noneOf(RuleInputType.class);
 
-        Class ruleClass = Rule.class;
-        Class[] detect1 = {Tuple.class};
-        Class[] detect2 = {Tuple.class, Tuple.class};
-        Class[] detect3 = {Iterable.class};
+        // reflect on the input type;
+        ParameterizedType parameterizedType =
+                (ParameterizedType)getClass().getGenericSuperclass();
 
-        try {
-            Class root = ruleClass.getMethod("detect", detect1).getDeclaringClass();
-            if (root.getName() != "Rule") {
-                signature.add(RuleInputType.One);
-            }
-
-            root = ruleClass.getMethod("detect", detect2).getDeclaringClass();
-            if (root.getName() != "Rule") {
-                signature.add(RuleInputType.Two);
-            }
-
-            root = ruleClass.getMethod("detect", detect3).getDeclaringClass();
-            if (root.getName() != "Rule") {
-                signature.add(RuleInputType.Many);
-            }
-        } catch (Exception ignore) {}
+        Type[] types = parameterizedType.getActualTypeArguments();
+        inputType = (Class)types[0];
     }
 
     /**
@@ -73,54 +58,33 @@ public abstract class Rule extends Primitive {
 
     /**
      * Detect rule with one tuple.
-     * @param tuple input tuple.
+     * @param tuples input tuple.
      * @return Violation set.
      */
-    public Violation[] detect(Tuple tuple) {
-        throw new NotImplementedException();
-    };
+    public abstract Collection<Violation> detect(T tuples);
 
     /**
-     * Detect rule with two tuples.
-     * @param tuple1 tuple 1.
-     * @param tuple2 tuple 2.
-     * @return Violation set.
-     */
-    public Violation[] detect(Tuple tuple1, Tuple tuple2) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Detect rule with multiple tuples.
-     *
-     * @param tuples@return Violation set.
-     */
-    public Violation[] detect(Tuple[] tuples) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Whether the rule implements one tuple input.
-     * @return .
+     * Returns <code>True</code> when the rule implements one tuple input.
+     * @return <code>True</code> when the rule implements one tuple inputs.
      */
     public boolean supportOneInput() {
-        return signature.contains(RuleInputType.One);
+        return inputType == Tuple.class;
     }
 
     /**
-     * Whether the rule implements two tuple inputs.
-     * @return .
+     * Returns <code>True</code> when the rule implements two tuple inputs.
+     * @return <code>True</code> when the rule implements two tuple inputs.
      */
     public boolean supportTwoInputs() {
-        return signature.contains(RuleInputType.Two);
+        return inputType == TuplePair.class;
     }
 
     /**
-     * Whether the rule implements many tuple inputs.
-     * @return .
+     * Returns <code>True</code> when the rule implements multiple tuple inputs.
+     * @return <code>True</code> when the rule implements multiple tuple inputs.
      */
     public boolean supportManyInputs() {
-        return signature.contains(RuleInputType.Many);
+        return inputType == TupleCollection.class;
     }
 
     /**

@@ -5,8 +5,10 @@
 
 package qa.qcri.nadeef.core.operator;
 
+import org.jooq.SQLDialect;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.Tracer;
 
 import java.sql.*;
@@ -17,6 +19,7 @@ import java.util.*;
  * based on the input rule hints.
  */
 public class SQLDeseralizer extends Operator<Rule, List<Tuple>> {
+    private SQLDialect dialect;
 
     /**
      * Constructor.
@@ -24,6 +27,7 @@ public class SQLDeseralizer extends Operator<Rule, List<Tuple>> {
      */
     public SQLDeseralizer(CleanPlan plan) {
         super(plan);
+        dialect = plan.getSqlDialect();
     }
 
     /**
@@ -39,8 +43,8 @@ public class SQLDeseralizer extends Operator<Rule, List<Tuple>> {
                 SQLException,
                 InstantiationException,
                 IllegalAccessException {
-        Connection conn = DBConnectionFactory.createSourceTableConnection(cleanPlan);
-        List<Tuple> result = null;
+        Connection conn = DBConnectionFactory.createSourceConnection(cleanPlan);
+        List<Tuple> result = new ArrayList();
         try {
             if (conn == null || conn.isClosed()) {
                 throw new IllegalArgumentException("SQLDeseralizer has no JDBC connection.");
@@ -51,20 +55,19 @@ public class SQLDeseralizer extends Operator<Rule, List<Tuple>> {
             ResultSet resultSet = stat.executeQuery(sql);
             conn.commit();
 
-            ArrayList<Tuple> list = new ArrayList<>();
             while(resultSet.next()) {
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int count = metaData.getColumnCount();
                 Cell[] cells = new Cell[count];
                 Object[] values = new Object[count];
-                for (int i = 0; i < count; i ++) {
+                for (int i = 1; i <= count; i ++) {
                     String attributeName = metaData.getColumnName(i);
-                    String tableName = metaData.getTableName(i);
-                    cells[i] = new Cell(tableName, attributeName);
-                    values[i] = resultSet.getObject(i);
+                    String tableName = DBMetaDataTool.getBaseTableName(dialect, metaData, i);
+                    cells[i - 1] = new Cell(tableName, attributeName);
+                    values[i - 1] = resultSet.getObject(i);
                 }
 
-                list.add(new Tuple(cells, values));
+                result.add(new Tuple(cells, values));
             }
         } catch (SQLException ex) {
             Tracer tracer = Tracer.getTracer(SQLDeseralizer.class);

@@ -33,32 +33,55 @@ public class DBConnectionFactory {
             String userName,
             String password
     ) throws ClassNotFoundException, SQLException, IllegalAccessException, InstantiationException {
-        Connection conn = null;
-
         String driverName = getDriverName(dialect);
         Class.forName(driverName).newInstance();
-        conn = DriverManager.getConnection(url, userName, password);
+        Connection conn = DriverManager.getConnection(url, userName, password);
         conn.setAutoCommit(false);
         return conn;
     }
 
     /**
-     * Gets source table JDBC connection from a clean plan.
+     * Creates a new JDBC connection on the source DB from a clean plan.
      * @param plan
-     * @return
+     * @return new JDBC connection.
      */
-    public static Connection createSourceTableConnection(CleanPlan plan)
+    public static Connection createSourceConnection(CleanPlan plan)
             throws
                 ClassNotFoundException,
                 SQLException,
                 InstantiationException,
                 IllegalAccessException {
+        String url = plan.getSourceUrl();
+        StringBuilder jdbcUrl = new StringBuilder("jdbc:");
+        SQLDialect dialect = plan.getSqlDialect();
+        switch (dialect) {
+            case POSTGRES:
+                jdbcUrl.append("postgresql");
+        }
+
+        jdbcUrl.append("://");
+        jdbcUrl.append(plan.getSourceUrl());
+
         return createConnection(
                 plan.getSqlDialect(),
-                plan.getSourceUrl(),
-                plan.getSourceTableUserName(),
-                plan.getSourceTableUserPassword()
+                jdbcUrl.toString(),
+                plan.getSourceUserName(),
+                plan.getSourceUserPassword()
         );
+    }
+
+    /**
+     * Creates a new JDBC connection on the target DB from a clean plan.
+     * @param plan clean plan.
+     * @return new JDBC connection.
+     */
+    public static Connection createTargetConnection(CleanPlan plan)
+            throws
+            ClassNotFoundException,
+            SQLException,
+            InstantiationException,
+            IllegalAccessException {
+        return createSourceConnection(plan);
     }
 
     // </editor-fold>

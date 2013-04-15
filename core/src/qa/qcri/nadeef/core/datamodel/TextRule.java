@@ -5,14 +5,13 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.List;
 
 /**
  * TextRule contains rule with description text.
  */
-public abstract class TextRule extends Rule {
+public abstract class TextRule<T> extends Rule<T> {
 
     /**
      * Constructor. Checks for which signatures are implemented.

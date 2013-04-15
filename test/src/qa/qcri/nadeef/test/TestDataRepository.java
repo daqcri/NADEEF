@@ -16,6 +16,10 @@ import java.io.StringReader;
  */
 public class TestDataRepository {
 
+    public static String getCSVFilename() {
+        return "test\\src\\qa\\qcri\\nadeef\\test\\input\\dumptest.csv";
+    }
+
     public static String getFDFileName() {
         return "test\\src\\qa\\qcri\\nadeef\\test\\input\\CleanPlan1.json";
 

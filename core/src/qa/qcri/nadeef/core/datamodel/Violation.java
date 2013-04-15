@@ -9,7 +9,7 @@ package qa.qcri.nadeef.core.datamodel;
  * Violation class.
  * TODO: considering using ORM libraries like JOOQ.
  */
-public class Violation extends Primitive {
+public class Violation {
     private String ruleId;
     private Cell cell;
     private Object attributeValue;

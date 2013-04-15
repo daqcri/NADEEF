@@ -12,6 +12,7 @@ import org.junit.runners.JUnit4;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.operator.SQLDeseralizer;
 import qa.qcri.nadeef.test.TestDataRepository;
 
@@ -37,5 +38,20 @@ public class SQLDeseralizerTest {
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
+    }
+
+    @Test
+    public void executeTest() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
+            List<Rule> rules = cleanPlan.getRules();
+            SQLDeseralizer deseralizer = new SQLDeseralizer(cleanPlan);
+            List<Tuple> tuples = deseralizer.execute(rules.get(0));
+            // TODO: think of better test data input
+            Assert.assertEquals(4, tuples.size());
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
+        }
+
     }
 }

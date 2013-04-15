@@ -13,10 +13,7 @@ import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.*;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Test FDRule methods.
@@ -72,8 +69,8 @@ public class FDRuleTest {
         List<String> tables = Arrays.asList("test");
         FDRule rule =
             new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
-        Violation[] violations = rule.detect(tuples);
-        Assert.assertEquals(8, violations.length);
+        Collection<Violation> violations = rule.detect(new TuplePair(tuples[0], tuples[1]));
+        Assert.assertEquals(4, violations.size());
     }
 
     @Test
@@ -90,7 +87,7 @@ public class FDRuleTest {
         List<String> tables = Arrays.asList("test");
         FDRule rule =
             new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
-        Violation[] violations = rule.detect(tupleA, tupleB);
-        Assert.assertEquals(4, violations.length);
+        Collection<Violation> violations = rule.detect(new TuplePair(tupleA, tupleB));
+        Assert.assertEquals(4, violations.size());
     }
 }

@@ -41,7 +41,7 @@ public class ViolationExport extends Operator<Violation[], Boolean> {
                 SQLException,
                 InstantiationException,
                 IllegalAccessException {
-        Connection conn = DBConnectionFactory.createSourceTableConnection(cleanPlan);
+        Connection conn = DBConnectionFactory.createTargetConnection(cleanPlan);
         Statement stat = conn.createStatement();
         for (Violation violation : violations) {
             String sql = getSQLInsert(violation);

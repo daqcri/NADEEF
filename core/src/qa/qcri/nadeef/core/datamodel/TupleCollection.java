@@ -5,11 +5,9 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import java.util.ArrayList;
+
 /**
- * Rule input enumeration.
+ * Tuple collection class.
  */
-public enum RuleInputType {
-    One,
-    Two,
-    Many
-}
+public class TupleCollection extends ArrayList<Tuple> {}

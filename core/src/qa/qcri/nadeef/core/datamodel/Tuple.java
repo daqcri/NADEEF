@@ -5,8 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import qa.qcri.nadeef.core.datamodel.Primitive;
-
 import java.util.*;
 
 /**
@@ -14,7 +12,7 @@ import java.util.*;
  * TODO: consider using Trove for better hashmap performance.
  * TODO: use better index instead of string
  */
-public class Tuple extends Primitive {
+public class Tuple {
 
     //<editor-fold desc="Private Fields">
     private HashMap<Cell, Object> dict;

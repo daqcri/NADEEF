@@ -19,18 +19,20 @@ import org.junit.Test;
 
 import org.jooq.SQLDialect;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVDumper;
 
 /**
  * CSV Dumper test.
  */
+@RunWith(JUnit4.class)
 public class CSVDumperTest {
     private static final String url = "jdbc:postgresql://localhost/unittest";
     private static final String userName = "tester";
     private static final String password = "tester";
-    private static final String inputFileName =
-            "tools\\src\\qa\\qcri\\nadeef\\tools\\test\\input\\dumptest.csv";
 
     private static String tableName;
     private static Connection conn;
@@ -60,10 +62,11 @@ public class CSVDumperTest {
     @Test
     public void goodDumpTest() {
         try {
-            tableName = CSVDumper.dump(conn, inputFileName);
+            tableName = CSVDumper.dump(conn, TestDataRepository.getCSVFilename());
             Assert.assertNotNull("tableName cannot be null", tableName);
 
-            BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
+            BufferedReader reader =
+                    new BufferedReader(new FileReader(TestDataRepository.getCSVFilename()));
             int lineCount = 0;
             String line;
             while ((line = reader.readLine()) != null) {

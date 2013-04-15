@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Function Dependency (FD) Rule.
  */
-public class FDRule extends TextRule {
+public class FDRule extends TextRule<TuplePair> {
     protected Set<Cell> lhs;
     protected Set<Cell> rhs;
 
@@ -93,12 +93,13 @@ public class FDRule extends TextRule {
 
     /**
      * Stupid and expensive detect method.
-     * @param a left tuple
-     * @param b right tuple
+     * @param tuplePair Tuple pair.
      * @return violation set.
      */
     @Override
-    public Violation[] detect(Tuple a, Tuple b) {
+    public Collection<Violation> detect(TuplePair tuplePair) {
+        Tuple a = tuplePair.getLeft();
+        Tuple b = tuplePair.getRight();
         ArrayList<Violation> result = new ArrayList<>(0);
         Cell[] lhsCells = lhs.toArray(new Cell[lhs.size()]);
         boolean hasSameLhs = true;
@@ -125,22 +126,22 @@ public class FDRule extends TextRule {
             }
         }
 
-        return result.toArray(new Violation[result.size()]);
+        return result;
     }
 
-    /**
-     * Detect rule with multiple tuples.
-     *
-     * @param tuples@return Violation set.
-     */
-    @Override
-    public Violation[] detect(Tuple[] tuples) {
-        ArrayList<Violation> violationList = new ArrayList<>();
-        for (Tuple tuple : tuples) {
-            violationList.addAll(getViolation(tuple));
-        }
-        return violationList.toArray(new Violation[violationList.size()]);
-    }
+//    /**
+//     * Detect rule with multiple tuples.
+//     *
+//     * @param tuples@return Violation set.
+//     */
+//    @Override
+//    public Collection<Violation> detect(Collection<Tuple> tuples) {
+//        ArrayList<Violation> violationList = new ArrayList<>();
+//        for (Tuple tuple : tuples) {
+//            violationList.addAll(getViolation(tuple));
+//        }
+//        return violationList;
+//    }
 
     /**
      * Gets LHS set.
