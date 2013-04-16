@@ -10,6 +10,7 @@ import jline.console.completer.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,16 +50,20 @@ public class Console {
             String line;
 
             console.setPrompt(prompt);
-            List<Completer> completers = new ArrayList<>();
-            completers.add(new StringsCompleter(commands));
-            completers.add(new FileNameCompleter());
-            completers.add(new NullCompleter());
-            console.addCompleter(new ArgumentCompleter(completers));
+            console.addCompleter(new ArgumentCompleter(new StringsCompleter(commands)));
+
+            List<Completer> loadCompleter =
+                    Arrays.asList(new StringsCompleter("load"), new FileNameCompleter(), new NullCompleter());
+            console.addCompleter(new ArgumentCompleter(loadCompleter));
 
             while ((line = console.readLine()) != null) {
                 line = line.trim();
                 if (line.equalsIgnoreCase("exit")) {
                     break;
+                }
+
+                if (line.startsWith("load")) {
+                    load(line);
                 }
 
                 if (line.equalsIgnoreCase("help")) {
@@ -72,20 +77,24 @@ public class Console {
         System.exit(0);
     }
 
-    public static void printHelp(ConsoleReader console) throws IOException {
+    private static void load(String cmdLine) {
+
+    }
+
+    private static void printHelp(ConsoleReader console) throws IOException {
         String help =
                 " |Nadeef console usage:\n" +
                 " |----------------------------------\n" +
                 " |help : Print out this help information.\n" +
                 " |\n" +
                 " |load <input CleanPlan file> :\n" +
-                " |    load a configured nadeef file.\n" +
+                " |    load a configured nadeef clean plan.\n" +
                 " |\n" +
-                " |detect <rule name> :\n" +
+                " |run <rule name> :\n" +
                 " |    start the violation detection with a given rule name.\n" +
                 " |\n" +
                 " |list : \n" +
-                " |    list the available rule.\n" +
+                " |    list available rules.\n" +
                 " |\n" +
                 " |repair <target table name> :\n" +
                 " |    repair the data source.\n" +
