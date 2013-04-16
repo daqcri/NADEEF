@@ -17,7 +17,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="guava-14.0.1" level="project" />
   </component>
 </module>
 

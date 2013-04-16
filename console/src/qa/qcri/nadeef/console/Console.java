@@ -26,7 +26,7 @@ public class Console {
             "/_/|_/\\_,_/\\_,_/\\__/\\__/ __/\n" +
             "Data Cleaning solution (Build " + System.getenv("BuildVersion")  +
             ", using Java " + System.getProperty("java.version") + ").\n" +
-            "Copyright (C) Qatar Computing Research Institute, 2013.";
+            "Copyright (C) Qatar Computing Research Institute, 2013 (http://da.qcri.org).";
 
     private static final String helpInfo = "Type 'help' to see what commands we have.";
 
@@ -50,10 +50,13 @@ public class Console {
             String line;
 
             console.setPrompt(prompt);
-            console.addCompleter(new ArgumentCompleter(new StringsCompleter(commands)));
 
             List<Completer> loadCompleter =
-                    Arrays.asList(new StringsCompleter("load"), new FileNameCompleter(), new NullCompleter());
+                    Arrays.asList(
+                        new StringsCompleter(commands),
+                        new FileNameCompleter(),
+                        new NullCompleter()
+                    );
             console.addCompleter(new ArgumentCompleter(loadCompleter));
 
             while ((line = console.readLine()) != null) {

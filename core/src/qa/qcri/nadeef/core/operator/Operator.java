@@ -6,12 +6,10 @@
 package qa.qcri.nadeef.core.operator;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 
 /**
  * Abstract class for an Operator.
