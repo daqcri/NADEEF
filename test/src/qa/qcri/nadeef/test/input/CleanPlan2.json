@@ -1,0 +1,17 @@
+{
+    "source" : {
+        "type" : "csv",
+        "path" : "./location.csv",
+    },
+    "target" : {
+        "table" : "output"
+    },
+    "rule" : [
+        {
+            "name" : "location rule",
+            "type" : "fd",
+            "table" : ["location"],
+            "value" : "zip|city, state"
+        }
+    ]
+}

@@ -3,16 +3,14 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.tools;
+package qa.qcri.nadeef.core.util;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.Tracer;
+import qa.qcri.nadeef.tools.DBInstaller;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.sql.SQLException;
 
 /**
  * Bootstrapping Nadeef.
@@ -29,7 +27,8 @@ public class Bootstrap {
         try {
             NadeefConfiguration.initialize(new FileReader(configurationFile));
             DBInstaller.install(
-                DBConnectionFactory.createNadeefConnection(), new NadeefConfiguration()
+                    DBConnectionFactory.createNadeefConnection(),
+                    NadeefConfiguration.getViolationTableName()
             );
         } catch (FileNotFoundException e) {
             tracer.err("Nadeef configuration is not found.");

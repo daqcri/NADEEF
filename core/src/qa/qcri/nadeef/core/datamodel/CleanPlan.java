@@ -7,15 +7,20 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.io.Files;
 import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -56,26 +61,47 @@ public class CleanPlan {
      * @param reader JSON string reader.
      * @return <code>CleanPlan</code> object.
      */
-    public static CleanPlan createCleanPlanFromJSON(Reader reader) {
+    public static CleanPlan createCleanPlanFromJSON(Reader reader)
+            throws
+            IOException,
+            ClassNotFoundException,
+            SQLException,
+            InstantiationException,
+            IllegalAccessException {
         Preconditions.checkNotNull(reader);
 
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
         JSONObject src = (JSONObject)jsonObject.get("source");
-        String sourceUrl = (String)src.get("url");
-        String sourceTableUserName = (String)src.get("username");
-        String sourceTableUserPassword = (String)src.get("password");
+        SQLDialect sqlDialect;
+        String sourceUrl = null;
+        String sourceTableUserName = null;
+        String sourceTableUserPassword = null;
+        String csvTableName = null;
+        boolean isCSV = false;
+
+        String type = (String)src.get("type");
+        if (type.equalsIgnoreCase("csv")) {
+            isCSV = true;
+            String file = (String)src.get("file");
+            // source is a CSV file, dump it first.
+            Connection conn = DBConnectionFactory.createNadeefConnection();
+            // TODO; find a way to clean the table after exiting.
+            csvTableName = CSVDumper.dump(conn, file);
+            sqlDialect = SQLDialect.POSTGRES;
+        } else {
+            switch (type) {
+                default:
+                case "postgres":
+                    sqlDialect = SQLDialect.POSTGRES;
+            }
+
+            sourceUrl = (String)src.get("url");
+            sourceTableUserName = (String)src.get("username");
+            sourceTableUserPassword = (String)src.get("password");
+        }
 
         JSONObject target = (JSONObject)jsonObject.get("target");
         String targetTableName = (String)target.get("table");
-
-        // TODO: make it support for multiple dialects.
-        String type = (String)src.get("type");
-        SQLDialect sqlDialect;
-        switch (type) {
-            default:
-            case "postgres":
-                sqlDialect = SQLDialect.POSTGRES;
-        }
 
         // parse rules.
         JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
@@ -87,7 +113,13 @@ public class CleanPlan {
                 name = "rule" + i;
             }
 
-            List<String> tableObjs = (List<String>)ruleObj.get("table");
+            List<String> tableObjs;
+            if (isCSV) {
+                tableObjs = Arrays.asList(csvTableName);
+            } else {
+                tableObjs = (List<String>)ruleObj.get("table");
+            }
+
             type = (String)ruleObj.get("type");
             Rule rule = null;
             if (type.equalsIgnoreCase("fd")) {

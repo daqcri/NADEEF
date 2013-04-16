@@ -21,7 +21,7 @@ import qa.qcri.nadeef.core.operator.ViolationDetector;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.tools.Bootstrap;
+import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.test.TestDataRepository;
 
 import java.util.Collection;

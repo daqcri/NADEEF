@@ -9,7 +9,7 @@ import org.jooq.SQLDialect;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.Tracer;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
 import java.util.*;

@@ -7,7 +7,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.util.Tracer;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

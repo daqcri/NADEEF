@@ -40,7 +40,8 @@ public class CSVDumperTest {
     @BeforeClass
     public static void setUp() {
         try {
-           conn = DBConnectionFactory.createConnection(SQLDialect.POSTGRES, url, userName, password);
+           conn =
+               DBConnectionFactory.createConnection(SQLDialect.POSTGRES, url, userName, password);
            conn.setAutoCommit(false);
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());

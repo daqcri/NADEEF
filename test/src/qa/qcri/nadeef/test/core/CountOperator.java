@@ -7,7 +7,7 @@ package qa.qcri.nadeef.test.core;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.operator.Operator;
-import qa.qcri.nadeef.core.util.Tracer;
+import qa.qcri.nadeef.tools.Tracer;
 
 /**
  * A counter operator.

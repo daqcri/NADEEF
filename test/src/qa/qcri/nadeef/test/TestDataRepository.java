@@ -9,7 +9,9 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
+import java.sql.SQLException;
 
 /**
  * Factory class to get TestData.
@@ -25,7 +27,7 @@ public class TestDataRepository {
 
     }
 
-    public static CleanPlan getFDCleanPlan() throws FileNotFoundException {
+    public static CleanPlan getFDCleanPlan() throws IOException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDFileName()));
     }
 }

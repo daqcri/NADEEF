@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.tools;
 
 /**
  * Tracer is used for debugging / profiling / benchmarking purpose.

@@ -5,7 +5,7 @@
 
 package qa.qcri.nadeef.tools;
 
-import qa.qcri.nadeef.core.util.Tracer;
+import com.google.common.io.Files;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,9 +13,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.String;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * CSVDumper is a simple tool which dumps CSV data into database with a new created table.
@@ -31,9 +28,7 @@ public class CSVDumper {
      */
     public static String dump(Connection conn, String fullFileName)
             throws IllegalAccessException, SQLException, IOException {
-        File file = new File(fullFileName);
-        int fileNameIndex = file.getName().indexOf('.');
-        String fileName = file.getName().substring(0, fileNameIndex);
+        String fileName = Files.getNameWithoutExtension(fullFileName);
         String tableName = "csvtable_" + fileName + '_' + System.currentTimeMillis();
         dump(conn, fullFileName, tableName, "public");
         return tableName;
@@ -62,7 +57,8 @@ public class CSVDumper {
             conn.setAutoCommit(false);
 
             BufferedReader reader = new BufferedReader(new FileReader(fullFileName));
-            String header = reader.readLine();
+            StringBuilder header = new StringBuilder(reader.readLine());
+            header.insert(0, "TID SERAL");
 
             // create the table
             PreparedStatement createStat =
