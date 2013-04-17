@@ -89,11 +89,8 @@ public class CleanPlan {
             csvTableName = CSVDumper.dump(conn, file);
             sqlDialect = SQLDialect.POSTGRES;
         } else {
-            switch (type) {
-                default:
-                case "postgres":
-                    sqlDialect = SQLDialect.POSTGRES;
-            }
+            // TODO: support different type of DB.
+            sqlDialect = SQLDialect.POSTGRES;
 
             sourceUrl = (String)src.get("url");
             sourceTableUserName = (String)src.get("username");

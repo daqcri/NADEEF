@@ -34,7 +34,7 @@ public class Flow {
      */
     public Flow() {
         nodeList = new LinkedList();
-        keyList = new LinkedList<>();
+        keyList = new LinkedList();
         currentFlowPosition = 0;
         state = FlowState.Ready;
     }

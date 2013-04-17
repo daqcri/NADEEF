@@ -21,7 +21,7 @@ public class RuleHintCollection {
      * Constructor.
      */
     public RuleHintCollection() {
-        ruleHints = new HashMap<>();
+        ruleHints = new HashMap();
         ruleHints.put(RuleHintType.Project, new ArrayList<RuleHint>());
     }
 

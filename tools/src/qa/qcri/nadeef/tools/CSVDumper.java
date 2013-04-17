@@ -100,7 +100,6 @@ public class CSVDumper {
                 stat.close();
                 conn.commit();
             }
-            throw ex;
         }
     }
     // </editor-fold>

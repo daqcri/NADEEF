@@ -33,7 +33,7 @@ public class Tuple {
         }
 
         dict = new HashMap(cells.length);
-        HashSet<String> tableSet = new HashSet<>();
+        HashSet<String> tableSet = new HashSet();
         for (int i = 0; i < cells.length; i ++) {
             dict.put(cells[i], values[i]);
             tableSet.add(cells[i].getTableName());

@@ -92,7 +92,7 @@ public class SQLDeseralizer extends Operator<Rule, List<Tuple>> {
         // 1 - projection hint
         List<RuleHint> projects = hints.getHint(RuleHintType.Project);
         if (projects != null) {
-            List<String> attrList = new ArrayList<>();
+            List<String> attrList = new ArrayList();
 
             for (RuleHint projectHint : projects) {
                 ProjectHint hint = (ProjectHint)projectHint;

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import org.jooq.SQLDialect;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Creates DB connection.
@@ -124,7 +123,7 @@ public class DBConnectionFactory {
             case POSTGRES:
                 return "org.postgresql.Driver";
             default:
-                throw new NotImplementedException();
+                throw new UnsupportedOperationException();
         }
     }
 }

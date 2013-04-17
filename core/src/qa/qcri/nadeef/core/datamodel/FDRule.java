@@ -43,8 +43,8 @@ public class FDRule extends TextRule<TuplePair> {
     @Override
     public void parse(StringReader input) {
         BufferedReader reader = new BufferedReader(input);
-        lhs = new HashSet<>(0);
-        rhs = new HashSet<>(0);
+        lhs = new HashSet(0);
+        rhs = new HashSet(0);
 
         // Here we assume the rule comes in with one line.
         try {
@@ -100,7 +100,7 @@ public class FDRule extends TextRule<TuplePair> {
     public Collection<Violation> detect(TuplePair tuplePair) {
         Tuple a = tuplePair.getLeft();
         Tuple b = tuplePair.getRight();
-        ArrayList<Violation> result = new ArrayList<>(0);
+        ArrayList<Violation> result = new ArrayList(0);
         Cell[] lhsCells = lhs.toArray(new Cell[lhs.size()]);
         boolean hasSameLhs = true;
         for (Cell cell : lhsCells) {
@@ -129,20 +129,6 @@ public class FDRule extends TextRule<TuplePair> {
         return result;
     }
 
-//    /**
-//     * Detect rule with multiple tuples.
-//     *
-//     * @param tuples@return Violation set.
-//     */
-//    @Override
-//    public Collection<Violation> detect(Collection<Tuple> tuples) {
-//        ArrayList<Violation> violationList = new ArrayList<>();
-//        for (Tuple tuple : tuples) {
-//            violationList.addAll(getViolation(tuple));
-//        }
-//        return violationList;
-//    }
-
     /**
      * Gets LHS set.
      * @return lhs set.
@@ -161,7 +147,7 @@ public class FDRule extends TextRule<TuplePair> {
 
     private ArrayList<Violation> getViolation(Tuple tuple) {
         Cell[] cells = tuple.getCells();
-        ArrayList<Violation> result = new ArrayList<>();
+        ArrayList<Violation> result = new ArrayList();
         for (Cell cell : cells) {
             // Only adds RHS in the violation.
             if (lhs.contains(cell)) {

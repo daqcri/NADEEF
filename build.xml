@@ -1,4 +1,5 @@
-<project>
+<project name="Nadeef Build" default="all" basedir=".">
+
     <!-- Common property values -->
     <property name="project.name" value="nadeef" />
     <property name="build.dir" value="out/production" />
@@ -58,7 +59,7 @@
                classpathref="vendors.jars"/>
     </target>
 
-    <target name="core">
+    <target name="core" depends="tools">
         <mkdir dir="${build.dir}" />
         <javac includeantruntime="false"
                srcdir="core/src"
@@ -69,10 +70,11 @@
     <target name="tools">
         <mkdir dir="${build.dir}" />
         <javac includeantruntime="false"
+
                debug="on"
                srcdir="tools/src"
                destdir="${build.dir}"
-               classpath="${vendor.dir};${build.core.dir}"
+               classpath="${vendor.dir}"
                classpathref="vendors.jars"/>
     </target>
 
