@@ -11,80 +11,41 @@ import com.google.common.base.Strings;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Abstract base class for a rule.
  */
-public abstract class Rule<T> {
+public abstract class Rule<T> extends AbstractRule<T> {
     protected RuleHintCollection hints;
-    protected String id;
-    protected List<String> tableNames;
-    protected Class inputType;
 
     /**
      * Constructor. Checks for which signatures are implemented.
      */
     protected Rule(String id, List<String> tableNames) {
-        Preconditions.checkArgument(
-                !Strings.isNullOrEmpty(id) && tableNames != null && tableNames.size() > 0
-        );
-
-        this.id = id;
-        this.tableNames = tableNames;
-        this.hints = new RuleHintCollection();
-
-        // reflect on the input type;
-        ParameterizedType parameterizedType =
-                (ParameterizedType)getClass().getGenericSuperclass();
-
-        Type[] types = parameterizedType.getActualTypeArguments();
-        inputType = (Class)types[0];
+        super(id, tableNames);
     }
 
     /**
-     * Gets of rule Id.
+     * Default group operation.
+     * @param tupleCollection input tuple
+     * @return a group of tuple collection.
      */
-    public String getId() {
-        return id;
+    @Override
+    public Collection<TupleCollection> group(TupleCollection tupleCollection) {
+        Collection<TupleCollection> result = new LinkedList<TupleCollection>();
+        return result;
     }
 
     /**
-     * Sets of rule Id.
+     * Default filter operation.
+     * @param tupleCollection input tuple collections.
+     * @return filtered tuple collection.
      */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Detect rule with one tuple.
-     * @param tuples input tuple.
-     * @return Violation set.
-     */
-    public abstract Collection<Violation> detect(T tuples);
-
-    /**
-     * Returns <code>True</code> when the rule implements one tuple input.
-     * @return <code>True</code> when the rule implements one tuple inputs.
-     */
-    public boolean supportOneInput() {
-        return inputType == Tuple.class;
-    }
-
-    /**
-     * Returns <code>True</code> when the rule implements two tuple inputs.
-     * @return <code>True</code> when the rule implements two tuple inputs.
-     */
-    public boolean supportTwoInputs() {
-        return inputType == TuplePair.class;
-    }
-
-    /**
-     * Returns <code>True</code> when the rule implements multiple tuple inputs.
-     * @return <code>True</code> when the rule implements multiple tuple inputs.
-     */
-    public boolean supportManyInputs() {
-        return inputType == TupleCollection.class;
+    @Override
+    public TupleCollection filter(TupleCollection tupleCollection) {
+        return tupleCollection;
     }
 
     /**
@@ -93,13 +54,5 @@ public abstract class Rule<T> {
      */
     public RuleHintCollection getHints() {
         return this.hints;
-    }
-
-    /**
-     * Gets the used table names in the rule.
-     * @return A list of table names.
-     */
-    public List<String> getTableNames() {
-        return tableNames;
     }
 }

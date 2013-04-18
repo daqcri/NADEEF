@@ -39,11 +39,11 @@ public class ProjectHint extends RuleHint {
             switch (attrs.length) {
                 case 3:
                     newAttribute =
-                            new Cell(attrs[0].trim(), attrs[1].trim(), attrs[2].trim());
+                        new Cell(attrs[0].trim(), attrs[1].trim(), attrs[2].trim());
                     break;
                 case 2:
                     newAttribute =
-                            new Cell(defaultSchema, attrs[0].trim(), attrs[1].trim());
+                        new Cell(defaultSchema, attrs[0].trim(), attrs[1].trim());
                     break;
                 default:
                     newAttribute = new Cell(defaultSchema, null, attrs[0].trim());
@@ -66,7 +66,6 @@ public class ProjectHint extends RuleHint {
      * @param attributes
      */
     public ProjectHint(List<Cell> attributes) {
-        super();
         this.attributes = attributes;
     }
 

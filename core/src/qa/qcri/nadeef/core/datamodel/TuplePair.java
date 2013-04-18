@@ -11,7 +11,9 @@ public class TuplePair {
     private Tuple right;
 
     public TuplePair(Tuple left, Tuple right) {
-        Preconditions.checkArgument(left != null && right != null, "Pair cannot have null values.");
+        Preconditions.checkArgument(
+            left != null && right != null, "Pair cannot have null values."
+        );
         this.left = left;
         this.right = right;
     }

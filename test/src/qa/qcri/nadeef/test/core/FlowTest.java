@@ -16,7 +16,7 @@ import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.operator.TuplePairIterator;
-import qa.qcri.nadeef.core.operator.SQLDeseralizer;
+import qa.qcri.nadeef.core.operator.Deseralizer;
 import qa.qcri.nadeef.core.operator.ViolationDetector;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
@@ -68,7 +68,7 @@ public class FlowTest {
 
             Flow flow = new Flow();
             flow.setInputKey(inputKey);
-            flow.addNode(new Node(new SQLDeseralizer(cleanPlan), "1"), 0);
+            flow.addNode(new Node(new Deseralizer(cleanPlan), "1"), 0);
             flow.addNode(new Node(new TuplePairIterator(), "2"), 1);
             flow.addNode(new Node(new ViolationDetector<TuplePair>(rules.get(0)), "3"), 2);
             flow.start();

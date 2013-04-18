@@ -6,10 +6,7 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.Tuple;
-import qa.qcri.nadeef.core.datamodel.TuplePair;
+import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.operator.*;
 
 import java.util.Collection;
@@ -20,7 +17,7 @@ import java.util.List;
  * start the execution.
  */
 public class CleanExecutor {
-    private CleanPlan cleanPlan;
+    private static CleanPlan cleanPlan;
 
     /**
      * Constructor.
@@ -44,17 +41,21 @@ public class CleanExecutor {
             Rule rule = rules.get(i);
             String inputKey = cacheManager.put(rule);
             flows[i].setInputKey(inputKey);
-            if (cleanPlan.isSourceDataBase()) {
-                flows[i].addNode(new Node(new SQLDeseralizer(cleanPlan), "deseralizer"));
-            }
-
             if (rule.supportTwoInputs()) {
-                flows[i].addNode(new Node(new TuplePairIterator(), "iterator"));
+                flows[i].addNode(
+                    new Node(new Deseralizer<TupleCollectionPair>(cleanPlan), "deserializer")
+                );
+                flows[i].addNode(new Node(new PairQueryEngine(rule), "query"));
+                flows[i].addNode(new Node(new TupleCollectionPairIterator(), "iterator"));
                 flows[i].addNode(new Node(new ViolationDetector<TuplePair>(rule), "detector"));
-            } else if (rule.supportManyInputs()) {
+            } else {
+                flows[i].addNode(
+                    new Node(new Deseralizer<TupleCollection>(cleanPlan), "deserializer")
+                );
+                flows[i].addNode(new Node(new QueryEngine(rule), "query"));
                 flows[i].addNode(new Node(new TupleCollectionIterator(), "iterator"));
                 flows[i].addNode(
-                    new Node(new ViolationDetector<Collection<Tuple>>(rule), "detector")
+                    new Node(new ViolationDetector<TupleCollection>(rule), "detector")
                 );
             }
 
@@ -71,7 +72,7 @@ public class CleanExecutor {
      * Gets the <code>CleanPlan</code>.
      * @return the <code>CleanPlan</code>.
      */
-    public CleanPlan getCleanPlan() {
+    public static CleanPlan getCurrentCleanPlan() {
         return cleanPlan;
     }
 }

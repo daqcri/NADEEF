@@ -6,7 +6,8 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import qa.qcri.nadeef.core.util.SqlQueryBuilder;
+import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -17,23 +18,13 @@ import java.util.*;
 /**
  * Function Dependency (FD) Rule.
  */
-public class FDRule extends TextRule<TuplePair> {
+public class FDRule extends TextRule<TupleCollection> {
     protected Set<Cell> lhs;
     protected Set<Cell> rhs;
 
     public FDRule(String id, List<String> tableNames, StringReader input) {
         super(id, tableNames);
         parse(input);
-        createHints();
-    }
-
-    /**
-     * See @see createHints.
-     */
-    @Override
-    protected void createHints() {
-        hints.add(new ProjectHint(Lists.newArrayList(lhs)));
-        hints.add(new ProjectHint(Lists.newArrayList(rhs)));
     }
 
     /**
@@ -92,38 +83,72 @@ public class FDRule extends TextRule<TuplePair> {
     }
 
     /**
+     * FD filter.
+     * @param tupleCollection input tuple collections.
+     * @return tuples after filtering.
+     */
+    @Override
+    public TupleCollection filter(TupleCollection tupleCollection) {
+        SqlQueryBuilder query = tupleCollection.getSQLQuery();
+        query.setDistinct(true);
+        // projection filter
+        Cell[] attrs = lhs.toArray(new Cell[lhs.size()]);
+        for (Cell cell : attrs) {
+            query.addSelect(cell.getFullAttributeName());
+        }
+
+        attrs = rhs.toArray(new Cell[rhs.size()]);
+        for (Cell cell : attrs) {
+            query.addSelect(cell.getFullAttributeName());
+        }
+
+        return tupleCollection;
+    }
+
+    @Override
+    public Collection<TupleCollection> group(TupleCollection tupleCollection) {
+        LinkedList<TupleCollection> groups = new LinkedList();
+        SqlQueryBuilder query = tupleCollection.getSQLQuery();
+        Cell[] attrs = lhs.toArray(new Cell[lhs.size()]);
+        for (Cell cell : attrs) {
+            query.addOrder(cell.getFullAttributeName());
+        }
+
+        Tuple lastTuple = null;
+        List<Tuple> cur = new ArrayList();
+        for (int i = 0; i < tupleCollection.size(); i ++) {
+            Tuple tuple = tupleCollection.get(i);
+            if (lastTuple == null) {
+                lastTuple = tuple;
+                cur.add(tuple);
+                continue;
+            }
+
+            for (Cell cell : attrs) {
+                Object lastValue = lastTuple.get(cell);
+                Object newValue = tuple.get(cell);
+                if (lastValue.equals(newValue)) {
+                    cur.add(tuple);
+                } else {
+                    groups.add(new TupleCollection(cur));
+                    cur = new ArrayList<Tuple>();
+                }
+            }
+        }
+        return groups;
+    }
+
+    /**
      * Stupid and expensive detect method.
-     * @param tuplePair Tuple pair.
+     * @param tupleCollection tupleCollection.
      * @return violation set.
      */
     @Override
-    public Collection<Violation> detect(TuplePair tuplePair) {
-        Tuple a = tuplePair.getLeft();
-        Tuple b = tuplePair.getRight();
-        ArrayList<Violation> result = new ArrayList(0);
-        Cell[] lhsCells = lhs.toArray(new Cell[lhs.size()]);
-        boolean hasSameLhs = true;
-        for (Cell cell : lhsCells) {
-            Object value1 = a.get(cell);
-            Object value2 = b.get(cell);
-            if (!value1.equals(value2)) {
-                hasSameLhs = false;
-                break;
-            }
-        }
-
-        if (hasSameLhs) {
-            Cell[] rhsCells = rhs.toArray(new Cell[rhs.size()]);
-            for (Cell cell : rhsCells) {
-                Object value1 = a.get(cell);
-                Object value2 = b.get(cell);
-                if (!value1.equals(value2)) {
-                    result = getViolation(a);
-                    result.addAll(getViolation(b));
-                    break;
-                }
-
-            }
+    public Collection<Violation> detect(TupleCollection tupleCollection) {
+        ArrayList<Violation> result = new ArrayList();
+        for (int i = 0; i < tupleCollection.size(); i ++) {
+            Tuple tuple = tupleCollection.get(i);
+            result.addAll(Violations.fromTuple(this.id, tuple));
         }
 
         return result;
@@ -143,25 +168,5 @@ public class FDRule extends TextRule<TuplePair> {
      */
     public Set getRhs() {
         return rhs;
-    }
-
-    private ArrayList<Violation> getViolation(Tuple tuple) {
-        Cell[] cells = tuple.getCells();
-        ArrayList<Violation> result = new ArrayList();
-        for (Cell cell : cells) {
-            // Only adds RHS in the violation.
-            if (lhs.contains(cell)) {
-                continue;
-            }
-
-            Violation violation = new Violation();
-            // TODO: find a way to get tuple id.
-            // violation.setTupleId();
-            violation.setRuleId(this.id);
-            violation.setCell(cell);
-            violation.setAttributeValue(tuple.get(cell));
-            result.add(violation);
-        }
-        return result;
     }
 }

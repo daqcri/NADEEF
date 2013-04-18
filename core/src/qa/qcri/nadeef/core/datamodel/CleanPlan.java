@@ -27,12 +27,8 @@ import java.util.List;
  * Nadeef cleaning plan.
  */
 public class CleanPlan {
-    private String targetTableName;
-    private String sourceUrl;
-    private String sourceTableUserName;
-    private String sourceTableUserPassword;
-
-    private SQLDialect sqlDialect;
+    private DBConfig source;
+    private DBConfig target;
     private List<Rule> rules;
 
     //<editor-fold desc="Constructor">
@@ -40,20 +36,15 @@ public class CleanPlan {
      * Constructor.
      */
     public CleanPlan(
-        String targetTableName,
-        String sourceUrl,
-        String sourceTableUserName,
-        String sourceTableUserPassword,
-        List<Rule> rules,
-        SQLDialect sqlDialect
+        DBConfig sourceConfig,
+        DBConfig targetConfig,
+        List<Rule> rules
     ) {
-        this.targetTableName = targetTableName;
-        this.sourceUrl = sourceUrl;
-        this.sourceTableUserName = sourceTableUserName;
-        this.sourceTableUserPassword = sourceTableUserPassword;
-        this.sqlDialect = sqlDialect;
+        this.source = sourceConfig;
+        this.target = targetConfig;
         this.rules = rules;
     }
+
     //</editor-fold>
 
     /**
@@ -70,8 +61,6 @@ public class CleanPlan {
             IllegalAccessException {
         Preconditions.checkNotNull(reader);
 
-        JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
-        JSONObject src = (JSONObject)jsonObject.get("source");
         SQLDialect sqlDialect;
         String sourceUrl = null;
         String sourceTableUserName = null;
@@ -79,6 +68,10 @@ public class CleanPlan {
         String csvTableName = null;
         boolean isCSV = false;
 
+        JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
+
+        // parsing the source config
+        JSONObject src = (JSONObject)jsonObject.get("source");
         String type = (String)src.get("type");
         if (type.equalsIgnoreCase("csv")) {
             isCSV = true;
@@ -96,9 +89,16 @@ public class CleanPlan {
             sourceTableUserName = (String)src.get("username");
             sourceTableUserPassword = (String)src.get("password");
         }
+        DBConfig source =
+            new DBConfig(
+                sourceTableUserName,
+                sourceTableUserPassword,
+                sourceUrl,
+                sqlDialect
+            );
 
-        JSONObject target = (JSONObject)jsonObject.get("target");
-        String targetTableName = (String)target.get("table");
+        // parsing the target config
+        // TODO: fill the target parsing
 
         // parse rules.
         JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
@@ -131,42 +131,19 @@ public class CleanPlan {
         }
         return
             new CleanPlan(
-                targetTableName,
-                sourceUrl,
-                sourceTableUserName,
-                sourceTableUserPassword,
-                rules,
-                sqlDialect
+                source,
+                null,
+                rules
             );
     }
 
     //<editor-fold desc="Property Getters">
-    public SQLDialect getSqlDialect() {
-        return sqlDialect;
-    }
-
-    public String getSourceUserPassword() {
-        return sourceTableUserPassword;
-    }
-
-    public String getTargetTableName() {
-        return targetTableName;
-    }
-
-    public String getSourceUrl() {
-        return sourceUrl;
-    }
-
-    public String getSourceUserName() {
-        return sourceTableUserName;
+    public DBConfig getSourceDBConfig() {
+        return source;
     }
 
     public List<Rule> getRules() {
         return rules;
-    }
-
-    public boolean isSourceDataBase() {
-        return sqlDialect != null;
     }
     //</editor-fold>
 }

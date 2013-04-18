@@ -14,14 +14,6 @@
         <fileset dir="${vendor.dir}" includes="*.jar" />
     </path>
 
-    <path id="production.classpath">
-        <fileset dir="${vendor.dir}" includes="*.jar" />
-        <pathelement location="./core" />
-        <pathelement location="./test" />
-        <pathelement location="./tools" />
-        <pathelement location="./console" />
-    </path>
-
     <!-- Targets -->
     <target name="clean">
         <delete dir="${build.root}" includeemptydirs="true" />
@@ -32,7 +24,10 @@
             depends="clean, jar, test">
      </target>
 
-    <target name="compile" depends="core, console, tools" />
+    <target name="compile" 
+			description="Compile all the NADEEF components"
+			depends="core, console, tools">
+	</target>
 
     <target name="jar" depends="compile">
         <manifestclasspath property="jar.classpath" jarfile="out/${project.name}.jar">
@@ -70,7 +65,6 @@
     <target name="tools">
         <mkdir dir="${build.dir}" />
         <javac includeantruntime="false"
-
                debug="on"
                srcdir="tools/src"
                destdir="${build.dir}"

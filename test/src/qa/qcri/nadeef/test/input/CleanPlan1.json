@@ -10,7 +10,6 @@
     },
     "rule" : [
         {
-            "name" : "location rule",
             "type" : "fd",
             "table" : ["location"],
             "value" : "zip|city, state"

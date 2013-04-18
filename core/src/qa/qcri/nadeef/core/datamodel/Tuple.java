@@ -17,6 +17,7 @@ public class Tuple {
     //<editor-fold desc="Private Fields">
     private HashMap<Cell, Object> dict;
     private String[] tableNames;
+    private int tupleId;
     //</editor-fold>
 
     //<editor-fold desc="Public Members">
@@ -24,8 +25,8 @@ public class Tuple {
     /**
      * Constructor.
      */
-    public Tuple(Cell[] cells, Object[] values) {
-        if (cells == null || values == null) {
+    public Tuple(int tupleId, Cell[] cells, Object[] values) {
+        if (cells == null || values == null || tupleId < 1) {
             throw new IllegalArgumentException("Input attribute/value cannot be null.");
         }
         if (cells.length != values.length) {
@@ -39,6 +40,8 @@ public class Tuple {
             tableSet.add(cells[i].getTableName());
         }
         tableNames = tableSet.toArray(new String[tableSet.size()]);
+        this.tupleId = tupleId;
+
     }
 
     /**
@@ -48,6 +51,14 @@ public class Tuple {
      */
     public Object get(Cell key) {
         return dict.get(key);
+    }
+
+    /**
+     * Gets Tuple Id.
+     * @return tuple id.
+     */
+    public int getTupleId() {
+        return this.tupleId;
     }
 
     /**

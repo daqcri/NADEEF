@@ -11,7 +11,9 @@ import java.sql.SQLException;
 
 import org.jooq.SQLDialect;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.DBConfig;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 
 /**
  * Creates DB connection.
@@ -74,48 +76,32 @@ public class DBConnectionFactory {
 
     /**
      * Creates a new JDBC connection on the source DB from a clean plan.
-     * @param plan
+     * @param dbConfig Database configuration.
      * @return new JDBC connection.
      */
-    public static Connection createSourceConnection(CleanPlan plan)
+    public static Connection createConnection(DBConfig dbConfig)
             throws
                 ClassNotFoundException,
                 SQLException,
                 InstantiationException,
                 IllegalAccessException {
-        String url = plan.getSourceUrl();
         StringBuilder jdbcUrl = new StringBuilder("jdbc:");
-        SQLDialect dialect = plan.getSqlDialect();
+        SQLDialect dialect = dbConfig.getDialect();
         switch (dialect) {
             case POSTGRES:
                 jdbcUrl.append("postgresql");
         }
 
         jdbcUrl.append("://");
-        jdbcUrl.append(plan.getSourceUrl());
+        jdbcUrl.append(dbConfig.getUrl());
 
         return createConnection(
-                plan.getSqlDialect(),
+                dialect,
                 jdbcUrl.toString(),
-                plan.getSourceUserName(),
-                plan.getSourceUserPassword()
+                dbConfig.getUserName(),
+                dbConfig.getPassword()
         );
     }
-
-    /**
-     * Creates a new JDBC connection on the target DB from a clean plan.
-     * @param plan clean plan.
-     * @return new JDBC connection.
-     */
-    public static Connection createTargetConnection(CleanPlan plan)
-            throws
-            ClassNotFoundException,
-            SQLException,
-            InstantiationException,
-            IllegalAccessException {
-        return createSourceConnection(plan);
-    }
-
     // </editor-fold>
 
     private static String getDriverName(SQLDialect dialect) {

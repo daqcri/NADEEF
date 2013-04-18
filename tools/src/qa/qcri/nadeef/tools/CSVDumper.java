@@ -58,7 +58,8 @@ public class CSVDumper {
 
             BufferedReader reader = new BufferedReader(new FileReader(fullFileName));
             StringBuilder header = new StringBuilder(reader.readLine());
-            header.insert(0, "TID SERAL");
+            // TODO: make it other DB compatible
+            header.insert(0, "TID SERIAL PRIMARY KEY,");
 
             // create the table
             PreparedStatement createStat =
@@ -81,7 +82,8 @@ public class CSVDumper {
                 if (line.isEmpty()) {
                     continue;
                 }
-                String sqlInsert = getInsert(line, schemaName, tableName, columnSchemas);
+                String sqlInsert =
+                    getInsert(line, schemaName, tableName, columnSchemas);
                 stat.addBatch(sqlInsert);
                 lineCount ++;
             }
@@ -107,20 +109,18 @@ public class CSVDumper {
     // <editor-fold desc="Private helper">
     /**
      * Generates insert statement based on the CSV line.
-     * @param line
-     * @param tableName
-     * @param columnSchemas
-     * @return
-     * @throws SQLException
      */
     private static String getInsert(
             String line, String schema, String tableName, ResultSet columnSchemas
     ) throws SQLException {
         String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+        // TODO: consider not using DEFAULT since it is postgres dependent.
         StringBuilder sqlInsert = new StringBuilder(
-                "INSERT INTO " + schema + "." + tableName  + " VALUES " + "(");
-        int i = 0;
-        while (columnSchemas.next()) {
+                "INSERT INTO " + schema + "." + tableName  + " VALUES " + "(DEFAULT, ");
+
+        // skip the SERIAL key
+        columnSchemas.next();
+        for (int i = 0; i < tokens.length; i ++) {
             if (i != 0) {
                 sqlInsert.append(',');
             }
@@ -131,6 +131,7 @@ public class CSVDumper {
                 continue;
             }
 
+            columnSchemas.next();
             String type = columnSchemas.getString("TYPE_NAME");
             if (type.startsWith("varchar")) {
                 sqlInsert.append('\'');
@@ -139,8 +140,6 @@ public class CSVDumper {
             } else {
                 sqlInsert.append(token);
             }
-
-            i ++;
         }
 
         sqlInsert.append(')');
