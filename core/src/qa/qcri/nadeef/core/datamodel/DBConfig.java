@@ -18,6 +18,7 @@ public class DBConfig {
     private String url;
     private SQLDialect dialect;
 
+    //<editor-fold desc="Constructor">
     /**
      * Constructor.
      * @param userName DB user name.
@@ -47,7 +48,9 @@ public class DBConfig {
         this.url = url;
         this.dialect = dialect;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Getters">
     public String getUserName() {
         return userName;
     }
@@ -63,4 +66,5 @@ public class DBConfig {
     public SQLDialect getDialect() {
         return dialect;
     }
+    //</editor-fold>
 }

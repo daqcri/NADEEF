@@ -50,9 +50,9 @@ public class DBInstallerTest {
             }
             DBInstaller.install(conn, NadeefConfiguration.getViolationTableName());
             Assert.assertTrue(
-                    DBInstaller.isInstalled(
-                            conn, NadeefConfiguration.getViolationTableName()
-                    )
+                DBInstaller.isInstalled(
+                        conn, NadeefConfiguration.getViolationTableName()
+                )
             );
             DBInstaller.uninstall(conn, NadeefConfiguration.getViolationTableName());
             Assert.assertFalse(

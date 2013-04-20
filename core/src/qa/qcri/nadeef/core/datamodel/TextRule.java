@@ -25,9 +25,4 @@ public abstract class TextRule<T> extends Rule<T> {
      * @param input Input stream.
      */
     public abstract void parse(StringReader input);
-
-    /**
-     * Creates the hints based on the content of the rule.
-     */
-    protected void createHints() {}
 }

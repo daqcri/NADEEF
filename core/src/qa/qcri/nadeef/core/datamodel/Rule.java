@@ -15,11 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Abstract base class for a rule.
+ * Abstract base class for a rule providing the default behavior of filter and group operation.
  */
 public abstract class Rule<T> extends AbstractRule<T> {
-    protected RuleHintCollection hints;
-
     /**
      * Constructor. Checks for which signatures are implemented.
      */
@@ -34,7 +32,8 @@ public abstract class Rule<T> extends AbstractRule<T> {
      */
     @Override
     public Collection<TupleCollection> group(TupleCollection tupleCollection) {
-        Collection<TupleCollection> result = new LinkedList<TupleCollection>();
+        Collection<TupleCollection> result = new LinkedList();
+        result.add(tupleCollection);
         return result;
     }
 
@@ -46,13 +45,5 @@ public abstract class Rule<T> extends AbstractRule<T> {
     @Override
     public TupleCollection filter(TupleCollection tupleCollection) {
         return tupleCollection;
-    }
-
-    /**
-     * Getter of hint.
-     * @return opitmization hints.
-     */
-    public RuleHintCollection getHints() {
-        return this.hints;
     }
 }

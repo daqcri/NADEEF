@@ -31,6 +31,7 @@ public class DBInstaller {
     /**
      * Install Nadeef in the target database.
      */
+    // TODO: move connection inside the method.
     public static void install(Connection conn, String tableName)
             throws SQLException {
         Tracer tracer = Tracer.getTracer(DBInstaller.class);
@@ -40,6 +41,7 @@ public class DBInstaller {
         }
 
         Statement stat = conn.createStatement();
+        // TODO: make an index key for violations
         stat.execute(
                 "CREATE TABLE " +
                 tableName + " (" +

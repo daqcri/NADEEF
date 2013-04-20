@@ -17,7 +17,10 @@ import java.io.FileReader;
  */
 public class Bootstrap {
     private static boolean isStarted;
-    private static final String configurationFile = ".\\nadeef.conf";
+    private static final String configurationFile = "nadeef.conf";
+
+
+    private Bootstrap() {}
 
     /**
      * Initialize the Nadeef infrastructure.

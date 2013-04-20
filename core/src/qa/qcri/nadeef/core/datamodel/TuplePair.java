@@ -10,6 +10,11 @@ public class TuplePair {
     private Tuple left;
     private Tuple right;
 
+    /**
+     * Constructor.
+     * @param left left tuple.
+     * @param right right tuple.
+     */
     public TuplePair(Tuple left, Tuple right) {
         Preconditions.checkArgument(
             left != null && right != null, "Pair cannot have null values."

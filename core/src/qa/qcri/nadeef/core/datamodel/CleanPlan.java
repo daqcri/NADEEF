@@ -117,6 +117,10 @@ public class CleanPlan {
                 tableObjs = (List<String>)ruleObj.get("table");
             }
 
+            if (tableObjs.size() > 2 || tableObjs.size() < 1) {
+                throw new IllegalArgumentException("Invalid Rule property, rule needs to have one or two tables.");
+            }
+
             type = (String)ruleObj.get("type");
             Rule rule = null;
             if (type.equalsIgnoreCase("fd")) {

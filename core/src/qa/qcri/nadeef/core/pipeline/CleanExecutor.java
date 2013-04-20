@@ -42,6 +42,7 @@ public class CleanExecutor {
             String inputKey = cacheManager.put(rule);
             flows[i].setInputKey(inputKey);
             if (rule.supportTwoInputs()) {
+                // work on the pairwise pipeline.
                 flows[i].addNode(
                     new Node(new Deseralizer<TupleCollectionPair>(cleanPlan), "deserializer")
                 );
@@ -53,7 +54,6 @@ public class CleanExecutor {
                     new Node(new Deseralizer<TupleCollection>(cleanPlan), "deserializer")
                 );
                 flows[i].addNode(new Node(new QueryEngine(rule), "query"));
-                flows[i].addNode(new Node(new TupleCollectionIterator(), "iterator"));
                 flows[i].addNode(
                     new Node(new ViolationDetector<TupleCollection>(rule), "detector")
                 );

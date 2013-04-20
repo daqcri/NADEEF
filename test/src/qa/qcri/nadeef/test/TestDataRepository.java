@@ -7,10 +7,7 @@ package qa.qcri.nadeef.test;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.sql.SQLException;
 
 /**
@@ -19,12 +16,13 @@ import java.sql.SQLException;
 public class TestDataRepository {
 
     public static String getCSVFilename() {
-        return "test\\src\\qa\\qcri\\nadeef\\test\\input\\dumptest.csv";
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*dumptest.csv";
+        return filePath.replace('*', File.separatorChar);
     }
 
     public static String getFDFileName() {
-        return "test\\src\\qa\\qcri\\nadeef\\test\\input\\CleanPlan1.json";
-
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan1.json";
+        return filePath.replace('*', File.separatorChar);
     }
 
     public static CleanPlan getFDCleanPlan() throws IOException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {

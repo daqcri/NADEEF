@@ -22,13 +22,20 @@ public class SqlQueryBuilder {
     private List<String> orders;
     private boolean isDistinct;
 
+    //<editor-fold desc="Constructor">
+
+    /**
+     * Constructor.
+     */
     public SqlQueryBuilder() {
         selects = new ArrayList();
         wheres = new ArrayList();
         froms = new ArrayList();
         orders = new ArrayList();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Public methods">
     public void addSelect(String select) {
         Preconditions.checkNotNull(selects);
         this.selects.add(select);
@@ -86,7 +93,9 @@ public class SqlQueryBuilder {
         builder.append(asString(wheres));
         return builder.toString();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Private methods">
     private StringBuilder asString(Collection<String> list, String defaultString) {
         if (list.size() == 0) {
             return new StringBuilder(defaultString);
@@ -106,4 +115,5 @@ public class SqlQueryBuilder {
         }
         return builder;
     }
+    //</editor-fold>
 }

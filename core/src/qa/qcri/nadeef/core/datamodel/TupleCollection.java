@@ -27,12 +27,26 @@ public class TupleCollection {
     private String tableName;
     private SqlQueryBuilder sqlQuery;
     private ArrayList<Tuple> tuples;
+
     private static Tracer tracer = Tracer.getTracer(TupleCollection.class);
 
+    //<editor-fold desc="Constructor">
+
+    /**
+     * Constructor.
+     * @param collection a collection of <code>Tuples</code>, by
+     *                   using this constructor the result <code>TupleCollection</code>
+     *                   will be an orphan collection (no database connection behind).
+     */
     public TupleCollection(Collection<Tuple> collection) {
         tuples = Lists.newArrayList(collection);
     }
 
+    /**
+     * Constructor with database connection.
+     * @param tableName tuple collection table name.
+     * @param dbconfig used database connection.
+     */
     public TupleCollection(String tableName, DBConfig dbconfig)
             throws
                 ClassNotFoundException,
@@ -45,14 +59,14 @@ public class TupleCollection {
         this.tableName = tableName;
         this.sqlQuery = new SqlQueryBuilder();
         this.sqlQuery.addFrom(tableName);
-
     }
+    //</editor-fold>
 
     /**
      * Synchronize the collection data with the underlying database.
      * @return Returns <code>True</code> when the synchronization is successful.
      */
-    public boolean sync()
+    public synchronized boolean sync()
         throws SQLException,
                InstantiationException,
                IllegalAccessException,
@@ -92,10 +106,20 @@ public class TupleCollection {
         return true;
     }
 
+    /**
+     * Gets the SQL query of this tuple collection.
+     * @return <code>SqlQueryBuilder</code> instance.
+     */
     public SqlQueryBuilder getSQLQuery() {
         return sqlQuery;
     }
 
+    /**
+     * Gets the size of the collection.
+     * It will call <code>sync</code> if the collection is not yet existed.
+     *
+     * @return size of the collection.
+     */
     public int size() {
         try {
             if (tuples == null) {
@@ -108,6 +132,11 @@ public class TupleCollection {
         return tuples.size();
     }
 
+    /**
+     * Gets the tuple from the collection.
+     * @param i tuple index.
+     * @return tuple instance.
+     */
     public Tuple get(int i) {
         try {
             if (tuples == null) {
@@ -137,6 +166,11 @@ public class TupleCollection {
         return dbconfig == null;
     }
 
+    /**
+     * Custom equals compare.
+     * @param collection target collection.
+     * @return Returns <code>True</code> if the given collection is the same.
+     */
     @Override
     public boolean equals(Object collection) {
         if (collection == this) {

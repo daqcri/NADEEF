@@ -8,10 +8,12 @@ package qa.qcri.nadeef.core.operator;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 
+import java.util.Collection;
+
 /**
  * Query engine operator, which generates optimized queries based on given hints.
  */
-public class QueryEngine extends Operator<TupleCollection, TupleCollection> {
+public class QueryEngine extends Operator<TupleCollection, Collection<TupleCollection>> {
     private Rule rule;
     /**
      * Constructor.
@@ -28,9 +30,9 @@ public class QueryEngine extends Operator<TupleCollection, TupleCollection> {
      * @return output object.
      */
     @Override
-    public TupleCollection execute(TupleCollection tuples) throws Exception {
-        rule.filter(tuples);
-        rule.group(tuples);
-        return tuples;
+    public Collection<TupleCollection> execute(TupleCollection tuples) throws Exception {
+        TupleCollection result = rule.filter(tuples);
+        Collection<TupleCollection> resultCollection = rule.group(result);
+        return resultCollection;
     }
 }

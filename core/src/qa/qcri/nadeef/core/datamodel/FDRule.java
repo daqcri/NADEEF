@@ -131,7 +131,7 @@ public class FDRule extends TextRule<TupleCollection> {
                     cur.add(tuple);
                 } else {
                     groups.add(new TupleCollection(cur));
-                    cur = new ArrayList<Tuple>();
+                    cur = new ArrayList();
                 }
             }
         }

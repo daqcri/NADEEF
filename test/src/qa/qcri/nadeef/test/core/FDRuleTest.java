@@ -34,10 +34,6 @@ public class FDRuleTest {
         rhs = rule1.getRhs();
         Assert.assertEquals(1, rhs.size());
         Assert.assertTrue(rhs.contains(new Cell("test.C")));
-        RuleHintCollection hints = rule1.getHints();
-        Assert.assertEquals(2, hints.size(RuleHintType.Project));
-        List<RuleHint> projectHints = hints.getHint(RuleHintType.Project);
-        Assert.assertEquals(2, projectHints.size());
         // TODO: add test for the attribute inspection
 
         tables = Arrays.asList("a");
@@ -61,33 +57,15 @@ public class FDRuleTest {
         cells[0] = new Cell(tableName, "ZIP");
         cells[1] = new Cell(tableName, "CITY");
         cells[2] = new Cell(tableName, "STATE");
-        tuples[0] = new Tuple(cells, new String[] {"0001", "Brooklyn", "NY"});
-        tuples[1] = new Tuple(cells, new String[] {"0001", "Chengdu", "Sichuan"});
-        tuples[2] = new Tuple(cells, new String[] {"1183JV", "Delft", "Raadstad"});
-        tuples[3] = new Tuple(cells, new String[] {"1183JV", "Amsterdam", "Raadstad"});
+        tuples[0] = new Tuple(1, cells, new String[] {"0001", "Brooklyn", "NY"});
+        tuples[1] = new Tuple(2, cells, new String[] {"0001", "Chengdu", "Sichuan"});
+        tuples[2] = new Tuple(3, cells, new String[] {"1183JV", "Delft", "Raadstad"});
+        tuples[3] = new Tuple(4, cells, new String[] {"1183JV", "Amsterdam", "Raadstad"});
 
         List<String> tables = Arrays.asList("test");
         FDRule rule =
             new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
-        Collection<Violation> violations = rule.detect(new TuplePair(tuples[0], tuples[1]));
-        Assert.assertEquals(4, violations.size());
-    }
-
-    @Test
-    public void detectPairTest() {
-        final String tableName = "test";
-
-        Cell[] cells = new Cell[3];
-        cells[0] = new Cell(tableName, "ZIP");
-        cells[1] = new Cell(tableName, "CITY");
-        cells[2] = new Cell(tableName, "STATE");
-        Tuple tupleA = new Tuple(cells, new String[] {"0001", "Brooklyn", "NY"});
-        Tuple tupleB = new Tuple(cells, new String[] {"0001", "Chengdu", "Sichuan"});
-
-        List<String> tables = Arrays.asList("test");
-        FDRule rule =
-            new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
-        Collection<Violation> violations = rule.detect(new TuplePair(tupleA, tupleB));
+        Collection<Violation> violations = rule.detect(new TupleCollection(Arrays.asList(tuples)));
         Assert.assertEquals(4, violations.size());
     }
 }

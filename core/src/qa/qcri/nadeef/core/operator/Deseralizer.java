@@ -46,7 +46,6 @@ public class Deseralizer<T> extends Operator<Rule, T> {
                 IllegalAccessException {
         Preconditions.checkNotNull(rule);
 
-        List<TupleCollection> result = new ArrayList<TupleCollection>();
         List<String> tableNames = rule.getTableNames();
         if (tableNames.size() == 2) {
             TupleCollectionPair pair =

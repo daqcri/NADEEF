@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.DBConfig;
 import qa.qcri.nadeef.core.datamodel.FDRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
@@ -32,11 +33,11 @@ public class CleanPlanTest {
                 CleanPlan.createCleanPlanFromJSON(
                     new FileReader(TestDataRepository.getFDFileName())
                 );
-            Assert.assertEquals("localhost/unittest", cleanPlan.getSourceUrl());
-            Assert.assertEquals("tester", cleanPlan.getSourceUserName());
-            Assert.assertEquals("tester", cleanPlan.getSourceUserPassword());
-            Assert.assertEquals(SQLDialect.POSTGRES, cleanPlan.getSqlDialect());
-            Assert.assertEquals("output", cleanPlan.getTargetTableName());
+            DBConfig source = cleanPlan.getSourceDBConfig();
+            Assert.assertEquals("localhost/unittest", source.getUrl());
+            Assert.assertEquals("tester", source.getUserName());
+            Assert.assertEquals("tester", source.getPassword());
+            Assert.assertEquals(SQLDialect.POSTGRES, source.getDialect());
             Assert.assertEquals(1, cleanPlan.getRules().size());
             Rule rule = cleanPlan.getRules().get(0);
             Assert.assertTrue(rule instanceof FDRule);

@@ -38,8 +38,8 @@ public class ViolationDetector<T>
         Iterator iterator = collections.iterator();
         while (iterator.hasNext()) {
             if (rule.supportOneInput()) {
-                    Tuple a = (Tuple)iterator.next();
-                    result = rule.detect(a);
+                Tuple a = (Tuple)iterator.next();
+                result = rule.detect(a);
             }
 
             if (rule.supportTwoInputs()) {

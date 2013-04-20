@@ -104,6 +104,7 @@ public class DBConnectionFactory {
     }
     // </editor-fold>
 
+    //<editor-fold desc="Private methods">
     private static String getDriverName(SQLDialect dialect) {
         switch (dialect) {
             case POSTGRES:
@@ -112,4 +113,5 @@ public class DBConnectionFactory {
                 throw new UnsupportedOperationException();
         }
     }
+    //</editor-fold>
 }

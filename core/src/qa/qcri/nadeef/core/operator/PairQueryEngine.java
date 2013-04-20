@@ -31,7 +31,7 @@ public class PairQueryEngine extends Operator<TupleCollectionPair, TupleCollecti
     public TupleCollectionPair execute(TupleCollectionPair tuples) throws Exception {
         TupleCollectionPair result = (TupleCollectionPair)tuples;
         rule.filter(result.getLeft());
-        rule.group(result.getRight());
+        rule.filter(result.getRight());
         return result;
     }
 }
