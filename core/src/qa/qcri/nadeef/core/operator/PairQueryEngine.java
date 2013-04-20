@@ -29,9 +29,8 @@ public class PairQueryEngine extends Operator<TupleCollectionPair, TupleCollecti
      */
     @Override
     public TupleCollectionPair execute(TupleCollectionPair tuples) throws Exception {
-        TupleCollectionPair result = (TupleCollectionPair)tuples;
-        rule.filter(result.getLeft());
-        rule.filter(result.getRight());
-        return result;
+        rule.filter(tuples.getLeft());
+        rule.filter(tuples.getRight());
+        return tuples;
     }
 }

@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.tools;
 
 import com.google.common.io.Files;
+import com.google.common.base.Stopwatch;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.String;
 import java.sql.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CSVDumper is a simple tool which dumps CSV data into database with a new created table.
@@ -23,14 +25,14 @@ public class CSVDumper {
     /**
      * Dump CSV file content into a database with default schema name and generated table name.
      * @param conn JDBC connection.
-     * @param fullFileName CSV file name.
+     * @param file CSV file.
      * @return new created table name.
      */
-    public static String dump(Connection conn, String fullFileName)
+    public static String dump(Connection conn, File file)
             throws IllegalAccessException, SQLException, IOException {
-        String fileName = Files.getNameWithoutExtension(fullFileName);
+        String fileName = Files.getNameWithoutExtension(file.getName());
         String tableName = "csvtable_" + fileName + '_' + System.currentTimeMillis();
-        dump(conn, fullFileName, tableName, "public");
+        dump(conn, file, tableName, "public");
         return tableName;
     }
 
@@ -38,17 +40,18 @@ public class CSVDumper {
      * Dump CSV file content into a specified database. It replaces the table if the table
      * already existed.
      * @param conn JDBC connection.
-     * @param fullFileName CSV file.
+     * @param file CSV file.
      * @param tableName new created table name.
      * @param schemaName schema name
      */
     public static void dump(
             Connection conn,
-            String fullFileName,
+            File file,
             String tableName,
             String schemaName
     ) throws IllegalAccessException, SQLException, IOException {
         Tracer tracer = Tracer.getTracer(CSVDumper.class);
+        Stopwatch stopwatch = new Stopwatch().start();
         try {
             if (conn.isClosed()) {
                 throw new IllegalAccessException("JDBC connection is already closed.");
@@ -56,7 +59,7 @@ public class CSVDumper {
 
             conn.setAutoCommit(false);
 
-            BufferedReader reader = new BufferedReader(new FileReader(fullFileName));
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             StringBuilder header = new StringBuilder(reader.readLine());
             // TODO: make it other DB compatible
             header.insert(0, "TID SERIAL PRIMARY KEY,");
@@ -91,13 +94,16 @@ public class CSVDumper {
             stat.executeBatch();
             stat.close();
             conn.commit();
-            tracer.info("Dumped " + lineCount + " rows");
+            tracer.info(
+                "Dumped " + lineCount + " rows in " +
+                stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+            );
         } catch (Exception ex) {
-            tracer.err("Cannot load file" + fullFileName);
+            tracer.err("Cannot load file" + file.getName());
             ex.printStackTrace();
             if (conn != null) {
                 PreparedStatement stat =
-                        conn.prepareStatement("DROP TABLE IF EXISTS " + tableName);
+                    conn.prepareStatement("DROP TABLE IF EXISTS " + tableName);
                 stat.execute();
                 stat.close();
                 conn.commit();
@@ -116,7 +122,7 @@ public class CSVDumper {
         String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
         // TODO: consider not using DEFAULT since it is postgres dependent.
         StringBuilder sqlInsert = new StringBuilder(
-                "INSERT INTO " + schema + "." + tableName  + " VALUES " + "(DEFAULT, ");
+            "INSERT INTO " + schema + "." + tableName  + " VALUES " + "(DEFAULT, ");
 
         // skip the SERIAL key
         columnSchemas.next();

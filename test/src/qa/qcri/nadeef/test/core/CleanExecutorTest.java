@@ -42,4 +42,16 @@ public class CleanExecutorTest {
             Assert.fail(e.getMessage());
         }
     }
+
+    @Test
+    public void cleanExecutorTest2() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan2();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
 }

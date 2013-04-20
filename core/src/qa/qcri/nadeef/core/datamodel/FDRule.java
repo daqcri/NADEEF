@@ -17,6 +17,7 @@ import java.util.*;
 
 /**
  * Function Dependency (FD) Rule.
+ * TODO: write more unit testing on FD rule.
  */
 public class FDRule extends TextRule<TupleCollection> {
     protected Set<Cell> lhs;
@@ -109,14 +110,15 @@ public class FDRule extends TextRule<TupleCollection> {
     public Collection<TupleCollection> group(TupleCollection tupleCollection) {
         LinkedList<TupleCollection> groups = new LinkedList();
         SqlQueryBuilder query = tupleCollection.getSQLQuery();
-        Cell[] attrs = lhs.toArray(new Cell[lhs.size()]);
-        for (Cell cell : attrs) {
+        Cell[] lhsCells = lhs.toArray(new Cell[lhs.size()]);
+        for (Cell cell : lhsCells) {
             query.addOrder(cell.getFullAttributeName());
         }
 
         Tuple lastTuple = null;
         List<Tuple> cur = new ArrayList();
         for (int i = 0; i < tupleCollection.size(); i ++) {
+            boolean isSameGroup = true;
             Tuple tuple = tupleCollection.get(i);
             if (lastTuple == null) {
                 lastTuple = tuple;
@@ -124,16 +126,24 @@ public class FDRule extends TextRule<TupleCollection> {
                 continue;
             }
 
-            for (Cell cell : attrs) {
+            // check whether the current tuple is within the same current group.
+            for (Cell cell : lhsCells) {
                 Object lastValue = lastTuple.get(cell);
                 Object newValue = tuple.get(cell);
-                if (lastValue.equals(newValue)) {
-                    cur.add(tuple);
-                } else {
-                    groups.add(new TupleCollection(cur));
-                    cur = new ArrayList();
+                if (!lastValue.equals(newValue)) {
+                    isSameGroup = false;
+                    break;
                 }
             }
+
+            if (isSameGroup) {
+                cur.add(tuple);
+            } else {
+                groups.add(new TupleCollection(cur));
+                cur = new ArrayList();
+                cur.add(tuple);
+            }
+            lastTuple = tuple;
         }
         return groups;
     }
@@ -146,9 +156,11 @@ public class FDRule extends TextRule<TupleCollection> {
     @Override
     public Collection<Violation> detect(TupleCollection tupleCollection) {
         ArrayList<Violation> result = new ArrayList();
-        for (int i = 0; i < tupleCollection.size(); i ++) {
-            Tuple tuple = tupleCollection.get(i);
-            result.addAll(Violations.fromTuple(this.id, tuple));
+        if (tupleCollection.size() > 1) {
+            for (int i = 0; i < tupleCollection.size(); i ++) {
+                Tuple tuple = tupleCollection.get(i);
+                result.addAll(Violations.fromTuple(this.id, tuple));
+            }
         }
 
         return result;

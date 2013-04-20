@@ -129,7 +129,7 @@ public class TupleCollection {
             ex.printStackTrace();
             return 0;
         }
-        return tuples.size();
+         return tuples.size();
     }
 
     /**

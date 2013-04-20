@@ -11,28 +11,31 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.Connection;
 
 /**
  * Bootstrapping Nadeef.
  */
 public class Bootstrap {
-    private static boolean isStarted;
     private static final String configurationFile = "nadeef.conf";
-
 
     private Bootstrap() {}
 
     /**
      * Initialize the Nadeef infrastructure.
      */
-    public static synchronized void Start() {
+    public static synchronized boolean Start() {
         Tracer tracer = Tracer.getTracer(Bootstrap.class);
         try {
             NadeefConfiguration.initialize(new FileReader(configurationFile));
-            DBInstaller.install(
-                    DBConnectionFactory.createNadeefConnection(),
-                    NadeefConfiguration.getViolationTableName()
-            );
+            Connection conn = DBConnectionFactory.createNadeefConnection();
+            String violationTableName = NadeefConfiguration.getViolationTableName();
+            if (DBInstaller.isInstalled(conn, violationTableName)) {
+                DBInstaller.uninstall(conn, violationTableName);
+            }
+            DBInstaller.install(conn, violationTableName);
+            conn.commit();
+            conn.close();
         } catch (FileNotFoundException e) {
             tracer.err("Nadeef configuration is not found.");
         } catch (Exception ex) {
@@ -40,6 +43,6 @@ public class Bootstrap {
             tracer.err("Nadeef database is not able to install, abort.");
             System.exit(1);
         }
-        isStarted = true;
+        return true;
     }
 }

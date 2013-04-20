@@ -5,21 +5,19 @@
 
 package qa.qcri.nadeef.core.util;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * SQL Builder utility.
  */
 public class SqlQueryBuilder {
-    private List<String> selects;
-    private List<String> wheres;
-    private List<String> froms;
-    private List<String> orders;
+    private Set<String> selects;
+    private Set<String> wheres;
+    private Set<String> froms;
+    private Set<String> orders;
     private boolean isDistinct;
 
     //<editor-fold desc="Constructor">
@@ -28,10 +26,10 @@ public class SqlQueryBuilder {
      * Constructor.
      */
     public SqlQueryBuilder() {
-        selects = new ArrayList();
-        wheres = new ArrayList();
-        froms = new ArrayList();
-        orders = new ArrayList();
+        selects = new HashSet();
+        wheres = new HashSet();
+        froms = new HashSet();
+        orders = new HashSet();
     }
     //</editor-fold>
 
@@ -89,31 +87,30 @@ public class SqlQueryBuilder {
         builder.append(asString(selects, "*"));
         builder.append(" FROM ");
         builder.append(asString(froms));
-        builder.append(" WHERE ");
-        builder.append(asString(wheres));
+        if (wheres.size() > 0) {
+            builder.append(" WHERE ");
+            builder.append(asString(wheres));
+        }
+
+        if (orders.size() > 0) {
+            builder.append(" ORDER BY ");
+            builder.append(asString(orders));
+        }
+
         return builder.toString();
     }
     //</editor-fold>
 
     //<editor-fold desc="Private methods">
-    private StringBuilder asString(Collection<String> list, String defaultString) {
+    private String asString(Collection<String> list, String defaultString) {
         if (list.size() == 0) {
-            return new StringBuilder(defaultString);
+            return defaultString;
         }
-        return asString(Arrays.asList(defaultString));
+        return asString(list);
     }
 
-    private StringBuilder asString(Collection<String> list) {
-        StringBuilder builder = new StringBuilder();
-        String[] attrs = list.toArray(new String[list.size()]);
-        int i = 0;
-        for (String attr : attrs) {
-            if (i != 0) {
-                builder.append(',');
-            }
-            builder.append(attr);
-        }
-        return builder;
+    private String asString(Collection<String> list) {
+        return Joiner.on(',').skipNulls().join(list);
     }
     //</editor-fold>
 }

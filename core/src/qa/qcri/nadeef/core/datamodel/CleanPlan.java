@@ -75,12 +75,21 @@ public class CleanPlan {
         String type = (String)src.get("type");
         if (type.equalsIgnoreCase("csv")) {
             isCSV = true;
-            String file = (String)src.get("file");
+            String fileName = (String)src.get("file");
+            // TODO: find a better way to parse the file name.
+            fileName = fileName.replace("\\", "\\\\");
+            fileName = fileName.replace("\t", "\\t");
+            fileName = fileName.replace("\n", "\\n");
+            File file = new File(fileName);
             // source is a CSV file, dump it first.
             Connection conn = DBConnectionFactory.createNadeefConnection();
-            // TODO; find a way to clean the table after exiting.
+            // TODO: find a way to clean the table after exiting.
             csvTableName = CSVDumper.dump(conn, file);
             sqlDialect = SQLDialect.POSTGRES;
+            conn.close();
+            sourceUrl = NadeefConfiguration.getUrl();
+            sourceTableUserName = NadeefConfiguration.getUserName();
+            sourceTableUserPassword = NadeefConfiguration.getPassword();
         } else {
             // TODO: support different type of DB.
             sqlDialect = SQLDialect.POSTGRES;
@@ -101,6 +110,7 @@ public class CleanPlan {
         // TODO: fill the target parsing
 
         // parse rules.
+        // TODO: adds verification on the rule attributes arguments.
         JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
         ArrayList<Rule> rules = new ArrayList(0);
         for (int i = 0; i < ruleArray.size(); i ++) {
@@ -118,7 +128,9 @@ public class CleanPlan {
             }
 
             if (tableObjs.size() > 2 || tableObjs.size() < 1) {
-                throw new IllegalArgumentException("Invalid Rule property, rule needs to have one or two tables.");
+                throw new IllegalArgumentException(
+                    "Invalid Rule property, rule needs to have one or two tables."
+                );
             }
 
             type = (String)ruleObj.get("type");
@@ -133,19 +145,23 @@ public class CleanPlan {
                 rules.add(rule);
             }
         }
-        return
-            new CleanPlan(
-                source,
-                null,
-                rules
-            );
+        return new CleanPlan(source, null, rules);
     }
 
     //<editor-fold desc="Property Getters">
+
+    /**
+     * Gets the <code>DBConfig</code> for the clean source.
+     * @return <code>DBConfig</code>.
+     */
     public DBConfig getSourceDBConfig() {
         return source;
     }
 
+    /**
+     * Gets the rules in the <code>CleanPlan</code>.
+     * @return a list of <code>Rule</code>.
+     */
     public List<Rule> getRules() {
         return rules;
     }

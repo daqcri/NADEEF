@@ -63,11 +63,11 @@ public class CSVDumperTest {
     @Test
     public void goodDumpTest() {
         try {
-            tableName = CSVDumper.dump(conn, TestDataRepository.getCSVFilename());
+            tableName = CSVDumper.dump(conn, TestDataRepository.getDumpTestCSVFile());
             Assert.assertNotNull("tableName cannot be null", tableName);
 
             BufferedReader reader =
-                    new BufferedReader(new FileReader(TestDataRepository.getCSVFilename()));
+                    new BufferedReader(new FileReader(TestDataRepository.getDumpTestCSVFile()));
             int lineCount = 0;
             String line;
             while ((line = reader.readLine()) != null) {
