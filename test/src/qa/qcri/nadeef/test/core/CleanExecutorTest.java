@@ -25,7 +25,7 @@ import java.sql.SQLException;
  */
 @RunWith(JUnit4.class)
 public class CleanExecutorTest {
-
+    // TODO: add verification of the violation result.
     @Before
     public void setUp() {
         Bootstrap.Start();
@@ -47,6 +47,18 @@ public class CleanExecutorTest {
     public void cleanExecutorTest2() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan2();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest3() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.run();
         } catch (Exception e) {

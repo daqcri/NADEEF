@@ -8,6 +8,7 @@ package qa.qcri.nadeef.test;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 /**
@@ -30,24 +31,45 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getFDTestFile3() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan3.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getFDCleanPlan()
-            throws
-                IOException,
-                ClassNotFoundException,
-                SQLException,
-                InstantiationException,
-                IllegalAccessException {
+        throws
+        IOException,
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException,
+        NoSuchMethodException,
+        InvocationTargetException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDTestFile1()));
     }
 
     public static CleanPlan getFDCleanPlan2()
-            throws
-            IOException,
-            ClassNotFoundException,
-            SQLException,
-            InstantiationException,
-            IllegalAccessException {
+        throws
+        IOException,
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException,
+        NoSuchMethodException,
+        InvocationTargetException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDTestFile2()));
+    }
+
+    public static CleanPlan getFDCleanPlan3()
+        throws
+        IOException,
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException,
+        NoSuchMethodException,
+        InvocationTargetException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDTestFile3()));
     }
 
 }

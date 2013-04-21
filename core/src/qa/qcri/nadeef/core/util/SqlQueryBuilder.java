@@ -18,7 +18,7 @@ public class SqlQueryBuilder {
     private Set<String> wheres;
     private Set<String> froms;
     private Set<String> orders;
-    private boolean isDistinct;
+    private Set<String> distincts;
 
     //<editor-fold desc="Constructor">
 
@@ -30,6 +30,7 @@ public class SqlQueryBuilder {
         wheres = new HashSet();
         froms = new HashSet();
         orders = new HashSet();
+        distincts = new HashSet();
     }
     //</editor-fold>
 
@@ -74,14 +75,20 @@ public class SqlQueryBuilder {
         this.froms.addAll(froms);
     }
 
-    public void setDistinct(boolean distinct) {
-        isDistinct = distinct;
+    public void addDistinct(Collection<String> distincts) {
+        this.distincts.addAll(distincts);
+    }
+
+    public void addDistinct(String disintct) {
+        this.distincts.add(disintct);
     }
 
     public String toSQLString() {
         StringBuilder builder = new StringBuilder("SELECT ");
-        if (isDistinct) {
-            builder.append(" DISTINCT ");
+        if (distincts.size() > 0) {
+            builder.append(" DISTINCT ON (");
+            builder.append(asString(distincts));
+            builder.append(") ");
         }
 
         builder.append(asString(selects, "*"));

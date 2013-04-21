@@ -15,7 +15,7 @@ import java.util.*;
 public class Tuple {
 
     //<editor-fold desc="Private Fields">
-    private HashMap<Cell, Object> dict;
+    private HashMap<Column, Object> dict;
     private String[] tableNames;
     private int tupleId;
     //</editor-fold>
@@ -25,19 +25,19 @@ public class Tuple {
     /**
      * Constructor.
      */
-    public Tuple(int tupleId, Cell[] cells, Object[] values) {
-        if (cells == null || values == null || tupleId < 1) {
+    public Tuple(int tupleId, Column[] columns, Object[] values) {
+        if (columns == null || values == null || tupleId < 1) {
             throw new IllegalArgumentException("Input attribute/value cannot be null.");
         }
-        if (cells.length != values.length) {
+        if (columns.length != values.length) {
             throw new IllegalArgumentException("Incorrect input with attributes and values");
         }
 
-        dict = new HashMap(cells.length);
+        dict = new HashMap(columns.length);
         HashSet<String> tableSet = new HashSet();
-        for (int i = 0; i < cells.length; i ++) {
-            dict.put(cells[i], values[i]);
-            tableSet.add(cells[i].getTableName());
+        for (int i = 0; i < columns.length; i ++) {
+            dict.put(columns[i], values[i]);
+            tableSet.add(columns[i].getTableName());
         }
         tableNames = tableSet.toArray(new String[tableSet.size()]);
         this.tupleId = tupleId;
@@ -49,8 +49,17 @@ public class Tuple {
      * @param key The attribute key
      * @return Output Value
      */
-    public Object get(Cell key) {
+    public Object get(Column key) {
         return dict.get(key);
+    }
+
+    /**
+     * Gets the value from the tuple.
+     * @param key The attribute key
+     * @return Output Value
+     */
+    public String getString(Column key) {
+        return (String)dict.get(key);
     }
 
     /**
@@ -73,18 +82,17 @@ public class Tuple {
      * Gets all the cells in the tuple.
      * @return Attribute collection
      */
-    public Cell[] getCells() {
-        Set<Cell> keySet = dict.keySet();
-        return keySet.toArray(new Cell[keySet.size()]);
+    public Collection<Column> getColumns() {
+        return dict.keySet();
     }
 
     /**
      * Check whether the tuple has an attribute.
-     * @param cell Attribute name.
+     * @param column Attribute name.
      * @return true when the attribute exists.
      */
-    public boolean hasCell(Cell cell) {
-        return dict.containsKey(cell);
+    public boolean hasCell(Column column) {
+        return dict.containsKey(column);
     }
 
     /**

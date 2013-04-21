@@ -31,7 +31,7 @@ public class CSVDumper {
     public static String dump(Connection conn, File file)
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
-        String tableName = "csvtable_" + fileName + '_' + System.currentTimeMillis();
+        String tableName = "csvtable_" + fileName; //  + '_' + System.currentTimeMillis();
         dump(conn, file, tableName, "public");
         return tableName;
     }

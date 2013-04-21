@@ -5,13 +5,12 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 /**
  * Table attribute object, used as the operand in the rule hint.
  */
-public class Cell {
+public class Column {
     private String tableName;
     private String attributeName;
     private String schemaName;
@@ -19,14 +18,14 @@ public class Cell {
     /**
      * Constructor.
      */
-    public Cell(String tableName, String attributeName) {
+    public Column(String tableName, String attributeName) {
         this("public", tableName, attributeName);
     }
 
     /**
      * Constructor.
      */
-    public Cell(String fullAttributeName) {
+    public Column(String fullAttributeName) {
         if (!isValidFullAttributeName(fullAttributeName)) {
             throw new IllegalArgumentException("Invalid full attribute name " + fullAttributeName);
         }
@@ -44,7 +43,7 @@ public class Cell {
      * @param tableName table.
      * @param attributeName attribute.
      */
-    public Cell(String schemaName, String tableName, String attributeName) {
+    public Column(String schemaName, String tableName, String attributeName) {
         if (attributeName == null || tableName == null || schemaName == null) {
             throw new IllegalArgumentException("Attribute name cannot be null.");
         }
@@ -97,15 +96,15 @@ public class Cell {
             return true;
         }
 
-        if (obj == null || !(obj instanceof Cell)) {
+        if (obj == null || !(obj instanceof Column)) {
             return false;
         }
 
-        Cell cell = (Cell)obj;
+        Column column = (Column)obj;
         if (
-            cell.getAttributeName().equals(attributeName) &&
-            cell.getSchemaName().equals(schemaName) &&
-            cell.getTableName().equals(this.tableName)
+            column.getAttributeName().equals(attributeName) &&
+            column.getSchemaName().equals(schemaName) &&
+            column.getTableName().equals(this.tableName)
         ) {
             return true;
         }

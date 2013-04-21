@@ -38,20 +38,21 @@ public class ViolationDetector<T>
         Iterator iterator = collections.iterator();
         while (iterator.hasNext()) {
             if (rule.supportOneInput()) {
-                Tuple a = (Tuple)iterator.next();
-                result = rule.detect(a);
-            }
-
-            if (rule.supportTwoInputs()) {
+                TupleCollection collection = (TupleCollection)iterator.next();
+                for (int i = 0; i < collection.size(); i ++) {
+                    Tuple a = collection.get(i);
+                    result = rule.detect(a);
+                    resultCollection.addAll(result);
+                }
+            } else if (rule.supportTwoInputs()) {
                 TuplePair pair = (TuplePair)iterator.next();
                 result = rule.detect(pair);
-            }
-
-            if (rule.supportManyInputs()) {
+                resultCollection.addAll(result);
+            } else if (rule.supportManyInputs()) {
                 TupleCollection collection = (TupleCollection)iterator.next();
                 result = rule.detect(collection);
+                resultCollection.addAll(result);
             }
-            resultCollection.addAll(result);
         }
         return resultCollection;
     }

@@ -85,7 +85,7 @@ public class TupleCollection {
         while(resultSet.next()) {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
-            Cell[] cells = new Cell[count];
+            Column[] columns = new Column[count];
             Object[] values = new Object[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
@@ -94,11 +94,11 @@ public class TupleCollection {
                 }
                 String tableName =
                     DBMetaDataTool.getBaseTableName(dbconfig.getDialect(), metaData, i);
-                cells[i - 1] = new Cell(tableName, attributeName);
+                columns[i - 1] = new Column(tableName, attributeName);
                 values[i - 1] = resultSet.getObject(i);
             }
 
-            tuples.add(new Tuple(tupleId, cells, values));
+            tuples.add(new Tuple(tupleId, columns, values));
             tupleId ++;
         }
         stat.close();

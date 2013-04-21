@@ -8,8 +8,10 @@ package qa.qcri.nadeef.core.util;
 import org.jooq.SQLDialect;
 import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
 
+import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * A helper for getting the right meta data from different DBs.
@@ -53,4 +55,10 @@ public class DBMetaDataTool {
         return result;
     }
 
+    public static void addTidColumn(SQLDialect dialect, Connection conn, String tableName)
+            throws SQLException {
+        Statement stat = conn.createStatement();
+        stat.execute("alter table " + tableName + " add column tid serial");
+        conn.commit();
+    }
 }

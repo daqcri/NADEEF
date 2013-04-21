@@ -5,16 +5,15 @@
 
 package qa.qcri.nadeef.core.operator;
 
-import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.datamodel.Violation;
+import com.google.common.collect.Lists;
+import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Export violations into the target place.
@@ -45,8 +44,11 @@ public class ViolationExport extends Operator<Collection<Violation>, Boolean> {
         Connection conn = DBConnectionFactory.createNadeefConnection();
         Statement stat = conn.createStatement();
         for (Violation violation : violations) {
-            String sql = getSQLInsert(violation);
-            stat.addBatch(sql);
+            List<ViolationRow> rows = Lists.newArrayList(violation.getRowCollection());
+            for (ViolationRow row : rows) {
+                String sql = getSQLInsert(violation.getRuleId(), row);
+                stat.addBatch(sql);
+            }
         }
         stat.executeBatch();
         conn.commit();
@@ -57,24 +59,24 @@ public class ViolationExport extends Operator<Collection<Violation>, Boolean> {
 
     /**
      * Converts a violation to SQL insert.
-     * @param violation violation.
+     * @param row violation.
      * @return sql statement.
      */
-    private String getSQLInsert(Violation violation) {
+    private String getSQLInsert(String ruleId, ViolationRow row) {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO");
         sqlBuilder.append(' ');
         sqlBuilder.append(
             NadeefConfiguration.getSchemaName() +
             "." + NadeefConfiguration.getViolationTableName()
         );
-        sqlBuilder.append(" VALUES (");
-        sqlBuilder.append("'" + violation.getRuleId() + "',");
-        Cell cell = violation.getCell();
-        sqlBuilder.append("'" + cell.getTableName() + "',");
-        sqlBuilder.append(0);
+        sqlBuilder.append(" VALUES (default, ");
+        sqlBuilder.append("'" + ruleId + "',");
+        Column column = row.getColumn();
+        sqlBuilder.append("'" + column.getTableName() + "',");
+        sqlBuilder.append(row.getTupleId());
         sqlBuilder.append(",");
-        sqlBuilder.append("'" + cell.getAttributeName() + "',");
-        sqlBuilder.append("'" + violation.getAttributeValue().toString() + "')");
+        sqlBuilder.append("'" + column.getAttributeName() + "',");
+        sqlBuilder.append("'" + row.getAttributeValue().toString() + "')");
         return sqlBuilder.toString();
     }
 }

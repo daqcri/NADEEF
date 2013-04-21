@@ -6,11 +6,10 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * Rule optimization hint type.
+ * Rule Type.
  */
-public enum RuleHintType {
-    Project,
-    GroupBy,
-    Filter,
-    GroupFilter
+public enum RuleType {
+    FD,
+    CFD,
+    UDF,
 }

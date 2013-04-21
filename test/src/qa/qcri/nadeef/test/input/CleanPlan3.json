@@ -1,0 +1,26 @@
+{
+    "source" : {
+        "url" : "localhost/unittest",
+        "username" : "tester",
+        "password" : "tester",
+        "type" : "postgres"
+    },
+    "target" : {
+        "table" : "output"
+    },
+    "rule" : [
+        {
+            "type" : "udf",
+            "table" : ["location"],
+            "value" : "qa.qcri.nadeef.test.rule.MyRule1",
+            "filter" : {
+                "vertical" : ["city", "zip"],
+                "horizontal" : ["zip = '1183JV'"]
+            },
+            "group" : {
+                "on" : "zip"
+            },
+            "iterator" : "qa.qcri.nadeef.test.rule.MyIterator"
+        }
+    ]
+}

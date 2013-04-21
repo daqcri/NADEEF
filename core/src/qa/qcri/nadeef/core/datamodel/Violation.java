@@ -5,65 +5,56 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Violation class.
  * TODO: considering using ORM libraries like JOOQ.
  */
 public class Violation {
     private String ruleId;
-    private Cell cell;
-    private Object attributeValue;
-    private int tupleId;
+    private Set<ViolationRow> rows;
 
-    //<editor-fold desc="Getter and Setters">
-    public Cell getCell() {
-        return cell;
-    }
-
-    public void setCell(Cell cell) {
-        this.cell = cell;
-    }
-
+    /**
+     * Gets the rule Id of this violation.
+     * @return rule Id.
+     */
     public String getRuleId() {
-        return ruleId;
+        return this.ruleId;
     }
 
-    public void setRuleId(String ruleId) {
+    /**
+     * Constructor.
+     * @param ruleId rule id.
+     */
+    public Violation(String ruleId) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
+        rows = new HashSet();
     }
 
-    public Object getAttributeValue() {
-        return attributeValue;
+    /**
+     * Gets the row collection.
+     * @return collection row.
+     */
+    public Collection<ViolationRow> getRowCollection() {
+        return rows;
     }
 
-    public void setAttributeValue(Object attributeValue) {
-        this.attributeValue = attributeValue;
-    }
-
-    public int getTupleId() {
-        return tupleId;
-    }
-
-    public void setTupleId(int tupleId) {
-        this.tupleId = tupleId;
-    }
-    //</editor-fold>
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof Violation)) {
-            return false;
-        }
-
-        Violation violation = (Violation)obj;
-
-        if (
-            violation.getRuleId().equals(ruleId) &&
-            violation.getCell().equals(cell) &&
-            violation.getTupleId() == tupleId
-        ) {
-            return true;
-        }
-        return false;
+    /**
+     * Adds a new violation for a rule.
+     * @param tuple tuple.
+     * @param column column.
+     */
+    public void addCell(Tuple tuple, Column column) {
+        Preconditions.checkNotNull(tuple);
+        Preconditions.checkNotNull(column);
+        ViolationRow row = new ViolationRow(column, tuple.getTupleId(), tuple.getTupleId());
+        rows.add(row);
     }
 }

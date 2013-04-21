@@ -5,11 +5,15 @@
 
 package qa.qcri.nadeef.core.util;
 
-import qa.qcri.nadeef.core.datamodel.Cell;
+import com.google.common.collect.Lists;
+import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -22,17 +26,32 @@ public class Violations {
      * @param tuple input tuple.
      * @return collection of violations relates to this tuple.
      */
-    public static List<Violation> fromTuple(String ruleId, Tuple tuple) {
-        Cell[] cells = tuple.getCells();
-        ArrayList<Violation> result = new ArrayList();
-        for (Cell cell : cells) {
-            Violation violation = new Violation();
-            violation.setTupleId(tuple.getTupleId());
-            violation.setRuleId(ruleId);
-            violation.setCell(cell);
-            violation.setAttributeValue(tuple.get(cell));
-            result.add(violation);
+    public static Violation fromTuple(String ruleId, Tuple tuple) {
+        List<Column> columns = Lists.newArrayList(tuple.getColumns());
+        Violation violation = new Violation(ruleId);
+        for (Column column : columns) {
+            violation.addCell(tuple, column);
         }
-        return result;
+        return violation;
+    }
+
+    /**
+     * Generates violation id from database.
+     * @return new unique violation id.
+     */
+    public static int generateViolationId()
+        throws
+            ClassNotFoundException,
+            SQLException,
+            InstantiationException,
+            IllegalAccessException {
+        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Statement stat = conn.createStatement();
+        ResultSet resultSet = stat.executeQuery("SELECT MAX(vid) from violations");
+        int result = -1;
+        if (resultSet.next()) {
+            result = resultSet.getInt("vid");
+        }
+        return result + 1;
     }
 }

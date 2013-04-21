@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.SqlQueryBuilder;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.tools.Tracer;
@@ -19,9 +20,9 @@ import java.util.*;
  * Function Dependency (FD) Rule.
  * TODO: write more unit testing on FD rule.
  */
-public class FDRule extends TextRule<TupleCollection> {
-    protected Set<Cell> lhs;
-    protected Set<Cell> rhs;
+public class FDRule extends TextRule<TuplePair> {
+    protected Set<Column> lhs;
+    protected Set<Column> rhs;
 
     public FDRule(String id, List<String> tableNames, StringReader input) {
         super(id, tableNames);
@@ -35,8 +36,8 @@ public class FDRule extends TextRule<TupleCollection> {
     @Override
     public void parse(StringReader input) {
         BufferedReader reader = new BufferedReader(input);
-        lhs = new HashSet(0);
-        rhs = new HashSet(0);
+        lhs = new HashSet();
+        rhs = new HashSet();
 
         // Here we assume the rule comes in with one line.
         try {
@@ -51,30 +52,30 @@ public class FDRule extends TextRule<TupleCollection> {
             // use the first one as default table name.
             String defaultTable = tableNames.get(0);
             for (int i = 0; i < lhsSplits.length; i ++) {
-                split = lhsSplits[i].trim();
+                split = lhsSplits[i].trim().toLowerCase();
                 if (Strings.isNullOrEmpty(split)) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                if (!Strings.isNullOrEmpty(defaultTable) && !Cell.isValidFullAttributeName(split)) {
-                    lhs.add(new Cell(defaultTable, split));
+                if (!Strings.isNullOrEmpty(defaultTable) && !Column.isValidFullAttributeName(split)) {
+                    lhs.add(new Column(defaultTable, split));
                 } else {
-                    lhs.add(new Cell(split));
+                    lhs.add(new Column(split));
                 }
             }
 
             // parse the RHS
             String[] rhsSplits = splits[1].trim().split(",");
             for (int i = 0; i < rhsSplits.length; i ++) {
-                split = rhsSplits[i].trim();
+                split = rhsSplits[i].trim().toLowerCase();
                 if (split.isEmpty()) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                if (!Strings.isNullOrEmpty(defaultTable) && !Cell.isValidFullAttributeName(split)) {
-                    rhs.add(new Cell(defaultTable, split));
+                if (!Strings.isNullOrEmpty(defaultTable) && !Column.isValidFullAttributeName(split)) {
+                    rhs.add(new Column(defaultTable, split));
                 } else {
-                    rhs.add(new Cell(split));
+                    rhs.add(new Column(split));
                 }
             }
         } catch (IOException ex) {
@@ -91,16 +92,19 @@ public class FDRule extends TextRule<TupleCollection> {
     @Override
     public TupleCollection filter(TupleCollection tupleCollection) {
         SqlQueryBuilder query = tupleCollection.getSQLQuery();
-        query.setDistinct(true);
+
         // projection filter
-        Cell[] attrs = lhs.toArray(new Cell[lhs.size()]);
-        for (Cell cell : attrs) {
-            query.addSelect(cell.getFullAttributeName());
+        query.addSelect("tid");
+        List<Column> attrs = Lists.newArrayList(lhs);
+        for (Column column : attrs) {
+            query.addSelect(column.getFullAttributeName());
+            query.addDistinct(column.getFullAttributeName());
         }
 
-        attrs = rhs.toArray(new Cell[rhs.size()]);
-        for (Cell cell : attrs) {
-            query.addSelect(cell.getFullAttributeName());
+        attrs = Lists.newArrayList(rhs);
+        for (Column column : attrs) {
+            query.addSelect(column.getFullAttributeName());
+            query.addDistinct(column.getFullAttributeName());
         }
 
         return tupleCollection;
@@ -110,9 +114,9 @@ public class FDRule extends TextRule<TupleCollection> {
     public Collection<TupleCollection> group(TupleCollection tupleCollection) {
         LinkedList<TupleCollection> groups = new LinkedList();
         SqlQueryBuilder query = tupleCollection.getSQLQuery();
-        Cell[] lhsCells = lhs.toArray(new Cell[lhs.size()]);
-        for (Cell cell : lhsCells) {
-            query.addOrder(cell.getFullAttributeName());
+        Column[] lhsColumns = lhs.toArray(new Column[lhs.size()]);
+        for (Column column : lhsColumns) {
+            query.addOrder(column.getFullAttributeName());
         }
 
         Tuple lastTuple = null;
@@ -127,9 +131,9 @@ public class FDRule extends TextRule<TupleCollection> {
             }
 
             // check whether the current tuple is within the same current group.
-            for (Cell cell : lhsCells) {
-                Object lastValue = lastTuple.get(cell);
-                Object newValue = tuple.get(cell);
+            for (Column column : lhsColumns) {
+                Object lastValue = lastTuple.get(column);
+                Object newValue = tuple.get(column);
                 if (!lastValue.equals(newValue)) {
                     isSameGroup = false;
                     break;
@@ -145,21 +149,30 @@ public class FDRule extends TextRule<TupleCollection> {
             }
             lastTuple = tuple;
         }
+        groups.add(new TupleCollection(cur));
         return groups;
     }
 
     /**
      * Stupid and expensive detect method.
-     * @param tupleCollection tupleCollection.
+     * @param tuplePair tuple pair.
      * @return violation set.
      */
     @Override
-    public Collection<Violation> detect(TupleCollection tupleCollection) {
-        ArrayList<Violation> result = new ArrayList();
-        if (tupleCollection.size() > 1) {
-            for (int i = 0; i < tupleCollection.size(); i ++) {
-                Tuple tuple = tupleCollection.get(i);
-                result.addAll(Violations.fromTuple(this.id, tuple));
+    public Collection<Violation> detect(TuplePair tuplePair) {
+        Tuple left = tuplePair.getLeft();
+        Tuple right = tuplePair.getRight();
+
+        Column[] rhsColumns = rhs.toArray(new Column[rhs.size()]);
+        List<Violation> result = new ArrayList();
+        for (Column column : rhsColumns) {
+            Object lvalue = left.get(column);
+            Object rvalue = right.get(column);
+
+            if (!lvalue.equals(rvalue)) {
+                result.add(Violations.fromTuple(id, left));
+                result.add(Violations.fromTuple(id, right));
+                break;
             }
         }
 

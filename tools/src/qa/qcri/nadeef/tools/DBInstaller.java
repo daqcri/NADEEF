@@ -45,6 +45,7 @@ public class DBInstaller {
         stat.execute(
                 "CREATE TABLE " +
                 tableName + " (" +
+                "vid serial primary key," +
                 "rid varchar(255), " +
                 "tablename varchar(63), " +
                 "tupleid int, " +

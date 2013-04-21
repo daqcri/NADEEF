@@ -35,7 +35,7 @@ public class CleanExecutor {
         List<Rule> rules = cleanPlan.getRules();
         Flow[] flows = new Flow[rules.size()];
         NodeCacheManager cacheManager = NodeCacheManager.getInstance();
-        // assembly the flow.
+        // assemble the flow.
         for (int i = 0; i < flows.length; i ++)  {
             flows[i] = new Flow();
             Rule rule = rules.get(i);
