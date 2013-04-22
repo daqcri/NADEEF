@@ -5,43 +5,39 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import java.util.*;
+import com.google.common.collect.ImmutableSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tuple class.
  * TODO: consider using Trove for better hashmap performance.
- * TODO: use better index instead of string
  */
 public class Tuple {
-
     //<editor-fold desc="Private Fields">
-    private HashMap<Column, Object> dict;
-    private String[] tableNames;
+    private Object[] values;
+    private Schema schema;
+    private String tableName;
     private int tupleId;
     //</editor-fold>
 
     //<editor-fold desc="Public Members">
-
     /**
      * Constructor.
      */
-    public Tuple(int tupleId, Column[] columns, Object[] values) {
-        if (columns == null || values == null || tupleId < 1) {
+    public Tuple(int tupleId, Schema schema, Object[] values) {
+        if (schema == null || values == null || tupleId < 1) {
             throw new IllegalArgumentException("Input attribute/value cannot be null.");
         }
-        if (columns.length != values.length) {
+        if (schema.size() != values.length) {
             throw new IllegalArgumentException("Incorrect input with attributes and values");
         }
 
-        dict = new HashMap(columns.length);
-        HashSet<String> tableSet = new HashSet();
-        for (int i = 0; i < columns.length; i ++) {
-            dict.put(columns[i], values[i]);
-            tableSet.add(columns[i].getTableName());
-        }
-        tableNames = tableSet.toArray(new String[tableSet.size()]);
+        this.tableName = schema.getTableName();
         this.tupleId = tupleId;
-
+        this.schema = schema;
+        this.values = values;
     }
 
     /**
@@ -50,7 +46,8 @@ public class Tuple {
      * @return Output Value
      */
     public Object get(Column key) {
-        return dict.get(key);
+        int index = schema.get(key);
+        return values[index];
     }
 
     /**
@@ -59,7 +56,8 @@ public class Tuple {
      * @return Output Value
      */
     public String getString(Column key) {
-        return (String)dict.get(key);
+        Object value = get(key);
+        return (String)value;
     }
 
     /**
@@ -71,44 +69,45 @@ public class Tuple {
     }
 
     /**
+     * Gets the Cell given a column key.
+     * @param key key.
+     * @return Cell.
+     */
+    public Cell getCell(Column key) {
+        return new Cell(key, tupleId, get(key));
+    }
+
+    /**
      * Gets all the values in the tuple.
      * @return value collections.
      */
-    public Collection<Object> getValues() {
-        return dict.values();
+    public ImmutableSet<Cell> getCells() {
+        List<Column> columns = schema.getColumns().asList();
+        List<Cell> cells = new ArrayList();
+        for (Column column : columns) {
+            if (column.getAttributeName().equals("tid")) {
+                continue;
+            }
+            Cell cell = new Cell(column, tupleId, get(column));
+            cells.add(cell);
+        }
+        return ImmutableSet.copyOf(cells);
     }
 
     /**
      * Gets all the cells in the tuple.
      * @return Attribute collection
      */
-    public Collection<Column> getColumns() {
-        return dict.keySet();
-    }
-
-    /**
-     * Check whether the tuple has an attribute.
-     * @param column Attribute name.
-     * @return true when the attribute exists.
-     */
-    public boolean hasCell(Column column) {
-        return dict.containsKey(column);
+    public Schema getSchema() {
+        return schema;
     }
 
     /**
      * Gets the table names.
      * @return table names.
      */
-    public String[] getTableNames() {
-        return tableNames;
-    }
-    /**
-     * Gets whether the tuple is from multiple tables.
-     * @return True when the tuple is from multiple tables.
-     */
-    public boolean hasMoreThanOneTable() {
-        return tableNames.length > 1;
+    public String getTableName() {
+        return tableName;
     }
     //</editor-fold>
-
 }

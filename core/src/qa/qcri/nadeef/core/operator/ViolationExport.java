@@ -8,6 +8,8 @@ package qa.qcri.nadeef.core.operator;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,7 +20,8 @@ import java.util.List;
 /**
  * Export violations into the target place.
  */
-public class ViolationExport extends Operator<Collection<Violation>, Boolean> {
+public class ViolationExport extends Operator<Collection<Violation>, Integer> {
+    private static Tracer tracer = Tracer.getTracer(ViolationExport.class);
 
     /**
      * Constructor.
@@ -33,9 +36,10 @@ public class ViolationExport extends Operator<Collection<Violation>, Boolean> {
      *
      * @param violations violations.
      * @return whether the exporting is successful or not.
+     * TODO: this is not out-of-process safe.
      */
     @Override
-    public Boolean execute(Collection<Violation> violations)
+    public synchronized Integer execute(Collection<Violation> violations)
             throws
                 ClassNotFoundException,
                 SQLException,
@@ -43,40 +47,45 @@ public class ViolationExport extends Operator<Collection<Violation>, Boolean> {
                 IllegalAccessException {
         Connection conn = DBConnectionFactory.createNadeefConnection();
         Statement stat = conn.createStatement();
+        Integer count = 0;
+        int vid = Violations.generateViolationId();
         for (Violation violation : violations) {
-            List<ViolationRow> rows = Lists.newArrayList(violation.getRowCollection());
-            for (ViolationRow row : rows) {
-                String sql = getSQLInsert(violation.getRuleId(), row);
+            List<Cell> cells = Lists.newArrayList(violation.getCells());
+            for (Cell cell : cells) {
+                String sql = getSQLInsert(violation.getRuleId(), vid, cell);
                 stat.addBatch(sql);
+                count ++;
             }
+            vid ++;
         }
+
         stat.executeBatch();
         conn.commit();
         stat.close();
         conn.close();
-        return true;
+        tracer.info("exported " + count + " rows in Violation table.");
+        return count;
     }
 
     /**
      * Converts a violation to SQL insert.
-     * @param row violation.
-     * @return sql statement.
      */
-    private String getSQLInsert(String ruleId, ViolationRow row) {
+    private String getSQLInsert(String ruleId, int vid, Cell cell) {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO");
         sqlBuilder.append(' ');
         sqlBuilder.append(
             NadeefConfiguration.getSchemaName() +
             "." + NadeefConfiguration.getViolationTableName()
         );
-        sqlBuilder.append(" VALUES (default, ");
-        sqlBuilder.append("'" + ruleId + "',");
-        Column column = row.getColumn();
+        sqlBuilder.append(" VALUES (");
+        sqlBuilder.append(vid);
+        sqlBuilder.append(", '" + ruleId + "',");
+        Column column = cell.getColumn();
         sqlBuilder.append("'" + column.getTableName() + "',");
-        sqlBuilder.append(row.getTupleId());
+        sqlBuilder.append(cell.getTupleId());
         sqlBuilder.append(",");
         sqlBuilder.append("'" + column.getAttributeName() + "',");
-        sqlBuilder.append("'" + row.getAttributeValue().toString() + "')");
+        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "')");
         return sqlBuilder.toString();
     }
 }

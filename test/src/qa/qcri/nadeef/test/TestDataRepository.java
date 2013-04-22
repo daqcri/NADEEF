@@ -21,22 +21,27 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
-    public static File getFDTestFile1() {
+    public static File getTestFile1() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan1.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
-    public static File getFDTestFile2() {
+    public static File getTestFile2() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan2.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
-    public static File getFDTestFile3() {
+    public static File getTestFile3() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan3.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
-    public static CleanPlan getFDCleanPlan()
+    public static File getTestFile4() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan4.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static CleanPlan getCleanPlan()
         throws
         IOException,
         ClassNotFoundException,
@@ -45,10 +50,10 @@ public class TestDataRepository {
         IllegalAccessException,
         NoSuchMethodException,
         InvocationTargetException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDTestFile1()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile1()));
     }
 
-    public static CleanPlan getFDCleanPlan2()
+    public static CleanPlan getCleanPlan2()
         throws
         IOException,
         ClassNotFoundException,
@@ -57,10 +62,10 @@ public class TestDataRepository {
         IllegalAccessException,
         NoSuchMethodException,
         InvocationTargetException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDTestFile2()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile2()));
     }
 
-    public static CleanPlan getFDCleanPlan3()
+    public static CleanPlan getCleanPlan3()
         throws
         IOException,
         ClassNotFoundException,
@@ -69,7 +74,18 @@ public class TestDataRepository {
         IllegalAccessException,
         NoSuchMethodException,
         InvocationTargetException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getFDTestFile3()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile3()));
     }
 
+    public static CleanPlan getCleanPlan4()
+        throws
+        IOException,
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException,
+        NoSuchMethodException,
+        InvocationTargetException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4()));
+    }
 }

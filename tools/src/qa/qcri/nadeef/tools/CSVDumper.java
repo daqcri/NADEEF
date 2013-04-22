@@ -63,14 +63,12 @@ public class CSVDumper {
             StringBuilder header = new StringBuilder(reader.readLine());
             // TODO: make it other DB compatible
             header.insert(0, "TID SERIAL PRIMARY KEY,");
+            String fullTableName = schemaName + "." + tableName;
+            Statement stat = conn.createStatement();
+            stat.execute("DROP TABLE IF EXISTS " + fullTableName);
 
             // create the table
-            PreparedStatement createStat =
-                    conn.prepareStatement(
-                            "CREATE TABLE IF NOT EXISTS " + schemaName + "." + tableName +
-                            "( " + header + ")"
-                    );
-            createStat.execute();
+            stat.execute("CREATE TABLE " + fullTableName + "( " + header + ")");
             conn.commit();
             tracer.info("Successfully created table " + tableName);
 
@@ -78,7 +76,6 @@ public class CSVDumper {
             DatabaseMetaData metaData = conn.getMetaData();
             ResultSet columnSchemas = metaData.getColumns(null, schemaName, tableName, null);
 
-            Statement stat = conn.createStatement();
             String line = null;
             int lineCount = 0;
             while ((line = reader.readLine()) != null) {

@@ -6,14 +6,10 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
-import org.jooq.SQLDialect;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.DBMetaDataTool;
-import qa.qcri.nadeef.tools.Tracer;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Deseralizer generates tuples for the rule. It also does the optimization

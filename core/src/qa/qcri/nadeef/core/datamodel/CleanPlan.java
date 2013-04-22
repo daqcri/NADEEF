@@ -11,10 +11,14 @@ import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import qa.qcri.nadeef.core.util.ClassResolver;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.CSVDumper;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -202,6 +206,7 @@ public class CleanPlan {
         List<String> horizontals = null;
         Column groupColumn = null;
 
+        // parse the filtering
         JSONObject filterObj = (JSONObject)ruleObj.get("filter");
         if (filterObj != null) {
             JSONArray verticalList = (JSONArray)filterObj.get("vertical");
@@ -229,6 +234,7 @@ public class CleanPlan {
             }
         }
 
+        // parse the group
         JSONObject groupObj = (JSONObject)ruleObj.get("group");
         if (groupObj != null) {
             String groupCellName = (String)groupObj.get("on");
@@ -241,8 +247,10 @@ public class CleanPlan {
             }
         }
 
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Class udfClass = classLoader.loadClass(className);
+        // parse the iterator
+        String iteratorClassName = (String)ruleObj.get("iterator");
+
+        Class udfClass = ClassResolver.loadClass(className);
         if (!Rule.class.isAssignableFrom(udfClass)) {
             throw
                 new IllegalArgumentException(
@@ -266,6 +274,10 @@ public class CleanPlan {
 
         if (horizontals != null) {
             rule.setHorizontalFilter(horizontals);
+        }
+
+        if (!Strings.isNullOrEmpty(iteratorClassName)) {
+            rule.setIteratorClass(iteratorClassName);
         }
         return rule;
     }

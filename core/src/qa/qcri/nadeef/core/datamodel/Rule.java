@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import qa.qcri.nadeef.core.util.SqlQueryBuilder;
@@ -20,6 +21,7 @@ public abstract class Rule<T> extends AbstractRule<T> {
     private Set<String> horizontalFilter;
     private Column groupColumn;
     private Set<String> groupSelector;
+    private String iteratorClass;
 
     /**
      * Constructor. Checks for which signatures are implemented.
@@ -28,6 +30,7 @@ public abstract class Rule<T> extends AbstractRule<T> {
         super(id, tableNames);
         verticalFilter = new HashSet();
         horizontalFilter = new HashSet();
+        groupSelector = new HashSet();
     }
 
     /**
@@ -52,6 +55,14 @@ public abstract class Rule<T> extends AbstractRule<T> {
      */
     public void setGroupColumn(Column column) {
         this.groupColumn = column;
+    }
+
+    /**
+     * Gets iterator class name.
+     * @return iterator class name.
+     */
+    public String getIteratorClass() {
+        return iteratorClass;
     }
 
     /**
@@ -118,5 +129,21 @@ public abstract class Rule<T> extends AbstractRule<T> {
             query.addWhere(where);
         }
         return tupleCollection;
+    }
+
+    /**
+     * Sets of the iterator.
+     * @param iteratorClass iterator class.
+     */
+    public void setIteratorClass(String iteratorClass) {
+        this.iteratorClass = iteratorClass;
+    }
+
+    /**
+     * Returns <code>True</code> when the rule has customized iterator.
+     * @return <code>True</code> when the rule has customized iterator.
+     */
+    public boolean hasCustomIterator() {
+        return !Strings.isNullOrEmpty(iteratorClass);
     }
 }

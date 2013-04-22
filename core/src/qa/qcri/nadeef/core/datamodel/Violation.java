@@ -18,7 +18,7 @@ import java.util.Set;
  */
 public class Violation {
     private String ruleId;
-    private Set<ViolationRow> rows;
+    private Set<Cell> cells;
 
     /**
      * Gets the rule Id of this violation.
@@ -35,26 +35,32 @@ public class Violation {
     public Violation(String ruleId) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
-        rows = new HashSet();
+        cells = new HashSet();
     }
 
     /**
      * Gets the row collection.
      * @return collection row.
      */
-    public Collection<ViolationRow> getRowCollection() {
-        return rows;
+    public Collection<Cell> getCells() {
+        return cells;
     }
 
     /**
-     * Adds a new violation for a rule.
-     * @param tuple tuple.
-     * @param column column.
+     * Adds a new violated cell.
+     * @param cell violated cell.
      */
-    public void addCell(Tuple tuple, Column column) {
+    public void addCell(Cell cell) {
+        Preconditions.checkNotNull(cell);
+        cells.add(cell);
+    }
+
+    /**
+     * Adds a whole <code>Tuple</code> as violated tuple.
+     * @param tuple tuple.
+     */
+    public void addTuple(Tuple tuple) {
         Preconditions.checkNotNull(tuple);
-        Preconditions.checkNotNull(column);
-        ViolationRow row = new ViolationRow(column, tuple.getTupleId(), tuple.getTupleId());
-        rows.add(row);
+        cells.addAll(tuple.getCells());
     }
 }

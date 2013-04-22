@@ -1,4 +1,4 @@
-package qa.qcri.nadeef.test.rule;
+package qa.qcri.nadeef.test.udf;
 
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Rule;
@@ -40,8 +40,8 @@ public class MyRule1 extends Rule<Tuple> {
 
         if (!city.equalsIgnoreCase("amsterdam")) {
             Violation newViolation = new Violation(this.id);
-            newViolation.addCell(tuple, cityColumn);
-            newViolation.addCell(tuple, zipColumn);
+            newViolation.addCell(tuple.getCell(cityColumn));
+            newViolation.addCell(tuple.getCell(zipColumn));
             result.add(newViolation);
         }
         return result;

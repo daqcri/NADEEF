@@ -62,7 +62,7 @@ public class FlowTest {
     public void SimpleFDRuleTest() {
         try {
             NodeCacheManager cacheManager = NodeCacheManager.getInstance();
-            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             List<Rule> rules = cleanPlan.getRules();
             String inputKey = cacheManager.put(rules.get(0));
 

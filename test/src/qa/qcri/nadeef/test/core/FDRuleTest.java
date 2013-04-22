@@ -57,15 +57,20 @@ public class FDRuleTest {
         columns[0] = new Column(tableName, "ZIP");
         columns[1] = new Column(tableName, "CITY");
         columns[2] = new Column(tableName, "STATE");
-        tuples[0] = new Tuple(1, columns, new String[] {"0001", "Brooklyn", "NY"});
-        tuples[1] = new Tuple(2, columns, new String[] {"0001", "Chengdu", "Sichuan"});
-        tuples[2] = new Tuple(3, columns, new String[] {"1183JV", "Delft", "Raadstad"});
-        tuples[3] = new Tuple(4, columns, new String[] {"1183JV", "Amsterdam", "Raadstad"});
+        Schema schema = new Schema("test", columns);
+        tuples[0] = new Tuple(1, schema, new String[] {"0001", "Brooklyn", "NY"});
+        tuples[1] = new Tuple(2, schema, new String[] {"0001", "Chengdu", "Sichuan"});
+        tuples[2] = new Tuple(3, schema, new String[] {"1183JV", "Delft", "Raadstad"});
+        tuples[3] = new Tuple(4, schema, new String[] {"1183JV", "Amsterdam", "Raadstad"});
 
         List<String> tables = Arrays.asList("test");
         FDRule rule =
             new FDRule("FD1", tables, new StringReader("test.ZIP | test.CITY, test.STATE"));
-        Collection<Violation> violations = rule.detect(new TuplePair(tuples[0], tuples[1]));
-        Assert.assertEquals(4, violations.size());
+        List<Violation> violations = (List)rule.detect(new TuplePair(tuples[0], tuples[1]));
+        Assert.assertEquals(1, violations.size());
+        Violation violation = violations.get(0);
+        Assert.assertEquals("FD1", violation.getRuleId());
+        Collection<Cell> collection = violation.getCells();
+        Assert.assertEquals(6, collection.size());
     }
 }

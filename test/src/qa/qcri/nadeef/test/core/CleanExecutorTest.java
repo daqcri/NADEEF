@@ -14,18 +14,21 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.test.TestDataRepository;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Tests for CleanExecutor.
  */
 @RunWith(JUnit4.class)
 public class CleanExecutorTest {
-    // TODO: add verification of the violation result.
     @Before
     public void setUp() {
         Bootstrap.Start();
@@ -34,9 +37,10 @@ public class CleanExecutorTest {
     @Test
     public void cleanExecutorTest() {
         try {
-            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.run();
+            verifyViolationResult(6);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -46,9 +50,10 @@ public class CleanExecutorTest {
     @Test
     public void cleanExecutorTest2() {
         try {
-            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan2();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.run();
+            verifyViolationResult(84);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -58,12 +63,36 @@ public class CleanExecutorTest {
     @Test
     public void cleanExecutorTest3() {
         try {
-            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan3();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.run();
+            verifyViolationResult(2);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void cleanExecutorTest4() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan4();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.run();
+            verifyViolationResult(2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    private void verifyViolationResult(int expectRow)
+        throws
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException {
+        int rowCount = Violations.getViolationRowCount();
+        Assert.assertEquals(expectRow, rowCount);
     }
 }

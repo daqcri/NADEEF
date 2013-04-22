@@ -6,7 +6,6 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Flow state.

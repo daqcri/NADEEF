@@ -8,14 +8,11 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -82,23 +79,30 @@ public class TupleCollection {
         ResultSet resultSet = stat.executeQuery(sqlQuery.toSQLString());
         conn.commit();
         int tupleId = 1;
-        while(resultSet.next()) {
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int count = metaData.getColumnCount();
-            Column[] columns = new Column[count];
+
+        // fill the schema
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int count = metaData.getColumnCount();
+        Column[] columns = new Column[count];
+        for (int i = 1; i <= count; i ++) {
+            String attributeName = metaData.getColumnName(i);
+            columns[i - 1] = new Column(tableName, attributeName);
+        }
+
+        Schema schema  = new Schema(tableName, columns);
+
+        // fill the tuples
+        while (resultSet.next()) {
             Object[] values = new Object[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
                 if (attributeName.equalsIgnoreCase("tid")) {
                     tupleId = (int)resultSet.getObject(i);
                 }
-                String tableName =
-                    DBMetaDataTool.getBaseTableName(dbconfig.getDialect(), metaData, i);
-                columns[i - 1] = new Column(tableName, attributeName);
                 values[i - 1] = resultSet.getObject(i);
             }
 
-            tuples.add(new Tuple(tupleId, columns, values));
+            tuples.add(new Tuple(tupleId, schema, values));
             tupleId ++;
         }
         stat.close();

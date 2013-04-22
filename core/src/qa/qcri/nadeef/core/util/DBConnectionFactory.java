@@ -5,15 +5,13 @@
 
 package qa.qcri.nadeef.core.util;
 
+import org.jooq.SQLDialect;
+import qa.qcri.nadeef.core.datamodel.DBConfig;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import org.jooq.SQLDialect;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.DBConfig;
-import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 
 /**
  * Creates DB connection.

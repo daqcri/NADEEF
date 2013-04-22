@@ -8,7 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 /**
  * Violation row.
  */
-public class ViolationRow {
+public class Cell {
     private int tupleId;
     private Column column;
     private Object value;
@@ -19,7 +19,7 @@ public class ViolationRow {
      * @param tupleId TupleId.
      * @param value Value.
      */
-    public ViolationRow(Column column, int tupleId, Object value) {
+    public Cell(Column column, int tupleId, Object value) {
         this.column = column;
         this.value = value;
         this.tupleId = tupleId;
@@ -57,7 +57,7 @@ public class ViolationRow {
             return false;
         }
 
-        ViolationRow row = (ViolationRow)obj;
+        Cell row = (Cell)obj;
 
         if (row.column.equals(column) && row.tupleId == tupleId) {
             return true;

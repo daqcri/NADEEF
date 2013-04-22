@@ -93,6 +93,14 @@ public abstract class AbstractRule<T> {
     }
 
     /**
+     * Returns <code>True</code> when the rule has two tables supported.
+     * @return <code>True</code> when the rule has two tables supported.
+     */
+    public boolean supportTwoTables() {
+        return tableNames.size() == 2;
+    }
+
+    /**
      * Gets the used table names in the rule.
      * @return A list of table names.
      */

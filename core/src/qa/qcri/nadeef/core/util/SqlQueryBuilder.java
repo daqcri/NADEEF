@@ -8,7 +8,10 @@ package qa.qcri.nadeef.core.util;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * SQL Builder utility.

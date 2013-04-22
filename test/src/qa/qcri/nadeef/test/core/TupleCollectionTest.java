@@ -22,7 +22,7 @@ import java.util.List;
  * Deseralizer Test.
  */
 @RunWith(JUnit4.class)
-public class SQLDeseralizerTest {
+public class TupleCollectionTest {
 
     @Test
     public void projectSQLStatementTest() {

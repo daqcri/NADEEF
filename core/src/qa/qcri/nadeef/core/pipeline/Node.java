@@ -7,7 +7,6 @@ package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.operator.Operator;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 /**

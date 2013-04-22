@@ -8,7 +8,6 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.SqlQueryBuilder;
-import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -98,19 +97,18 @@ public class FDRule extends TextRule<TuplePair> {
         List<Column> attrs = Lists.newArrayList(lhs);
         for (Column column : attrs) {
             query.addSelect(column.getFullAttributeName());
-            query.addDistinct(column.getFullAttributeName());
         }
 
         attrs = Lists.newArrayList(rhs);
         for (Column column : attrs) {
             query.addSelect(column.getFullAttributeName());
-            query.addDistinct(column.getFullAttributeName());
         }
 
         return tupleCollection;
     }
 
     @Override
+    // TODO: create a new view for each group
     public Collection<TupleCollection> group(TupleCollection tupleCollection) {
         LinkedList<TupleCollection> groups = new LinkedList();
         SqlQueryBuilder query = tupleCollection.getSQLQuery();
@@ -170,8 +168,10 @@ public class FDRule extends TextRule<TuplePair> {
             Object rvalue = right.get(column);
 
             if (!lvalue.equals(rvalue)) {
-                result.add(Violations.fromTuple(id, left));
-                result.add(Violations.fromTuple(id, right));
+                Violation violation = new Violation(id);
+                violation.addTuple(left);
+                violation.addTuple(right);
+                result.add(violation);
                 break;
             }
         }

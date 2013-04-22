@@ -65,7 +65,7 @@ public class Column {
     }
 
     /**
-     * Generates a string with format of 'schemaName'.'tableName'.'atrributeName'.
+     * Generates a string with format of 'schemaName'.'tableName'.'attributeName'.
      */
     public String getFullAttributeName() {
         return tableName + "." + attributeName;
@@ -102,9 +102,9 @@ public class Column {
 
         Column column = (Column)obj;
         if (
-            column.getAttributeName().equals(attributeName) &&
-            column.getSchemaName().equals(schemaName) &&
-            column.getTableName().equals(this.tableName)
+            column.getAttributeName().equalsIgnoreCase(attributeName) &&
+            column.getSchemaName().equalsIgnoreCase(schemaName) &&
+            column.getTableName().equalsIgnoreCase(tableName)
         ) {
             return true;
         }
@@ -114,7 +114,10 @@ public class Column {
     @Override
     public int hashCode() {
         final int root = 109;
-        return root * tableName.hashCode() * attributeName.hashCode() * schemaName.hashCode();
+        return
+            root * tableName.toLowerCase().hashCode() *
+                attributeName.toLowerCase().hashCode() *
+                schemaName.toLowerCase().hashCode();
     }
     //</editor-fold>
 

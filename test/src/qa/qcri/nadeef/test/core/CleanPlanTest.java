@@ -31,7 +31,7 @@ public class CleanPlanTest {
         try {
             CleanPlan cleanPlan =
                 CleanPlan.createCleanPlanFromJSON(
-                    new FileReader(TestDataRepository.getFDTestFile1())
+                    new FileReader(TestDataRepository.getTestFile1())
                 );
             DBConfig source = cleanPlan.getSourceDBConfig();
             Assert.assertEquals("localhost/unittest", source.getUrl());

@@ -15,8 +15,7 @@ import java.util.Collection;
 /**
  * Iterator which generates pair tuples from pair <code>TupleCollection</code>.
  */
-public class TupleCollectionPairIterator
-        extends Operator<TupleCollectionPair, Collection<TuplePair>> {
+public class TupleCollectionPairIterator extends PairCollectionIterator {
     /**
      * Execute the operator.
      *

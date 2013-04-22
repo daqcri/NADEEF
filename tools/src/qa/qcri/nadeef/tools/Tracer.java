@@ -50,6 +50,9 @@ public class Tracer {
         infoFlag = mode;
     }
 
+    public static boolean isInfoOn() {
+        return infoFlag;
+    }
     //</editor-fold>
 
 }

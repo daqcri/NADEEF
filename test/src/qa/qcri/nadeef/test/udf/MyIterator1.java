@@ -3,20 +3,22 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.test.udf;
 
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 import qa.qcri.nadeef.core.datamodel.TuplePair;
+import qa.qcri.nadeef.core.operator.Operator;
+import qa.qcri.nadeef.core.operator.PairIterator;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Iterator which generates pair tuples.
+ * Custom iterator.
  */
-public class TuplePairIterator extends PairIterator {
+public class MyIterator1 extends PairIterator {
     /**
      * Execute the operator.
      *
@@ -26,7 +28,7 @@ public class TuplePairIterator extends PairIterator {
     @Override
     public Collection<TuplePair> execute(Collection<TupleCollection> tupleCollections)
         throws Exception {
-        ArrayList<TuplePair> result = new ArrayList();
+        Collection<TuplePair> result = new ArrayList();
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
         for (TupleCollection tuples : collectionList) {
             for (int i = 0; i < tuples.size(); i ++) {
