@@ -86,6 +86,19 @@ public class CleanExecutorTest {
         }
     }
 
+    @Test
+    public void cleanExecutorTest5() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan5();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.run();
+            verifyViolationResult(84);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
     private void verifyViolationResult(int expectRow)
         throws
         ClassNotFoundException,

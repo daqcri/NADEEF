@@ -8,8 +8,11 @@
     },
     "rule" : [
         {
-            "type" : "fd",
-            "value" : ["B|A, C"]
+            "type" : "cfd",
+            "value" : [
+                "B|A, C",
+                "b1,_,_"
+                ]
         }
     ]
 }

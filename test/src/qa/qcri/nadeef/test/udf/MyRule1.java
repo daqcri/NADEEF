@@ -14,13 +14,6 @@ import java.util.List;
  */
 public class MyRule1 extends Rule<Tuple> {
     /**
-     * Constructor. Checks for which signatures are implemented.
-     */
-    public MyRule1(String id, List<String> tableNames) {
-        super(id, tableNames);
-    }
-
-    /**
      * Detect rule with one tuple.
      *
      * @param tuple input tuple.

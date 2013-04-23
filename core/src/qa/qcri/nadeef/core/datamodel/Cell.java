@@ -64,4 +64,9 @@ public class Cell {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return column.hashCode() * tupleId;
+    }
 }

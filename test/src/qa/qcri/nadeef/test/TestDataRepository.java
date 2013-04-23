@@ -41,6 +41,11 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getTestFile5() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan5.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
         throws
         IOException,
@@ -87,5 +92,17 @@ public class TestDataRepository {
         NoSuchMethodException,
         InvocationTargetException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4()));
+    }
+
+    public static CleanPlan getCleanPlan5()
+        throws
+        IOException,
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException,
+        NoSuchMethodException,
+        InvocationTargetException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
     }
 }

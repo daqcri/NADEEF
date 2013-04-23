@@ -12,7 +12,7 @@
         {
             "type" : "fd",
             "table" : ["location"],
-            "value" : "zip|city, state"
+            "value" : ["zip|city, state"]
         }
     ]
 }

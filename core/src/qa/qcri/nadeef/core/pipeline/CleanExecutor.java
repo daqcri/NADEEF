@@ -86,8 +86,6 @@ public class CleanExecutor {
                         }
                         flows[i].addNode(new Node((Operator)iteratorInstance, "iterator"));
                     } else if (rule.supportTwoInputs()) {
-                        flows[i].addNode(new Node(new TupleCollectionPairIterator(), "iterator"));
-                    } else {
                         flows[i].addNode(new Node(new TuplePairIterator(), "iterator"));
                     }
 

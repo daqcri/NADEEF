@@ -148,25 +148,43 @@ public class CleanPlan {
             }
 
             type = (String)ruleObj.get("type");
-            String value = (String)ruleObj.get("value");
-            Preconditions.checkArgument(
-                !Strings.isNullOrEmpty(value), "Type value cannot be null or empty."
-            );
-
             Rule rule = null;
+            JSONArray value;
             switch (type) {
                 case "fd":
-                    rule = new FDRule(name, tableNames, new StringReader(value));
+                    value = (JSONArray)ruleObj.get("value");
+                    Preconditions.checkArgument(
+                        value != null && value.size() == 1,
+                        "Type value cannot be null or empty."
+                    );
+                    rule =
+                        new FDRule(
+                            name,
+                            tableNames,
+                            new StringReader((String)value.get(0))
+                        );
+                    rules.add(rule);
                     break;
                 case "udf":
                     rule = parseUdf(ruleObj, name, tableNames);
+                    rules.add(rule);
+                    break;
+                case "cfd":
+                    value = (JSONArray)ruleObj.get("value");
+                    Preconditions.checkArgument(
+                        value != null && value.size() == 2,
+                        "Type value cannot be null or empty."
+                    );
+                    String columnLine = (String)value.get(0);
+                    for (int j = 1; j < value.size(); j ++) {
+                        StringReader cfdLine =
+                            new StringReader(columnLine + "\n" + value.get(j));
+                        rule = new CFDRule(name, tableNames, cfdLine);
+                        rules.add(rule);
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown rule type.");
-            }
-
-            if (rule != null) {
-                rules.add(rule);
             }
         }
         return new CleanPlan(source, null, rules);
@@ -199,12 +217,14 @@ public class CleanPlan {
             IllegalAccessException,
             InvocationTargetException,
             InstantiationException {
-        String className = (String)ruleObj.get("value");
-        Preconditions.checkNotNull(className);
+        JSONArray value = (JSONArray)ruleObj.get("value");
+        Preconditions.checkArgument(value != null && value.size() == 1);
 
+        String className = (String)value.get(0);
         List<Column> verticalColumns = null;
-        List<String> horizontals = null;
+        List<SimpleExpression> horizontals = null;
         Column groupColumn = null;
+        String defaultTableName = tableNames.get(0);
 
         // parse the filtering
         JSONObject filterObj = (JSONObject)ruleObj.get("filter");
@@ -229,7 +249,12 @@ public class CleanPlan {
             if (horizontalList != null) {
                 horizontals = new ArrayList();
                 for (int i = 0; i < horizontalList.size(); i ++) {
-                    horizontals.add((String)horizontalList.get(i));
+                    horizontals.add(
+                        SimpleExpression.fromString(
+                            (String)horizontalList.get(i),
+                            defaultTableName
+                        )
+                    );
                 }
             }
         }
@@ -258,11 +283,9 @@ public class CleanPlan {
                 );
         }
 
-        Rule rule =
-            (Rule)udfClass.getDeclaredConstructor(
-                String.class,
-                List.class
-            ).newInstance(ruleId, tableNames);
+        Rule rule = (Rule)udfClass.newInstance();
+        // call internal initialization on the rule.
+        rule.initialize(ruleId, tableNames);
 
         if (groupColumn != null) {
             rule.setGroupColumn(groupColumn);

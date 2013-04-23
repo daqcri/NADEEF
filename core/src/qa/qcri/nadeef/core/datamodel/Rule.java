@@ -17,19 +17,33 @@ import java.util.*;
  */
 // TODO: adds generic verification to limit the T type.
 public abstract class Rule<T> extends AbstractRule<T> {
-    private Set<Column> verticalFilter;
-    private Set<String> horizontalFilter;
-    private Column groupColumn;
-    private Set<String> groupSelector;
-    private String iteratorClass;
+    protected Set<Column> verticalFilter;
+    protected Set<SimpleExpression> horizontalFilter;
+    protected Column groupColumn;
+    protected Set<String> groupSelector;
+    protected String iteratorClass;
+
+    /**
+     * Default constructor.
+     */
+    public Rule() {}
 
     /**
      * Constructor. Checks for which signatures are implemented.
      */
     protected Rule(String id, List<String> tableNames) {
-        super(id, tableNames);
+        initialize(id, tableNames);
+    }
+
+    /**
+     * Internal method to initialize a rule.
+     * @param id Rule id.
+     * @param tableNames Table names.
+     */
+    void initialize(String id, List<String> tableNames) {
+        super.initialize(id, tableNames);
         verticalFilter = new HashSet();
-        horizontalFilter = new HashSet();
+        horizontalFilter = new HashSet<SimpleExpression>();
         groupSelector = new HashSet();
     }
 
@@ -45,8 +59,8 @@ public abstract class Rule<T> extends AbstractRule<T> {
      * Sets the horizontal filter.
      * @param horizontalFilter horizontal filter.
      */
-    public void setHorizontalFilter(Iterable<String> horizontalFilter) {
-        this.horizontalFilter = Sets.newHashSet(horizontalFilter);
+    public void setHorizontalFilter(Iterable<SimpleExpression> horizontalFilter) {
+        this.horizontalFilter = Sets.<SimpleExpression>newHashSet(horizontalFilter);
     }
 
     /**
@@ -121,12 +135,11 @@ public abstract class Rule<T> extends AbstractRule<T> {
         List<Column> selects = Lists.newArrayList(verticalFilter);
         for (Column column : selects) {
             query.addSelect(column.getFullAttributeName());
-            query.addDistinct(column.getFullAttributeName());
         }
 
-        List<String> wheres = Lists.newArrayList(horizontalFilter);
-        for (String where : wheres) {
-            query.addWhere(where);
+        List<SimpleExpression> wheres = Lists.newArrayList(horizontalFilter);
+        for (SimpleExpression where : wheres) {
+            query.addWhere(where.toString());
         }
         return tupleCollection;
     }

@@ -22,9 +22,23 @@ public abstract class AbstractRule<T> {
     protected Class inputType;
 
     /**
+     * Default constructor.
+     */
+    protected AbstractRule() {}
+
+    /**
      * Constructor. Checks for which signatures are implemented.
      */
     public AbstractRule(String id, List<String> tableNames) {
+        initialize(id, tableNames);
+    }
+
+    /**
+     * Initialize a rule.
+     * @param id Rule id.
+     * @param tableNames table names.
+     */
+    void initialize(String id, List<String> tableNames) {
         Preconditions.checkArgument(
             !Strings.isNullOrEmpty(id) && tableNames != null && tableNames.size() > 0
         );
@@ -34,7 +48,7 @@ public abstract class AbstractRule<T> {
 
         // reflect on the input type;
         ParameterizedType parameterizedType =
-                (ParameterizedType)getClass().getGenericSuperclass();
+            (ParameterizedType)getClass().getGenericSuperclass();
 
         Type[] types = parameterizedType.getActualTypeArguments();
         inputType = (Class)types[0];
