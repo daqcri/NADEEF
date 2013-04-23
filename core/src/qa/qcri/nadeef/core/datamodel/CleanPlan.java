@@ -11,7 +11,7 @@ import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import qa.qcri.nadeef.core.util.ClassResolver;
+import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.CSVDumper;
 
@@ -251,7 +251,7 @@ public class CleanPlan {
                 for (int i = 0; i < horizontalList.size(); i ++) {
                     horizontals.add(
                         SimpleExpression.fromString(
-                            (String)horizontalList.get(i),
+                            (String) horizontalList.get(i),
                             defaultTableName
                         )
                     );
@@ -275,7 +275,7 @@ public class CleanPlan {
         // parse the iterator
         String iteratorClassName = (String)ruleObj.get("iterator");
 
-        Class udfClass = ClassResolver.loadClass(className);
+        Class udfClass = Bootstrap.loadClass(className);
         if (!Rule.class.isAssignableFrom(udfClass)) {
             throw
                 new IllegalArgumentException(

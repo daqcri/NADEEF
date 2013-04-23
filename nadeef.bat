@@ -3,7 +3,7 @@
 
 if not exist "out\production" goto noCompile
 
-java -cp out\production\console;vendors\jline-2.6.jar qa.qcri.nadeef.console.Console
+java -cp out\nadeef.jar qa.qcri.nadeef.console.Console
 goto end
 
 :noCompile

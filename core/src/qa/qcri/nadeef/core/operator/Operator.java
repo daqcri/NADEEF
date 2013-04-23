@@ -39,7 +39,7 @@ public abstract class Operator<TInput, TOutput> {
      * Gets the generic input class information at runtime.
      * @return inputType class.
      */
-    // TODO: solve the reflection in a more refined way
+    // TODO: solve the reflection in a better way
     public Type getInputType() {
         Type genericSuperType = getClass().getGenericSuperclass();
         if (!(genericSuperType instanceof ParameterizedType)) {

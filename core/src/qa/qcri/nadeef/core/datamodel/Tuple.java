@@ -52,11 +52,32 @@ public class Tuple {
 
     /**
      * Gets the value from the tuple.
+     * @param columnAttribute The attribute key
+     * @return Output Value
+     */
+    public Object get(String columnAttribute) {
+        Column column = new Column(tableName, columnAttribute);
+        int index = schema.get(column);
+        return values[index];
+    }
+
+    /**
+     * Gets the value from the tuple.
      * @param key The attribute key
      * @return Output Value
      */
     public String getString(Column key) {
         Object value = get(key);
+        return (String)value;
+    }
+
+    /**
+     * Gets the value from the tuple.
+     * @param columnAttribute The attribute key
+     * @return Output Value
+     */
+    public String getString(String columnAttribute) {
+        Object value = get(columnAttribute);
         return (String)value;
     }
 
@@ -75,6 +96,15 @@ public class Tuple {
      */
     public Cell getCell(Column key) {
         return new Cell(key, tupleId, get(key));
+    }
+
+    /**
+     * Gets the Cell given a column key.
+     * @param key key.
+     * @return Cell.
+     */
+    public Cell getCell(String key) {
+        return new Cell(new Column(tableName, key), tupleId, get(key));
     }
 
     /**

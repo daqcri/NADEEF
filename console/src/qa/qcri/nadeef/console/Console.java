@@ -5,13 +5,19 @@
 
 package qa.qcri.nadeef.console;
 
-import jline.console.ConsoleReader;
-import jline.console.completer.*;
-
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import jline.Terminal;
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
+import jline.console.completer.*;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.pipeline.CleanExecutor;
+import qa.qcri.nadeef.core.util.Bootstrap;
 
 /**
  * User interactive console.
@@ -33,6 +39,10 @@ public class Console {
     private static final String prompt = ":> ";
 
     private static final String[] commands = { "load", "run", "repair", "help", "set", "exit" };
+    private static ConsoleReader console;
+    private static CleanPlan currentCleanPlan;
+    private static CleanExecutor executor;
+
     //</editor-fold>
 
     /**
@@ -41,12 +51,14 @@ public class Console {
      */
     public static void main(String[] args) {
         try {
-            ConsoleReader console = new ConsoleReader();
+            // bootstrap Nadeef.
+            Bootstrap.Start();
+            console = new ConsoleReader();
             console.println(logo);
             console.println();
             console.println(helpInfo);
             console.println();
-
+            console.drawLine();
             String line;
 
             console.setPrompt(prompt);
@@ -60,31 +72,77 @@ public class Console {
             console.addCompleter(new ArgumentCompleter(loadCompleter));
 
             while ((line = console.readLine()) != null) {
-                line = line.trim();
-                if (line.equalsIgnoreCase("exit")) {
-                    break;
-                }
-
-                if (line.startsWith("load")) {
-                    load(line);
-                }
-
-                if (line.equalsIgnoreCase("help")) {
-                    printHelp(console);
+                try {
+                    if (line.equalsIgnoreCase("exit")) {
+                        break;
+                    } else if (line.startsWith("load")) {
+                        load(line);
+                    } else if (line.startsWith("list")) {
+                        list();
+                    } else if (line.startsWith("help")) {
+                        printHelp();
+                    } else if (line.startsWith("detect")) {
+                        detect(line);
+                    } else {
+                        console.println("I don't know this command.");
+                    }
+                } catch (Exception ex) {
+                    console.println("Oops, exceptions happens:");
+                    console.println(ex.getMessage());
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            try {
+                console.println("Bootstrap failed.");
+                ex.printStackTrace();
+            } catch (Exception ignore) {}
         }
 
         System.exit(0);
     }
 
-    private static void load(String cmdLine) {
+    private static void load(String cmdLine) throws IOException {
+        String[] splits = cmdLine.split("\\s");
+        if (splits.length != 2) {
+            throw new IllegalArgumentException(
+                "Invalid load command. Run load <Nadeef config file>."
+            );
+        }
+        String fileName = splits[1];
+        if (Bootstrap.isWindows()) {
+            fileName = fileName.replace('/', '\\');
+        }
+        CleanPlan plan;
+        try {
+            currentCleanPlan = CleanPlan.createCleanPlanFromJSON(new FileReader(fileName));
+        } catch (Exception ex) {
+            console.println(ex.getMessage());
+            return;
+        }
 
+        executor = new CleanExecutor(currentCleanPlan);
+        console.println(currentCleanPlan.getRules().size() + " rules loaded.");
     }
 
-    private static void printHelp(ConsoleReader console) throws IOException {
+    private static void list() throws IOException {
+        List<Rule> rules = currentCleanPlan.getRules();
+        for (int i = 0; i < rules.size(); i ++) {
+            console.println("\t" + i + ": " + rules.get(i).getId());
+        }
+    }
+
+    private static void detect(String cmd) throws IOException {
+        String[] splits = cmd.split("\\s");
+        if (splits.length > 2) {
+            throw
+                new IllegalArgumentException(
+                    "Invalid detect command. Run detect [id number] instead."
+                );
+        }
+        executor.run();
+    }
+
+    private static void printHelp() throws IOException {
         String help =
                 " |Nadeef console usage:\n" +
                 " |----------------------------------\n" +
@@ -93,8 +151,8 @@ public class Console {
                 " |load <input CleanPlan file> :\n" +
                 " |    load a configured nadeef clean plan.\n" +
                 " |\n" +
-                " |run <rule name> :\n" +
-                " |    start the violation detection with a given rule name.\n" +
+                " |detect [rule id] :\n" +
+                " |    start the violation detection with a given rule id number.\n" +
                 " |\n" +
                 " |list : \n" +
                 " |    list available rules.\n" +

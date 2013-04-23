@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.operator.*;
-import qa.qcri.nadeef.core.util.ClassResolver;
+import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class CleanExecutor {
                     flows[i].addNode(new Node(new PairQueryEngine(rule), "query"));
                     // process customized iterator
                     if (rule.hasCustomIterator()) {
-                        Class iteratorClass = ClassResolver.loadClass(rule.getIteratorClass());
+                        Class iteratorClass = Bootstrap.loadClass(rule.getIteratorClass());
                         Object iteratorInstance = iteratorClass.newInstance();
                         if (!Operator.class.isAssignableFrom(iteratorInstance.getClass())) {
                             throw
@@ -76,7 +76,7 @@ public class CleanExecutor {
                     flows[i].addNode(new Node(new QueryEngine(rule), "query"));
                     // process customized iterator
                     if (rule.hasCustomIterator()) {
-                        Class iteratorClass = ClassResolver.loadClass(rule.getIteratorClass());
+                        Class iteratorClass = Bootstrap.loadClass(rule.getIteratorClass());
                         Object iteratorInstance = iteratorClass.newInstance();
                         if (!Operator.class.isAssignableFrom(iteratorInstance.getClass())) {
                             throw

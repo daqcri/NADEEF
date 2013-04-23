@@ -32,8 +32,8 @@ public class Flow {
      * Constructor.
      */
     public Flow() {
-        nodeList = new LinkedList();
-        keyList = new LinkedList();
+        nodeList = new LinkedList<Node>();
+        keyList = new LinkedList<String>();
         currentFlowPosition = 0;
         state = FlowState.Ready;
     }

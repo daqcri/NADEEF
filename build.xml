@@ -48,6 +48,7 @@
 
     <target name="console" depends="core">
         <javac includeantruntime="false"
+               fork="true"
                srcdir="console/src"
                destdir="${build.dir}"
                classpath="${vendor.dir};${build.core.dir}"
@@ -57,9 +58,12 @@
     <target name="core" depends="tools">
         <mkdir dir="${build.dir}" />
         <javac includeantruntime="false"
+               fork="true"
                srcdir="core/src"
                destdir="${build.dir}"
-               classpathref="vendors.jars"/>
+               classpathref="vendors.jars">
+            <compilerarg line="-Xlint:none" />
+        </javac>
     </target>
 
     <target name="tools">

@@ -1,6 +1,5 @@
 package qa.qcri.nadeef.test.udf;
 
-import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -21,20 +20,13 @@ public class MyRule1 extends Rule<Tuple> {
      */
     @Override
     public Collection<Violation> detect(Tuple tuple) {
-        Column zipColumn = new Column("location", "zip");
-        String zip = tuple.getString(zipColumn);
-        if (!zip.equalsIgnoreCase("1183JV")) {
-            return new ArrayList();
-        }
-
         List<Violation> result = new ArrayList();
-        Column cityColumn = new Column("location", "city");
-        String city = tuple.getString(cityColumn);
+        String city = tuple.getString("city");
 
         if (!city.equalsIgnoreCase("amsterdam")) {
             Violation newViolation = new Violation(this.id);
-            newViolation.addCell(tuple.getCell(cityColumn));
-            newViolation.addCell(tuple.getCell(zipColumn));
+            newViolation.addCell(tuple.getCell("city"));
+            newViolation.addCell(tuple.getCell("zip"));
             result.add(newViolation);
         }
         return result;

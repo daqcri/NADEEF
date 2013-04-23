@@ -19,8 +19,8 @@ public class NodeCacheManager {
     private static final NodeCacheManager instance = new NodeCacheManager();
 
     private NodeCacheManager() {
-        cachePool = new HashMap(0);
-        refPool = new HashMap(0);
+        cachePool = new HashMap<String, Object>(0);
+        refPool = new HashMap<String, Integer>(0);
     }
 
     /**

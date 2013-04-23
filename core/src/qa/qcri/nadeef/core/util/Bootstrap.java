@@ -22,6 +22,16 @@ public class Bootstrap {
     private Bootstrap() {}
 
     /**
+     * Loads a class in runtime.
+     * @param className class name.
+     * @return Class type.
+     */
+    public static Class loadClass(String className) throws ClassNotFoundException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        return classLoader.loadClass(className);
+    }
+
+    /**
      * Initialize the Nadeef infrastructure.
      */
     public static synchronized boolean Start() {
@@ -44,5 +54,10 @@ public class Bootstrap {
             System.exit(1);
         }
         return true;
+    }
+
+    public static boolean isWindows() {
+        String osName = System.getProperty("os.name");
+        return osName.startsWith("Windows");
     }
 }
