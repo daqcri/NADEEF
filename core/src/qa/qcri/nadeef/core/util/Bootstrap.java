@@ -55,9 +55,4 @@ public class Bootstrap {
         }
         return true;
     }
-
-    public static boolean isWindows() {
-        String osName = System.getProperty("os.name");
-        return osName.startsWith("Windows");
-    }
 }

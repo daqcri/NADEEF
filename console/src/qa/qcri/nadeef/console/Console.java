@@ -6,14 +6,19 @@
 package qa.qcri.nadeef.console;
 
 import com.google.common.base.Strings;
+import jline.Terminal;
+import jline.WindowsTerminal;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
+import javax.smartcardio.TerminalFactory;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -53,14 +58,15 @@ public class Console {
         try {
             // bootstrap Nadeef.
             Bootstrap.Start();
+            String line;
+
             console = new ConsoleReader();
+            console.clearScreen();
             console.println(logo);
             console.println();
             console.println(helpInfo);
             console.println();
             console.drawLine();
-            String line;
-
             console.setPrompt(prompt);
 
             List<Completer> loadCompleter =
@@ -92,7 +98,7 @@ public class Console {
                         console.println("I don't know this command.");
                     }
                 } catch (Exception ex) {
-                    console.println("Oops, exceptions happens:");
+                    console.println("Oops, something is wrong:");
                     console.println(ex.getMessage());
                 }
             }
@@ -114,11 +120,9 @@ public class Console {
             );
         }
         String fileName = splits[1];
-        if (Bootstrap.isWindows()) {
-            fileName = fileName.replace('/', '\\');
-        }
+        File file = FileHelper.getFile(fileName);
         try {
-            currentCleanPlan = CleanPlan.createCleanPlanFromJSON(new FileReader(fileName));
+            currentCleanPlan = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
         } catch (Exception ex) {
             console.println(ex.getMessage());
             return;
