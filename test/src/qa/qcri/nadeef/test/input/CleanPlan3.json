@@ -10,7 +10,8 @@
     },
     "rule" : [
         {
-            "type" : "udf",
+            "name" : "myRule",
+			"type" : "udf",
             "table" : ["location"],
             "value" : ["qa.qcri.nadeef.test.udf.MyRule1"],
             "filter" : {
@@ -19,7 +20,7 @@
             },
             "group" : {
                 "on" : "zip"
-            },
+            }
         }
     ]
 }

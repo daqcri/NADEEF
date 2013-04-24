@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.SqlQueryBuilder;
+import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
@@ -76,7 +76,7 @@ public class TupleCollection {
         tuples = new ArrayList();
         Connection conn = DBConnectionFactory.createConnection(dbconfig);
         Statement stat = conn.createStatement();
-        ResultSet resultSet = stat.executeQuery(sqlQuery.toSQLString());
+        ResultSet resultSet = stat.executeQuery(sqlQuery.build());
         conn.commit();
         int tupleId = 1;
 

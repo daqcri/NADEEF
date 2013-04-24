@@ -106,7 +106,7 @@ public class SimpleExpression {
     public String toString() {
         StringBuilder builder = new StringBuilder(left.getFullAttributeName());
         builder.append(operationMap.get(operation));
-        if (value.matches("^[0-9]+$")) {
+        if (value.matches("^[0-9]+$") || value.contains("'") || value.contains("\"")) {
             builder.append(value);
         } else {
             builder.append("'");

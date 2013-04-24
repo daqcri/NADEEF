@@ -11,8 +11,8 @@ package qa.qcri.nadeef.tools;
  */
 public class Tracer {
     private Class classType;
-    private static boolean timingFlag = true;
     private static boolean infoFlag = true;
+    private static boolean verboseFlag = false;
 
     //<editor-fold desc="Tracer creation">
     private Tracer(Class classType) {
@@ -27,6 +27,12 @@ public class Tracer {
     //<editor-fold desc="Public methods">
     public void info(String msg) {
         if (infoFlag) {
+            System.out.println(msg);
+        }
+    }
+
+    public void verbose(String msg) {
+        if (verboseFlag) {
             System.out.println("In " + classType.getName() + " : " + msg);
         }
     }
@@ -35,23 +41,20 @@ public class Tracer {
         System.err.println("In " + classType.getName() + " : " + msg);
     }
 
-    /**
-     * Timing information.
-     * @param msg message.
-     * @param milliseconds elapsed time.
-     */
-    public void timing(String msg, long milliseconds) {
-        if (timingFlag) {
-            System.out.println("::" + msg + " : " + milliseconds);
-        }
-    }
-
     public static void setInfo(boolean mode) {
         infoFlag = mode;
     }
 
+    public static void setVerbose(boolean mode) {
+        verboseFlag = mode;
+    }
+
     public static boolean isInfoOn() {
         return infoFlag;
+    }
+
+    public static boolean isVerboseOn() {
+        return verboseFlag;
     }
     //</editor-fold>
 

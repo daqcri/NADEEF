@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -86,7 +86,7 @@ public class SqlQueryBuilder {
         this.distincts.add(disintct);
     }
 
-    public String toSQLString() {
+    public String build() {
         StringBuilder builder = new StringBuilder("SELECT ");
         if (distincts.size() > 0) {
             builder.append(" DISTINCT ON (");

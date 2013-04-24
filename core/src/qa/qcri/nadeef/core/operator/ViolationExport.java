@@ -47,6 +47,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 IllegalAccessException {
         Connection conn = DBConnectionFactory.createNadeefConnection();
         Statement stat = conn.createStatement();
+        // stat.execute("DELETE FROM " + NadeefConfiguration.getViolationTableName());
         Integer count = 0;
         int vid = Violations.generateViolationId();
         for (Violation violation : violations) {

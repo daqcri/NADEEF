@@ -5,19 +5,19 @@
 
 package qa.qcri.nadeef.console;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import jline.Terminal;
-import jline.TerminalFactory;
+import com.google.common.base.Strings;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.tools.Tracer;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * User interactive console.
@@ -72,8 +72,9 @@ public class Console {
             console.addCompleter(new ArgumentCompleter(loadCompleter));
 
             while ((line = console.readLine()) != null) {
+                line = line.trim();
                 try {
-                    if (line.equalsIgnoreCase("exit")) {
+                    if (line.startsWith("exit")) {
                         break;
                     } else if (line.startsWith("load")) {
                         load(line);
@@ -83,7 +84,11 @@ public class Console {
                         printHelp();
                     } else if (line.startsWith("detect")) {
                         detect(line);
-                    } else {
+                    } else if (Strings.isNullOrEmpty(line)) {
+                        continue;
+                    } else if (line.startsWith("set")) {
+                        set(line);
+                    } else{
                         console.println("I don't know this command.");
                     }
                 } catch (Exception ex) {
@@ -112,7 +117,6 @@ public class Console {
         if (Bootstrap.isWindows()) {
             fileName = fileName.replace('/', '\\');
         }
-        CleanPlan plan;
         try {
             currentCleanPlan = CleanPlan.createCleanPlanFromJSON(new FileReader(fileName));
         } catch (Exception ex) {
@@ -125,21 +129,37 @@ public class Console {
     }
 
     private static void list() throws IOException {
+        if (currentCleanPlan == null) {
+            console.println("There are 0 rules loaded.");
+            return;
+        }
+
         List<Rule> rules = currentCleanPlan.getRules();
+        console.println("There are " + rules.size() + " rules loaded.");
         for (int i = 0; i < rules.size(); i ++) {
             console.println("\t" + i + ": " + rules.get(i).getId());
         }
     }
 
-    private static void detect(String cmd) throws IOException {
+    private static void detect(String cmd) {
         String[] splits = cmd.split("\\s");
         if (splits.length > 2) {
             throw
                 new IllegalArgumentException(
-                    "Invalid detect command. Run detect [id number] instead."
+                    "Wrong detect command. Run detect [id number] instead."
                 );
         }
+
         executor.run();
+    }
+
+    private static void set(String cmd) throws IOException {
+        String[] splits = cmd.split("\\s");
+        if (splits[1].equalsIgnoreCase("verbose")) {
+            boolean mode = !Tracer.isVerboseOn();
+            console.println("set verbose " + (mode ? "on" : "off"));
+            Tracer.setVerbose(mode);
+        }
     }
 
     private static void printHelp() throws IOException {

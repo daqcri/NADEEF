@@ -1,7 +1,7 @@
 {
      "source" : {
          "type" : "csv",
-         "file" : ".\test\src\qa\qcri\nadeef\test\input\dumptest.csv",
+         "file" : "test/src/qa/qcri/nadeef/test/input/dumptest.csv",
      },
      "target" : {
          "table" : "output"
@@ -12,7 +12,7 @@
              "value" : [
                  "B|A, C",
                  "b1,_,_"
-                 ]
+             ]
          }
      ]
  }

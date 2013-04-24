@@ -8,7 +8,9 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import qa.qcri.nadeef.core.util.SqlQueryBuilder;
+
+import qa.qcri.nadeef.tools.SqlQueryBuilder;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.*;
 
@@ -22,6 +24,7 @@ public abstract class Rule<T> extends AbstractRule<T> {
     protected Column groupColumn;
     protected Set<String> groupSelector;
     protected String iteratorClass;
+    protected Tracer tracer = Tracer.getTracer(getClass());
 
     /**
      * Default constructor.
@@ -89,6 +92,7 @@ public abstract class Rule<T> extends AbstractRule<T> {
         LinkedList<TupleCollection> groups = new LinkedList();
 
         if (groupColumn != null) {
+            tracer.verbose("Use default grouping on " + groupColumn.getFullAttributeName());
             SqlQueryBuilder query = tupleCollection.getSQLQuery();
             query.addOrder(groupColumn.getFullAttributeName());
 
@@ -132,14 +136,22 @@ public abstract class Rule<T> extends AbstractRule<T> {
         SqlQueryBuilder query = tupleCollection.getSQLQuery();
 
         query.addSelect("tid");
-        List<Column> selects = Lists.newArrayList(verticalFilter);
-        for (Column column : selects) {
-            query.addSelect(column.getFullAttributeName());
+        if (verticalFilter.size() != 0) {
+            tracer.verbose("Use default vertical filter on ");
+            List<Column> selects = Lists.newArrayList(verticalFilter);
+            for (Column column : selects) {
+                tracer.verbose(column.getFullAttributeName());
+                query.addSelect(column.getFullAttributeName());
+            }
         }
 
-        List<SimpleExpression> wheres = Lists.newArrayList(horizontalFilter);
-        for (SimpleExpression where : wheres) {
-            query.addWhere(where.toString());
+        if (horizontalFilter.size() != 0) {
+            tracer.verbose("Use default horizontal filter on ");
+            List<SimpleExpression> wheres = Lists.newArrayList(horizontalFilter);
+            for (SimpleExpression where : wheres) {
+                tracer.verbose(where.toString());
+                query.addWhere(where.toString());
+            }
         }
         return tupleCollection;
     }

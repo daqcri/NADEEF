@@ -28,6 +28,7 @@ public class MyIterator1 extends PairIterator {
     @Override
     public Collection<TuplePair> execute(Collection<TupleCollection> tupleCollections)
         throws Exception {
+		System.out.println("calling my iterator");
         Collection<TuplePair> result = new ArrayList();
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
         for (TupleCollection tuples : collectionList) {
