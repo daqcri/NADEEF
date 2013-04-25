@@ -1,11 +1,11 @@
-<project name="Nadeef Build" default="all" basedir=".">
+<project name="Nadeef Build" default="compile" basedir=".">
 
     <!-- Common property values -->
     <property name="project.name" value="nadeef" />
-    <property name="build.dir" value="out/production" />
     <property name="build.root" value="out" />
-    <property name="build.core.dir" value="${build.dir}" />
-    <property name="build.tools.dir" value="${build.dir}" />
+    <property name="build.dir" value="${build.root}/production" />
+    <property name="test.dir" value="${build.root}/test" />
+    <property name="testresult.dir" value="${build.root}/testresult" />
     <property name="vendor.dir" value="vendors" />
     <property name="console.class" value="qa.qcri.console.Console" />
 
@@ -30,7 +30,7 @@
 	</target>
 
     <target name="jar" depends="compile">
-        <manifestclasspath property="jar.classpath" jarfile="out/${project.name}.jar">
+        <manifestclasspath property="jar.classpath" jarfile="${build.root}/${project.name}.jar">
             <classpath>
                 <fileset dir="${vendor.dir}" includes="*.jar" />
             </classpath>
@@ -46,12 +46,13 @@
         </jar>
     </target>
 
+    <!-- Targets per component -->
     <target name="console" depends="core">
         <javac includeantruntime="false"
                fork="true"
                srcdir="console/src"
                destdir="${build.dir}"
-               classpath="${vendor.dir};${build.core.dir}"
+               classpath="${vendor.dir};"
                classpathref="vendors.jars"/>
     </target>
 
@@ -62,27 +63,44 @@
                srcdir="core/src"
                destdir="${build.dir}"
                classpathref="vendors.jars">
-            <compilerarg line="-Xlint:none" />
         </javac>
     </target>
 
     <target name="tools">
         <mkdir dir="${build.dir}" />
         <javac includeantruntime="false"
-               debug="on"
+               fork="true"
                srcdir="tools/src"
                destdir="${build.dir}"
                classpath="${vendor.dir}"
                classpathref="vendors.jars"/>
     </target>
 
-    <target name="test" depends="core, tools">
-        <mkdir dir="${build.dir}" />
+    <target name="test" depends="jar">
+        <mkdir dir="${test.dir}" />
         <javac includeantruntime="false"
                debug="on"
                srcdir="test/src"
-               destdir="${build.dir}"
-               classpath="${vendor.dir};${build.core.dir};${build.tools.dir}"
+               destdir="${test.dir}"
+               classpath="${build.dir}"
                classpathref="vendors.jars"/>
+    </target>
+
+    <!-- JUnit -->
+    <target name="unittest" depends="compile">
+        <mkdir dir="${build.root}/testresult" />
+        <junit printsummary="yes">
+            <classpath>
+                <fileset dir="${build.root}" includes="${project.name}.jar" />
+            </classpath>
+            <formatter type="plain" />
+            <formatter type="xml" />
+
+            <batchtest fork="yes" todir="${build.root}/testresult">
+                <fileset dir="${test.dir}">
+                    <include name="**/*.class" />
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 </project>

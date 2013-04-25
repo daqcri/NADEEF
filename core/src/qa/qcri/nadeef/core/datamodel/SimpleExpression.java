@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Expression class describes a simple expression used in the filter.
+ * Expression class describes a simple expression used in the scope.
  */
 public class SimpleExpression {
     /**

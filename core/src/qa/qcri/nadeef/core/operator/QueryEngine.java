@@ -13,13 +13,15 @@ import java.util.Collection;
 /**
  * Query engine operator, which generates optimized queries based on given hints.
  */
-public class QueryEngine extends Operator<TupleCollection, Collection<TupleCollection>> {
-    private Rule rule;
+public class QueryEngine<TRule extends Rule, TOutput>
+    extends Operator<Collection<TupleCollection>, TOutput> {
+    private TRule rule;
+
     /**
      * Constructor.
      * @param rule
      */
-    public QueryEngine(Rule rule) {
+    public QueryEngine(TRule rule) {
         this.rule = rule;
     }
 
@@ -30,9 +32,8 @@ public class QueryEngine extends Operator<TupleCollection, Collection<TupleColle
      * @return output object.
      */
     @Override
-    public Collection<TupleCollection> execute(TupleCollection tuples) throws Exception {
-        TupleCollection result = rule.filter(tuples);
-        Collection<TupleCollection> resultCollection = rule.group(result);
-        return resultCollection;
+    public TOutput execute(Collection<TupleCollection> tuples) throws Exception {
+        Collection<TupleCollection> result = rule.scope(tuples);
+        return (TOutput)rule.group(result);
     }
 }

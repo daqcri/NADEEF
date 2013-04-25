@@ -8,14 +8,15 @@ package qa.qcri.nadeef.core.operator;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Deseralizer generates tuples for the rule. It also does the optimization
  * based on the input rule hints.
  */
-public class Deseralizer<T> extends Operator<Rule, T> {
+public class Deseralizer extends Operator<Rule, Collection<TupleCollection>> {
     private DBConfig dbConfig;
 
     /**
@@ -34,24 +35,18 @@ public class Deseralizer<T> extends Operator<Rule, T> {
      * @return output object.
      */
     @Override
-    public T execute(Rule rule)
-            throws
-                ClassNotFoundException,
-                SQLException,
-                InstantiationException,
-                IllegalAccessException {
+    public Collection<TupleCollection> execute(Rule rule) {
         Preconditions.checkNotNull(rule);
 
         List<String> tableNames = rule.getTableNames();
+        List<TupleCollection> collections = new ArrayList<TupleCollection>();
         if (tableNames.size() == 2) {
-            TupleCollectionPair pair =
-                new TupleCollectionPair(
-                    new TupleCollection(tableNames.get(0), dbConfig),
-                    new TupleCollection(tableNames.get(1), dbConfig)
-                );
-            return (T)pair;
+            collections.add(new SQLTupleCollection(tableNames.get(0), dbConfig));
+            collections.add(new SQLTupleCollection(tableNames.get(1), dbConfig));
+        } else {
+            collections.add(new SQLTupleCollection(tableNames.get(0), dbConfig));
         }
 
-        return (T)(new TupleCollection(tableNames.get(0), dbConfig));
+        return collections;
     }
 }

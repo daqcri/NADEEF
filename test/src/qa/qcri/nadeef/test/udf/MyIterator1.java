@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.core.operator.Operator;
-import qa.qcri.nadeef.core.operator.PairIterator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * Custom iterator.
  */
-public class MyIterator1 extends PairIterator {
+public class MyIterator1 extends Operator<Collection<TupleCollection>, Collection<TuplePair>> {
     /**
      * Execute the operator.
      *

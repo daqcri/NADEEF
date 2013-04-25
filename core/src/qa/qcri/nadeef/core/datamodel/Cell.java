@@ -6,7 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * Violation row.
+ * A Cell contains a Column and a Value given a TupleId.
  */
 public class Cell {
     private int tupleId;

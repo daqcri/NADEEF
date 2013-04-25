@@ -5,25 +5,23 @@
 
 package qa.qcri.nadeef.test.tools;
 
+import org.jooq.SQLDialect;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.CSVDumper;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import org.junit.Assert;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import org.jooq.SQLDialect;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVDumper;
 
 /**
  * CSV Dumper test.

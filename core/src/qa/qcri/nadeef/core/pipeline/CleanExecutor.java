@@ -47,48 +47,12 @@ public class CleanExecutor {
                 Rule rule = rules.get(i);
                 String inputKey = cacheManager.put(rule);
                 flows[i].setInputKey(inputKey);
-                if (rule.supportTwoTables()) {
+                flows[i].addNode(new Node(new Deseralizer(cleanPlan), "deserializer"));
+                flows[i].addNode(new Node(new QueryEngine(rule), "query"));
+                if (rule.supportTwoInputs()) {
                     // the case where the rule is working on multiple tables (2).
-                    flows[i].addNode(
-                        new Node(new Deseralizer<TupleCollectionPair>(cleanPlan), "deserializer")
-                    );
-                    flows[i].addNode(new Node(new PairQueryEngine(rule), "query"));
-                    // process customized iterator
-                    if (rule.hasCustomIterator()) {
-                        Class iteratorClass = Bootstrap.loadClass(rule.getIteratorClass());
-                        Object iteratorInstance = iteratorClass.newInstance();
-                        if (!Operator.class.isAssignableFrom(iteratorInstance.getClass())) {
-                            throw
-                                new ReflectiveOperationException(
-                                    "Iterator class is not a valid operator."
-                                );
-                        }
-                        flows[i].addNode(new Node((Operator)iteratorInstance, "iterator"));
-                    } else {
-                        flows[i].addNode(new Node(new TupleCollectionPairIterator(), "iterator"));
-                    }
                     flows[i].addNode(new Node(new ViolationDetector<TuplePair>(rule), "detector"));
                 } else {
-                    // single table rule
-                    flows[i].addNode(
-                        new Node(new Deseralizer<TupleCollection>(cleanPlan), "deserializer")
-                    );
-                    flows[i].addNode(new Node(new QueryEngine(rule), "query"));
-                    // process customized iterator
-                    if (rule.hasCustomIterator()) {
-                        Class iteratorClass = Bootstrap.loadClass(rule.getIteratorClass());
-                        Object iteratorInstance = iteratorClass.newInstance();
-                        if (!Operator.class.isAssignableFrom(iteratorInstance.getClass())) {
-                            throw
-                                new ReflectiveOperationException(
-                                    "Iterator class is not a valid operator."
-                                );
-                        }
-                        flows[i].addNode(new Node((Operator)iteratorInstance, "iterator"));
-                    } else if (rule.supportTwoInputs()) {
-                        flows[i].addNode(new Node(new TuplePairIterator(), "iterator"));
-                    }
-
                     flows[i].addNode(
                         new Node(new ViolationDetector<TupleCollection>(rule), "detector")
                     );

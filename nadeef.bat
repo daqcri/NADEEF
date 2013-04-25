@@ -7,6 +7,6 @@ java -cp out\nadeef.jar qa.qcri.nadeef.console.Console
 goto end
 
 :noCompile
-echo Nadeef is not compiled yet. Run 'ant all' to compile Nadeef.
+echo Nadeef is not compiled yet. Run 'ant' to compile Nadeef.
 
 :end

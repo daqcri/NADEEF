@@ -9,12 +9,11 @@ import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * My custom rule with pair detection.
  */
-public class MyRule2 extends Rule<TuplePair> {
+public class MyRule2 extends PairTupleRule {
     /**
      * Detect rule with one tuple.
      *

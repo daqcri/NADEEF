@@ -11,18 +11,11 @@ import java.util.List;
 /**
  * TextRule contains rule with description text.
  */
-public abstract class TextRule<T> extends Rule<T> {
-
-    /**
-     * Constructor. Checks for which signatures are implemented.
-     */
-    protected TextRule(String id, List<String> tableNames) {
-        super(id, tableNames);
-    }
+public interface TextRule {
 
     /**
      * Interpret a rule from input text stream.
      * @param input Input stream.
      */
-    public abstract void parse(StringReader input);
+    public void parse(StringReader input);
 }

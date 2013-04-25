@@ -5,18 +5,9 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.Tuple;
-import qa.qcri.nadeef.core.operator.Deseralizer;
-import qa.qcri.nadeef.test.TestDataRepository;
-
-import java.util.List;
 
 /**
  * Deseralizer Test.

@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -17,9 +18,10 @@ import java.util.*;
 /**
  * CFD rule.
  */
-public class CFDRule extends TextRule<TuplePair> {
+public class CFDRule extends PairTupleRule implements TextRule {
     protected List<Column> lhs;
     protected List<Column> rhs;
+    protected List<SimpleExpression> filterExpressions;
 
     /**
      * Constructor. Checks for which signatures are implemented.
@@ -27,8 +29,24 @@ public class CFDRule extends TextRule<TuplePair> {
     public CFDRule(String id, List<String> tableNames, StringReader reader) {
         super(id, tableNames);
         parse(reader);
-        verticalFilter.addAll(lhs);
-        verticalFilter.addAll(rhs);
+
+        lhs = new ArrayList<Column>();
+        rhs = new ArrayList<Column>();
+        filterExpressions = new ArrayList<SimpleExpression>();
+    }
+
+    /**
+     * Scope the tuple collection.
+     * @param tupleCollections input tuple collections.
+     * @return
+     */
+    @Override
+    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
+        List<TupleCollection> collections = Lists.newArrayList(tupleCollections);
+        TupleCollection collection = collections.get(0);
+        collection.project(new Column(tableNames.get(0), "tid")).project(lhs).project(rhs);
+        collection.filter(filterExpressions);
+        return collections;
     }
 
     /**
@@ -126,7 +144,6 @@ public class CFDRule extends TextRule<TuplePair> {
                 throw new IllegalArgumentException("Invalid rule description " + line);
             }
 
-            List<SimpleExpression> expressions = new ArrayList();
             Column curColumn;
             for (int i = 0; i < splits.length; i ++) {
                 split = splits[i].trim().toLowerCase();
@@ -143,10 +160,8 @@ public class CFDRule extends TextRule<TuplePair> {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                expressions.add(SimpleExpression.newEqual(curColumn, split));
+                filterExpressions.add(SimpleExpression.newEqual(curColumn, split));
             }
-
-            setHorizontalFilter(expressions);
         } catch (IOException ex) {
             Tracer tracer = Tracer.getTracer(FDRule.class);
             tracer.err(ex.getMessage());

@@ -17,7 +17,6 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
-import javax.smartcardio.TerminalFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -79,6 +78,10 @@ public class Console {
 
             while ((line = console.readLine()) != null) {
                 line = line.trim();
+                char[] result = line.toCharArray();
+                for (int i = 0; i < result.length; i ++) {
+                    System.out.println(result[i] + " : " + (int)result[i]);
+                }
                 try {
                     if (line.startsWith("exit")) {
                         break;
@@ -94,7 +97,7 @@ public class Console {
                         continue;
                     } else if (line.startsWith("set")) {
                         set(line);
-                    } else{
+                    } else {
                         console.println("I don't know this command.");
                     }
                 } catch (Exception ex) {

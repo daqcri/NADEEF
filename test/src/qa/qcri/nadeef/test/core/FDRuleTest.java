@@ -9,11 +9,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import qa.qcri.nadeef.core.datamodel.*;
 
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Test FDRule methods.
@@ -22,8 +24,8 @@ import java.util.*;
 public class FDRuleTest {
     @Test
     public void parseTest() {
-        Set lhs = null;
-        Set rhs = null;
+        List lhs = null;
+        List rhs = null;
 
         List<String> tables = Arrays.asList("test");
         FDRule rule1 = new FDRule("FD1", tables, new StringReader("test.A, test.B,|test.C"));
@@ -53,10 +55,10 @@ public class FDRuleTest {
         final String tableName = "test";
 
         Tuple[] tuples = new Tuple[4];
-        Column[] columns = new Column[3];
-        columns[0] = new Column(tableName, "ZIP");
-        columns[1] = new Column(tableName, "CITY");
-        columns[2] = new Column(tableName, "STATE");
+        List columns = new ArrayList();
+        columns.add(new Column(tableName, "ZIP"));
+        columns.add(new Column(tableName, "CITY"));
+        columns.add(new Column(tableName, "STATE"));
         Schema schema = new Schema("test", columns);
         tuples[0] = new Tuple(1, schema, new String[] {"0001", "Brooklyn", "NY"});
         tuples[1] = new Tuple(2, schema, new String[] {"0001", "Chengdu", "Sichuan"});

@@ -6,10 +6,12 @@
 package qa.qcri.nadeef.test;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
+import qa.qcri.nadeef.core.exception.InvalidRuleException;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 /**
  * Factory class to get TestData.
@@ -48,61 +50,41 @@ public class TestDataRepository {
 
     public static CleanPlan getCleanPlan()
         throws
-        IOException,
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException,
-        NoSuchMethodException,
-        InvocationTargetException {
+            InvalidRuleException,
+            FileNotFoundException,
+            InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile1()));
     }
 
     public static CleanPlan getCleanPlan2()
         throws
-        IOException,
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException,
-        NoSuchMethodException,
-        InvocationTargetException {
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile2()));
     }
 
     public static CleanPlan getCleanPlan3()
         throws
-        IOException,
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException,
-        NoSuchMethodException,
-        InvocationTargetException {
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile3()));
     }
 
     public static CleanPlan getCleanPlan4()
         throws
-        IOException,
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException,
-        NoSuchMethodException,
-        InvocationTargetException {
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4()));
     }
 
     public static CleanPlan getCleanPlan5()
         throws
-        IOException,
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException,
-        NoSuchMethodException,
-        InvocationTargetException {
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
     }
 }

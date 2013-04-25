@@ -16,12 +16,13 @@ import java.util.Set;
 /**
  * SQL Builder utility.
  */
-public class SqlQueryBuilder {
+public class SqlQueryBuilder implements Cloneable {
     private Set<String> selects;
     private Set<String> wheres;
     private Set<String> froms;
     private Set<String> orders;
     private Set<String> distincts;
+    private int limit;
 
     //<editor-fold desc="Constructor">
 
@@ -29,11 +30,24 @@ public class SqlQueryBuilder {
      * Constructor.
      */
     public SqlQueryBuilder() {
-        selects = new HashSet();
-        wheres = new HashSet();
-        froms = new HashSet();
-        orders = new HashSet();
-        distincts = new HashSet();
+        selects = new HashSet(5);
+        wheres = new HashSet(5);
+        froms = new HashSet(5);
+        orders = new HashSet(5);
+        distincts = new HashSet(5);
+        limit = -1;
+    }
+
+    /**
+     * Copy Constructor.
+     */
+    public SqlQueryBuilder(SqlQueryBuilder obj) {
+        selects = new HashSet(obj.selects);
+        wheres = new HashSet(obj.wheres);
+        froms = new HashSet(obj.froms);
+        orders = new HashSet(obj.orders);
+        distincts = new HashSet(obj.distincts);
+        limit = obj.limit;
     }
     //</editor-fold>
 
@@ -86,6 +100,10 @@ public class SqlQueryBuilder {
         this.distincts.add(disintct);
     }
 
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     public String build() {
         StringBuilder builder = new StringBuilder("SELECT ");
         if (distincts.size() > 0) {
@@ -107,6 +125,10 @@ public class SqlQueryBuilder {
             builder.append(asString(orders));
         }
 
+        if (limit > 0) {
+            builder.append(" LIMIT ");
+            builder.append(limit);
+        }
         return builder.toString();
     }
     //</editor-fold>

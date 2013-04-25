@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
@@ -19,13 +20,13 @@ import java.util.*;
  * Function Dependency (FD) Rule.
  * TODO: write more unit testing on FD rule.
  */
-public class FDRule extends TextRule<TuplePair> {
-    protected Set<Column> lhs;
-    protected Set<Column> rhs;
+public class FDRule extends PairTupleRule implements TextRule {
+    protected ImmutableList<Column> lhs;
+    protected ImmutableList<Column> rhs;
 
-    public FDRule(String id, List<String> tableNames, StringReader input) {
+    public FDRule(String id, List<String> tableNames, StringReader reader) {
         super(id, tableNames);
-        parse(input);
+        parse(reader);
     }
 
     /**
@@ -35,48 +36,67 @@ public class FDRule extends TextRule<TuplePair> {
     @Override
     public void parse(StringReader input) {
         BufferedReader reader = new BufferedReader(input);
-        lhs = new HashSet();
-        rhs = new HashSet();
+        Set<Column> lhsSet = new HashSet();
+        Set<Column> rhsSet = new HashSet();
 
         // Here we assume the rule comes in with one line.
         try {
             String line = reader.readLine();
-            String[] splits = line.trim().split("\\|");
-            String split;
-            if (splits.length != 2) {
+            String[] tokens = line.trim().split("\\|");
+            String token;
+            if (tokens.length != 2) {
                 throw new IllegalArgumentException("Invalid rule description " + line);
             }
             // parse the LHS
-            String[] lhsSplits = splits[0].split(",");
+            String[] lhsSplits = tokens[0].split(",");
             // use the first one as default table name.
             String defaultTable = tableNames.get(0);
+            Column newColumn = null;
             for (int i = 0; i < lhsSplits.length; i ++) {
-                split = lhsSplits[i].trim().toLowerCase();
-                if (Strings.isNullOrEmpty(split)) {
+                token = lhsSplits[i].trim().toLowerCase();
+                if (Strings.isNullOrEmpty(token)) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                if (!Strings.isNullOrEmpty(defaultTable) && !Column.isValidFullAttributeName(split)) {
-                    lhs.add(new Column(defaultTable, split));
+                if (!Column.isValidFullAttributeName(token)) {
+                    newColumn = new Column(defaultTable, token);
                 } else {
-                    lhs.add(new Column(split));
+                    newColumn = new Column(token);
                 }
+
+                if (lhsSet.contains(newColumn)) {
+                    throw new IllegalArgumentException(
+                        "FD cannot have duplicated column " + newColumn.getFullAttributeName()
+                    );
+                }
+                lhsSet.add(newColumn);
             }
 
             // parse the RHS
-            String[] rhsSplits = splits[1].trim().split(",");
+            String[] rhsSplits = tokens[1].trim().split(",");
             for (int i = 0; i < rhsSplits.length; i ++) {
-                split = rhsSplits[i].trim().toLowerCase();
-                if (split.isEmpty()) {
+                token = rhsSplits[i].trim().toLowerCase();
+                if (token.isEmpty()) {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                if (!Strings.isNullOrEmpty(defaultTable) && !Column.isValidFullAttributeName(split)) {
-                    rhs.add(new Column(defaultTable, split));
+                if (!Strings.isNullOrEmpty(defaultTable) && !Column.isValidFullAttributeName(token)) {
+                    newColumn = new Column(defaultTable, token);
                 } else {
-                    rhs.add(new Column(split));
+                    newColumn = new Column(token);
                 }
+
+                if (rhsSet.contains(newColumn)) {
+                    throw new IllegalArgumentException(
+                        "FD cannot have duplicated column " + newColumn.getFullAttributeName()
+                    );
+                }
+                rhsSet.add(newColumn);
             }
+
+            lhs = ImmutableList.copyOf(lhsSet);
+            rhs = ImmutableList.copyOf(rhsSet);
+
         } catch (IOException ex) {
             Tracer tracer = Tracer.getTracer(FDRule.class);
             tracer.err(ex.getMessage());
@@ -84,71 +104,39 @@ public class FDRule extends TextRule<TuplePair> {
     }
 
     /**
-     * FD filter.
-     * @param tupleCollection input tuple collections.
+     * FD scope.
+     * @param tupleCollections input tuple collections.
      * @return tuples after filtering.
      */
     @Override
-    public TupleCollection filter(TupleCollection tupleCollection) {
-        SqlQueryBuilder query = tupleCollection.getSQLQuery();
-
-        // projection filter
-        query.addSelect("tid");
-        List<Column> attrs = Lists.newArrayList(lhs);
-        for (Column column : attrs) {
-            query.addSelect(column.getFullAttributeName());
-        }
-
-        attrs = Lists.newArrayList(rhs);
-        for (Column column : attrs) {
-            query.addSelect(column.getFullAttributeName());
-        }
-
-        return tupleCollection;
+    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
+        // TODO: solve the TID issue more elegantly
+        TupleCollection tupleCollection = tupleCollections.iterator().next();
+        tupleCollection.project(new Column(tableNames.get(0), "tid"))
+            .project(lhs)
+            .project(rhs);
+        return tupleCollections;
     }
 
+    /**
+     * Default group operation.
+     *
+     * @param tupleCollections input tuple
+     * @return a group of tuple collection.
+     */
     @Override
-    // TODO: create a new view for each group
-    public Collection<TupleCollection> group(TupleCollection tupleCollection) {
-        LinkedList<TupleCollection> groups = new LinkedList();
-        SqlQueryBuilder query = tupleCollection.getSQLQuery();
-        Column[] lhsColumns = lhs.toArray(new Column[lhs.size()]);
-        for (Column column : lhsColumns) {
-            query.addOrder(column.getFullAttributeName());
-        }
-
-        Tuple lastTuple = null;
-        List<Tuple> cur = new ArrayList();
-        for (int i = 0; i < tupleCollection.size(); i ++) {
-            boolean isSameGroup = true;
-            Tuple tuple = tupleCollection.get(i);
-            if (lastTuple == null) {
-                lastTuple = tuple;
-                cur.add(tuple);
-                continue;
-            }
-
-            // check whether the current tuple is within the same current group.
-            for (Column column : lhsColumns) {
-                Object lastValue = lastTuple.get(column);
-                Object newValue = tuple.get(column);
-                if (!lastValue.equals(newValue)) {
-                    isSameGroup = false;
-                    break;
+    public Collection<TuplePair> group(Collection<TupleCollection> tupleCollections) {
+        ArrayList<TuplePair> result = new ArrayList();
+        Collection<TupleCollection> groupResult = tupleCollections.iterator().next().groupOn(lhs);
+        for (TupleCollection tuples : groupResult) {
+            for (int i = 0; i < tuples.size(); i ++) {
+                for (int j = i + 1; j < tuples.size(); j ++) {
+                    TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                    result.add(pair);
                 }
             }
-
-            if (isSameGroup) {
-                cur.add(tuple);
-            } else {
-                groups.add(new TupleCollection(cur));
-                cur = new ArrayList();
-                cur.add(tuple);
-            }
-            lastTuple = tuple;
         }
-        groups.add(new TupleCollection(cur));
-        return groups;
+        return result;
     }
 
     /**
@@ -161,9 +149,8 @@ public class FDRule extends TextRule<TuplePair> {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
 
-        Column[] rhsColumns = rhs.toArray(new Column[rhs.size()]);
         List<Violation> result = new ArrayList();
-        for (Column column : rhsColumns) {
+        for (Column column : rhs) {
             Object lvalue = left.get(column);
             Object rvalue = right.get(column);
 
@@ -183,7 +170,7 @@ public class FDRule extends TextRule<TuplePair> {
      * Gets LHS set.
      * @return lhs set.
      */
-    public Set getLhs() {
+    public List<Column> getLhs() {
         return lhs;
     }
 
@@ -191,7 +178,7 @@ public class FDRule extends TextRule<TuplePair> {
      * Gets RHS set.
      * @return rhs set.
      */
-    public Set getRhs() {
+    public List<Column> getRhs() {
         return rhs;
     }
 }

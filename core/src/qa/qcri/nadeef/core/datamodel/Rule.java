@@ -5,170 +5,111 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
-import qa.qcri.nadeef.tools.Tracer;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Abstract base class for a rule providing the default behavior of filter and group operation.
+ * Abstract rule.
  */
-// TODO: adds generic verification to limit the T type.
-public abstract class Rule<T> extends AbstractRule<T> {
-    protected Set<Column> verticalFilter;
-    protected Set<SimpleExpression> horizontalFilter;
-    protected Column groupColumn;
-    protected Set<String> groupSelector;
-    protected String iteratorClass;
-    protected Tracer tracer = Tracer.getTracer(getClass());
+public abstract class Rule<TDetect, TIterator> {
+    protected String id;
+    protected List<String> tableNames;
 
     /**
      * Default constructor.
      */
-    public Rule() {}
+    protected Rule() {}
 
     /**
      * Constructor. Checks for which signatures are implemented.
      */
-    protected Rule(String id, List<String> tableNames) {
+    public Rule(String id, List<String> tableNames) {
         initialize(id, tableNames);
     }
 
     /**
-     * Internal method to initialize a rule.
+     * Initialize a rule.
      * @param id Rule id.
-     * @param tableNames Table names.
+     * @param tableNames table names.
      */
     void initialize(String id, List<String> tableNames) {
-        super.initialize(id, tableNames);
-        verticalFilter = new HashSet();
-        horizontalFilter = new HashSet<SimpleExpression>();
-        groupSelector = new HashSet();
+        Preconditions.checkArgument(
+            !Strings.isNullOrEmpty(id) && tableNames != null && tableNames.size() > 0
+        );
+
+        this.id = id;
+        this.tableNames = tableNames;
     }
 
     /**
-     * Sets the vertical filter.
-     * @param verticalFilters vertical filters.
+     * Gets of rule Id.
      */
-    public void setVerticalFilter(Iterable<Column> verticalFilters) {
-        this.verticalFilter = Sets.newHashSet(verticalFilters);
+    public String getId() {
+        return id;
     }
 
     /**
-     * Sets the horizontal filter.
-     * @param horizontalFilter horizontal filter.
+     * Detect rule with one tuple.
+     * @param tuples input tuple.
+     * @return Violation set.
      */
-    public void setHorizontalFilter(Iterable<SimpleExpression> horizontalFilter) {
-        this.horizontalFilter = Sets.<SimpleExpression>newHashSet(horizontalFilter);
-    }
+    public abstract Collection<Violation> detect(TDetect tuples);
 
-    /**
-     * Sets the group column.
-     * @param column group column.
-     */
-    public void setGroupColumn(Column column) {
-        this.groupColumn = column;
-    }
-
-    /**
-     * Gets iterator class name.
-     * @return iterator class name.
-     */
-    public String getIteratorClass() {
-        return iteratorClass;
-    }
-
+    // public abstract Collection<Fix> repair(Violation violation);
     /**
      * Default group operation.
      * @param tupleCollection input tuple
      * @return a group of tuple collection.
      */
-    @Override
-    public Collection<TupleCollection> group(TupleCollection tupleCollection) {
-        LinkedList<TupleCollection> groups = new LinkedList();
-
-        if (groupColumn != null) {
-            tracer.verbose("Use default grouping on " + groupColumn.getFullAttributeName());
-            SqlQueryBuilder query = tupleCollection.getSQLQuery();
-            query.addOrder(groupColumn.getFullAttributeName());
-
-            Tuple lastTuple = null;
-            List<Tuple> cur = new ArrayList();
-            for (int i = 0; i < tupleCollection.size(); i ++) {
-                Tuple tuple = tupleCollection.get(i);
-                if (lastTuple == null) {
-                    lastTuple = tuple;
-                    cur.add(tuple);
-                    continue;
-                }
-
-                // check whether the current tuple is within the same current group.
-                Object lastValue = lastTuple.get(groupColumn);
-                Object newValue = tuple.get(groupColumn);
-                if (!lastValue.equals(newValue)) {
-                    groups.add(new TupleCollection(cur));
-                    cur = new ArrayList();
-                    cur.add(tuple);
-                } else {
-                    cur.add(tuple);
-                }
-
-                lastTuple = tuple;
-            }
-            groups.add(new TupleCollection(cur));
-        } else {
-            groups.add(tupleCollection);
-        }
-        return groups;
-    }
+    public abstract TIterator group(Collection<TupleCollection> tupleCollection);
 
     /**
-     * Default filter operation.
+     * Default scope operation.
      * @param tupleCollection input tuple collections.
      * @return filtered tuple collection.
      */
-    @Override
-    public TupleCollection filter(TupleCollection tupleCollection) {
-        SqlQueryBuilder query = tupleCollection.getSQLQuery();
+    public abstract Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollection);
 
-        query.addSelect("tid");
-        if (verticalFilter.size() != 0) {
-            tracer.verbose("Use default vertical filter on ");
-            List<Column> selects = Lists.newArrayList(verticalFilter);
-            for (Column column : selects) {
-                tracer.verbose(column.getFullAttributeName());
-                query.addSelect(column.getFullAttributeName());
-            }
-        }
-
-        if (horizontalFilter.size() != 0) {
-            tracer.verbose("Use default horizontal filter on ");
-            List<SimpleExpression> wheres = Lists.newArrayList(horizontalFilter);
-            for (SimpleExpression where : wheres) {
-                tracer.verbose(where.toString());
-                query.addWhere(where.toString());
-            }
-        }
-        return tupleCollection;
+    /**
+     * Returns <code>True</code> when the rule implements one tuple input.
+     * @return <code>True</code> when the rule implements one tuple inputs.
+     */
+    public boolean supportOneInput() {
+        return this instanceof SingleTupleRule;
     }
 
     /**
-     * Sets of the iterator.
-     * @param iteratorClass iterator class.
+     * Returns <code>True</code> when the rule implements two tuple inputs.
+     * @return <code>True</code> when the rule implements two tuple inputs.
      */
-    public void setIteratorClass(String iteratorClass) {
-        this.iteratorClass = iteratorClass;
+    public boolean supportTwoInputs() {
+        return this instanceof PairTupleRule;
     }
 
     /**
-     * Returns <code>True</code> when the rule has customized iterator.
-     * @return <code>True</code> when the rule has customized iterator.
+     * Returns <code>True</code> when the rule implements multiple tuple inputs.
+     * @return <code>True</code> when the rule implements multiple tuple inputs.
      */
-    public boolean hasCustomIterator() {
-        return !Strings.isNullOrEmpty(iteratorClass);
+    public boolean supportManyInputs() {
+        return this instanceof SingleTupleRule;
+    }
+
+    /**
+     * Returns <code>True</code> when the rule has two tables supported.
+     * @return <code>True</code> when the rule has two tables supported.
+     */
+    public boolean supportTwoTables() {
+        return tableNames.size() == 2;
+    }
+
+    /**
+     * Gets the used table names in the rule.
+     * @return A list of table names.
+     */
+    public List<String> getTableNames() {
+        return tableNames;
     }
 }

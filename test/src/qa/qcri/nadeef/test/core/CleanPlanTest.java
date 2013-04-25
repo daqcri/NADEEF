@@ -5,19 +5,18 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.Assert;
 import org.jooq.SQLDialect;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.DBConfig;
 import qa.qcri.nadeef.core.datamodel.FDRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
 
-import java.io.*;
+import java.io.FileReader;
 import java.util.List;
 
 /**

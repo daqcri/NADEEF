@@ -6,190 +6,166 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.core.exception.InvalidSchemaException;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * Tuple collection class.
+ * Abstract Tuple Collection.
  */
-public class TupleCollection {
-    private DBConfig dbconfig;
-    private String tableName;
-    private SqlQueryBuilder sqlQuery;
-    private ArrayList<Tuple> tuples;
-
-    private static Tracer tracer = Tracer.getTracer(TupleCollection.class);
-
-    //<editor-fold desc="Constructor">
+public abstract class TupleCollection {
+    protected Schema schema;
 
     /**
      * Constructor.
-     * @param collection a collection of <code>Tuples</code>, by
-     *                   using this constructor the result <code>TupleCollection</code>
-     *                   will be an orphan collection (no database connection behind).
+     * @param schema schema.
      */
-    public TupleCollection(Collection<Tuple> collection) {
-        tuples = Lists.newArrayList(collection);
+    public TupleCollection(Schema schema) {
+        this.schema = schema;
     }
 
     /**
-     * Constructor with database connection.
-     * @param tableName tuple collection table name.
-     * @param dbconfig used database connection.
+     * Gets the Tuple schema.
+     * @return Tuple schema.
      */
-    public TupleCollection(String tableName, DBConfig dbconfig)
-            throws
-                ClassNotFoundException,
-                SQLException,
-                InstantiationException,
-                IllegalAccessException {
-        Preconditions.checkNotNull(dbconfig);
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
-        this.dbconfig = dbconfig;
-        this.tableName = tableName;
-        this.sqlQuery = new SqlQueryBuilder();
-        this.sqlQuery.addFrom(tableName);
-    }
-    //</editor-fold>
-
-    /**
-     * Synchronize the collection data with the underlying database.
-     * @return Returns <code>True</code> when the synchronization is successful.
-     */
-    public synchronized boolean sync()
-        throws SQLException,
-               InstantiationException,
-               IllegalAccessException,
-               ClassNotFoundException {
-        if (isOrphan()) {
-            tracer.info("TupleCollection is an orphan, sync failed.");
-            return false;
-        }
-
-        tuples = new ArrayList();
-        Connection conn = DBConnectionFactory.createConnection(dbconfig);
-        Statement stat = conn.createStatement();
-        ResultSet resultSet = stat.executeQuery(sqlQuery.build());
-        conn.commit();
-        int tupleId = 1;
-
-        // fill the schema
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int count = metaData.getColumnCount();
-        Column[] columns = new Column[count];
-        for (int i = 1; i <= count; i ++) {
-            String attributeName = metaData.getColumnName(i);
-            columns[i - 1] = new Column(tableName, attributeName);
-        }
-
-        Schema schema  = new Schema(tableName, columns);
-
-        // fill the tuples
-        while (resultSet.next()) {
-            Object[] values = new Object[count];
-            for (int i = 1; i <= count; i ++) {
-                String attributeName = metaData.getColumnName(i);
-                if (attributeName.equalsIgnoreCase("tid")) {
-                    tupleId = (int)resultSet.getObject(i);
-                }
-                values[i - 1] = resultSet.getObject(i);
-            }
-
-            tuples.add(new Tuple(tupleId, schema, values));
-            tupleId ++;
-        }
-        stat.close();
-        conn.close();
-        return true;
+    public Schema getSchema() {
+        return schema;
     }
 
     /**
-     * Gets the SQL query of this tuple collection.
-     * @return <code>SqlQueryBuilder</code> instance.
+     * Creates a tuple collection from a collection of tuples.
+     * @param tuples a collection of tuples.
+     * @return <code>TupleCollection</code> instance.
      */
-    public SqlQueryBuilder getSQLQuery() {
-        return sqlQuery;
-    }
+    protected abstract TupleCollection newTupleCollection(Collection<Tuple> tuples);
 
     /**
      * Gets the size of the collection.
-     * It will call <code>sync</code> if the collection is not yet existed.
-     *
      * @return size of the collection.
      */
-    public int size() {
-        try {
-            if (tuples == null) {
-                sync();
+    public abstract int size();
+
+    /**
+     * Gets the <code>Tuple</code> at the index.
+     * @param i index.
+     * @return Tuple.
+     */
+    public abstract Tuple get(int i);
+
+    //<editor-fold desc="Default TupleCollection behavior">
+    public abstract TupleCollection project(Column column);
+    public abstract TupleCollection project(Collection<Column> columns);
+    public abstract TupleCollection orderBy(Column column);
+    public abstract TupleCollection orderBy(Collection<Column> columns);
+    public abstract TupleCollection filter(SimpleExpression expression);
+    public abstract TupleCollection filter(List<SimpleExpression> expressions);
+
+    /**
+     * Partition the tuple collection into multiple tuple collections based
+     * on a list of columns.
+     * @param columns Paritition based on a list of column.
+     * @return A collection of tuple collections.
+     */
+    public Collection<TupleCollection> groupOn(Collection<Column> columns) {
+        Preconditions.checkNotNull(columns);
+        Schema schema = getSchema();
+
+        for (Column column : columns) {
+            if (!schema.hasColumn(column)) {
+                throw
+                    new IllegalArgumentException(
+                        "Column " + column + "does not exist."
+                    );
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return 0;
         }
-         return tuples.size();
-    }
 
-    /**
-     * Gets the tuple from the collection.
-     * @param i tuple index.
-     * @return tuple instance.
-     */
-    public Tuple get(int i) {
-        try {
-            if (tuples == null) {
-                sync();
+        List<TupleCollection> groups = new ArrayList();
+        orderBy(columns);
+        if (size() < 2) {
+            groups.add(this);
+            return groups;
+        }
+
+        Tuple lastTuple = get(0);
+        List<Tuple> curList = new ArrayList();
+        curList.add(lastTuple);
+
+        boolean isSameGroup = true;
+        for (int i = 1; i < size(); i ++) {
+            isSameGroup = true;
+            Tuple tuple = get(i);
+            for (Column column : columns) {
+                Object lvalue = lastTuple.get(column);
+                Object rvalue = tuple.get(column);
+                if (!lvalue.equals(rvalue)) {
+                    isSameGroup = false;
+                    break;
+                }
+
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+
+            if (isSameGroup) {
+                curList.add(tuple);
+            } else {
+                groups.add(newTupleCollection(curList));
+                curList = new ArrayList();
+                curList.add(tuple);
+            }
+
+            lastTuple = tuple;
         }
 
-        return tuples.get(i);
+        groups.add(newTupleCollection(curList));
+        return groups;
     }
 
     /**
-     * Gets the DB config.
-     * @return DB config.
+     * Partition the tuple collection into multiple tuple collections based
+     * on the column.
+     * @param column Paritition based on column.
+     * @return A collection of tuple collections.
      */
-    public DBConfig getDbconfig() {
-        return this.dbconfig;
-    }
+    public Collection<TupleCollection> groupOn(Column column) {
+        Schema schema = getSchema();
 
-    /**
-     * Return <code>True</code> when the tuple collection has no Database underneath.
-     * @return
-     */
-    public boolean isOrphan() {
-        return dbconfig == null;
-    }
-
-    /**
-     * Custom equals compare.
-     * @param collection target collection.
-     * @return Returns <code>True</code> if the given collection is the same.
-     */
-    @Override
-    public boolean equals(Object collection) {
-        if (collection == this) {
-            return true;
+        if (!schema.hasColumn(column)) {
+            throw
+                new IllegalArgumentException(
+                    "Column " + column + "does not exist."
+                );
         }
 
-        if (collection == null || !(collection instanceof TupleCollection)) {
-            return false;
+        List<TupleCollection> groups = new ArrayList();
+        if (size() < 2) {
+            groups.add(this);
+            return groups;
         }
 
-        TupleCollection obj = (TupleCollection)collection;
-        if (dbconfig.equals(obj.dbconfig) && tableName.equals(obj.tableName)) {
-            return true;
+        orderBy(column);
+
+        Tuple lastTuple = get(0);
+        List<Tuple> curList = new ArrayList();
+        curList.add(lastTuple);
+
+        for (int i = 1; i < size(); i ++) {
+            Tuple tuple = get(i);
+            Object lvalue = lastTuple.get(column);
+            Object rvalue = tuple.get(column);
+            if (lvalue.equals(rvalue)) {
+                curList.add(tuple);
+            } else {
+                groups.add(newTupleCollection(curList));
+                curList = new ArrayList();
+                curList.add(tuple);
+            }
+            lastTuple = tuple;
         }
 
-        return this.tuples.equals(obj.tuples);
+        groups.add(newTupleCollection(curList));
+        return groups;
     }
+    //</editor-fold desc="Default TupleCollection behavior">
 }

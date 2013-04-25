@@ -1,6 +1,6 @@
 package qa.qcri.nadeef.test.udf;
 
-import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.SingleTupleRule;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Test rule.
  */
-public class MyRule1 extends Rule<Tuple> {
+public class MyRule1 extends SingleTupleRule {
     /**
      * Detect rule with one tuple.
      *
