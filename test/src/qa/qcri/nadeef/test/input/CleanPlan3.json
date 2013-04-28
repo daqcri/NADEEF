@@ -14,13 +14,6 @@
 			"type" : "udf",
             "table" : ["location"],
             "value" : ["qa.qcri.nadeef.test.udf.MyRule1"],
-            "filter" : {
-                "vertical" : ["city", "zip"],
-                "horizontal" : ["zip = '1183JV'"]
-            },
-            "group" : {
-                "on" : "zip"
-            }
         }
     ]
 }

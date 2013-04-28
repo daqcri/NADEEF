@@ -15,6 +15,7 @@ public class Column {
     private String attributeName;
     private String schemaName;
 
+    //<editor-fold desc="Constructors">
     /**
      * Constructor.
      */
@@ -51,6 +52,7 @@ public class Column {
         this.tableName = tableName;
         this.attributeName = attributeName;
     }
+    //</editor-fold>
 
     public String getSchemaName() {
         return schemaName;

@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
@@ -13,7 +12,9 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * CFD rule.
@@ -28,11 +29,12 @@ public class CFDRule extends PairTupleRule implements TextRule {
      */
     public CFDRule(String id, List<String> tableNames, StringReader reader) {
         super(id, tableNames);
-        parse(reader);
 
         lhs = new ArrayList<Column>();
         rhs = new ArrayList<Column>();
         filterExpressions = new ArrayList<SimpleExpression>();
+
+        parse(reader);
     }
 
     /**
@@ -182,5 +184,13 @@ public class CFDRule extends PairTupleRule implements TextRule {
      */
     public List<Column> getRhs() {
         return rhs;
+    }
+
+    /**
+     * Gets the filter expression.
+     * @return Filter expression set.
+     */
+    public List<SimpleExpression> getFilterExpressions() {
+        return filterExpressions;
     }
 }

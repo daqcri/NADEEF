@@ -25,15 +25,24 @@ public class MyRule2 extends PairTupleRule {
         Tuple left = tuples.getLeft();
         Tuple right = tuples.getRight();
 
-        String tableName = tableNames.get(0);
-        Column city = new Column(tableName, "city");
-        Column zip = new Column(tableName, "zip");
+        Column city = new Column(tableNames.get(0), "city");
 
         Violation violation = new Violation(id);
         if (!left.get(city).equals(right.get(city))) {
             violation.addTuple(left);
+			violation.addTuple(right);
         }
 
         return Lists.newArrayList(violation);
+    }
+
+    @Override
+    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
+        TupleCollection collection = tupleCollections.iterator().next();
+        String tableName = tableNames.get(0);
+        collection.project(new Column(tableName, "city"))
+                .project(new Column(tableName, "zip"))
+                .filter(SimpleExpression.newEqual(new Column(tableName, "zip"), "1183JV"));
+        return tupleCollections;
     }
 }

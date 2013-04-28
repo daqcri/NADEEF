@@ -7,25 +7,21 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-
 import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.CSVDumper;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,11 +79,7 @@ public class CleanPlan {
             if (type.equalsIgnoreCase("csv")) {
                 isCSV = true;
                 String fileName = (String)src.get("file");
-                // TODO: find a better way to parse the file name.
-                fileName = fileName.replace("\\", "\\\\");
-                fileName = fileName.replace("\t", "\\t");
-                fileName = fileName.replace("\n", "\\n");
-                File file = new File(fileName);
+                File file = FileHelper.getFile(fileName);
                 // source is a CSV file, dump it first.
                 Connection conn = DBConnectionFactory.createNadeefConnection();
                 // TODO: find a way to clean the table after exiting.
@@ -105,13 +97,13 @@ public class CleanPlan {
                 sourceTableUserName = (String)src.get("username");
                 sourceTableUserPassword = (String)src.get("password");
             }
+            DBConfig.Builder builder = new DBConfig.Builder();
             DBConfig source =
-                new DBConfig(
-                    sourceTableUserName,
-                    sourceTableUserPassword,
-                    sourceUrl,
-                    sqlDialect
-                );
+                    builder.username(sourceTableUserName)
+                           .password(sourceTableUserPassword)
+                           .url(sourceUrl)
+                           .dialect(sqlDialect)
+                           .build();
 
             // ----------------------------------------
             // parsing the target config
@@ -189,6 +181,7 @@ public class CleanPlan {
             }
             return new CleanPlan(source, null, rules);
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new InvalidCleanPlanException(ex.getMessage());
         }
     }

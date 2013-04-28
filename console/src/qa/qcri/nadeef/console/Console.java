@@ -6,15 +6,13 @@
 package qa.qcri.nadeef.console;
 
 import com.google.common.base.Strings;
-import jline.Terminal;
-import jline.WindowsTerminal;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.FileHelper;
+import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;

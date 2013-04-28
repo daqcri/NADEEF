@@ -13,6 +13,7 @@ public class Cell {
     private Column column;
     private Object value;
 
+    //<editor-fold desc="Constructors">
     /**
      * Constructor.
      * @param column Column.
@@ -24,6 +25,7 @@ public class Cell {
         this.value = value;
         this.tupleId = tupleId;
     }
+    //</editor-fold>
 
     //<editor-fold desc="Getter and Setters">
     public Column getColumn() {
@@ -51,9 +53,10 @@ public class Cell {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Override Equals and Hashcode">
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof Violation)) {
+        if (obj == null || !(obj instanceof Cell)) {
             return false;
         }
 
@@ -69,4 +72,5 @@ public class Cell {
     public int hashCode() {
         return column.hashCode() * tupleId;
     }
+    //</editor-fold>
 }

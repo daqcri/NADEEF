@@ -60,7 +60,7 @@ public class CleanExecutorTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.run();
-            verifyViolationResult(2);
+            verifyViolationResult(6);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -73,7 +73,7 @@ public class CleanExecutorTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan4();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.run();
-            verifyViolationResult(2);
+            verifyViolationResult(4);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

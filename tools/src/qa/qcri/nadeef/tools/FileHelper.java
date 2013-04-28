@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.tools;
 
 import java.io.File;
 import java.io.FileNotFoundException;
