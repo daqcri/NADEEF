@@ -40,10 +40,15 @@ public class Bootstrap {
             NadeefConfiguration.initialize(new FileReader(configurationFile));
             Connection conn = DBConnectionFactory.createNadeefConnection();
             String violationTableName = NadeefConfiguration.getViolationTableName();
+            String repairTableName = NadeefConfiguration.getRepairTableName();
             if (DBInstaller.isInstalled(conn, violationTableName)) {
                 DBInstaller.uninstall(conn, violationTableName);
             }
-            DBInstaller.install(conn, violationTableName);
+            if (DBInstaller.isInstalled(conn, repairTableName)) {
+                DBInstaller.uninstall(conn, repairTableName);
+            }
+
+            DBInstaller.install(conn, violationTableName, repairTableName);
             conn.commit();
             conn.close();
         } catch (FileNotFoundException e) {

@@ -1,5 +1,6 @@
 package qa.qcri.nadeef.test.udf;
 
+import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.SingleTupleRule;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -30,5 +31,16 @@ public class MyRule1 extends SingleTupleRule {
             result.add(newViolation);
         }
         return result;
+    }
+
+    /**
+     * Repair of this rule.
+     *
+     * @param violation violation input.
+     * @return a candidate fix.
+     */
+    @Override
+    public Fix repair(Violation violation) {
+        return null;
     }
 }

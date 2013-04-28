@@ -35,7 +35,7 @@ public abstract class Rule<TDetect, TIterator> {
      * @param id Rule id.
      * @param tableNames table names.
      */
-    void initialize(String id, List<String> tableNames) {
+    public void initialize(String id, List<String> tableNames) {
         Preconditions.checkArgument(
             !Strings.isNullOrEmpty(id) && tableNames != null && tableNames.size() > 0
         );
@@ -58,7 +58,13 @@ public abstract class Rule<TDetect, TIterator> {
      */
     public abstract Collection<Violation> detect(TDetect tuples);
 
-    // public abstract Collection<Fix> repair(Violation violation);
+    /**
+     * Repair of this rule.
+     * @param violation violation input.
+     * @return a candidate fix.
+     */
+    public abstract Fix repair(Violation violation);
+
     /**
      * Default group operation.
      * @param tupleCollection input tuple

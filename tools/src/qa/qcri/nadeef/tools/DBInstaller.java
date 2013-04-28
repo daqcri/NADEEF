@@ -32,10 +32,10 @@ public class DBInstaller {
      * Install Nadeef in the target database.
      */
     // TODO: move connection inside the method.
-    public static void install(Connection conn, String tableName)
+    public static void install(Connection conn, String violationTableName, String repairTableName)
             throws SQLException {
         Tracer tracer = Tracer.getTracer(DBInstaller.class);
-        if (isInstalled(conn, tableName)) {
+        if (isInstalled(conn, violationTableName)) {
             tracer.info("Nadeef is installed on the database, please try uninstall first.");
             return;
         }
@@ -44,13 +44,30 @@ public class DBInstaller {
         // TODO: make an index key for violations
         stat.execute(
                 "CREATE TABLE " +
-                tableName + " (" +
+                violationTableName + " (" +
                 "vid int," +
                 "rid varchar(255), " +
                 "tablename varchar(63), " +
                 "tupleid int, " +
                 "attribute varchar(63), value text)"
         );
+
+        stat.execute(
+            "CREATE TABLE " +
+             repairTableName + "(" +
+            "id int, " +
+            "vid int, " +
+            "c1_tupleid int, " +
+            "c1_tablename varchar(63), " +
+            "c1_attribute varchar(63), " +
+            "c1_value text," +
+            "op int," +
+            "c2_tupleid int, " +
+            "c2_tablename varchar(63), " +
+            "c2_attribute varchar(63), " +
+            "c2_value text)"
+        );
+        stat.close();
         conn.commit();
     }
 

@@ -14,20 +14,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Operation enumeration.
+ */
+enum Operation {
+    EQ,
+    LT,
+    GT,
+    NEQ,
+    LTE,
+    GTE,
+    CEQ
+}
+
+/**
  * Expression class describes a simple expression used in the scope.
  */
 public class SimpleExpression {
-    /**
-     * Operation enumeration.
-     */
-    private enum Operation {
-        EQUAL,
-        SMALLER,
-        BIGGER,
-        NOTEQUAL,
-        SMALLERANDEQUAL,
-        BIGGERANDEUQAL
-    }
 
     /**
      * Initialize BiMap for operation and corresponding SQL strings.
@@ -35,12 +37,13 @@ public class SimpleExpression {
     private static final BiMap<Operation, String> operationMap;
     static {
         Map<Operation, String> realMap = new HashMap();
-        realMap.put(Operation.EQUAL, "=");
-        realMap.put(Operation.BIGGER, ">");
-        realMap.put(Operation.SMALLER, "<");
-        realMap.put(Operation.NOTEQUAL, "!=");
-        realMap.put(Operation.BIGGERANDEUQAL, ">=");
-        realMap.put(Operation.SMALLERANDEQUAL, "<=");
+        realMap.put(Operation.EQ, "=");
+        realMap.put(Operation.GT, ">");
+        realMap.put(Operation.LT, "<");
+        realMap.put(Operation.NEQ, "!=");
+        realMap.put(Operation.GTE, ">=");
+        realMap.put(Operation.LTE, "<=");
+        realMap.put(Operation.CEQ, "<-");
         operationMap = ImmutableBiMap.copyOf(Collections.unmodifiableMap(realMap));
     }
 
@@ -93,7 +96,7 @@ public class SimpleExpression {
      * @return
      */
     public static SimpleExpression newEqual(Column column, String value) {
-        return new SimpleExpression(Operation.EQUAL, column, value);
+        return new SimpleExpression(Operation.EQ, column, value);
     }
 
     /**

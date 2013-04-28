@@ -21,7 +21,7 @@ public abstract class SingleTupleRule extends Rule<Tuple, Collection<TupleCollec
      * @param id Rule id.
      * @param tableNames Table names.
      */
-    void initialize(String id, List<String> tableNames) {
+    public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
     }
 

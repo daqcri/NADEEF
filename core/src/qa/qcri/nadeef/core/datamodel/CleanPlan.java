@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,6 +16,7 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.CSVDumper;
 
@@ -99,11 +101,11 @@ public class CleanPlan {
             }
             DBConfig.Builder builder = new DBConfig.Builder();
             DBConfig source =
-                    builder.username(sourceTableUserName)
-                           .password(sourceTableUserPassword)
-                           .url(sourceUrl)
-                           .dialect(sqlDialect)
-                           .build();
+                builder.username(sourceTableUserName)
+                       .password(sourceTableUserPassword)
+                       .url(sourceUrl)
+                       .dialect(sqlDialect)
+                       .build();
 
             // ----------------------------------------
             // parsing the target config
@@ -142,42 +144,48 @@ public class CleanPlan {
                 type = (String)ruleObj.get("type");
                 Rule rule = null;
                 JSONArray value;
+                RuleBuilder ruleBuilder = new RuleBuilder();
+                value = (JSONArray)ruleObj.get("value");
                 switch (type) {
                     case "fd":
-                        value = (JSONArray)ruleObj.get("value");
                         Preconditions.checkArgument(
                             value != null && value.size() == 1,
                             "Type value cannot be null or empty."
                         );
-                        rule =
-                            new FDRule(
-                                name,
-                                tableNames,
-                                new StringReader((String)value.get(0))
-                            );
+                        rule = ruleBuilder.type(RuleType.FD)
+                            .name(name)
+                            .table(tableNames)
+                            .value(value)
+                            .build();
                         rules.add(rule);
                         break;
                     case "udf":
-                        rule = parseUdf(ruleObj, name, tableNames);
+                        value = (JSONArray)ruleObj.get("value");
+                        rule = ruleBuilder.type(RuleType.UDF)
+                            .name(name)
+                            .table(tableNames)
+                            .value(value)
+                            .build();
                         rules.add(rule);
                         break;
                     case "cfd":
-                        value = (JSONArray)ruleObj.get("value");
-                        Preconditions.checkArgument(
-                            value != null && value.size() == 2,
-                            "Type value cannot be null or empty."
-                        );
-                        String columnLine = (String)value.get(0);
+                        // TODO: currently we parse each condition line in CFD
+                        // as a separate rule.
+                        String head = (String)value.get(0);
                         for (int j = 1; j < value.size(); j ++) {
-                            StringReader cfdLine =
-                                new StringReader(columnLine + "\n" + value.get(j));
-                            rule = new CFDRule(name, tableNames, cfdLine);
+                            String condition = (String)value.get(j);
+                            rule = ruleBuilder.type(RuleType.CFD)
+                                .name(name)
+                                .table(tableNames)
+                                .value(Lists.newArrayList(head, condition))
+                                .build();
                             rules.add(rule);
                         }
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown rule type.");
                 }
+
             }
             return new CleanPlan(source, null, rules);
         } catch (Exception ex) {
@@ -205,30 +213,4 @@ public class CleanPlan {
     }
 
     //</editor-fold>
-    private static Rule parseUdf(
-        JSONObject ruleObj,
-        String ruleId,
-        List<String> tableNames
-    ) throws InvalidRuleException {
-        try {
-            JSONArray value = (JSONArray)ruleObj.get("value");
-            Preconditions.checkArgument(value != null && value.size() == 1);
-
-            String className = (String)value.get(0);
-            Class udfClass = Bootstrap.loadClass(className);
-            if (!Rule.class.isAssignableFrom(udfClass)) {
-                throw
-                    new IllegalArgumentException(
-                        "The specified class is not a Rule class."
-                    );
-            }
-
-            Rule rule = (Rule)udfClass.newInstance();
-            // call internal initialization on the rule.
-            rule.initialize(ruleId, tableNames);
-            return rule;
-        } catch (Exception ex) {
-            throw new InvalidRuleException(ex.getMessage());
-        }
-    }
 }

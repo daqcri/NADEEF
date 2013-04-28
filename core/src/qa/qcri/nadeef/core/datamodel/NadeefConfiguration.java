@@ -22,6 +22,7 @@ public class NadeefConfiguration {
     private static String password;
     private static String type;
     private static String violationTable;
+    private static String repairTable;
     private static String schemaName = "public";
     private static String version = "1.0";
 
@@ -39,8 +40,13 @@ public class NadeefConfiguration {
         userName = (String)database.get("username");
         password = (String)database.get("password");
         type = (String)database.get("type");
+
         JSONObject violation = (JSONObject)jsonObject.get("violation");
         violationTable = (String)violation.get("name");
+
+        JSONObject repair = (JSONObject)jsonObject.get("repair");
+        repairTable = (String)repair.get("name");
+
         JSONObject general = (JSONObject)jsonObject.get("general");
         testMode = (Boolean)general.get("testmode");
     }
@@ -91,6 +97,14 @@ public class NadeefConfiguration {
      */
     public static String getViolationTableName() {
         return violationTable;
+    }
+
+    /**
+     * Gets Nadeef violation table name.
+     * @return violation table name.
+     */
+    public static String getRepairTableName() {
+        return repairTable;
     }
 
     /**

@@ -8,6 +8,8 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -164,6 +166,32 @@ public class FDRule extends PairTupleRule implements TextRule {
         }
 
         return result;
+    }
+
+    /**
+     * Repair of this rule.
+     *
+     * @param violation violation input.
+     * @return a candidate fix.
+     */
+    @Override
+    public Fix repair(Violation violation) {
+        // TODO: find a way to get violation id without touching DB.
+        Fix fix = new Fix(null);
+        List<Cell> cells = (List)violation.getCells();
+        HashMap<Column, Cell> candidates = Maps.newHashMap();
+        for (Cell cell : cells) {
+            Column column = cell.getColumn();
+            if (rhs.contains(column)) {
+                if (candidates.containsKey(column)) {
+                    Cell right = candidates.get(column);
+                    fix.add(cell, right,Operation.EQ);
+                } else {
+                    candidates.put(column, cell);
+                }
+            }
+        }
+        return fix;
     }
 
     /**

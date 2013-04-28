@@ -42,23 +42,24 @@ public class DBInstallerTest {
 
     @Test
     public void installerTest() {
+        String violationTableName = NadeefConfiguration.getViolationTableName();
+        String repairTableName = NadeefConfiguration.getRepairTableName();
         try {
-            if (DBInstaller.isInstalled(conn, NadeefConfiguration.getViolationTableName())) {
-                DBInstaller.uninstall(conn, NadeefConfiguration.getViolationTableName());
+            if (DBInstaller.isInstalled(conn, violationTableName)) {
+                DBInstaller.uninstall(conn, violationTableName);
             }
-            DBInstaller.install(conn, NadeefConfiguration.getViolationTableName());
-            Assert.assertTrue(
-                DBInstaller.isInstalled(
-                        conn, NadeefConfiguration.getViolationTableName()
-                )
-            );
-            DBInstaller.uninstall(conn, NadeefConfiguration.getViolationTableName());
-            Assert.assertFalse(
-                DBInstaller.isInstalled(
-                    conn,
-                    NadeefConfiguration.getViolationTableName()
-                )
-            );
+
+            if (DBInstaller.isInstalled(conn, repairTableName)) {
+                DBInstaller.uninstall(conn, repairTableName);
+            }
+
+            DBInstaller.install(conn, violationTableName, repairTableName);
+            Assert.assertTrue(DBInstaller.isInstalled(conn, violationTableName));
+            DBInstaller.uninstall(conn, violationTableName);
+            DBInstaller.uninstall(conn, repairTableName);
+
+            Assert.assertFalse(DBInstaller.isInstalled(conn, violationTableName));
+            Assert.assertFalse(DBInstaller.isInstalled(conn, repairTableName));
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
             ex.printStackTrace();

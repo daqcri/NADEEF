@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
     protected List<Column> lhs;
     protected List<Column> rhs;
     protected List<SimpleExpression> filterExpressions;
+    protected HashMap<Column, SimpleExpression> filterCache;
 
     /**
      * Constructor. Checks for which signatures are implemented.
@@ -33,6 +36,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
         lhs = new ArrayList<Column>();
         rhs = new ArrayList<Column>();
         filterExpressions = new ArrayList<SimpleExpression>();
+        filterCache = new HashMap<Column, SimpleExpression>();
 
         parse(reader);
     }
@@ -81,6 +85,34 @@ public class CFDRule extends PairTupleRule implements TextRule {
     }
 
     /**
+     * Repair of this rule.
+     *
+     * @param violation violation input.
+     * @return a candidate fix.
+     */
+    @Override
+    public Fix repair(Violation violation) {
+        Fix fix = new Fix(null);
+        List<Cell> cells = (List)violation.getCells();
+        HashMap<Column, Cell> candidates = Maps.newHashMap();
+        for (Cell cell : cells) {
+            Column column = cell.getColumn();
+            if (rhs.contains(column)) {
+                if (filterCache.containsKey(column)) {
+                    SimpleExpression filter = filterCache.get(column);
+                    fix.add(cell, filter.getValue(), Operation.CEQ);
+                } else if (candidates.containsKey(column)) {
+                    Cell right = candidates.get(column);
+                    fix.add(cell, right, Operation.EQ);
+                } else {
+                    candidates.put(column, cell);
+                }
+            }
+        }
+        return fix;
+    }
+
+    /**
      * Interpret a rule from input text stream.
      *
      * @param input Input stream.
@@ -88,8 +120,6 @@ public class CFDRule extends PairTupleRule implements TextRule {
     @Override
     public void parse(StringReader input) {
         BufferedReader reader = new BufferedReader(input);
-        lhs = new ArrayList();
-        rhs = new ArrayList();
 
         // Here we assume the rule comes in with one line.
         try {
@@ -162,7 +192,9 @@ public class CFDRule extends PairTupleRule implements TextRule {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                filterExpressions.add(SimpleExpression.newEqual(curColumn, split));
+                SimpleExpression newFilter = SimpleExpression.newEqual(curColumn, split);
+                filterExpressions.add(newFilter);
+                filterCache.put(curColumn, newFilter);
             }
         } catch (IOException ex) {
             Tracer tracer = Tracer.getTracer(FDRule.class);

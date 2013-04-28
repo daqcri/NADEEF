@@ -9,7 +9,13 @@ package qa.qcri.nadeef.core.exception;
  * InvalidRuleException.
  */
 public class InvalidRuleException extends Exception {
+    private Exception innerException;
+
     public InvalidRuleException(String message) {
         super(message);
+    }
+
+    public InvalidRuleException(Exception innerException) {
+        this.innerException = innerException;
     }
 }

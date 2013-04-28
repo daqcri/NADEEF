@@ -36,6 +36,17 @@ public class MyRule2 extends PairTupleRule {
         return Lists.newArrayList(violation);
     }
 
+    /**
+     * Repair of this rule.
+     *
+     * @param violation violation input.
+     * @return a candidate fix.
+     */
+    @Override
+    public Fix repair(Violation violation) {
+        return null;
+    }
+
     @Override
     public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
         TupleCollection collection = tupleCollections.iterator().next();
