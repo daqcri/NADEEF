@@ -175,23 +175,24 @@ public class FDRule extends PairTupleRule implements TextRule {
      * @return a candidate fix.
      */
     @Override
-    public Fix repair(Violation violation) {
+    public Collection<Fix> repair(Violation violation) {
         // TODO: find a way to get violation id without touching DB.
-        Fix fix = new Fix(null);
+        List<Fix> result = Lists.newArrayList();
         List<Cell> cells = (List)violation.getCells();
         HashMap<Column, Cell> candidates = Maps.newHashMap();
         for (Cell cell : cells) {
             Column column = cell.getColumn();
+            // we assume only the right hand is wrong.
             if (rhs.contains(column)) {
                 if (candidates.containsKey(column)) {
                     Cell right = candidates.get(column);
-                    fix.add(cell, right,Operation.EQ);
+                    result.add(new Fix(cell, right, Operation.EQ));
                 } else {
                     candidates.put(column, cell);
                 }
             }
         }
-        return fix;
+        return result;
     }
 
     /**

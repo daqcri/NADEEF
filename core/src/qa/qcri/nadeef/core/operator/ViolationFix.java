@@ -36,8 +36,8 @@ public class ViolationFix
         throws Exception {
         LinkedList<Fix> fixes = new LinkedList<Fix>();
         for (Violation violation : violations) {
-            Fix fix = rule.repair(violation);
-            fixes.add(fix);
+            Collection<Fix> fix = rule.repair(violation);
+            fixes.addAll(fix);
         }
         return fixes;
     }

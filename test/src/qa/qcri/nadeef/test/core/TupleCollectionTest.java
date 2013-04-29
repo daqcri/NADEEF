@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
- * Deseralizer Test.
+ * SourceDeserializer Test.
  */
 @RunWith(JUnit4.class)
 public class TupleCollectionTest {
@@ -20,7 +20,7 @@ public class TupleCollectionTest {
 //        try {
 //            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
 //            List<Rule> rules = cleanPlan.getRules();
-//            Deseralizer deseralizer = new Deseralizer(cleanPlan);
+//            SourceDeserializer deseralizer = new SourceDeserializer(cleanPlan);
 //            String sqlStatement = deseralizer.processProjectHint(rules.get(0));
 //            Assert.assertTrue(
 //                "SELECT location.zip,location.state,location.city from location"
@@ -36,7 +36,7 @@ public class TupleCollectionTest {
 //        try {
 //            CleanPlan cleanPlan = TestDataRepository.getFDCleanPlan();
 //            List<Rule> rules = cleanPlan.getRules();
-//            Deseralizer deseralizer = new Deseralizer(cleanPlan);
+//            SourceDeserializer deseralizer = new SourceDeserializer(cleanPlan);
 //            List<Tuple> tuples = deseralizer.execute(rules.get(0));
 //            // TODO: think of better test data input
 //            Assert.assertEquals(4, tuples.size());

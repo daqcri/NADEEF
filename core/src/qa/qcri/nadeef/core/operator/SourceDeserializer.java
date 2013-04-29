@@ -13,17 +13,17 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Deseralizer generates tuples for the rule. It also does the optimization
+ * SourceDeserializer generates tuples for the rule. It also does the optimization
  * based on the input rule hints.
  */
-public class Deseralizer extends Operator<Rule, Collection<TupleCollection>> {
+public class SourceDeserializer extends Operator<Rule, Collection<TupleCollection>> {
     private DBConfig dbConfig;
 
     /**
      * Constructor.
      * @param plan Clean plan.
      */
-    public Deseralizer(CleanPlan plan) {
+    public SourceDeserializer(CleanPlan plan) {
         super(plan);
         dbConfig = plan.getSourceDBConfig();
     }

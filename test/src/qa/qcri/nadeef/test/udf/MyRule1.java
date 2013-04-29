@@ -1,6 +1,5 @@
 package qa.qcri.nadeef.test.udf;
 
-import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.SingleTupleRule;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;

@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.operator.*;
-import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.List;
@@ -33,9 +32,9 @@ public class CleanExecutor {
     }
 
     /**
-     * Runs the cleaning execution.
+     * Runs the violation repair execution.
      */
-    public void run() {
+    public void repair() {
         List<Rule> rules = cleanPlan.getRules();
         Flow[] flows = new Flow[rules.size()];
         NodeCacheManager cacheManager = NodeCacheManager.getInstance();
@@ -47,7 +46,44 @@ public class CleanExecutor {
                 Rule rule = rules.get(i);
                 String inputKey = cacheManager.put(rule);
                 flows[i].setInputKey(inputKey);
-                flows[i].addNode(new Node(new Deseralizer(cleanPlan), "deserializer"));
+                flows[i].addNode(new Node(new ViolationDeserializer(), "deserializer"));
+                flows[i].addNode(new Node(new ViolationFix(rule), "query"));
+            }
+        } catch (Exception ex) {
+            Tracer tracer = Tracer.getTracer(CleanExecutor.class);
+            tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
+            if (Tracer.isInfoOn()) {
+                ex.printStackTrace();
+            }
+            return;
+        }
+
+        // TODO: run multiple rules in parallel in process / thread.
+        Stopwatch stopwatch = new Stopwatch().start();
+        for (Flow flow : flows) {
+            flow.start();
+        }
+        tracer.info(
+            "Cleaning finished in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+        );
+    }
+
+    /**
+     * Runs the violation detection execution.
+     */
+    public void detect() {
+        List<Rule> rules = cleanPlan.getRules();
+        Flow[] flows = new Flow[rules.size()];
+        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
+
+        try {
+            // assemble the flow.
+            for (int i = 0; i < flows.length; i ++)  {
+                flows[i] = new Flow();
+                Rule rule = rules.get(i);
+                String inputKey = cacheManager.put(rule);
+                flows[i].setInputKey(inputKey);
+                flows[i].addNode(new Node(new SourceDeserializer(cleanPlan), "deserializer"));
                 flows[i].addNode(new Node(new QueryEngine(rule), "query"));
                 if (rule.supportTwoInputs()) {
                     // the case where the rule is working on multiple tables (2).

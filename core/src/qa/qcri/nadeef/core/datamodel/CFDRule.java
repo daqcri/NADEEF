@@ -91,7 +91,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
      * @return a candidate fix.
      */
     @Override
-    public Fix repair(Violation violation) {
+    public Collection<Fix> repair(Violation violation) {
         Fix fix = new Fix(null);
         List<Cell> cells = (List)violation.getCells();
         HashMap<Column, Cell> candidates = Maps.newHashMap();

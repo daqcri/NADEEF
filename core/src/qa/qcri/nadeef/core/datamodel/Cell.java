@@ -9,9 +9,11 @@ package qa.qcri.nadeef.core.datamodel;
  * A Cell contains a Column and a Value given a TupleId.
  */
 public class Cell {
+    //<editor-fold desc="Private fields">
     private int tupleId;
     private Column column;
     private Object value;
+    //</editor-fold>
 
     //<editor-fold desc="Constructors">
     /**

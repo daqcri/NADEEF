@@ -63,7 +63,7 @@ public abstract class Rule<TDetect, TIterator> {
      * @param violation violation input.
      * @return a candidate fix.
      */
-    public abstract Fix repair(Violation violation);
+    public abstract Collection<Fix> repair(Violation violation);
 
     /**
      * Default group operation.
