@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -92,24 +93,33 @@ public class CFDRule extends PairTupleRule implements TextRule {
      */
     @Override
     public Collection<Fix> repair(Violation violation) {
-        Fix fix = new Fix(null);
+        List<Fix> result = Lists.newArrayList();
         List<Cell> cells = (List)violation.getCells();
         HashMap<Column, Cell> candidates = Maps.newHashMap();
+        Optional<Integer> vid = violation.getVid();
+        Fix fix;
+        Fix.Builder builder = new Fix.Builder(vid.or(-1));
         for (Cell cell : cells) {
             Column column = cell.getColumn();
             if (rhs.contains(column)) {
                 if (filterCache.containsKey(column)) {
+                    // if the right hand is in the filter expression, we assign it a constant.
                     SimpleExpression filter = filterCache.get(column);
-                    fix.add(cell, filter.getValue(), Operation.CEQ);
+                    fix = builder.left(cell).right(filter.getValue()).build();
+                    result.add(fix);
                 } else if (candidates.containsKey(column)) {
+                    // if the right hand is already found out in another tuple
                     Cell right = candidates.get(column);
-                    fix.add(cell, right, Operation.EQ);
+                    fix = builder.left(cell).right(right).build();
+                    result.add(fix);
                 } else {
+                    // it is the first time of this cell shown up, put it in the candidate and
+                    // wait for the next one shown up.
                     candidates.put(column, cell);
                 }
             }
         }
-        return fix;
+        return result;
     }
 
     /**

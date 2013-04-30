@@ -16,13 +16,12 @@ import java.util.LinkedList;
 /**
  * Operator which executes the repair of a rule.
  */
-public class ViolationFix
+public class ViolationRepair
     extends Operator<Collection<Violation>, Collection<Fix>> {
     private Rule rule;
 
-    public ViolationFix(Rule rule) {
-        Preconditions.checkNotNull(rule);
-        this.rule = rule;
+    public ViolationRepair(Rule rule) {
+        this.rule = Preconditions.checkNotNull(rule);
     }
 
     /**

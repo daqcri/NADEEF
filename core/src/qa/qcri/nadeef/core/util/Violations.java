@@ -12,6 +12,7 @@ import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -71,6 +72,11 @@ public class Violations {
         return result;
     }
 
+    /**
+     * Generates a list of violations from a query result.
+     * @param resultSet query result.
+     * @return a list of violations.
+     */
     public static Collection<Violation> fromQuery(ResultSet resultSet)
         throws SQLException {
         Preconditions.checkNotNull(resultSet);
@@ -84,6 +90,41 @@ public class Violations {
             int tupleId = resultSet.getInt("tupleid");
             String attribute = resultSet.getString("attribute");
             String value = resultSet.getString("value");
+            Column column = new Column(tableName, attribute);
+            Cell cell = new Cell(column, tupleId, value);
+            if (vid != lastVid || vid == -1) {
+                violation = new Violation(rid);
+                violation.addCell(cell);
+                result.add(violation);
+                lastVid = vid;
+            } else {
+                violation.addCell(cell);
+            }
+        }
+        return result;
+    }
+
+    public static Collection<Violation> fromCSV(File csvFile)
+        throws IOException {
+        Preconditions.checkNotNull(csvFile);
+        BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+        // skip the head
+        String line = reader.readLine();
+        List<Violation> result = Lists.newArrayList();
+        int lastVid = -1;
+        Violation violation = null;
+        while ((line = reader.readLine()) != null) {
+            String[] token = line.split(";");
+            if (token.length != 6) {
+                throw
+                    new InvalidObjectException("The given CSV is not a valid violation CSV file.");
+            }
+            int vid = Integer.parseInt(token[0]);
+            String rid = token[1].replace("\"", "");
+            String tableName = token[2].replace("\"", "");
+            int tupleId = Integer.parseInt(token[3]);
+            String attribute = token[4].replace("\"", "");
+            String value = token[5].replace("\"", "");
             Column column = new Column(tableName, attribute);
             Cell cell = new Cell(column, tupleId, value);
             if (vid != lastVid || vid == -1) {

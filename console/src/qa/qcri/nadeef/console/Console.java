@@ -155,7 +155,7 @@ public class Console {
                 );
         }
 
-        executor.run();
+        executor.detect();
     }
 
     private static void set(String cmd) throws IOException {

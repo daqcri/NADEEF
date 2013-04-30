@@ -9,6 +9,7 @@ import com.google.common.collect.*;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Fix;
+import qa.qcri.nadeef.core.datamodel.Violation;
 
 import java.util.*;
 
@@ -26,14 +27,13 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
     @Override
     public Collection<Fix> execute(Collection<Fix> fixes) throws Exception {
         List<HashSet<Cell>> clusters = Lists.newArrayList();
-        HashMap<Column, HashSet<Cell>> clusterMap = Maps.newHashMap();
+        // a map between a cell and n
+        HashMap<Cell, HashSet<Cell>> clusterMap = Maps.newHashMap();
         HashMap<Cell, String> assignMap = Maps.newHashMap();
 
         // Clustering all the fixes.
         for (Fix fix : fixes) {
             Cell leftCell = fix.getLeft();
-            Column leftColumn = leftCell.getColumn();
-
             if (fix.isConstantAssign()) {
                 // TODO: do a statistic on the assign count.
                 assignMap.put(leftCell, fix.getRightValue());
@@ -41,29 +41,28 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
             }
 
             Cell rightCell = fix.getRight();
-            Column rightColumn = rightCell.getColumn();
 
-            if (assignMap.containsKey(leftColumn)) {
-                assignMap.remove(leftColumn);
+            if (assignMap.containsKey(leftCell)) {
+                assignMap.remove(leftCell);
             }
 
-            if (assignMap.containsKey(rightColumn)) {
-                assignMap.remove(rightColumn);
+            if (assignMap.containsKey(rightCell)) {
+                assignMap.remove(rightCell);
             }
 
             HashSet<Cell> leftCluster = null;
             HashSet<Cell> rightCluster = null;
 
             // when the left column is already in a cluster
-            if (clusterMap.containsKey(leftColumn)) {
-                leftCluster = clusterMap.get(leftColumn);
-                if (!leftCluster.contains(rightColumn)) {
+            if (clusterMap.containsKey(leftCell)) {
+                leftCluster = clusterMap.get(leftCell);
+                if (!leftCluster.contains(rightCell)) {
                     // union of two cluster of cell sets.
-                    if (clusterMap.containsKey(rightColumn)) {
-                        rightCluster = clusterMap.get(rightColumn);
+                    if (clusterMap.containsKey(rightCell)) {
+                        rightCluster = clusterMap.get(rightCell);
                         for (Cell cell : rightCluster) {
                             leftCluster.add(cell);
-                            clusterMap.put(cell.getColumn(), leftCluster);
+                            clusterMap.put(cell, leftCluster);
                         }
 
                         for (Cell cell : rightCluster) {
@@ -72,19 +71,20 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
 
                         clusters.remove(rightCluster);
                     } else {
-                        clusterMap.put(rightColumn, leftCluster);
+                        clusterMap.put(rightCell, leftCluster);
+                        leftCluster.add(rightCell);
                     }
                 }
-            } else if (clusterMap.containsKey(rightColumn)) {
+            } else if (clusterMap.containsKey(rightCell)) {
                 // when the right column is already in the cluster
-                rightCluster = clusterMap.get(rightColumn);
-                if (!rightCluster.contains(leftColumn)) {
+                rightCluster = clusterMap.get(rightCell);
+                if (!rightCluster.contains(leftCell)) {
                     // union of two cluster of cell sets.
-                    if (clusterMap.containsKey(leftColumn)) {
-                        leftCluster = clusterMap.get(leftColumn);
+                    if (clusterMap.containsKey(leftCell)) {
+                        leftCluster = clusterMap.get(leftCell);
                         for (Cell cell : leftCluster) {
                             rightCluster.add(cell);
-                            clusterMap.put(cell.getColumn(), rightCluster);
+                            clusterMap.put(cell, rightCluster);
                         }
 
                         for (Cell cell : leftCluster) {
@@ -93,7 +93,8 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
 
                         clusters.remove(leftCluster);
                     } else {
-                        clusterMap.put(leftColumn, rightCluster);
+                        clusterMap.put(leftCell, rightCluster);
+                        rightCluster.add(leftCell);
                     }
                 }
             } else {
@@ -102,8 +103,8 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
                 HashSet<Cell> cluster = Sets.newHashSet();
                 cluster.add(leftCell);
                 cluster.add(rightCell);
-                clusterMap.put(leftColumn, cluster);
-                clusterMap.put(rightColumn, cluster);
+                clusterMap.put(leftCell, cluster);
+                clusterMap.put(rightCell, cluster);
                 clusters.add(cluster);
             }
         }
@@ -111,7 +112,8 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         // start to count each cluster and decide the final fix based on
         // percentage.
         List<Fix> result = Lists.newArrayList();
-        Fix.Builder fixBuilder = new Fix.Builder();
+        // for final execution of all the fixes, we use 0 as default as the fix id.
+        Fix.Builder fixBuilder = new Fix.Builder(Violation.UnknownId);
         for (HashSet<Cell> cluster : clusters) {
             Multiset<Object> countSet = HashMultiset.create();
             for (Cell cell : cluster) {

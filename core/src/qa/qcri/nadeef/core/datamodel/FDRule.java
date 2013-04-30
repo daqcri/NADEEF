@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -176,18 +177,23 @@ public class FDRule extends PairTupleRule implements TextRule {
      */
     @Override
     public Collection<Fix> repair(Violation violation) {
-        // TODO: find a way to get violation id without touching DB.
         List<Fix> result = Lists.newArrayList();
-        List<Cell> cells = (List)violation.getCells();
+        List<Cell> cells = Lists.newArrayList(violation.getCells());
         HashMap<Column, Cell> candidates = Maps.newHashMap();
+        Optional<Integer> vid = violation.getVid();
+        Fix fix;
+        Fix.Builder builder = new Fix.Builder(vid.or(-1));
         for (Cell cell : cells) {
             Column column = cell.getColumn();
-            // we assume only the right hand is wrong.
             if (rhs.contains(column)) {
                 if (candidates.containsKey(column)) {
+                    // if the right hand is already found out in another tuple
                     Cell right = candidates.get(column);
-                    result.add(new Fix(cell, right, Operation.EQ));
+                    fix = builder.left(cell).right(right).build();
+                    result.add(fix);
                 } else {
+                    // it is the first time of this cell shown up, put it in the
+                    // candidate and wait for the next one shown up.
                     candidates.put(column, cell);
                 }
             }

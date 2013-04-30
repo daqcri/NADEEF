@@ -22,7 +22,7 @@ import java.sql.SQLException;
  * Tests for CleanExecutor.
  */
 @RunWith(JUnit4.class)
-public class CleanExecutorTest {
+public class DetectionTest {
     @Before
     public void setUp() {
         Bootstrap.Start();
@@ -33,7 +33,7 @@ public class CleanExecutorTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.run();
+            executor.detect();
             verifyViolationResult(6);
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class CleanExecutorTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.run();
+            executor.detect();
             verifyViolationResult(84);
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,7 +59,7 @@ public class CleanExecutorTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.run();
+            executor.detect();
             verifyViolationResult(6);
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class CleanExecutorTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan4();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.run();
+            executor.detect();
             verifyViolationResult(4);
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +85,7 @@ public class CleanExecutorTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan5();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.run();
+            executor.detect();
             verifyViolationResult(84);
         } catch (Exception e) {
             e.printStackTrace();

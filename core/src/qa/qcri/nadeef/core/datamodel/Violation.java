@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -17,8 +18,10 @@ import java.util.Set;
  * TODO: considering using ORM libraries like JOOQ.
  */
 public class Violation {
+    public static final int UnknownId = -1;
     private String ruleId;
     private Set<Cell> cells;
+    private Optional<Integer> vid;
 
     /**
      * Gets the rule Id of this violation.
@@ -36,6 +39,7 @@ public class Violation {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
         cells = new HashSet();
+        vid = Optional.absent();
     }
 
     /**
@@ -62,5 +66,13 @@ public class Violation {
     public void addTuple(Tuple tuple) {
         Preconditions.checkNotNull(tuple);
         cells.addAll(tuple.getCells());
+    }
+
+    public Optional<Integer> getVid() {
+        return vid;
+    }
+
+    public void setVid(int vid) {
+        this.vid = Optional.of(vid);
     }
 }

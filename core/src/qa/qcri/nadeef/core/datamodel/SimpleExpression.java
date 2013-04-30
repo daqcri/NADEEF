@@ -14,19 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Operation enumeration.
- */
-enum Operation {
-    EQ,
-    LT,
-    GT,
-    NEQ,
-    LTE,
-    GTE,
-    CEQ
-}
-
-/**
  * Expression class describes a simple expression used in the scope.
  */
 public class SimpleExpression {

@@ -48,6 +48,16 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getViolationTestData1() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*violation1.csv";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getFixTestData1() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*Fix1.csv";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
         throws
             InvalidRuleException,

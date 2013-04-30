@@ -15,6 +15,41 @@ public class Cell {
     private Object value;
     //</editor-fold>
 
+    /**
+     * Builder class.
+     */
+    public static class Builder {
+        private int tupleId;
+        private Column column;
+        private Object value;
+
+        public Builder() {}
+
+        public Builder tid(int tid) {
+            this.tupleId = tid;
+            return this;
+        }
+
+        public Builder column(Column column) {
+            this.column = column;
+            return this;
+        }
+
+        public Builder column(String column) {
+            this.column = new Column(column);
+            return this;
+        }
+
+        public Builder value(Object value) {
+            this.value = value;
+            return this;
+        }
+
+        public Cell build() {
+            return new Cell(column, tupleId, value);
+        }
+    }
+
     //<editor-fold desc="Constructors">
     /**
      * Constructor.

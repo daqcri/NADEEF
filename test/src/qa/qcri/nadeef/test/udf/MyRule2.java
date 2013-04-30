@@ -43,7 +43,7 @@ public class MyRule2 extends PairTupleRule {
      * @return a candidate fix.
      */
     @Override
-    public Fix repair(Violation violation) {
+    public Collection<Fix> repair(Violation violation) {
         return null;
     }
 

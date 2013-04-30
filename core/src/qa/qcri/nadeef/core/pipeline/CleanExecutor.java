@@ -47,7 +47,7 @@ public class CleanExecutor {
                 String inputKey = cacheManager.put(rule);
                 flows[i].setInputKey(inputKey);
                 flows[i].addNode(new Node(new ViolationDeserializer(), "deserializer"));
-                flows[i].addNode(new Node(new ViolationFix(rule), "query"));
+                flows[i].addNode(new Node(new ViolationRepair(rule), "query"));
             }
         } catch (Exception ex) {
             Tracer tracer = Tracer.getTracer(CleanExecutor.class);
