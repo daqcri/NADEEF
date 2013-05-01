@@ -6,18 +6,20 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Operator which executes the repair of a rule.
  */
 public class ViolationRepair
-    extends Operator<Collection<Violation>, Collection<Fix>> {
+    extends Operator<Collection<Violation>, Collection<Collection<Fix>>> {
     private Rule rule;
 
     public ViolationRepair(Rule rule) {
@@ -31,13 +33,13 @@ public class ViolationRepair
      * @return output object.
      */
     @Override
-    public Collection<Fix> execute(Collection<Violation> violations)
+    public Collection<Collection<Fix>> execute(Collection<Violation> violations)
         throws Exception {
-        LinkedList<Fix> fixes = new LinkedList<Fix>();
+        List<Collection<Fix>> result = Lists.newArrayList();
         for (Violation violation : violations) {
             Collection<Fix> fix = rule.repair(violation);
-            fixes.addAll(fix);
+            result.add(fix);
         }
-        return fixes;
+        return result;
     }
 }

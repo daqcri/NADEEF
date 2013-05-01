@@ -51,6 +51,21 @@ public class FixDecisionMakerTest {
             FixDecisionMaker eq = new FixDecisionMaker();
             Collection<Fix> result = eq.execute(fixes);
             Assert.assertEquals(6, result.size());
+            for (Fix fix : result) {
+                Cell left = fix.getLeft();
+                if (
+                    left.getTupleId() == 1 ||
+                    left.getTupleId() == 2 ||
+                    left.getTupleId() == 3 ||
+                    left.getTupleId() == 4
+                ) {
+                    String value = fix.getRightValue();
+                    Assert.assertEquals("a3", value);
+                } else {
+                    String value = fix.getRightValue();
+                    Assert.assertEquals("b1", value);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

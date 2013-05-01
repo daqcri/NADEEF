@@ -16,15 +16,15 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Updator fixes the source data and exports it in the database.
+ * Updater fixes the source data and exports it in the database.
  * It returns <code>True</code> when there is no Cell changed in
  * the pipeline. In this case the pipeline will stop.
  */
-public class Updator extends Operator<Collection<Fix>, Boolean> {
+public class Updater extends Operator<Collection<Fix>, Integer> {
     private CleanPlan cleanPlan;
-    private HashSet<Column> status;
+    private HashSet<Cell> status;
 
-    public Updator(CleanPlan cleanPlan) {
+    public Updater(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         status = Sets.newHashSet();
     }
@@ -36,29 +36,32 @@ public class Updator extends Operator<Collection<Fix>, Boolean> {
      * @return output object.
      */
     @Override
-    public Boolean execute(Collection<Fix> fixes) throws Exception {
+    public Integer execute(Collection<Fix> fixes) throws Exception {
         Connection conn =
             DBConnectionFactory.createConnection(cleanPlan.getSourceDBConfig());
         Statement stat = conn.createStatement();
+        int count = 0;
         try {
             String rightValue;
             for (Fix fix : fixes) {
                 Cell cell = fix.getLeft();
-                Column column = cell.getColumn();
 
-                // when the result is ambigious, we set it to NULL.
-                if (status.contains(column)) {
+                // when the result is ambiguous, we set it to NULL.
+                if (status.contains(cell)) {
                     // TODO: what happens when you assign the same value twice
                     rightValue = "null";
                 } else {
                     rightValue = fix.getRightValue();
+                    status.add(cell);
                 }
+                Column column = cell.getColumn();
                 String tableName = column.getTableName();
                 stat.addBatch(
                     "UPDATE " + tableName +
                     " SET " + column.getAttributeName() + " = " + rightValue +
                     " WHERE tid = " + cell.getTupleId()
                 );
+                count ++;
             }
             stat.executeBatch();
             conn.commit();
@@ -71,6 +74,6 @@ public class Updator extends Operator<Collection<Fix>, Boolean> {
                 stat.close();
             }
         }
-        return null;
+        return count;
     }
 }

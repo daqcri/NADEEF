@@ -19,62 +19,25 @@ import java.util.concurrent.TimeUnit;
  * start the execution.
  */
 public class CleanExecutor {
-    private static CleanPlan cleanPlan;
     private static Tracer tracer = Tracer.getTracer(CleanExecutor.class);
+    private CleanPlan cleanPlan;
+    private NodeCacheManager cacheManager;
 
     /**
      * Constructor.
      * @param cleanPlan clean plan.
      */
     public CleanExecutor(CleanPlan cleanPlan) {
-        Preconditions.checkNotNull(cleanPlan);
-        this.cleanPlan = cleanPlan;
+        this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
+        this.cacheManager = NodeCacheManager.getInstance();
     }
 
     /**
      * Runs the violation repair execution.
      */
-    public void repair() {
+    public Flow[] detect() {
         List<Rule> rules = cleanPlan.getRules();
         Flow[] flows = new Flow[rules.size()];
-        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
-
-        try {
-            // assemble the flow.
-            for (int i = 0; i < flows.length; i ++)  {
-                flows[i] = new Flow();
-                Rule rule = rules.get(i);
-                String inputKey = cacheManager.put(rule);
-                flows[i].setInputKey(inputKey);
-                flows[i].addNode(new Node(new ViolationDeserializer(), "deserializer"));
-                flows[i].addNode(new Node(new ViolationRepair(rule), "query"));
-            }
-        } catch (Exception ex) {
-            Tracer tracer = Tracer.getTracer(CleanExecutor.class);
-            tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
-            if (Tracer.isInfoOn()) {
-                ex.printStackTrace();
-            }
-            return;
-        }
-
-        // TODO: run multiple rules in parallel in process / thread.
-        Stopwatch stopwatch = new Stopwatch().start();
-        for (Flow flow : flows) {
-            flow.start();
-        }
-        tracer.info(
-            "Cleaning finished in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
-        );
-    }
-
-    /**
-     * Runs the violation detection execution.
-     */
-    public void detect() {
-        List<Rule> rules = cleanPlan.getRules();
-        Flow[] flows = new Flow[rules.size()];
-        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
 
         try {
             // assemble the flow.
@@ -102,24 +65,75 @@ public class CleanExecutor {
             if (Tracer.isInfoOn()) {
                 ex.printStackTrace();
             }
-            return;
+            return null;
         }
 
         // TODO: run multiple rules in parallel in process / thread.
-        Stopwatch stopwatch = new Stopwatch().start();
-        for (Flow flow : flows) {
+        for (int i = 0; i < flows.length; i ++) {
+            Stopwatch stopwatch = new Stopwatch().start();
+            Flow flow = flows[i];
             flow.start();
+            Tracer.addStatEntry(
+                "Rule [" + rules.get(i).getId() + "] Detection time",
+                stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
+            );
         }
-        tracer.info(
-            "Cleaning finished in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
-        );
+        return flows;
     }
 
     /**
-     * Gets the <code>CleanPlan</code>.
-     * @return the <code>CleanPlan</code>.
+     * Runs the violation detection execution.
      */
-    public static CleanPlan getCurrentCleanPlan() {
-        return cleanPlan;
+    public Flow[] repair() {
+        List<Rule> rules = cleanPlan.getRules();
+        Flow[] flows = new Flow[rules.size()];
+        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
+
+        try {
+            // assemble the flow.
+            for (int i = 0; i < flows.length; i ++)  {
+                flows[i] = new Flow();
+                Rule rule = rules.get(i);
+                String inputKey = cacheManager.put(rule);
+                flows[i].setInputKey(inputKey);
+                flows[i].addNode(new Node(new ViolationDeserializer(), "violation_deserializer"));
+                flows[i].addNode(new Node(new ViolationRepair(rule), "violation_repair"));
+                flows[i].addNode(new Node(new FixExport(cleanPlan), "fix export"));
+            }
+        } catch (Exception ex) {
+            tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
+            if (Tracer.isInfoOn()) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        // TODO: run multiple rules in parallel in process / thread.
+        for (int i = 0; i < flows.length; i ++) {
+            Stopwatch stopwatch = new Stopwatch().start();
+            Flow flow = flows[i];
+            flow.start();
+            Tracer.addStatEntry(
+                "Rule [" + rules.get(i).getId() + "] Generate Candidate Fix time",
+                stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
+            );
+        }
+
+        return flows;
+    }
+
+    public void apply(Rule rule) {
+        // Apply Fix decisions.
+        Stopwatch stopwatch = new Stopwatch().start();
+        Flow eq = new Flow();
+        String inputKey = cacheManager.put(rule);
+        eq.setInputKey(inputKey);
+        eq.addNode(new Node(new FixDeserializer(), "fix deserializer"));
+        eq.addNode(new Node(new FixDecisionMaker(), "eq"));
+        eq.addNode(new Node(new Updater(cleanPlan), "updater"));
+        eq.start();
+        Tracer.addStatEntry(
+            "EQ running time", stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
+        );
     }
 }

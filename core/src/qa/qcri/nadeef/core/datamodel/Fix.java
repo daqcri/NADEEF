@@ -155,7 +155,8 @@ public class Fix {
             Connection conn = DBConnectionFactory.createNadeefConnection();
             Statement stat = conn.createStatement();
             ResultSet resultSet =
-                stat.executeQuery("SELECT MAX(vid) + 1 as vid from " + tableName);
+                stat.executeQuery("SELECT MAX(id) + 1 as id from " + tableName);
+            conn.commit();
             int result = -1;
             if (resultSet.next()) {
                 result = resultSet.getInt("id");

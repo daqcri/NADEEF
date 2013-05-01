@@ -36,9 +36,9 @@ public class ViolationDeserializer extends Operator<Rule, Collection<Violation>>
             ResultSet resultSet = stat.executeQuery(
                 "SELECT * FROM " +
                     NadeefConfiguration.getViolationTableName() +
-                    " WHERE RID = " +
+                    " WHERE RID = '" +
                     rule.getId() +
-                    " ORDER BY vid"
+                    "' ORDER BY vid"
             );
 
             result = Violations.fromQuery(resultSet);

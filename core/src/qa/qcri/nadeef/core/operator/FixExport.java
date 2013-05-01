@@ -20,8 +20,8 @@ import java.util.List;
 /**
  * Export fix in the repair database.
  */
-public class FixExport extends Operator<Collection<List<Fix>>, Integer> {
-    private static Tracer tracer = Tracer.getTracer(ViolationExport.class);
+public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
+    private static Tracer tracer = Tracer.getTracer(FixExport.class);
 
     /**
      * Constructor.
@@ -39,7 +39,7 @@ public class FixExport extends Operator<Collection<List<Fix>>, Integer> {
      * TODO: this is not out-of-process safe.
      */
     @Override
-    public synchronized Integer execute(Collection<List<Fix>> fixCollection)
+    public synchronized Integer execute(Collection<Collection<Fix>> fixCollection)
         throws
         ClassNotFoundException,
         SQLException,
@@ -49,7 +49,7 @@ public class FixExport extends Operator<Collection<List<Fix>>, Integer> {
         Statement stat = conn.createStatement();
         Integer count = 0;
         int id = Fix.generateFixId();
-        for (List<Fix> fixes : fixCollection) {
+        for (Collection<Fix> fixes : fixCollection) {
             for (Fix fix : fixes) {
                 String sql = getSQLInsert(id, fix);
                 stat.addBatch(sql);
@@ -62,7 +62,7 @@ public class FixExport extends Operator<Collection<List<Fix>>, Integer> {
         conn.commit();
         stat.close();
         conn.close();
-        tracer.info("exported " + count + " rows in Violation table.");
+        tracer.info("exported " + count + " rows in Repair table.");
         return count;
     }
 
@@ -79,20 +79,24 @@ public class FixExport extends Operator<Collection<List<Fix>>, Integer> {
         );
         sqlBuilder.append(" VALUES (");
         sqlBuilder.append(id);
-        sqlBuilder.append(", '" + vid + "',");
+        sqlBuilder.append(',');
+        sqlBuilder.append(vid);
+        sqlBuilder.append(',');
         Cell cell = fix.getLeft();
         sqlBuilder.append(cell.getTupleId());
+        sqlBuilder.append(',');
         sqlBuilder.append("'" + cell.getColumn().getTableName() + "',");
         sqlBuilder.append("'" + cell.getColumn().getAttributeName() + "',");
         sqlBuilder.append("'" + cell.getAttributeValue().toString() + "',");
 
         sqlBuilder.append(fix.getOperation().getValue());
-
+        sqlBuilder.append(',');
         cell = fix.getRight();
         sqlBuilder.append(cell.getTupleId());
+        sqlBuilder.append(',');
         sqlBuilder.append("'" + cell.getColumn().getTableName() + "',");
         sqlBuilder.append("'" + cell.getColumn().getAttributeName() + "',");
-        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "',");
+        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "')");
         return sqlBuilder.toString();
     }
 }

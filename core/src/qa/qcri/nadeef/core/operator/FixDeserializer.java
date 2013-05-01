@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.operator;
 
+import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -19,16 +20,16 @@ import java.util.Collection;
 /**
  * Deserialize the fix data from database.
  */
-public class FixDeserializer extends Operator<Rule, Collection<Violation>> {
+public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
     @Override
-    public Collection<Violation> execute(Rule rule) throws Exception {
+    public Collection<Fix> execute(Rule rule) throws Exception {
         Connection conn = DBConnectionFactory.createNadeefConnection();
-        Collection<Violation> result = null;
+        Collection<Fix> result = null;
         try {
             Statement stat = conn.createStatement();
             ResultSet resultSet = stat.executeQuery(
                 "SELECT * FROM " +
-                    NadeefConfiguration.getViolationTableName() +
+                    NadeefConfiguration.getRepairTableName() +
                     " WHERE RID = " +
                     rule.getId() +
                     " ORDER BY vid"
