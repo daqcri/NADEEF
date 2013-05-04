@@ -8,7 +8,6 @@ package qa.qcri.nadeef.test.core;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.Flow;

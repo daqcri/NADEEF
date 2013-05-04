@@ -7,16 +7,16 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.exception.InvalidSchemaException;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -27,8 +27,12 @@ public class SQLTupleCollection extends TupleCollection {
     private String tableName;
     private SqlQueryBuilder sqlQuery;
     private ArrayList<Tuple> tuples;
+    // indicate whether this tuple collection is an internal collection which needs to be removed
+    // after finalize.
+    private boolean isInternal;
 
     private static Tracer tracer = Tracer.getTracer(SQLTupleCollection.class);
+
 
     //<editor-fold desc="Constructor">
 
@@ -56,9 +60,8 @@ public class SQLTupleCollection extends TupleCollection {
      */
     public SQLTupleCollection(String tableName, DBConfig dbconfig) {
         super(null);
-        Preconditions.checkNotNull(dbconfig);
+        this.dbconfig = Preconditions.checkNotNull(dbconfig);
         Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
-        this.dbconfig = dbconfig;
         this.tableName = tableName;
         this.sqlQuery = new SqlQueryBuilder();
         this.sqlQuery.addFrom(tableName);
@@ -185,9 +188,48 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public Collection<TupleCollection> groupOn(Column column) {
-        //TODO: write a sql script to create a view for group.
-        return super.groupOn(column);
+    public synchronized Collection<TupleCollection> groupOn(Column column) {
+        Collection<TupleCollection> result = null;
+        if (isOrphan()) {
+            result = super.groupOn(column);
+        } else {
+            Connection conn = null;
+            try {
+                conn = DBConnectionFactory.createConnection(dbconfig);
+                Statement stat = conn.createStatement();
+                ResultSet distinctResult =
+                    stat.executeQuery(
+                        "SELECT DISTINCT(" + column.getFullAttributeName() + ") FROM " + tableName
+                    );
+                Statement viewStat = conn.createStatement();
+                while (distinctResult.next()) {
+                    String newTableName = UUID.randomUUID().toString();
+                    Object value = distinctResult.getObject(0);
+                    viewStat.execute(
+                        "CREATE VIEW " +
+                        newTableName + "AS" +
+                        "SELECT * FROM " +
+                        tableName + " WHERE value = " +
+                        value.toString() + ")"
+                    );
+                    TupleCollection newTupleCollection = new SQLTupleCollection(newTableName, dbconfig);
+                    result.add(newTupleCollection);
+                }
+            } catch (Exception ex) {
+                tracer.err(ex.getMessage());
+                // as a backup plan we try to use in-memory solution.
+                result = super.groupOn(column);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        // ignore
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     //</editor-fold>
@@ -278,6 +320,29 @@ public class SQLTupleCollection extends TupleCollection {
         stat.close();
         conn.close();
         return true;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Finalization methods">
+    @Override
+    protected void finalize() throws Throwable {
+        if (isInternal) {
+            Connection conn = null;
+            try {
+                conn = DBConnectionFactory.createConnection(dbconfig);
+                Statement stat = conn.createStatement();
+                stat.execute("DROP TABLE IF EXISTS " + tableName);
+                conn.commit();
+            } catch (Exception ex) {
+                // ignore;
+            } finally {
+                if (conn != null) {
+                    conn.close();
+                }
+            }
+        }
+        super.finalize();
     }
     //</editor-fold>
 }

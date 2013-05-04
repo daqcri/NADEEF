@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.Tracer;

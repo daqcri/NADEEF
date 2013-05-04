@@ -14,7 +14,10 @@ import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.operator.FixDecisionMaker;
 import qa.qcri.nadeef.test.TestDataRepository;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 

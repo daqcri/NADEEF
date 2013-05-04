@@ -5,17 +5,17 @@
 
 package qa.qcri.nadeef.core.operator;
 
-import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.Cell;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Fix;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Export fix in the repair database.

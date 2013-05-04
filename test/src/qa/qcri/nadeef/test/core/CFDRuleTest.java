@@ -6,12 +6,10 @@
 package qa.qcri.nadeef.test.core;
 
 import com.google.common.collect.Lists;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import qa.qcri.nadeef.core.datamodel.CFDRule;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.RuleType;

@@ -10,8 +10,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -132,6 +130,7 @@ public class FDRule extends PairTupleRule implements TextRule {
         ArrayList<TuplePair> result = new ArrayList();
         Collection<TupleCollection> groupResult = tupleCollections.iterator().next().groupOn(lhs);
         for (TupleCollection tuples : groupResult) {
+            tuples.orderBy(rhs);
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));

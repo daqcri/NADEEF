@@ -14,15 +14,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
-import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.FileHelper;
 
 import java.io.File;
 import java.io.Reader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;

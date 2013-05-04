@@ -6,7 +6,6 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import java.io.StringReader;
-import java.util.List;
 
 /**
  * TextRule contains rule with description text.

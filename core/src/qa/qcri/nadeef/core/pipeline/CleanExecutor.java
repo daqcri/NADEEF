@@ -7,7 +7,10 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.TupleCollection;
+import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.core.operator.*;
 import qa.qcri.nadeef.tools.Tracer;
 

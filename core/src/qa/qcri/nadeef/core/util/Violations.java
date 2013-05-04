@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
-import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 import java.io.*;

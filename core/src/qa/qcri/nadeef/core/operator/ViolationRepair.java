@@ -12,7 +12,6 @@ import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

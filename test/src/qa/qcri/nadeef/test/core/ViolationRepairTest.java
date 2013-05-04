@@ -8,7 +8,6 @@ package qa.qcri.nadeef.test.core;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Before;
-
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;

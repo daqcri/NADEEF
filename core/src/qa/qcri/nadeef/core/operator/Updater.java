@@ -7,7 +7,10 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.Cell;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 
 import java.sql.Connection;

@@ -7,7 +7,6 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.collect.*;
 import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Violation;
 

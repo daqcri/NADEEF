@@ -5,7 +5,8 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract base class for a rule providing the default behavior of scope and group operation.

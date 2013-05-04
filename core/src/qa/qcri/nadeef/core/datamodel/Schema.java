@@ -6,17 +6,9 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import qa.qcri.nadeef.core.exception.InvalidSchemaException;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

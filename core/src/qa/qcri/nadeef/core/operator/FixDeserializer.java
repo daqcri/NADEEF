@@ -8,9 +8,7 @@ package qa.qcri.nadeef.core.operator;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.Violations;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -35,7 +33,7 @@ public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
                     " ORDER BY vid"
             );
 
-            result = Violations.fromQuery(resultSet);
+            // result = Fixes.fromQuery(resultSet);
         } finally {
             if (conn != null) {
                 conn.close();
