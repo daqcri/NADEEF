@@ -1,0 +1,5 @@
+city varchar(255),zip varchar(255),state varchar(255)
+amsterdam,1183JV,raadstad
+delft,1183JV,noord-holland
+brooklyn,0001,NY,
+chengdu,620031,sichuan

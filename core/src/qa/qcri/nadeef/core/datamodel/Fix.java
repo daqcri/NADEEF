@@ -140,33 +140,4 @@ public class Fix {
         return this.right == null;
     }
     //</editor-fold>
-
-    /**
-     * Generates fix id from database.
-     * TODO: This doesn't promise that you will always get the right id in
-     * concurrency mode, design a better way of generating it.
-     * @return id.
-     */
-    public static int generateFixId() {
-        Tracer tracer = Tracer.getTracer(Fix.class);
-        try {
-            String tableName = NadeefConfiguration.getRepairTableName();
-            Connection conn = DBConnectionFactory.createNadeefConnection();
-            Statement stat = conn.createStatement();
-            ResultSet resultSet =
-                stat.executeQuery("SELECT MAX(id) + 1 as id from " + tableName);
-            conn.commit();
-            int result = -1;
-            if (resultSet.next()) {
-                result = resultSet.getInt("id");
-            }
-            stat.close();
-            conn.close();
-            return result;
-        } catch (Exception ex) {
-            tracer.err("Unable to generate Fix id.");
-            ex.printStackTrace();
-        }
-        return 0;
-    }
 }

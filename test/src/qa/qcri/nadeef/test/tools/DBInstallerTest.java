@@ -44,6 +44,7 @@ public class DBInstallerTest {
     public void installerTest() {
         String violationTableName = NadeefConfiguration.getViolationTableName();
         String repairTableName = NadeefConfiguration.getRepairTableName();
+        String auditTableName = NadeefConfiguration.getAuditTableName();
         try {
             if (DBInstaller.isInstalled(conn, violationTableName)) {
                 DBInstaller.uninstall(conn, violationTableName);
@@ -53,7 +54,11 @@ public class DBInstallerTest {
                 DBInstaller.uninstall(conn, repairTableName);
             }
 
-            DBInstaller.install(conn, violationTableName, repairTableName);
+            if (DBInstaller.isInstalled(conn, auditTableName)) {
+                DBInstaller.uninstall(conn, auditTableName);
+            }
+
+            DBInstaller.install(conn, violationTableName, repairTableName, auditTableName);
             Assert.assertTrue(DBInstaller.isInstalled(conn, violationTableName));
             DBInstaller.uninstall(conn, violationTableName);
             DBInstaller.uninstall(conn, repairTableName);

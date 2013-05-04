@@ -10,6 +10,7 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Fixes;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -48,7 +49,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         Connection conn = DBConnectionFactory.createNadeefConnection();
         Statement stat = conn.createStatement();
         Integer count = 0;
-        int id = Fix.generateFixId();
+        int id = Fixes.generateFixId();
         for (Collection<Fix> fixes : fixCollection) {
             for (Fix fix : fixes) {
                 String sql = getSQLInsert(id, fix);
@@ -91,12 +92,17 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
 
         sqlBuilder.append(fix.getOperation().getValue());
         sqlBuilder.append(',');
-        cell = fix.getRight();
-        sqlBuilder.append(cell.getTupleId());
-        sqlBuilder.append(',');
-        sqlBuilder.append("'" + cell.getColumn().getTableName() + "',");
-        sqlBuilder.append("'" + cell.getColumn().getAttributeName() + "',");
-        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "')");
+        if (!fix.isConstantAssign()) {
+            cell = fix.getRight();
+            sqlBuilder.append(cell.getTupleId());
+            sqlBuilder.append(',');
+            sqlBuilder.append("'" + cell.getColumn().getTableName() + "',");
+            sqlBuilder.append("'" + cell.getColumn().getAttributeName() + "',");
+            sqlBuilder.append("'" + cell.getAttributeValue().toString() + "')");
+        } else {
+            sqlBuilder.append("null, null, null,'" + fix.getRightValue() + "')");
+        }
+
         return sqlBuilder.toString();
     }
 }

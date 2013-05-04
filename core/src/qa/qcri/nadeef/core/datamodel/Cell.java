@@ -88,6 +88,14 @@ public class Cell {
     public void setTupleId(int tupleId) {
         this.tupleId = tupleId;
     }
+
+    public boolean containsAttribute(String attribute) {
+        if (column.getAttributeName().equalsIgnoreCase(attribute)) {
+            return true;
+        }
+        return false;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Equals and Hashcode">

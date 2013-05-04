@@ -41,14 +41,21 @@ public class Bootstrap {
             Connection conn = DBConnectionFactory.createNadeefConnection();
             String violationTableName = NadeefConfiguration.getViolationTableName();
             String repairTableName = NadeefConfiguration.getRepairTableName();
+            String auditTableName = NadeefConfiguration.getAuditTableName();
+
             if (DBInstaller.isInstalled(conn, violationTableName)) {
                 DBInstaller.uninstall(conn, violationTableName);
             }
+
             if (DBInstaller.isInstalled(conn, repairTableName)) {
                 DBInstaller.uninstall(conn, repairTableName);
             }
 
-            DBInstaller.install(conn, violationTableName, repairTableName);
+            if (DBInstaller.isInstalled(conn, auditTableName)) {
+                DBInstaller.uninstall(conn, auditTableName);
+            }
+
+            DBInstaller.install(conn, violationTableName, repairTableName, auditTableName);
             conn.commit();
             conn.close();
         } catch (FileNotFoundException e) {

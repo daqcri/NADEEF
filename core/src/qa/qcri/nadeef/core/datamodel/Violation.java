@@ -43,6 +43,17 @@ public class Violation {
     }
 
     /**
+     * Constructor.
+     * @param ruleId rule id.
+     */
+    public Violation(String ruleId, int vid) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
+        this.ruleId = ruleId;
+        cells = new HashSet();
+        this.vid = Optional.of(vid);
+    }
+
+    /**
      * Gets the row collection.
      * @return collection row.
      */
@@ -68,8 +79,12 @@ public class Violation {
         cells.addAll(tuple.getCells());
     }
 
-    public Optional<Integer> getVid() {
-        return vid;
+    /**
+     * Gets the violation id.
+     * @return violation id, -1 is returned if no violation id exists.
+     */
+    public int getVid() {
+        return vid.or(-1);
     }
 
     public void setVid(int vid) {

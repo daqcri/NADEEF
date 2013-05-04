@@ -6,9 +6,7 @@
 package qa.qcri.nadeef.test.core;
 
 import org.jooq.SQLDialect;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.*;
@@ -18,6 +16,7 @@ import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVDumper;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Set;
 
@@ -48,6 +47,19 @@ public class TupleCollectionTest {
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
+        }
+    }
+
+    @After
+    public void teardown() {
+        try {
+            Connection conn = DBConnectionFactory.createNadeefConnection();
+            Statement stat = conn.createStatement();
+            stat.execute("DROP TABLE " + tableName + " CASCADE");
+            conn.commit();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -84,7 +96,7 @@ public class TupleCollectionTest {
         Assert.assertEquals(3, result.size());
         for (TupleCollection t : result) {
             Tuple tuple = t.get(0);
-            String value =(String) tuple.get(targetColumn);
+            String value =(String) tuple.get("c");
             switch (value) {
                 case "c1":
                     Assert.assertEquals(7, t.size());

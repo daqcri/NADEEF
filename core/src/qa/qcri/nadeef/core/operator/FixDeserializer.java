@@ -9,6 +9,8 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Fixes;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -21,19 +23,25 @@ import java.util.Collection;
 public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
+        Tracer tracer = Tracer.getTracer(FixDeserializer.class);
         Connection conn = DBConnectionFactory.createNadeefConnection();
         Collection<Fix> result = null;
         try {
             Statement stat = conn.createStatement();
-            ResultSet resultSet = stat.executeQuery(
-                "SELECT * FROM " +
+            ResultSet resultSet =
+                stat.executeQuery(
+                    "select r.* from " +
                     NadeefConfiguration.getRepairTableName() +
-                    " WHERE RID = " +
+                    " r where r.vid in (select vid from " +
+                    NadeefConfiguration.getViolationTableName() +
+                    " where rid = '" +
                     rule.getId() +
-                    " ORDER BY vid"
-            );
+                    "') order by r.vid"
+                );
 
-            // result = Fixes.fromQuery(resultSet);
+
+            result = Fixes.fromQuery(resultSet);
+            tracer.info("There are " + result.size() + " fixes deserialized.");
         } finally {
             if (conn != null) {
                 conn.close();

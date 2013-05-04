@@ -127,6 +127,14 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     /**
+     * Sets whether it is an internal table / view.
+     * @param isInternal
+     */
+    public void setInternal(boolean isInternal) {
+        this.isInternal = isInternal;
+    }
+
+    /**
      * Gets the tuple from the collection.
      * @param i tuple index.
      * @return tuple instance.
@@ -193,29 +201,39 @@ public class SQLTupleCollection extends TupleCollection {
         if (isOrphan()) {
             result = super.groupOn(column);
         } else {
+            result = Lists.newArrayList();
             Connection conn = null;
             try {
+                String sql =
+                    "SELECT DISTINCT(" + column.getFullAttributeName() + ") FROM " + tableName;
                 conn = DBConnectionFactory.createConnection(dbconfig);
                 Statement stat = conn.createStatement();
-                ResultSet distinctResult =
-                    stat.executeQuery(
-                        "SELECT DISTINCT(" + column.getFullAttributeName() + ") FROM " + tableName
-                    );
+                ResultSet distinctResult = stat.executeQuery(sql);
                 Statement viewStat = conn.createStatement();
                 while (distinctResult.next()) {
-                    String newTableName = UUID.randomUUID().toString();
-                    Object value = distinctResult.getObject(0);
-                    viewStat.execute(
+                    String newTableName = "VIEW" + UUID.randomUUID().toString().replace("-", "");
+                    String value = distinctResult.getObject(1).toString();
+                    if (!value.matches("^[0-9]+$")) {
+                        value = '\'' + value + '\'';
+                    }
+
+                    sql =
                         "CREATE VIEW " +
-                        newTableName + "AS" +
-                        "SELECT * FROM " +
-                        tableName + " WHERE value = " +
-                        value.toString() + ")"
-                    );
-                    TupleCollection newTupleCollection = new SQLTupleCollection(newTableName, dbconfig);
+                            newTableName + " AS " +
+                            "SELECT * FROM " +
+                            tableName + " WHERE " +
+                            column.getFullAttributeName() + " = " +
+                            value.toString();
+                    tracer.verbose("Group on " + sql);
+                    viewStat.execute(sql);
+                    SQLTupleCollection newTupleCollection =
+                        new SQLTupleCollection(newTableName, dbconfig);
+                    newTupleCollection.setInternal(true);
                     result.add(newTupleCollection);
                 }
+                conn.commit();
             } catch (Exception ex) {
+                ex.printStackTrace();
                 tracer.err(ex.getMessage());
                 // as a backup plan we try to use in-memory solution.
                 result = super.groupOn(column);

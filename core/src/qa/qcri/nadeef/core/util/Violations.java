@@ -92,7 +92,7 @@ public class Violations {
             Column column = new Column(tableName, attribute);
             Cell cell = new Cell(column, tupleId, value);
             if (vid != lastVid || vid == -1) {
-                violation = new Violation(rid);
+                violation = new Violation(rid, vid);
                 violation.addCell(cell);
                 result.add(violation);
                 lastVid = vid;

@@ -65,7 +65,7 @@ public class CSVDumper {
             header.insert(0, "TID SERIAL PRIMARY KEY,");
             String fullTableName = schemaName + "." + tableName;
             Statement stat = conn.createStatement();
-            stat.execute("DROP TABLE IF EXISTS " + fullTableName);
+            stat.execute("DROP TABLE IF EXISTS " + fullTableName + " CASCADE");
 
             // create the table
             stat.execute("CREATE TABLE " + fullTableName + "( " + header + ")");

@@ -179,9 +179,9 @@ public class FDRule extends PairTupleRule implements TextRule {
         List<Fix> result = Lists.newArrayList();
         List<Cell> cells = Lists.newArrayList(violation.getCells());
         HashMap<Column, Cell> candidates = Maps.newHashMap();
-        Optional<Integer> vid = violation.getVid();
+        int vid = violation.getVid();
         Fix fix;
-        Fix.Builder builder = new Fix.Builder(vid.or(-1));
+        Fix.Builder builder = new Fix.Builder(vid);
         for (Cell cell : cells) {
             Column column = cell.getColumn();
             if (rhs.contains(column)) {

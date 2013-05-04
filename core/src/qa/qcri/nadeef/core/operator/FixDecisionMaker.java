@@ -122,6 +122,10 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
             countSet = Multisets.copyHighestCountFirst(countSet);
             Object value = countSet.iterator().next();
             for (Cell cell : cluster) {
+                if (cell.getAttributeValue().equals(value)) {
+                    // skip the correct value.
+                    continue;
+                }
                 Fix newFix = fixBuilder.left(cell).right(value.toString()).build();
                 result.add(newFix);
             }

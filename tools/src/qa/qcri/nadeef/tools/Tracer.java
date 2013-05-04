@@ -38,13 +38,13 @@ public class Tracer {
     //<editor-fold desc="Public methods">
     public void info(String msg) {
         if (infoFlag) {
-            System.out.println("In " + classType.getSimpleName() + " : " + msg);
+            System.out.println(":INFO:In " + classType.getSimpleName() + " : " + msg);
         }
     }
 
     public void verbose(String msg) {
         if (verboseFlag) {
-            System.out.println("In " + classType.getName() + " : " + msg);
+            System.out.println(":VERBOSE:In " + classType.getName() + " : " + msg);
         }
     }
 

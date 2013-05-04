@@ -23,6 +23,7 @@ public class NadeefConfiguration {
     private static String type;
     private static String violationTable;
     private static String repairTable;
+    private static String auditTable;
     private static String schemaName = "public";
     private static String version = "1.0";
 
@@ -46,6 +47,9 @@ public class NadeefConfiguration {
 
         JSONObject repair = (JSONObject)jsonObject.get("repair");
         repairTable = (String)repair.get("name");
+
+        JSONObject audit = (JSONObject)jsonObject.get("audit");
+        auditTable = (String)audit.get("name");
 
         JSONObject general = (JSONObject)jsonObject.get("general");
         testMode = (Boolean)general.get("testmode");
@@ -113,6 +117,10 @@ public class NadeefConfiguration {
      */
     public static String getVersion() {
         return version;
+    }
+
+    public static String getAuditTableName() {
+        return auditTable;
     }
     //</editor-fold>
 }

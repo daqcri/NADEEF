@@ -53,17 +53,20 @@ public class CleanExecutor {
                 flows[i].addNode(new Node(new QueryEngine(rule), "query"));
                 if (rule.supportTwoInputs()) {
                     // the case where the rule is working on multiple tables (2).
-                    flows[i].addNode(new Node(new ViolationDetector<TuplePair>(rule), "detector"));
+                    flows[i].addNode(
+                        new Node(new ViolationDetector<TuplePair>(rule), "detector")
+                    );
                 } else {
                     flows[i].addNode(
                         new Node(new ViolationDetector<TupleCollection>(rule), "detector")
                     );
                 }
 
-                flows[i].addNode(new Node(new ViolationExport(cleanPlan), "export"));
+                flows[i].addNode(
+                    new Node(new ViolationExport(cleanPlan), "export")
+                );
             }
         } catch (Exception ex) {
-            Tracer tracer = Tracer.getTracer(CleanExecutor.class);
             tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
             if (Tracer.isInfoOn()) {
                 ex.printStackTrace();
@@ -125,7 +128,7 @@ public class CleanExecutor {
         return flows;
     }
 
-    public void apply(Rule rule) {
+    public int apply(Rule rule) {
         // Apply Fix decisions.
         Stopwatch stopwatch = new Stopwatch().start();
         Flow eq = new Flow();
@@ -138,5 +141,11 @@ public class CleanExecutor {
         Tracer.addStatEntry(
             "EQ running time", stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
         );
+        String outputKey = eq.getLastOutputKey();
+        return ((Integer)cacheManager.get(outputKey)).intValue();
+    }
+
+    public void run() {
+
     }
 }

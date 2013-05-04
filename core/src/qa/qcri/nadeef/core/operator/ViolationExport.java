@@ -57,6 +57,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 stat.addBatch(sql);
                 count ++;
             }
+            violation.setVid(vid);
             vid ++;
         }
 

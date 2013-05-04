@@ -73,6 +73,5 @@ public class FixDecisionMakerTest {
             e.printStackTrace();
             Assert.fail(e.getMessage());
         }
-
     }
 }

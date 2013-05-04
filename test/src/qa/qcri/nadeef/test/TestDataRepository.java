@@ -58,6 +58,11 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getLocationData1() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*locations.csv";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
         throws
             InvalidRuleException,
