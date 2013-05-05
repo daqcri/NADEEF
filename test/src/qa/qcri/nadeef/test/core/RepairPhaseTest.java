@@ -80,15 +80,15 @@ public class RepairPhaseTest {
 
             String key = flows[0].getLastOutputKey();
             Integer count = (Integer)cacheManager.get(key);
-            Assert.assertEquals(84, count.intValue());
+            Assert.assertEquals(4, count.intValue());
 
             flows = executor.repair();
             key = flows[0].getLastOutputKey();
             count = (Integer)cacheManager.get(key);
-            Assert.assertEquals(28, count.intValue());
+            Assert.assertEquals(2, count.intValue());
 
             int result = executor.apply(cleanPlan.getRules().get(0));
-            Assert.assertEquals(6, result);
+            Assert.assertEquals(2, result);
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail("exceptions : " + ex.getMessage());

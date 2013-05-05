@@ -24,6 +24,7 @@ public class Fix {
     private Cell right;
     private String rightValue;
     private int vid;
+
     //</editor-fold>
 
     /**
@@ -35,8 +36,14 @@ public class Fix {
         private String rightValue;
         private int vid;
 
-        public Builder(int vid) {
+        public Builder() {}
+        public Builder(Violation violation) {
+            this.vid = violation.getVid();
+        }
+
+        public Builder vid(int vid) {
             this.vid = vid;
+            return this;
         }
 
         public Builder left(Cell left) {
@@ -128,6 +135,10 @@ public class Fix {
         return rightValue;
     }
 
+    /**
+     * Gets of vid.
+     * @return vid.
+     */
     public int getVid() {
         return vid;
     }

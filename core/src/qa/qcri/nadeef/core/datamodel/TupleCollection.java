@@ -54,6 +54,7 @@ public abstract class TupleCollection {
     public abstract Tuple get(int i);
 
     //<editor-fold desc="Default TupleCollection behavior">
+    // TODO: implements default behaviors
     public abstract TupleCollection project(Column column);
     public abstract TupleCollection project(Collection<Column> columns);
     public abstract TupleCollection orderBy(Column column);

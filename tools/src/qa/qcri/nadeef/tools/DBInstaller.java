@@ -75,7 +75,7 @@ public class DBInstaller {
             "CREATE TABLE " +
             auditTableName + "(" +
             "id serial primary key," +
-            "rid varchar(255)," +
+            "vid int," +
             "tupleid int," +
             "tablename varchar(63)," +
             "attribute varchar(63)," +

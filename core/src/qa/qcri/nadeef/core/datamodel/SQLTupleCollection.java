@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Tools;
 import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -27,6 +28,9 @@ public class SQLTupleCollection extends TupleCollection {
     private String tableName;
     private SqlQueryBuilder sqlQuery;
     private ArrayList<Tuple> tuples;
+    private long updateTimestamp = -1;
+    private long changeTimestamp = System.currentTimeMillis();
+
     // indicate whether this tuple collection is an internal collection which needs to be removed
     // after finalize.
     private boolean isInternal;
@@ -90,39 +94,13 @@ public class SQLTupleCollection extends TupleCollection {
      */
     @Override
     public int size() {
-        try {
-            if (tuples == null) {
-                sync();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return 0;
-        }
+        syncIfNeeded();
         return tuples.size();
     }
 
     @Override
     public Schema getSchema() {
-        // TODO: write synchronization on SqlQueryBuilder
-        try {
-            SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
-            builder.setLimit(1);
-            Connection conn = DBConnectionFactory.createConnection(dbconfig);
-            ResultSet resultSet = conn.createStatement().executeQuery(builder.build());
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int count = metaData.getColumnCount();
-            List<Column> columns = new ArrayList<Column>();
-            for (int i = 1; i <= count; i ++) {
-                String attributeName = metaData.getColumnName(i);
-                columns.add(new Column(tableName, attributeName));
-            }
-
-            schema = new Schema(tableName, columns);
-            conn.close();
-        } catch (Exception ex) {
-            tracer.err("Cannot get valid schema.");
-            ex.printStackTrace();
-        }
+        syncIfNeeded();
         return schema;
     }
 
@@ -141,42 +119,47 @@ public class SQLTupleCollection extends TupleCollection {
      */
     @Override
     public Tuple get(int i) {
-        try {
-            if (tuples == null) {
-                sync();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-
+        syncIfNeeded();
         return tuples.get(i);
     }
 
     @Override
     public TupleCollection project(Column column) {
-        sqlQuery.addSelect(column.getFullAttributeName());
+        sqlQuery.addSelect(column.getAttributeName());
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
+        }
         return this;
     }
 
     @Override
     public TupleCollection project(Collection<Column> columns) {
         for (Column column : columns) {
-            sqlQuery.addSelect(column.getFullAttributeName());
+            sqlQuery.addSelect(column.getAttributeName());
+        }
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
         }
         return this;
     }
 
     @Override
     public TupleCollection orderBy(Column column) {
-        sqlQuery.addOrder(column.getFullAttributeName());
+        sqlQuery.addOrder(column.getAttributeName());
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
+        }
+
         return this;
     }
 
     @Override
     public TupleCollection orderBy(Collection<Column> columns) {
         for (Column column : columns) {
-            sqlQuery.addSelect(column.getFullAttributeName());
+            sqlQuery.addSelect(column.getAttributeName());
+        }
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
         }
         return this;
     }
@@ -184,6 +167,9 @@ public class SQLTupleCollection extends TupleCollection {
     @Override
     public TupleCollection filter(SimpleExpression expression) {
         sqlQuery.addWhere(expression.toString());
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
+        }
         return this;
     }
 
@@ -192,11 +178,27 @@ public class SQLTupleCollection extends TupleCollection {
         for (SimpleExpression expression : expressions) {
             sqlQuery.addWhere(expression.toString());
         }
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
+        }
         return this;
     }
 
     @Override
-    public synchronized Collection<TupleCollection> groupOn(Column column) {
+    public Collection<TupleCollection> groupOn(Collection<Column> columns) {
+        List result = Lists.newArrayList(this);
+        for (Column column : columns) {
+            List tmp = Lists.newArrayList();
+            for (Object collection : result) {
+                tmp.addAll(((SQLTupleCollection) collection).groupOn(column));
+            }
+            result = tmp;
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<TupleCollection> groupOn(Column column) {
         Collection<TupleCollection> result = null;
         if (isOrphan()) {
             result = super.groupOn(column);
@@ -205,26 +207,28 @@ public class SQLTupleCollection extends TupleCollection {
             Connection conn = null;
             try {
                 String sql =
-                    "SELECT DISTINCT(" + column.getFullAttributeName() + ") FROM " + tableName;
+                    "SELECT DISTINCT(" + column.getAttributeName() + ") FROM " + tableName;
                 conn = DBConnectionFactory.createConnection(dbconfig);
                 Statement stat = conn.createStatement();
                 ResultSet distinctResult = stat.executeQuery(sql);
                 Statement viewStat = conn.createStatement();
                 while (distinctResult.next()) {
-                    String newTableName = "VIEW" + UUID.randomUUID().toString().replace("-", "");
-                    String value = distinctResult.getObject(1).toString();
-                    if (!value.matches("^[0-9]+$")) {
-                        value = '\'' + value + '\'';
+                    // a hack to include original table name in the created view.
+                    String newTableName =
+                        "VIEW_" + tableName + "_" + UUID.randomUUID().toString().replace("-", "");
+                    Object value = distinctResult.getObject(1);
+                    if (value instanceof String) {
+                        value = '\'' + (String)value + '\'';
                     }
 
                     sql =
                         "CREATE VIEW " +
-                            newTableName + " AS " +
-                            "SELECT * FROM " +
-                            tableName + " WHERE " +
-                            column.getFullAttributeName() + " = " +
-                            value.toString();
-                    tracer.verbose("Group on " + sql);
+                        newTableName + " AS " +
+                        "SELECT * FROM " +
+                        tableName + " WHERE " +
+                        column.getAttributeName() + " = " +
+                        value.toString();
+                    tracer.verbose(sql);
                     viewStat.execute(sql);
                     SQLTupleCollection newTupleCollection =
                         new SQLTupleCollection(newTableName, dbconfig);
@@ -290,56 +294,106 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     /**
+     * Synchronize the data schema with underneath database.
+     * @return
+     */
+    private synchronized void syncSchema() {
+        Connection conn = null;
+        try {
+            SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
+            builder.setLimit(1);
+            conn = DBConnectionFactory.createConnection(dbconfig);
+            String sql = builder.build();
+            tracer.verbose(sql);
+            ResultSet resultSet = conn.createStatement().executeQuery(sql);
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int count = metaData.getColumnCount();
+            List<Column> columns = new ArrayList<Column>();
+            for (int i = 1; i <= count; i ++) {
+                String attributeName = metaData.getColumnName(i);
+                columns.add(new Column(tableName, attributeName));
+            }
+
+            schema = new Schema(tableName, columns);
+            conn.close();
+        } catch (Exception ex) {
+            tracer.err("Cannot get valid schema.");
+            ex.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    /**
      * Synchronize the collection data with the underlying database.
      * @return Returns <code>True</code> when the synchronization is successful.
      */
-    private synchronized boolean sync()
-        throws SQLException,
-        InstantiationException,
-        IllegalAccessException,
-        ClassNotFoundException {
+    private synchronized boolean sync() {
         if (isOrphan()) {
             tracer.info("TupleCollection is an orphan, sync failed.");
             return false;
         }
 
-        tuples = new ArrayList();
-        Connection conn = DBConnectionFactory.createConnection(dbconfig);
-        Statement stat = conn.createStatement();
-        ResultSet resultSet = stat.executeQuery(sqlQuery.build());
-        conn.commit();
-        int tupleId = 1;
+        try {
+            tuples = new ArrayList();
+            Connection conn = DBConnectionFactory.createConnection(dbconfig);
+            Statement stat = conn.createStatement();
+            String sql = sqlQuery.build();
+            tracer.verbose(sql);
+            ResultSet resultSet = stat.executeQuery(sql);
+            conn.commit();
+            int tupleId = 1;
 
-        // fill the schema
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int count = metaData.getColumnCount();
-        List<Column> columns = new ArrayList<Column>(count);
-        for (int i = 1; i <= count; i ++) {
-            String attributeName = metaData.getColumnName(i);
-            columns.add(new Column(tableName, attributeName));
-        }
-
-        schema  = new Schema(tableName, columns);
-
-        // fill the tuples
-        while (resultSet.next()) {
-            Object[] values = new Object[count];
+            // fill the schema
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int count = metaData.getColumnCount();
+            List<Column> columns = new ArrayList<Column>(count);
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
-                if (attributeName.equalsIgnoreCase("tid")) {
-                    tupleId = (int)resultSet.getObject(i);
-                }
-                values[i - 1] = resultSet.getObject(i);
+                columns.add(new Column(tableName, attributeName));
             }
 
-            tuples.add(new Tuple(tupleId, schema, values));
-            tupleId ++;
+            schema  = new Schema(tableName, columns);
+
+            // fill the tuples
+            while (resultSet.next()) {
+                Object[] values = new Object[count];
+                for (int i = 1; i <= count; i ++) {
+                    String attributeName = metaData.getColumnName(i);
+                    if (attributeName.equalsIgnoreCase("tid")) {
+                        tupleId = (int)resultSet.getObject(i);
+                    }
+                    values[i - 1] = resultSet.getObject(i);
+                }
+
+                tuples.add(new Tuple(tupleId, schema, values));
+                tupleId ++;
+            }
+            stat.close();
+            conn.close();
+        } catch (Exception ex) {
+            tracer.err("Synchronization failed.");
+            ex.printStackTrace();
         }
-        stat.close();
-        conn.close();
         return true;
     }
 
+    /**
+     * Synchronize the schema and data if needed.
+     */
+    private synchronized void syncIfNeeded() {
+        if (updateTimestamp < changeTimestamp) {
+            syncSchema();
+            sync();
+            updateTimestamp = changeTimestamp;
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="Finalization methods">

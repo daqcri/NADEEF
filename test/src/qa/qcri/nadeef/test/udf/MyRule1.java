@@ -51,7 +51,7 @@ public class MyRule1 extends SingleTupleRule {
     public Collection<Fix> repair(Violation violation) {
         List<Fix> result = Lists.newArrayList();
         List<Cell> cells = Lists.newArrayList(violation.getCells());
-        Fix.Builder fixBuilder = new Fix.Builder(violation.getVid());
+        Fix.Builder fixBuilder = new Fix.Builder(violation);
         for (Cell cell : cells) {
             if (cell.containsAttribute("city")) {
                 Fix fix = fixBuilder.left(cell).right("amsterdam").build();

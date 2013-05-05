@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import qa.qcri.nadeef.tools.Tracer;
@@ -128,7 +129,8 @@ public class FDRule extends PairTupleRule implements TextRule {
     @Override
     public Collection<TuplePair> group(Collection<TupleCollection> tupleCollections) {
         ArrayList<TuplePair> result = new ArrayList();
-        Collection<TupleCollection> groupResult = tupleCollections.iterator().next().groupOn(lhs);
+        TupleCollection tupleCollection = Iterables.get(tupleCollections, 0);
+        Collection<TupleCollection> groupResult = tupleCollection.groupOn(lhs);
         for (TupleCollection tuples : groupResult) {
             tuples.orderBy(rhs);
             for (int i = 0; i < tuples.size(); i ++) {
@@ -181,7 +183,7 @@ public class FDRule extends PairTupleRule implements TextRule {
         HashMap<Column, Cell> candidates = Maps.newHashMap();
         int vid = violation.getVid();
         Fix fix;
-        Fix.Builder builder = new Fix.Builder(vid);
+        Fix.Builder builder = new Fix.Builder(violation);
         for (Cell cell : cells) {
             Column column = cell.getColumn();
             if (rhs.contains(column)) {

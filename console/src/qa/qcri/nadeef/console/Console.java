@@ -91,6 +91,8 @@ public class Console {
                         printHelp();
                     } else if (line.startsWith("detect")) {
                         detect(line);
+                    } else if (line.startsWith("repair")) {
+                        repair(line);
                     } else if (Strings.isNullOrEmpty(line)) {
                         continue;
                     } else if (line.startsWith("set")) {
@@ -158,6 +160,18 @@ public class Console {
         executor.detect();
     }
 
+    private static void repair(String cmd) {
+        String[] splits = cmd.split("\\s");
+        if (splits.length > 2) {
+            throw
+                new IllegalArgumentException(
+                    "Wrong detect command. Run detect [id number] instead."
+                );
+        }
+
+        executor.repair();
+    }
+
     private static void set(String cmd) throws IOException {
         String[] splits = cmd.split("\\s");
         if (splits[1].equalsIgnoreCase("verbose")) {
@@ -182,8 +196,12 @@ public class Console {
                 " |list : \n" +
                 " |    list available rules.\n" +
                 " |\n" +
-                " |repair <target table name> :\n" +
-                " |    repair the data source.\n" +
+                " |repair [rule id] :\n" +
+                " |    repair the data source with a given rule id number.\n" +
+                " |\n" +
+                " |run <max iteration number> :\n" +
+                " |    clean the data source with maximum iteration number. Default is to run " +
+                    "until no violation is found.\n" +
                 " |\n" +
                 " |exit :\n" +
                 " |    exit the console (Ctrl + D).\n";

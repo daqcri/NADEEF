@@ -27,9 +27,8 @@ public class Schema {
      * @param columns column array.
      */
     public Schema(String tableName, List<Column> columns) {
-        Preconditions.checkNotNull(tableName);
+        this.tableName = Preconditions.checkNotNull(tableName);
         Preconditions.checkArgument(columns != null && columns.size() > 0);
-        this.tableName = tableName;
         Map mapping = new HashMap(columns.size());
 
         for (int i = 0; i < columns.size(); i ++) {

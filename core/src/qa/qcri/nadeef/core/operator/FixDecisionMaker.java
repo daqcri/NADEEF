@@ -29,18 +29,22 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         // a map between a cell and n
         HashMap<Cell, HashSet<Cell>> clusterMap = Maps.newHashMap();
         HashMap<Cell, String> assignMap = Maps.newHashMap();
+        // a map between cell and fix, used for getting the original vid.
+        HashMap<Cell, Fix> fixMap = Maps.newHashMap();
 
         // Clustering all the fixes.
         for (Fix fix : fixes) {
             Cell leftCell = fix.getLeft();
+
             if (fix.isConstantAssign()) {
                 // TODO: do a statistic on the assign count.
                 assignMap.put(leftCell, fix.getRightValue());
+                fixMap.put(leftCell, fix);
                 continue;
             }
 
             Cell rightCell = fix.getRight();
-
+            fixMap.put(rightCell, fix);
             if (assignMap.containsKey(leftCell)) {
                 assignMap.remove(leftCell);
             }
@@ -112,7 +116,7 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         // percentage.
         List<Fix> result = Lists.newArrayList();
         // for final execution of all the fixes, we use 0 as default as the fix id.
-        Fix.Builder fixBuilder = new Fix.Builder(Violation.UnknownId);
+        Fix.Builder fixBuilder = new Fix.Builder();
         for (HashSet<Cell> cluster : clusters) {
             Multiset<Object> countSet = HashMultiset.create();
             for (Cell cell : cluster) {
@@ -126,7 +130,12 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
                     // skip the correct value.
                     continue;
                 }
-                Fix newFix = fixBuilder.left(cell).right(value.toString()).build();
+                Fix originalFix = fixMap.get(cell);
+                Fix newFix =
+                    fixBuilder.vid(originalFix.getVid())
+                        .left(cell)
+                        .right(value.toString())
+                        .build();
                 result.add(newFix);
             }
         }

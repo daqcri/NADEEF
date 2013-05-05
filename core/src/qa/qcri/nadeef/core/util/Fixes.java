@@ -62,8 +62,7 @@ public class Fixes {
                 int vid = resultSet.getInt("vid");
                 int op = resultSet.getInt("op");
                 int c1TupleId = resultSet.getInt("c1_tupleid");
-
-                Fix.Builder builder = new Fix.Builder(vid);
+                Fix.Builder builder = new Fix.Builder();
 
                 String c1TableName = resultSet.getString("c1_tablename");
                 String c1Attribute = resultSet.getString("c1_attribute" );
@@ -84,9 +83,9 @@ public class Fixes {
                         cellBuilder.column(
                             new Column(c2TableName, c2Attribute)
                         ).value(c2Value).tid(c2TupleId).build();
-                    newFix = builder.left(c1Cell).right(c2Cell).build();
+                    newFix = builder.vid(vid).left(c1Cell).right(c2Cell).build();
                 } else {
-                    newFix = builder.left(c1Cell).right(c2Value).build();
+                    newFix = builder.vid(vid).left(c1Cell).right(c2Value).build();
                 }
 
                 result.add(newFix);

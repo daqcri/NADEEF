@@ -29,7 +29,7 @@ public class FixDecisionMakerTest {
         List<Fix> result = Lists.newArrayList();
         BufferedReader reader = new BufferedReader(new FileReader(path));
         String line = reader.readLine();
-        Fix.Builder fixBuilder = new Fix.Builder(Violation.UnknownId);
+        Fix.Builder fixBuilder = new Fix.Builder().vid(Violation.UnknownId);
         Cell.Builder cellBuilder = new Cell.Builder();
         while ((line = reader.readLine()) != null) {
             String[] tokens = line.split(";");
@@ -53,20 +53,21 @@ public class FixDecisionMakerTest {
             List<Fix> fixes = loadFix(TestDataRepository.getFixTestData1());
             FixDecisionMaker eq = new FixDecisionMaker();
             Collection<Fix> result = eq.execute(fixes);
-            Assert.assertEquals(6, result.size());
+            Assert.assertEquals(3, result.size());
             for (Fix fix : result) {
                 Cell left = fix.getLeft();
-                if (
-                    left.getTupleId() == 1 ||
-                    left.getTupleId() == 2 ||
-                    left.getTupleId() == 3 ||
-                    left.getTupleId() == 4
-                ) {
-                    String value = fix.getRightValue();
-                    Assert.assertEquals("a3", value);
-                } else {
-                    String value = fix.getRightValue();
-                    Assert.assertEquals("b1", value);
+                String value = fix.getRightValue();
+                switch (left.getTupleId()) {
+                    case 2:
+                    case 1:
+                        Assert.assertEquals("a3", value);
+                        break;
+                    case 6:
+                        Assert.assertEquals("b1", value);
+                        break;
+                    default:
+                        Assert.fail("Incorrect changed tuple.");
+                        break;
                 }
             }
         } catch (Exception e) {

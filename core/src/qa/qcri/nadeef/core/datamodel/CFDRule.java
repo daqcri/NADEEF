@@ -99,7 +99,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
 
         int vid = violation.getVid();
         Fix fix;
-        Fix.Builder builder = new Fix.Builder(vid);
+        Fix.Builder builder = new Fix.Builder(violation);
         for (Cell cell : cells) {
             Column column = cell.getColumn();
             if (rhs.contains(column)) {

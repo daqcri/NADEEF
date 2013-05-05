@@ -54,11 +54,23 @@ public class Column {
     }
     //</editor-fold>
 
+    /**
+     * Gets the schema name.
+     * @return schema name.
+     */
     public String getSchemaName() {
         return schemaName;
     }
 
+    /**
+     * Gets the table name. It also deals with situation where the table is a view.
+     * @return original table name.
+     */
     public String getTableName() {
+        if (tableName.startsWith("VIEW")) {
+            String[] tokens = tableName.split("_");
+            return tokens[1];
+        }
         return tableName;
     }
 
@@ -106,7 +118,7 @@ public class Column {
         if (
             column.getAttributeName().equalsIgnoreCase(attributeName) &&
             column.getSchemaName().equalsIgnoreCase(schemaName) &&
-            column.getTableName().equalsIgnoreCase(tableName)
+            column.getTableName().equalsIgnoreCase(getTableName())
         ) {
             return true;
         }
@@ -117,7 +129,7 @@ public class Column {
     public int hashCode() {
         final int root = 109;
         return
-            root * tableName.toLowerCase().hashCode() *
+            root * getTableName().toLowerCase().hashCode() *
                 attributeName.toLowerCase().hashCode() *
                 schemaName.toLowerCase().hashCode();
     }

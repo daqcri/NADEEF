@@ -7,11 +7,9 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.Column;
-import qa.qcri.nadeef.core.datamodel.Fix;
+import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Tools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -47,15 +45,20 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
      */
     @Override
     public Integer execute(Collection<Fix> fixes) throws Exception {
-        Connection conn =
-            DBConnectionFactory.createConnection(cleanPlan.getSourceDBConfig());
-        Statement stat = conn.createStatement();
         int count = 0;
+        Connection conn = null;
+        Statement stat = null;
+        String auditTableName = NadeefConfiguration.getAuditTableName();
+        String rightValue;
+        String oldValue;
+
         try {
-            String rightValue;
+            conn =
+                DBConnectionFactory.createConnection(cleanPlan.getSourceDBConfig());
+            stat = conn.createStatement();
             for (Fix fix : fixes) {
                 Cell cell = fix.getLeft();
-
+                oldValue = cell.getAttributeValue().toString();
                 // when the result is ambiguous, we set it to NULL.
                 if (status.contains(cell)) {
                     // TODO: what happens when you assign the same value twice
@@ -66,18 +69,34 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 }
 
                 // check for numerical type.
-                if (!rightValue.matches("-?\\d+(\\.\\d+)?")) {
+                if (!Tools.isNumericalString(rightValue)) {
                     rightValue = '\'' + rightValue + '\'';
+                }
+
+                if (!Tools.isNumericalString(oldValue)) {
+                    oldValue = '\'' + oldValue + '\'';
                 }
 
                 Column column = cell.getColumn();
                 String tableName = column.getTableName();
-                String sql =
+                String updateSql =
                     "UPDATE " + tableName +
                         " SET " + column.getAttributeName() + " = " + rightValue +
                         " WHERE tid = " + cell.getTupleId();
-                tracer.verbose(sql);
-                stat.addBatch(sql);
+                tracer.verbose(updateSql);
+                stat.addBatch(updateSql);
+                String insertSql =
+                    "INSERT INTO " + auditTableName +
+                    " VALUES (default, " +
+                    fix.getVid() + "," +
+                    cell.getTupleId() + ",\'" +
+                    column.getTableName() + "\',\'" +
+                    column.getAttributeName() + "\'," +
+                    oldValue + "," +
+                    rightValue + "," +
+                    "current_timestamp)";
+                tracer.verbose(insertSql);
+                stat.addBatch(insertSql);
                 count ++;
             }
             stat.executeBatch();
