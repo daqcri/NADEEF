@@ -34,7 +34,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(6);
+            verifyViolationResult(4);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -47,7 +47,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(84);
+            verifyViolationResult(56);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -60,7 +60,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(6);
+            verifyViolationResult(2);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

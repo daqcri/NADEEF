@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
@@ -15,6 +16,7 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -25,7 +27,7 @@ import java.util.HashSet;
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
     private CleanPlan cleanPlan;
-    private HashSet<Cell> status;
+    private HashMap<Cell, String> status;
 
     /**
      * Constructor.
@@ -33,7 +35,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
      */
     public Updater(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
-        status = Sets.newHashSet();
+        status = Maps.newHashMap();
     }
 
     /**
@@ -59,13 +61,19 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
             for (Fix fix : fixes) {
                 Cell cell = fix.getLeft();
                 oldValue = cell.getAttributeValue().toString();
-                // when the result is ambiguous, we set it to NULL.
-                if (status.contains(cell)) {
-                    // TODO: what happens when you assign the same value twice
+
+                if (status.containsKey(cell)) {
+                    String value = status.get(cell);
+                    if (value.equals(fix.getRightValue())) {
+                        continue;
+                    }
+                    // when a cell is set twice with different value,
+                    // we set it to null for ambiguous value.
                     rightValue = "null";
+
                 } else {
                     rightValue = fix.getRightValue();
-                    status.add(cell);
+                    status.put(cell, rightValue);
                 }
 
                 // check for numerical type.
@@ -81,8 +89,8 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 String tableName = column.getTableName();
                 String updateSql =
                     "UPDATE " + tableName +
-                        " SET " + column.getAttributeName() + " = " + rightValue +
-                        " WHERE tid = " + cell.getTupleId();
+                    " SET " + column.getAttributeName() + " = " + rightValue +
+                    " WHERE tid = " + cell.getTupleId();
                 tracer.verbose(updateSql);
                 stat.addBatch(updateSql);
                 String insertSql =
@@ -101,7 +109,8 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
             }
             stat.executeBatch();
             conn.commit();
-            tracer.info("In total there are " + count + " cells modified.");
+            Tracer.addStatEntry(Tracer.StatType.UpdatedCellNumber, Integer.toString(count));
+            status.clear();
         } finally {
             if (conn != null) {
                 conn.close();

@@ -65,7 +65,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         conn.commit();
         stat.close();
         conn.close();
-        tracer.info("exported " + count + " rows in Violation table.");
+        Tracer.addStatEntry(Tracer.StatType.ViolationExport, Integer.toString(count));
         return count;
     }
 

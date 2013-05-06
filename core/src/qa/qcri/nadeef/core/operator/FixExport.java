@@ -63,7 +63,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         conn.commit();
         stat.close();
         conn.close();
-        tracer.info("exported " + count + " rows in Repair table.");
+        Tracer.addStatEntry(Tracer.StatType.FixExport, Integer.toString(count));
         return count;
     }
 

@@ -25,7 +25,11 @@ public class CleanExecutor {
     private static Tracer tracer = Tracer.getTracer(CleanExecutor.class);
     private CleanPlan cleanPlan;
     private NodeCacheManager cacheManager;
+    private Flow[] detectFlows;
+    private Flow[] repairFlows;
+    private Flow[] updateFlows;
 
+    //<editor-fold desc="Constructor">
     /**
      * Constructor.
      * @param cleanPlan clean plan.
@@ -33,119 +37,167 @@ public class CleanExecutor {
     public CleanExecutor(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
+        assembleFlow();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Public methods">
+    public Object getDetectOutput() {
+        String key = detectFlows[detectFlows.length - 1].getLastOutputKey();
+        return cacheManager.get(key);
+    }
+
+    public Object getRepairOutput() {
+        String key = repairFlows[detectFlows.length - 1].getLastOutputKey();
+        return cacheManager.get(key);
+    }
+
+    public Object getUpdateOutput() {
+        String key = updateFlows[detectFlows.length - 1].getLastOutputKey();
+        return cacheManager.get(key);
     }
 
     /**
      * Runs the violation repair execution.
      */
-    public Flow[] detect() {
-        List<Rule> rules = cleanPlan.getRules();
-        Flow[] flows = new Flow[rules.size()];
-
-        try {
-            // assemble the flow.
-            for (int i = 0; i < flows.length; i ++)  {
-                flows[i] = new Flow();
-                Rule rule = rules.get(i);
-                String inputKey = cacheManager.put(rule);
-                flows[i].setInputKey(inputKey);
-                flows[i].addNode(new Node(new SourceDeserializer(cleanPlan), "deserializer"));
-                flows[i].addNode(new Node(new QueryEngine(rule), "query"));
-                if (rule.supportTwoInputs()) {
-                    // the case where the rule is working on multiple tables (2).
-                    flows[i].addNode(
-                        new Node(new ViolationDetector<TuplePair>(rule), "detector")
-                    );
-                } else {
-                    flows[i].addNode(
-                        new Node(new ViolationDetector<TupleCollection>(rule), "detector")
-                    );
-                }
-
-                flows[i].addNode(
-                    new Node(new ViolationExport(cleanPlan), "export")
-                );
-            }
-        } catch (Exception ex) {
-            tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
-            if (Tracer.isInfoOn()) {
-                ex.printStackTrace();
-            }
-            return null;
-        }
-
+    public CleanExecutor detect() {
         // TODO: run multiple rules in parallel in process / thread.
-        for (int i = 0; i < flows.length; i ++) {
-            Stopwatch stopwatch = new Stopwatch().start();
-            Flow flow = flows[i];
-            flow.start();
-            Tracer.addStatEntry(
-                "Rule [" + rules.get(i).getId() + "] Detection time",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
-            );
+        for (int i = 0; i < detectFlows.length; i ++) {
+            detect(i);
         }
-        return flows;
+        return this;
+    }
+
+    /**
+     * Runs the violation repair execution.
+     */
+    public CleanExecutor detect(int ruleIndex) {
+        Preconditions.checkArgument(ruleIndex >= 0 && ruleIndex < cleanPlan.getRules().size());
+        // TODO: run multiple rules in parallel in process / thread.
+        Stopwatch stopwatch = new Stopwatch().start();
+        Flow flow = detectFlows[ruleIndex];
+        flow.start();
+        Tracer.addStatEntry(
+            Tracer.StatType.DetectTime,
+            Long.toString(stopwatch.elapsed(TimeUnit.MILLISECONDS))
+        );
+        stopwatch.stop();
+        return this;
     }
 
     /**
      * Runs the violation detection execution.
      */
-    public Flow[] repair() {
+    public CleanExecutor repair(int ruleIndex) {
+        Preconditions.checkArgument(ruleIndex >= 0 && ruleIndex < cleanPlan.getRules().size());
+        long elapseTime;
+        // TODO: run multiple rules in parallel in process / thread.
+        Stopwatch stopwatch = new Stopwatch().start();
+        repairFlows[ruleIndex].start();
+        elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        Tracer.addStatEntry(
+            Tracer.StatType.RepairTime,
+            Long.toString(elapseTime)
+        );
+
+        updateFlows[ruleIndex].start();
+        elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) - elapseTime;
+        Tracer.addStatEntry(
+            Tracer.StatType.EQTime,
+            Long.toString(elapseTime)
+        );
+        stopwatch.stop();
+        return this;
+    }
+
+    /**
+     * Runs the violation detection execution.
+     */
+    public CleanExecutor repair() {
+        // TODO: run multiple rules in parallel in process / thread.
+        for (int i = 0; i < repairFlows.length; i ++) {
+            repair(i);
+        }
+
+        return this;
+    }
+
+    /**
+     * Run both the detection and repair.
+     * @param ruleIndex rule index.
+     * @return itself.
+     */
+    public CleanExecutor run(int ruleIndex) {
+        detect(ruleIndex);
+        repair(ruleIndex);
+        return this;
+    }
+
+    /**
+     * Run both the detection and repair.
+     * @return itself.
+     */
+    public CleanExecutor run() {
+        for (int i = 0; i < repairFlows.length; i ++) {
+            detect(i);
+            repair(i);
+        }
+        return this;
+    }
+    //</editor-fold>
+
+    /**
+     * Assemble the workflow.
+     */
+    private void assembleFlow() {
         List<Rule> rules = cleanPlan.getRules();
-        Flow[] flows = new Flow[rules.size()];
-        NodeCacheManager cacheManager = NodeCacheManager.getInstance();
+        int nRule = rules.size();
+        detectFlows = new Flow[nRule];
+        repairFlows = new Flow[nRule];
+        updateFlows = new Flow[nRule];
 
         try {
-            // assemble the flow.
-            for (int i = 0; i < flows.length; i ++)  {
-                flows[i] = new Flow();
+            for (int i = 0; i < nRule; i ++)  {
+                // assemble the detection flow.
+                detectFlows[i] = new Flow();
                 Rule rule = rules.get(i);
-                String inputKey = cacheManager.put(rule);
-                flows[i].setInputKey(inputKey);
-                flows[i].addNode(new Node(new ViolationDeserializer(), "violation_deserializer"));
-                flows[i].addNode(new Node(new ViolationRepair(rule), "violation_repair"));
-                flows[i].addNode(new Node(new FixExport(cleanPlan), "fix export"));
+                String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
+                detectFlows[i]
+                    .setInputKey(inputKey)
+                    .addNode(new SourceDeserializer(cleanPlan), "deserializer")
+                    .addNode(new QueryEngine(rule), "query");
+                if (rule.supportTwoInputs()) {
+                    // the case where the rule is working on multiple tables (2).
+                    detectFlows[i].addNode(new ViolationDetector<TuplePair>(rule), "detector");
+                } else {
+                    detectFlows[i].addNode(
+                        new ViolationDetector<TupleCollection>(rule),
+                        "detector"
+                    );
+                }
+                detectFlows[i].addNode(new ViolationExport(cleanPlan), "export");
+
+                // assemble the repair flow
+                repairFlows[i] = new Flow();
+                repairFlows[i]
+                    .setInputKey(inputKey)
+                    .addNode(new ViolationDeserializer(), "violation_deserializer")
+                    .addNode(new ViolationRepair(rule), "violation_repair")
+                    .addNode(new FixExport(cleanPlan), "fix export");
+
+                // assemble the updator flow
+                updateFlows[i] = new Flow();
+                updateFlows[i]
+                    .setInputKey(inputKey)
+                    .addNode(new FixDeserializer(), "fix deserializer")
+                    .addNode(new FixDecisionMaker(), "eq")
+                    .addNode(new Updater(cleanPlan), "updater");
             }
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
             if (Tracer.isInfoOn()) {
                 ex.printStackTrace();
             }
-            return null;
         }
-
-        // TODO: run multiple rules in parallel in process / thread.
-        for (int i = 0; i < flows.length; i ++) {
-            Stopwatch stopwatch = new Stopwatch().start();
-            Flow flow = flows[i];
-            flow.start();
-            Tracer.addStatEntry(
-                "Rule [" + rules.get(i).getId() + "] Generate Candidate Fix time",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
-            );
-        }
-
-        return flows;
-    }
-
-    public int apply(Rule rule) {
-        // Apply Fix decisions.
-        Stopwatch stopwatch = new Stopwatch().start();
-        Flow eq = new Flow();
-        String inputKey = cacheManager.put(rule);
-        eq.setInputKey(inputKey);
-        eq.addNode(new Node(new FixDeserializer(), "fix deserializer"));
-        eq.addNode(new Node(new FixDecisionMaker(), "eq"));
-        eq.addNode(new Node(new Updater(cleanPlan), "updater"));
-        eq.start();
-        Tracer.addStatEntry(
-            "EQ running time", stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms."
-        );
-        String outputKey = eq.getLastOutputKey();
-        return ((Integer)cacheManager.get(outputKey)).intValue();
-    }
-
-    public void run() {
-
     }
 }

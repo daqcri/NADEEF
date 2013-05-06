@@ -5,6 +5,8 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import qa.qcri.nadeef.core.operator.Operator;
+
 import java.util.LinkedList;
 
 /**
@@ -39,20 +41,42 @@ public class Flow {
     }
 
     //<editor-fold desc="Public methods">
+
+    /**
+     * Gets the input key of the flow.
+     * @return input key.
+     */
     public String getInputKey() {
         return inputKey;
     }
 
-    public void setInputKey(String inputKey) {
+    /**
+     * Sets the input key of the flow.
+     * @param inputKey input key.
+     */
+    public Flow setInputKey(String inputKey) {
         this.inputKey = inputKey;
+        return this;
     }
 
-    public synchronized void addNode(Node node, int index) {
+    /**
+     * Adds a new node in the flow.
+     * @param node node.
+     * @param index index.
+     */
+    public synchronized Flow addNode(Node node, int index) {
         nodeList.add(index, node);
+        return this;
     }
 
-    public synchronized void addNode(Node node) {
+    public synchronized Flow addNode(Node node) {
         nodeList.add(node);
+        return this;
+    }
+
+    public synchronized Flow addNode(Operator operator, String name) {
+        nodeList.add(new Node(operator, name));
+        return this;
     }
 
     public synchronized void removeNode(Node node, int index) {
@@ -81,6 +105,7 @@ public class Flow {
         }
 
         state = FlowState.Ready;
+        currentFlowPosition = 0;
         outputKey = keyList.peekLast();
     }
 

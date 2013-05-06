@@ -57,6 +57,19 @@ public class NodeCacheManager {
     }
 
     /**
+     * Add a value with generated unique key.
+     * @param value new object.
+     * @param lifeCount life count.
+     * @return generated key.
+     */
+    public synchronized String put(Object value, int lifeCount) {
+        UUID uuId = UUID.randomUUID();
+        String key = uuId.toString();
+        put(key, value, lifeCount);
+        return key;
+    }
+
+    /**
      * Add key-value pair in the container.
      * @param key value key.
      * @param value value.

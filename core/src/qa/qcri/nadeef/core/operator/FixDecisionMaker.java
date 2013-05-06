@@ -35,11 +35,11 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         // Clustering all the fixes.
         for (Fix fix : fixes) {
             Cell leftCell = fix.getLeft();
+            fixMap.put(leftCell, fix);
 
             if (fix.isConstantAssign()) {
                 // TODO: do a statistic on the assign count.
                 assignMap.put(leftCell, fix.getRightValue());
-                fixMap.put(leftCell, fix);
                 continue;
             }
 

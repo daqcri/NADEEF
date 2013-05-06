@@ -52,19 +52,14 @@ public class RepairPhaseTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            Flow[] flows = executor.detect();
-
-            String key = flows[0].getLastOutputKey();
-            Integer count = (Integer)cacheManager.get(key);
+            Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(2, count.intValue());
 
-            flows = executor.repair();
-            key = flows[0].getLastOutputKey();
-            count = (Integer)cacheManager.get(key);
+            count = (Integer)executor.repair().getRepairOutput();
             Assert.assertEquals(1, count.intValue());
 
-            int result = executor.apply(cleanPlan.getRules().get(0));
-            Assert.assertEquals(1, result);
+            count = (Integer)executor.getUpdateOutput();
+            Assert.assertEquals(1, count.intValue());
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail("exceptions : " + ex.getMessage());
@@ -76,19 +71,14 @@ public class RepairPhaseTest {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            Flow[] flows = executor.detect();
-
-            String key = flows[0].getLastOutputKey();
-            Integer count = (Integer)cacheManager.get(key);
+            Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(4, count.intValue());
 
-            flows = executor.repair();
-            key = flows[0].getLastOutputKey();
-            count = (Integer)cacheManager.get(key);
+            count = (Integer)executor.repair().getRepairOutput();
             Assert.assertEquals(2, count.intValue());
 
-            int result = executor.apply(cleanPlan.getRules().get(0));
-            Assert.assertEquals(2, result);
+            count = (Integer)executor.getUpdateOutput();
+            Assert.assertEquals(2, count.intValue());
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail("exceptions : " + ex.getMessage());

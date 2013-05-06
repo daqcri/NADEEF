@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.console;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
@@ -20,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * User interactive console.
@@ -54,10 +56,19 @@ public class Console {
     public static void main(String[] args) {
         try {
             // bootstrap Nadeef.
+            Stopwatch stopwatch = new Stopwatch().start();
             Bootstrap.Start();
             String line;
 
             console = new ConsoleReader();
+            List<Completer> loadCompleter =
+                Arrays.asList(
+                    new StringsCompleter(commands),
+                    new FileNameCompleter(),
+                    new NullCompleter()
+                );
+            console.addCompleter(new ArgumentCompleter(loadCompleter));
+
             console.clearScreen();
             console.println(logo);
             console.println();
@@ -65,21 +76,14 @@ public class Console {
             console.println();
             console.drawLine();
             console.setPrompt(prompt);
+            console.println(
+                "Your NADEEF started in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+            );
 
-            List<Completer> loadCompleter =
-                    Arrays.asList(
-                        new StringsCompleter(commands),
-                        new FileNameCompleter(),
-                        new NullCompleter()
-                    );
-            console.addCompleter(new ArgumentCompleter(loadCompleter));
 
             while ((line = console.readLine()) != null) {
                 line = line.trim();
-                char[] result = line.toCharArray();
-                for (int i = 0; i < result.length; i ++) {
-                    System.out.println(result[i] + " : " + (int)result[i]);
-                }
+                Tracer.recreateStat();
                 try {
                     if (line.startsWith("exit")) {
                         break;
@@ -93,6 +97,8 @@ public class Console {
                         detect(line);
                     } else if (line.startsWith("repair")) {
                         repair(line);
+                    } else if (line.startsWith("run")) {
+                        run(line);
                     } else if (Strings.isNullOrEmpty(line)) {
                         continue;
                     } else if (line.startsWith("set")) {
@@ -102,7 +108,7 @@ public class Console {
                     }
                 } catch (Exception ex) {
                     console.println("Oops, something is wrong:");
-                    console.println(ex.getMessage());
+                    ex.printStackTrace();
                 }
             }
         } catch (Exception ex) {
@@ -149,27 +155,59 @@ public class Console {
     }
 
     private static void detect(String cmd) {
-        String[] splits = cmd.split("\\s");
-        if (splits.length > 2) {
+
+        String[] tokens = cmd.split("\\s");
+        if (tokens.length > 2) {
             throw
                 new IllegalArgumentException(
                     "Wrong detect command. Run detect [id number] instead."
                 );
         }
 
-        executor.detect();
+        if (tokens.length == 1) {
+            executor.detect();
+        } else {
+            executor.detect(Integer.valueOf(tokens[1]));
+        }
+
+        Tracer.printDetectSummary();
     }
 
     private static void repair(String cmd) {
-        String[] splits = cmd.split("\\s");
-        if (splits.length > 2) {
+        String[] tokens = cmd.split("\\s");
+        if (tokens.length > 2) {
             throw
                 new IllegalArgumentException(
                     "Wrong detect command. Run detect [id number] instead."
                 );
         }
 
-        executor.repair();
+        if (tokens.length == 1) {
+            executor.repair();
+        } else {
+            executor.repair(Integer.valueOf(tokens[1]));
+        }
+
+        Tracer.printRepairSummary();
+    }
+
+    private static void run(String cmd) {
+        String[] tokens = cmd.split("\\s");
+        if (tokens.length > 2) {
+            throw
+                new IllegalArgumentException(
+                    "Wrong detect command. Run detect [id number] instead."
+                );
+        }
+
+        if (tokens.length == 1) {
+            executor.run();
+        } else {
+            executor.run(Integer.valueOf(tokens[1]));
+        }
+
+        Tracer.printDetectSummary();
+        Tracer.printRepairSummary();
     }
 
     private static void set(String cmd) throws IOException {
@@ -178,6 +216,12 @@ public class Console {
             boolean mode = !Tracer.isVerboseOn();
             console.println("set verbose " + (mode ? "on" : "off"));
             Tracer.setVerbose(mode);
+        }
+
+        if (splits[1].equalsIgnoreCase("info")) {
+            boolean mode = !Tracer.isInfoOn();
+            console.println("set info " + (mode ? "on" : "off"));
+            Tracer.setInfo(mode);
         }
     }
 

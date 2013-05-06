@@ -41,7 +41,7 @@ public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
 
 
             result = Fixes.fromQuery(resultSet);
-            tracer.info("There are " + result.size() + " fixes deserialized.");
+            Tracer.addStatEntry(Tracer.StatType.FixDeserialize, Integer.toString(result.size()));
         } finally {
             if (conn != null) {
                 conn.close();

@@ -69,7 +69,14 @@ public class Column {
     public String getTableName() {
         if (tableName.startsWith("VIEW")) {
             String[] tokens = tableName.split("_");
-            return tokens[1];
+            StringBuilder builder = new StringBuilder();
+            for (int i = 1; i < tokens.length - 1; i ++) {
+                if (i != 1) {
+                    builder.append('_');
+                }
+                builder.append(tokens[i]);
+            }
+            return builder.toString();
         }
         return tableName;
     }

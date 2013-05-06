@@ -29,7 +29,7 @@ public class FlowTest {
     public void SimpleFlowTest() {
         NodeCacheManager cacheManager = NodeCacheManager.getInstance();
         CountOperator countOperator = new CountOperator(null);
-        cacheManager.put("Input", 0);
+        cacheManager.put("Input", Integer.valueOf(0));
 
         Flow flow = new Flow();
         flow.setInputKey("Input");
