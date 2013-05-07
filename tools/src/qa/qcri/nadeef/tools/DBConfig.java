@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.datamodel;
+package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;

@@ -5,13 +5,11 @@
         "password" : "tester",
         "type" : "postgres"
     },
-    "target" : {
-        "table" : "output"
-    },
     "rule" : [
         {
             "type" : "fd",
             "table" : ["location"],
+            "target" : ["location_copy"],
             "value" : ["zip|city, state"]
         }
     ]

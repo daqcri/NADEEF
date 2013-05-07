@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,8 +16,10 @@ import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.FileHelper;
 
 import java.io.File;
@@ -25,13 +28,13 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Nadeef cleaning plan.
  */
 public class CleanPlan {
     private DBConfig source;
-    private DBConfig target;
     private List<Rule> rules;
 
     //<editor-fold desc="Constructor">
@@ -40,11 +43,9 @@ public class CleanPlan {
      */
     public CleanPlan(
         DBConfig sourceConfig,
-        DBConfig targetConfig,
         List<Rule> rules
     ) {
         this.source = sourceConfig;
-        this.target = targetConfig;
         this.rules = rules;
     }
 
@@ -60,7 +61,8 @@ public class CleanPlan {
             InvalidRuleException,
             InvalidCleanPlanException {
         Preconditions.checkNotNull(reader);
-
+        // a set which prevents generating new tables whenever encounters among multiple rules.
+        Set<String> generatedTables = Sets.newHashSet();
         SQLDialect sqlDialect;
         String sourceUrl = null;
         String sourceTableUserName = null;
@@ -92,13 +94,12 @@ public class CleanPlan {
             } else {
                 // TODO: support different type of DB.
                 sqlDialect = SQLDialect.POSTGRES;
-
                 sourceUrl = (String)src.get("url");
                 sourceTableUserName = (String)src.get("username");
                 sourceTableUserPassword = (String)src.get("password");
             }
             DBConfig.Builder builder = new DBConfig.Builder();
-            DBConfig source =
+            DBConfig dbConfig =
                 builder.username(sourceTableUserName)
                        .password(sourceTableUserPassword)
                        .url(sourceUrl)
@@ -106,16 +107,10 @@ public class CleanPlan {
                        .build();
 
             // ----------------------------------------
-            // parsing the target config
-            // ----------------------------------------
-            // TODO: fill the target parsing
-
-            // ----------------------------------------
             // parsing the rules
             // ----------------------------------------
             // TODO: adds verification on the fd rule attributes arguments.
             // TODO: adds verification on the table name check.
-            // TODO: adds verification on the hints.
             // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match the pattern.
             JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
             ArrayList<Rule> rules = new ArrayList();
@@ -126,17 +121,36 @@ public class CleanPlan {
                     name = "Rule " + i;
                 }
 
-                List<String> tableNames;
+                List<String> sourceTableNames;
+                List<String> targetTableNames;
                 if (isCSV) {
-                    tableNames = Arrays.asList(csvTableName);
+                    targetTableNames = Arrays.asList(csvTableName);
                 } else {
-                    tableNames = (List<String>)ruleObj.get("table");
-                }
+                    sourceTableNames = (List<String>)ruleObj.get("table");
+                    targetTableNames = (List<String>)ruleObj.get("target");
+                    if (targetTableNames == null) {
+                        // when user doesn't provide target tables we create a copy for them
+                        // with default table names.
+                        targetTableNames = Lists.newArrayList();
+                        for (String sourceTableName : sourceTableNames) {
+                            targetTableNames.add(sourceTableName + "_copy");
+                        }
+                    }
 
-                if (tableNames.size() > 2 || tableNames.size() < 1) {
-                    throw new IllegalArgumentException(
+                    Preconditions.checkArgument(
+                        sourceTableNames.size() == targetTableNames.size() &&
+                        sourceTableNames.size() <= 2 &&
+                        sourceTableNames.size() >= 1,
                         "Invalid Rule property, rule needs to have one or two tables."
                     );
+
+                    for (int j = 0; j < sourceTableNames.size(); j ++) {
+                        DBMetaDataTool.copy(
+                            dbConfig,
+                            sourceTableNames.get(j),
+                            targetTableNames.get(j)
+                        );
+                    }
                 }
 
                 type = (String)ruleObj.get("type");
@@ -152,7 +166,7 @@ public class CleanPlan {
                         );
                         rule = ruleBuilder.type(RuleType.FD)
                             .name(name)
-                            .table(tableNames)
+                            .table(targetTableNames)
                             .value(value)
                             .build();
                         rules.add(rule);
@@ -161,7 +175,7 @@ public class CleanPlan {
                         value = (JSONArray)ruleObj.get("value");
                         rule = ruleBuilder.type(RuleType.UDF)
                             .name(name)
-                            .table(tableNames)
+                            .table(targetTableNames)
                             .value(value)
                             .build();
                         rules.add(rule);
@@ -174,7 +188,7 @@ public class CleanPlan {
                             String condition = (String)value.get(j);
                             rule = ruleBuilder.type(RuleType.CFD)
                                 .name(name)
-                                .table(tableNames)
+                                .table(targetTableNames)
                                 .value(Lists.newArrayList(head, condition))
                                 .build();
                             rules.add(rule);
@@ -185,7 +199,7 @@ public class CleanPlan {
                 }
 
             }
-            return new CleanPlan(source, null, rules);
+            return new CleanPlan(dbConfig, rules);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new InvalidCleanPlanException(ex.getMessage());

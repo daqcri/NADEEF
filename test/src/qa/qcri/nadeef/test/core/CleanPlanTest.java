@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.DBConfig;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.FDRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
@@ -42,7 +42,7 @@ public class CleanPlanTest {
             Assert.assertTrue(rule instanceof FDRule);
             List<String> tableNames = rule.getTableNames();
             Assert.assertEquals(1, tableNames.size());
-            Assert.assertEquals("location", tableNames.get(0));
+            Assert.assertEquals("location_copy", tableNames.get(0));
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }

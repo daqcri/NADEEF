@@ -42,7 +42,8 @@ public class Console {
 
     private static final String prompt = ":> ";
 
-    private static final String[] commands = { "load", "run", "repair", "help", "set", "exit" };
+    private static final String[] commands =
+        { "load", "run", "repair", "detect", "help", "set", "exit" };
     private static ConsoleReader console;
     private static CleanPlan currentCleanPlan;
     private static CleanExecutor executor;

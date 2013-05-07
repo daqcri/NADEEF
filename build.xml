@@ -21,12 +21,12 @@
 
     <target name="all"
             description="Clean build on all the NADEEF files and creates the JAR file."
-            depends="clean, jar, test">
+            depends="clean, test, jar">
      </target>
 
     <target name="compile" 
 			description="Compile all the NADEEF components"
-			depends="core, console, tools">
+			depends="test">
 	</target>
 
     <target name="jar" depends="compile">
@@ -37,13 +37,13 @@
         </manifestclasspath>
 
         <jar destfile="${build.root}/${project.name}.jar">
-            <fileset dir="${build.dir}" includes="**/*.class" />
-            <fileset dir="${vendor.dir}" />
-            <manifest>
-                <attribute name="Main-Class" value="${console.class}" />
-                <attribute name="Class-Path" value="${jar.classpath}" />
-            </manifest>
-        </jar>
+        <fileset dir="${build.dir}" includes="**/*.class" />
+        <fileset dir="${vendor.dir}" />
+        <manifest>
+            <attribute name="Main-Class" value="${console.class}" />
+            <attribute name="Class-Path" value="${jar.classpath}" />
+        </manifest>
+    </jar>
     </target>
 
     <!-- Targets per component -->
@@ -76,12 +76,12 @@
                classpathref="vendors.jars"/>
     </target>
 
-    <target name="test" depends="jar">
+    <target name="test" depends="core, console, tools">
         <mkdir dir="${test.dir}" />
         <javac includeantruntime="false"
                debug="on"
                srcdir="test/src"
-               destdir="${test.dir}"
+               destdir="${build.dir}"
                classpath="${build.dir}"
                classpathref="vendors.jars"/>
     </target>

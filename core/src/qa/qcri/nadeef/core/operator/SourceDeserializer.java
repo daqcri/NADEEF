@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.tools.DBConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -7,10 +7,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.TupleCollection;
-import qa.qcri.nadeef.core.datamodel.TuplePair;
+import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.operator.*;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -138,10 +135,21 @@ public class CleanExecutor {
      * @return itself.
      */
     public CleanExecutor run() {
-        for (int i = 0; i < repairFlows.length; i ++) {
-            detect(i);
-            repair(i);
-        }
+        int changedCells = 0;
+        int count = 0;
+        do {
+            tracer.verbose("Running iteration " + count + 1);
+            for (int i = 0; i < repairFlows.length; i ++) {
+                detect(i);
+                repair(i);
+            }
+
+            changedCells = ((Integer)getUpdateOutput()).intValue();
+            count ++;
+            if (count == NadeefConfiguration.getMaxIterationNumber()) {
+                break;
+            }
+        } while (changedCells != 0);
         return this;
     }
     //</editor-fold>
@@ -185,7 +193,7 @@ public class CleanExecutor {
                     .addNode(new ViolationRepair(rule), "violation_repair")
                     .addNode(new FixExport(cleanPlan), "fix export");
 
-                // assemble the updator flow
+                // assemble the updater flow
                 updateFlows[i] = new Flow();
                 updateFlows[i]
                     .setInputKey(inputKey)

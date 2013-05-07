@@ -7,17 +7,16 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.Tools;
+import qa.qcri.nadeef.tools.Tools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Updater fixes the source data and exports it in the database.
@@ -27,7 +26,7 @@ import java.util.HashSet;
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
     private CleanPlan cleanPlan;
-    private HashMap<Cell, String> status;
+    private static HashMap<Cell, String> updateHistory = Maps.newHashMap();
 
     /**
      * Constructor.
@@ -35,7 +34,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
      */
     public Updater(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
-        status = Maps.newHashMap();
+        updateHistory.clear();
     }
 
     /**
@@ -50,6 +49,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         int count = 0;
         Connection conn = null;
         Statement stat = null;
+        PreparedStatement auditInsertStat = null;
         String auditTableName = NadeefConfiguration.getAuditTableName();
         String rightValue;
         String oldValue;
@@ -57,23 +57,25 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         try {
             conn =
                 DBConnectionFactory.createConnection(cleanPlan.getSourceDBConfig());
-            stat = conn.createStatement();
+            auditInsertStat =
+                conn.prepareStatement(
+                    "INSERT INTO " + auditTableName +
+                    " VALUES (default, ?, ?, ?, ?, ?, ?, current_timestamp)");
             for (Fix fix : fixes) {
                 Cell cell = fix.getLeft();
                 oldValue = cell.getAttributeValue().toString();
 
-                if (status.containsKey(cell)) {
-                    String value = status.get(cell);
+                if (updateHistory.containsKey(cell)) {
+                    String value = updateHistory.get(cell);
                     if (value.equals(fix.getRightValue())) {
                         continue;
                     }
                     // when a cell is set twice with different value,
                     // we set it to null for ambiguous value.
-                    rightValue = "null";
-
+                    rightValue = "?";
                 } else {
                     rightValue = fix.getRightValue();
-                    status.put(cell, rightValue);
+                    updateHistory.put(cell, rightValue);
                 }
 
                 // check for numerical type.
@@ -93,24 +95,23 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     " WHERE tid = " + cell.getTupleId();
                 tracer.verbose(updateSql);
                 stat.addBatch(updateSql);
-                String insertSql =
-                    "INSERT INTO " + auditTableName +
-                    " VALUES (default, " +
-                    fix.getVid() + "," +
-                    cell.getTupleId() + ",\'" +
-                    column.getTableName() + "\',\'" +
-                    column.getAttributeName() + "\'," +
-                    oldValue + "," +
-                    rightValue + "," +
-                    "current_timestamp)";
-                tracer.verbose(insertSql);
-                stat.addBatch(insertSql);
+                auditInsertStat.setInt(1, fix.getVid());
+                auditInsertStat.setInt(2, cell.getTupleId());
+                auditInsertStat.setString(3, column.getTableName());
+                auditInsertStat.setString(4, column.getAttributeName());
+                auditInsertStat.setString(5, oldValue);
+                auditInsertStat.setString(6, rightValue);
+                auditInsertStat.addBatch();
+                if (count % 1024 == 0) {
+                    auditInsertStat.executeBatch();
+                }
                 count ++;
             }
             stat.executeBatch();
+            auditInsertStat.executeBatch();
             conn.commit();
             Tracer.addStatEntry(Tracer.StatType.UpdatedCellNumber, Integer.toString(count));
-            status.clear();
+            updateHistory.clear();
         } finally {
             if (conn != null) {
                 conn.close();

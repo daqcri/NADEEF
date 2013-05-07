@@ -25,6 +25,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="postgresql-9.1-901.jdbc4" level="project" />
   </component>
 </module>
 

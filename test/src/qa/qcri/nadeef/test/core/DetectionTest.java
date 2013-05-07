@@ -15,6 +15,7 @@ import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.SQLException;
 
@@ -26,6 +27,7 @@ public class DetectionTest {
     @Before
     public void setUp() {
         Bootstrap.Start();
+        Tracer.setVerbose(true);
     }
 
     @Test
@@ -34,7 +36,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(4);
+            verifyViolationResult(8);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -73,7 +75,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan4();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(4);
+            verifyViolationResult(8);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -87,6 +89,32 @@ public class DetectionTest {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(84);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest6() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getAdultPlan1();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(4);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest7() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getAdultPlan2();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(365116);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

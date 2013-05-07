@@ -6,7 +6,7 @@
 package qa.qcri.nadeef.core.util;
 
 import org.jooq.SQLDialect;
-import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
+import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;import qa.qcri.nadeef.tools.DBConfig;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -55,10 +55,28 @@ public class DBMetaDataTool {
         return result;
     }
 
-    public static void addTidColumn(SQLDialect dialect, Connection conn, String tableName)
-            throws SQLException {
+    /**
+     * Copy the table within the source database.
+     * @param dbConfig dbconfig
+     * @param sourceTableName source table name.
+     * @param targetTableName target table name.
+     */
+    public static void copy(
+        DBConfig dbConfig,
+        String sourceTableName,
+        String targetTableName
+    ) throws
+        ClassNotFoundException,
+        SQLException,
+        InstantiationException,
+        IllegalAccessException {
+        Connection conn = DBConnectionFactory.createConnection(dbConfig);
         Statement stat = conn.createStatement();
-        stat.execute("alter table " + tableName + " add column tid serial");
+        stat.execute("DROP TABLE IF EXISTS " + targetTableName + " CASCADE");
+        stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
+        stat.execute("ALTER TABLE " + targetTableName + " ADD COLUMN TID SERIAL");
         conn.commit();
+        stat.close();
+        conn.close();
     }
 }

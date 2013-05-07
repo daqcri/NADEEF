@@ -5,14 +5,12 @@
         "password" : "tester",
         "type" : "postgres"
     },
-    "target" : {
-        "table" : "output"
-    },
     "rule" : [
         {
             "name" : "myRule",
 			"type" : "udf",
             "table" : ["location"],
+            "target" : ["location_copy"],
             "value" : ["qa.qcri.nadeef.test.udf.MyRule1"],
         }
     ]

@@ -26,6 +26,7 @@ public class NadeefConfiguration {
     private static String auditTable;
     private static String schemaName = "public";
     private static String version = "1.0";
+    private static int maxIterationNumber = 10;
 
     //<editor-fold desc="Public methods">
 
@@ -53,6 +54,9 @@ public class NadeefConfiguration {
 
         JSONObject general = (JSONObject)jsonObject.get("general");
         testMode = (Boolean)general.get("testmode");
+        if (general.containsKey("maxIterationNumber")) {
+            maxIterationNumber = (Integer)general.get("maxIterationNumber");
+        }
     }
 
     /**
@@ -85,6 +89,14 @@ public class NadeefConfiguration {
 
     public static String getType() {
         return type;
+    }
+
+    /**
+     * Gets the Nadeef installed schema name.
+     * @return Nadeef DB schema name.
+     */
+    public static int getMaxIterationNumber() {
+        return maxIterationNumber;
     }
 
     /**

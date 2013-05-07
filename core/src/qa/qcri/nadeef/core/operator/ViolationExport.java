@@ -5,23 +5,28 @@
 
 package qa.qcri.nadeef.core.operator;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import org.postgresql.PGConnection;
+import org.postgresql.copy.CopyManager;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.PushbackReader;
+import java.io.StringReader;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Export violations into the target place.
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
-    private static Tracer tracer = Tracer.getTracer(ViolationExport.class);
+    private final int BULKSIZE = 1024;
+    private static PushbackReader reader = new PushbackReader(new StringReader(""), 1024 * 1024);
 
     /**
      * Constructor.
@@ -32,39 +37,56 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     }
 
     /**
-     * Export the violation.
+     * Export the violation into database.
      *
      * @param violations violations.
      * @return whether the exporting is successful or not.
-     * TODO: this is not out-of-process safe.
      */
     @Override
-    public synchronized Integer execute(Collection<Violation> violations)
-            throws
-                ClassNotFoundException,
-                SQLException,
-                InstantiationException,
-                IllegalAccessException {
+    public Integer execute(Collection<Violation> violations) throws Exception {
+        Stopwatch stopwatch = new Stopwatch().start();
+        StringBuilder sb = new StringBuilder();
         Connection conn = DBConnectionFactory.createNadeefConnection();
-        Statement stat = conn.createStatement();
-        // stat.execute("DELETE FROM " + NadeefConfiguration.getViolationTableName());
-        Integer count = 0;
-        int vid = Violations.generateViolationId();
-        for (Violation violation : violations) {
-            List<Cell> cells = Lists.newArrayList(violation.getCells());
-            for (Cell cell : cells) {
-                String sql = getSQLInsert(violation.getRuleId(), vid, cell);
-                stat.addBatch(sql);
-                count ++;
+        CopyManager copyManager = ((PGConnection)conn).getCopyAPI();
+        int count = 0;
+
+        // Copy load the data into Postgres database. It is using Postgres API.
+        synchronized (ViolationExport.class) {
+            // TODO: this is not out-of-process safe.
+            int vid = Violations.generateViolationId();
+            for (Violation violation : violations) {
+                List<Cell> cells = Lists.newArrayList(violation.getCells());
+                for (Cell cell : cells) {
+                    sb.append(getSQLInsert(violation.getRuleId(), vid, cell));
+                    if (count % BULKSIZE == 0) {
+                        reader.unread(sb.toString().toCharArray());
+                        copyManager.copyIn(
+                            "COPY " +
+                                NadeefConfiguration.getViolationTableName() +
+                                " FROM STDIN WITH CSV",
+                            reader
+                        );
+                        sb.delete(0, sb.length());
+                    }
+                    count ++;
+                }
+                vid ++;
             }
-            violation.setVid(vid);
-            vid ++;
+            reader.unread(sb.toString().toCharArray());
+            copyManager.copyIn(
+                "COPY " +
+                    NadeefConfiguration.getViolationTableName() +
+                    " FROM STDIN WITH CSV",
+                reader
+            );
         }
 
-        stat.executeBatch();
         conn.commit();
-        stat.close();
         conn.close();
+        Tracer.addStatEntry(
+            Tracer.StatType.ViolationExportTime,
+            Long.toString(stopwatch.elapsed(TimeUnit.MILLISECONDS))
+        );
         Tracer.addStatEntry(Tracer.StatType.ViolationExport, Integer.toString(count));
         return count;
     }
@@ -73,13 +95,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
      * Converts a violation to SQL insert.
      */
     private String getSQLInsert(String ruleId, int vid, Cell cell) {
-        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO");
-        sqlBuilder.append(' ');
-        sqlBuilder.append(
-            NadeefConfiguration.getSchemaName() +
-            "." + NadeefConfiguration.getViolationTableName()
-        );
-        sqlBuilder.append(" VALUES (");
+        StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append(vid);
         sqlBuilder.append(", '" + ruleId + "',");
         Column column = cell.getColumn();
@@ -87,7 +103,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         sqlBuilder.append(cell.getTupleId());
         sqlBuilder.append(",");
         sqlBuilder.append("'" + column.getAttributeName() + "',");
-        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "')");
+        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "'\n");
         return sqlBuilder.toString();
     }
 }

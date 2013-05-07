@@ -25,6 +25,8 @@ public class Tracer {
         // detect
         DetectTime,
         ViolationExport,
+        ViolationExportTime,
+        TupleNumber,
         // repair
         RepairTime,
         EQTime,
@@ -91,28 +93,27 @@ public class Tracer {
         out("Repair summary:");
         List<String> detectStats = Lists.newArrayList(stats.get(StatType.RepairTime));
         List<String> eqStats = Lists.newArrayList(stats.get(StatType.EQTime));
-        List<String> fixStats = Lists.newArrayList(stats.get(StatType.FixDeserialize));
         List<String> cellStats = Lists.newArrayList(stats.get(StatType.UpdatedCellNumber));
+
         long totalTime = 0;
-        int totalFix = 0;
         int totalChangedCell = 0;
 
         for (int i = 0; i < detectStats.size(); i ++) {
             long time = Long.parseLong(detectStats.get(i));
-            out(String.format("%-30s %10d ms", "Repair Rule " + i, time));
-            time = Long.parseLong(eqStats.get(i));
-            totalTime += time;
-            out(String.format("%-30s %10d ms", "EQ Rule " + i, time));
+            out("Rule " + i + ":");
+            out("----------------------------------------------------------------");
+            out(String.format("%-30s %10d ms", "Repair time" , time));
             totalTime += time;
 
-            int nFix = Integer.parseInt(fixStats.get(i));
-            out(String.format("%-30s %10d", "Rule " + i + " has candidate fixes", nFix));
-            totalFix += nFix;
+            time = Long.parseLong(eqStats.get(i));
+            out(String.format("%-30s %10d ms", "EQ time", time));
+            totalTime += time;
 
             int nCell = Integer.parseInt(cellStats.get(i));
-            out(String.format("%-30s %10d", "Rule " + i + " has Cell updated", nCell));
+            out(String.format("%-30s %10d", "Cell updated", nCell));
             totalChangedCell += nCell;
         }
+        out("----------------------------------------------------------------");
         System.out.println(
             "Repair " + detectStats.size() + " rules finished in " + totalTime + " ms " +
             "with " + totalChangedCell + " cells changed.\n"
@@ -126,16 +127,28 @@ public class Tracer {
         int totalViolation = 0;
         List<String> detectStats = Lists.newArrayList(stats.get(StatType.DetectTime));
         List<String> violationExport = Lists.newArrayList(stats.get(StatType.ViolationExport));
+        List<String> violationExportTime =
+            Lists.newArrayList(stats.get(StatType.ViolationExportTime));
+        List<String> tupleNums = Lists.newArrayList(stats.get(StatType.TupleNumber));
 
         for (int i = 0; i < detectStats.size(); i ++) {
+            out("Rule " + i + ":");
+            out("----------------------------------------------------------------");
             long time = Long.parseLong(detectStats.get(i));
-            out(String.format("%-30s %10d ms", "Rule " + i, time));
+            out(String.format("%-30s %10d ms", "Detect time", time));
             totalTime += time;
 
+            int nTuple = Integer.parseInt(tupleNums.get(i));
+            out(String.format("%-30s %10d", "Detect tuple", nTuple));
+
             int num = Integer.parseInt(violationExport.get(i));
-            out(String.format("%-30s %10d", "Rule " + i + " found violation", num));
+            out(String.format("%-30s %10d", "Violation", num));
             totalViolation += num;
+
+            long exportTime = Long.parseLong(violationExportTime.get(i));
+            out(String.format("%-30s %10d ms", "Violation export time", exportTime));
         }
+        out("----------------------------------------------------------------");
 
         System.out.println(
             "Detection " + detectStats.size() + " rules finished in " + totalTime + " ms " +

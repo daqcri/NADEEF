@@ -94,6 +94,7 @@ public class RuleBuilder {
             }
             return rule;
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new InvalidRuleException(ex);
         }
     }

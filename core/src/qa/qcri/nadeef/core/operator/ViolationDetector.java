@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +37,7 @@ public class ViolationDetector<T>
         Collection<Violation> result = null;
         Collection<?> collections = (Collection)tuples;
         Iterator iterator = collections.iterator();
+        int count = 0;
         while (iterator.hasNext()) {
             if (rule.supportOneInput()) {
                 TupleCollection collection = (TupleCollection)iterator.next();
@@ -43,17 +45,21 @@ public class ViolationDetector<T>
                     Tuple a = collection.get(i);
                     result = rule.detect(a);
                     resultCollection.addAll(result);
+                    count ++;
                 }
             } else if (rule.supportTwoInputs()) {
                 TuplePair pair = (TuplePair)iterator.next();
                 result = rule.detect(pair);
                 resultCollection.addAll(result);
+                count ++;
             } else if (rule.supportManyInputs()) {
                 TupleCollection collection = (TupleCollection)iterator.next();
                 result = rule.detect(collection);
                 resultCollection.addAll(result);
+                count ++;
             }
         }
+        Tracer.addStatEntry(Tracer.StatType.TupleNumber, Integer.toString(count));
         return resultCollection;
     }
 }

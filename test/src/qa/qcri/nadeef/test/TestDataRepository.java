@@ -63,6 +63,16 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getAdult1kPlan() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan6.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getAdult30kPlan() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan7.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
         throws
             InvalidRuleException,
@@ -101,5 +111,21 @@ public class TestDataRepository {
         FileNotFoundException,
         InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
+    }
+
+    public static CleanPlan getAdultPlan1()
+        throws
+            InvalidRuleException,
+            FileNotFoundException,
+            InvalidCleanPlanException {
+            return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult1kPlan()));
+    }
+
+    public static CleanPlan getAdultPlan2()
+        throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult30kPlan()));
     }
 }

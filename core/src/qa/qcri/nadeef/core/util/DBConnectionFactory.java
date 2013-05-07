@@ -6,7 +6,7 @@
 package qa.qcri.nadeef.core.util;
 
 import org.jooq.SQLDialect;
-import qa.qcri.nadeef.core.datamodel.DBConfig;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 
 import java.sql.Connection;
@@ -49,6 +49,7 @@ public class DBConnectionFactory {
             ClassNotFoundException,
             SQLException,
             InstantiationException,
+
             IllegalAccessException {
         String url = NadeefConfiguration.getUrl();
         StringBuilder jdbcUrl = new StringBuilder("jdbc:");
