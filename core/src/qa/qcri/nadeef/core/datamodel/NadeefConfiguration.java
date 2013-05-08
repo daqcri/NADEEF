@@ -26,7 +26,7 @@ public class NadeefConfiguration {
     private static String auditTable;
     private static String schemaName = "public";
     private static String version = "1.0";
-    private static int maxIterationNumber = 10;
+    private static int maxIterationNumber = 1;
 
     //<editor-fold desc="Public methods">
 

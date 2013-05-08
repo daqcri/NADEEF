@@ -5,9 +5,11 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.operator.Operator;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Flow state.
@@ -23,8 +25,8 @@ enum FlowState {
  * TODO: currently the design only allows for one line of connected nodes.
  */
 public class Flow {
-    private LinkedList<Node> nodeList;
-    private LinkedList<String> keyList;
+    private List<Node> nodeList;
+    private List<String> keyList;
     private int currentFlowPosition;
     private FlowState state;
     private String outputKey;
@@ -34,8 +36,8 @@ public class Flow {
      * Constructor.
      */
     public Flow() {
-        nodeList = new LinkedList<Node>();
-        keyList = new LinkedList<String>();
+        nodeList = Lists.newArrayList();
+        keyList = Lists.newArrayList();
         currentFlowPosition = 0;
         state = FlowState.Ready;
     }
@@ -105,8 +107,8 @@ public class Flow {
         }
 
         state = FlowState.Ready;
+        outputKey = keyList.get(currentFlowPosition - 1);
         currentFlowPosition = 0;
-        outputKey = keyList.peekLast();
     }
 
     public FlowState getState() {
