@@ -57,6 +57,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         try {
             conn =
                 DBConnectionFactory.createConnection(cleanPlan.getSourceDBConfig());
+            stat = conn.createStatement();
             auditInsertStat =
                 conn.prepareStatement(
                     "INSERT INTO " + auditTableName +

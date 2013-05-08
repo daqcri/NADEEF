@@ -97,13 +97,18 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     private String getSQLInsert(String ruleId, int vid, Cell cell) {
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append(vid);
-        sqlBuilder.append(", '" + ruleId + "',");
+        sqlBuilder.append(',');
+        sqlBuilder.append(ruleId);
+        sqlBuilder.append(',');
         Column column = cell.getColumn();
-        sqlBuilder.append("'" + column.getTableName() + "',");
+        sqlBuilder.append(column.getTableName());
+        sqlBuilder.append(',');
         sqlBuilder.append(cell.getTupleId());
-        sqlBuilder.append(",");
-        sqlBuilder.append("'" + column.getAttributeName() + "',");
-        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "'\n");
+        sqlBuilder.append(',');
+        sqlBuilder.append(column.getAttributeName());
+        sqlBuilder.append(',');
+        sqlBuilder.append(cell.getAttributeValue().toString());
+        sqlBuilder.append('\n');
         return sqlBuilder.toString();
     }
 }

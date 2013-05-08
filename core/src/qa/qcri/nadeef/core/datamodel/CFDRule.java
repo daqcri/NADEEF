@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

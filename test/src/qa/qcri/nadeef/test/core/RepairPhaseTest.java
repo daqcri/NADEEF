@@ -5,20 +5,16 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVDumper;
 import qa.qcri.nadeef.tools.Tracer;
-
-import java.sql.Connection;
-import java.sql.Statement;
 
 /**
  * Test the repair phase of NADEEF.
@@ -32,6 +28,7 @@ public class RepairPhaseTest {
     public void setup() {
         Bootstrap.Start();
         Tracer.setVerbose(true);
+        Tracer.setInfo(true);
         ruleBuilder = new RuleBuilder();
         cacheManager = NodeCacheManager.getInstance();
     }
