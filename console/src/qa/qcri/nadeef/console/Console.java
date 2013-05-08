@@ -13,12 +13,18 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +49,7 @@ public class Console {
     private static final String prompt = ":> ";
 
     private static final String[] commands =
-        { "load", "run", "repair", "detect", "help", "set", "exit" };
+        { "load", "run", "repair", "detect", "help", "set", "exit", "schema", "fd" };
     private static ConsoleReader console;
     private static CleanPlan currentCleanPlan;
     private static CleanExecutor executor;
@@ -104,6 +110,8 @@ public class Console {
                         continue;
                     } else if (line.startsWith("set")) {
                         set(line);
+                    } else if (line.startsWith("schema")) {
+                        schema(line);
                     } else {
                         console.println("I don't know this command.");
                     }
@@ -120,6 +128,39 @@ public class Console {
         }
 
         System.exit(0);
+    }
+
+    private static void schema(String cmdLine) throws Exception {
+        String[] splits = cmdLine.split("\\s");
+        if (splits.length != 2) {
+            throw new IllegalArgumentException(
+                "Invalid schema command. Please try to use schema [table name]."
+            );
+        }
+
+        if (currentCleanPlan == null) {
+            throw new NullPointerException(
+                "There is no rule loaded."
+            );
+        }
+
+        String tableName = splits[1];
+        Connection conn =
+            DBConnectionFactory.createConnection(currentCleanPlan.getSourceDBConfig());
+        Statement stat = conn.createStatement();
+        ResultSet resultSet = stat.executeQuery("SELECT * FROM " + tableName);
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnNumber = metaData.getColumnCount();
+        for (int i = 1; i <= columnNumber; i ++) {
+            String columnName = metaData.getColumnName(i);
+            String typeName = metaData.getColumnTypeName(i);
+            console.println(String.format("\t %d:-20%s %s", i, columnName, typeName));
+        }
+    }
+
+    private static void fd(String cmdLine) throws Exception {
+        String[] tokens = cmdLine.split("\\s");
+
     }
 
     private static void load(String cmdLine) throws IOException {
@@ -156,7 +197,6 @@ public class Console {
     }
 
     private static void detect(String cmd) {
-
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
@@ -244,10 +284,13 @@ public class Console {
                 " |repair [rule id] :\n" +
                 " |    repair the data source with a given rule id number.\n" +
                 " |\n" +
-                " |run <max iteration number> :\n" +
-                " |    clean the data source with maximum iteration number. Default is to run " +
-                    "until no violation is found.\n" +
+                " |run :\n" +
+                " |    clean the data source with maximum iteration number. \n" +
                 " |\n" +
+                " |schema [table name]: \n" +
+                " |    list the schema of the data source. \n" +
+                " |fd [table name] [fd rule]: \n" +
+                " |    run FD rule with specified table name on the source data. \n" +
                 " |exit :\n" +
                 " |    exit the console (Ctrl + D).\n";
         console.println(help);

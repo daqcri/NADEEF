@@ -112,6 +112,9 @@ public class SqlQueryBuilder implements Cloneable {
             builder.append(") ");
         }
 
+        if (selects.size() != 0 && !selects.contains("tid")) {
+            selects.add("tid");
+        }
         builder.append(asString(selects, "*"));
         builder.append(" FROM ");
         builder.append(asString(froms));
@@ -142,9 +145,6 @@ public class SqlQueryBuilder implements Cloneable {
     }
 
     private String asString(Collection<String> list) {
-        if (!list.contains("tid")) {
-            list.add("tid");
-        }
         return Joiner.on(',').skipNulls().join(list);
     }
     //</editor-fold>
