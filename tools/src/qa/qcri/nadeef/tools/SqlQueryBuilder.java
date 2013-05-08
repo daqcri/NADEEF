@@ -142,6 +142,9 @@ public class SqlQueryBuilder implements Cloneable {
     }
 
     private String asString(Collection<String> list) {
+        if (!list.contains("tid")) {
+            list.add("tid");
+        }
         return Joiner.on(',').skipNulls().join(list);
     }
     //</editor-fold>

@@ -69,7 +69,6 @@ public class SQLTupleCollection extends TupleCollection {
         this.tableName = tableName;
         this.sqlQuery = new SqlQueryBuilder();
         this.sqlQuery.addFrom(tableName);
-        this.sqlQuery.addSelect("tid");
     }
 
     //</editor-fold>
