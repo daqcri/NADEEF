@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.tools.Tools;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -80,11 +80,11 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 }
 
                 // check for numerical type.
-                if (!Tools.isNumericalString(rightValue)) {
+                if (!CommonTools.isNumericalString(rightValue)) {
                     rightValue = '\'' + rightValue + '\'';
                 }
 
-                if (!Tools.isNumericalString(oldValue)) {
+                if (!CommonTools.isNumericalString(oldValue)) {
                     oldValue = '\'' + oldValue + '\'';
                 }
 

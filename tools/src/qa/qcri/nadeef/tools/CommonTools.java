@@ -8,7 +8,7 @@ package qa.qcri.nadeef.tools;
 /**
  * Common helper tools
  */
-public class Tools {
+public class CommonTools {
 
     /**
      * Returns <code>True</code> when the given string is a numerical string.

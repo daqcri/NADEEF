@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -135,8 +134,14 @@ public class FDRule extends PairTupleRule implements TextRule {
             tuples.orderBy(rhs);
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
-                    TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    result.add(pair);
+                    Tuple left = tuples.get(i);
+                    Tuple right = tuples.get(j);
+                    for (Column column : rhs) {
+                        if (!left.get(column).equals(right.get(column))) {
+                            TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                            result.add(pair);
+                        }
+                    }
                 }
             }
         }

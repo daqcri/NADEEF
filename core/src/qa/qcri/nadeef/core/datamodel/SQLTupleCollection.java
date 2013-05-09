@@ -124,6 +124,15 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
+    public TupleCollection project(String columnName) {
+        sqlQuery.addSelect(columnName);
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
+        }
+        return this;
+    }
+
+    @Override
     public TupleCollection project(Column column) {
         sqlQuery.addSelect(column.getAttributeName());
         synchronized (this) {
@@ -140,6 +149,16 @@ public class SQLTupleCollection extends TupleCollection {
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
         }
+        return this;
+    }
+
+    @Override
+    public TupleCollection orderBy(String columnName) {
+        sqlQuery.addOrder(columnName);
+        synchronized (this) {
+            changeTimestamp = System.currentTimeMillis();
+        }
+
         return this;
     }
 

@@ -55,8 +55,10 @@ public abstract class TupleCollection {
 
     //<editor-fold desc="Default TupleCollection behavior">
     // TODO: implements default behaviors
+    public abstract TupleCollection project(String columnName);
     public abstract TupleCollection project(Column column);
     public abstract TupleCollection project(Collection<Column> columns);
+    public abstract TupleCollection orderBy(String columnName);
     public abstract TupleCollection orderBy(Column column);
     public abstract TupleCollection orderBy(Collection<Column> columns);
     public abstract TupleCollection filter(SimpleExpression expression);

@@ -50,7 +50,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
     public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
         List<TupleCollection> collections = Lists.newArrayList(tupleCollections);
         TupleCollection collection = collections.get(0);
-        collection.project(new Column(tableNames.get(0), "tid")).project(lhs).project(rhs);
+        collection.project(new Column(tableNames.get(0),  "tid")).project(lhs).project(rhs);
         collection.filter(filterExpressions);
         return collections;
     }
