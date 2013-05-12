@@ -125,4 +125,12 @@ public class NodeCacheManager {
     public int getSize() {
         return cachePool.size();
     }
+
+    /**
+     * Clear all the resources in the cache.
+     */
+    public void clear() {
+        cachePool.clear();
+        refPool.clear();
+    }
 }

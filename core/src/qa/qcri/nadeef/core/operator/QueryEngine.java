@@ -34,6 +34,6 @@ public class QueryEngine<TRule extends Rule, TOutput>
     @Override
     public TOutput execute(Collection<TupleCollection> tuples) throws Exception {
         Collection<TupleCollection> result = rule.scope(tuples);
-        return (TOutput)rule.group(result);
+        return (TOutput)rule.generator(result);
     }
 }

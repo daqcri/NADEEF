@@ -8,9 +8,9 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -38,7 +38,7 @@ public class Violation {
     public Violation(String ruleId) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
-        cells = new HashSet();
+        cells = Sets.newHashSet();
         vid = Optional.absent();
     }
 
@@ -49,7 +49,7 @@ public class Violation {
     public Violation(String ruleId, int vid) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
-        cells = new HashSet();
+        cells = Sets.newHashSet();
         this.vid = Optional.of(vid);
     }
 

@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -33,7 +34,7 @@ public class ViolationDetector<T>
      */
     @Override
     public Collection<Violation> execute(T tuples) throws Exception {
-        ArrayList<Violation> resultCollection = new ArrayList();
+        ArrayList<Violation> resultCollection = Lists.newArrayList();
         Collection<Violation> result = null;
         Collection<?> collections = (Collection)tuples;
         Iterator iterator = collections.iterator();

@@ -6,8 +6,8 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -83,7 +83,7 @@ public abstract class TupleCollection {
             }
         }
 
-        List<TupleCollection> groups = new ArrayList();
+        List<TupleCollection> groups = Lists.newArrayList();
         orderBy(columns);
         if (size() < 2) {
             groups.add(this);
@@ -91,7 +91,7 @@ public abstract class TupleCollection {
         }
 
         Tuple lastTuple = get(0);
-        List<Tuple> curList = new ArrayList();
+        List<Tuple> curList = Lists.newArrayList();
         curList.add(lastTuple);
 
         boolean isSameGroup = true;
@@ -112,7 +112,7 @@ public abstract class TupleCollection {
                 curList.add(tuple);
             } else {
                 groups.add(newTupleCollection(curList));
-                curList = new ArrayList();
+                curList = Lists.newArrayList();
                 curList.add(tuple);
             }
 
@@ -139,7 +139,7 @@ public abstract class TupleCollection {
                 );
         }
 
-        List<TupleCollection> groups = new ArrayList();
+        List<TupleCollection> groups = Lists.newArrayList();
         if (size() < 2) {
             groups.add(this);
             return groups;
@@ -148,7 +148,7 @@ public abstract class TupleCollection {
         orderBy(column);
 
         Tuple lastTuple = get(0);
-        List<Tuple> curList = new ArrayList();
+        List<Tuple> curList = Lists.newArrayList();
         curList.add(lastTuple);
 
         for (int i = 1; i < size(); i ++) {
@@ -159,7 +159,7 @@ public abstract class TupleCollection {
                 curList.add(tuple);
             } else {
                 groups.add(newTupleCollection(curList));
-                curList = new ArrayList();
+                curList = Lists.newArrayList();
                 curList.add(tuple);
             }
             lastTuple = tuple;

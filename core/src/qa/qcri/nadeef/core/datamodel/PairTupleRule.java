@@ -32,14 +32,14 @@ public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair
     public abstract Collection<Violation> detect(TuplePair pair);
 
     /**
-     * Default group operation.
+     * Default generator operation.
      *
      * @param tupleCollections input tuple
-     * @return a group of tuple collection.
+     * @return a generator of tuple collection.
      */
     @Override
-    public Collection<TuplePair> group(Collection<TupleCollection> tupleCollections) {
-        ArrayList<TuplePair> result = new ArrayList();
+    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {
+        ArrayList<TuplePair> result = Lists.newArrayList();
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
 
         if (collectionList.size() == 1) {

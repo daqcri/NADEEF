@@ -9,24 +9,18 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -107,7 +101,7 @@ public class Console {
                     } else if (line.startsWith("run")) {
                         run(line);
                     } else if (Strings.isNullOrEmpty(line)) {
-                        continue;
+                        // empty line
                     } else if (line.startsWith("set")) {
                         set(line);
                     } else if (line.startsWith("schema")) {
@@ -145,16 +139,12 @@ public class Console {
         }
 
         String tableName = splits[1];
-        Connection conn =
-            DBConnectionFactory.createConnection(currentCleanPlan.getSourceDBConfig());
-        Statement stat = conn.createStatement();
-        ResultSet resultSet = stat.executeQuery("SELECT * FROM " + tableName);
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnNumber = metaData.getColumnCount();
-        for (int i = 1; i <= columnNumber; i ++) {
-            String columnName = metaData.getColumnName(i);
-            String typeName = metaData.getColumnTypeName(i);
-            console.println(String.format("\t %d:-20%s %s", i, columnName, typeName));
+        SQLTupleCollection sqlTupleCollection =
+                new SQLTupleCollection(tableName, currentCleanPlan.getSourceDBConfig());
+        Schema schema = sqlTupleCollection.getSchema();
+        Set<Column> columns = schema.getColumns();
+        for (Column column : columns) {
+            console.println(String.format("\t%s", column.getAttributeName()));
         }
     }
 

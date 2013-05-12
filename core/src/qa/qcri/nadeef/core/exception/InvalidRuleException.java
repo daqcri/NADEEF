@@ -18,4 +18,9 @@ public class InvalidRuleException extends Exception {
     public InvalidRuleException(Exception innerException) {
         this.innerException = innerException;
     }
+
+    @Override
+    public String getMessage() {
+        return this.innerException.getMessage();
+    }
 }

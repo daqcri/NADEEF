@@ -6,9 +6,9 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.RuleWriter;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
@@ -32,10 +32,12 @@ public class NadeefConfiguration {
     private static String violationTable;
     private static String repairTable;
     private static String auditTable;
+    @SuppressWarnings("FieldCanBeLocal")
     private static String schemaName = "public";
+    @SuppressWarnings("FieldCanBeLocal")
     private static String version = "1.0";
     private static int maxIterationNumber = 1;
-    private static HashMap<String, RuleWriter> ruleExtension;
+    private static HashMap<String, RuleWriter> ruleExtension = Maps.newHashMap();
     //<editor-fold desc="Public methods">
 
     /**

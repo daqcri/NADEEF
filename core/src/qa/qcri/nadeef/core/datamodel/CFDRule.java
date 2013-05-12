@@ -68,7 +68,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
         Tuple right = tuplePair.getRight();
 
         Column[] rhsColumns = rhs.toArray(new Column[rhs.size()]);
-        List<Violation> result = new ArrayList();
+        List<Violation> result = Lists.newArrayList();
         for (Column column : rhsColumns) {
             Object lvalue = left.get(column);
             Object rvalue = right.get(column);

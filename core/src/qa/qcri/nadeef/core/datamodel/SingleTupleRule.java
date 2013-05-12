@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Abstract base class for a rule providing the default behavior of scope and group operation.
+ * Abstract base class for a rule providing the default behavior of scope and generator operation.
  */
 public abstract class SingleTupleRule extends Rule<Tuple, Collection<TupleCollection>> {
     /**
@@ -37,12 +37,12 @@ public abstract class SingleTupleRule extends Rule<Tuple, Collection<TupleCollec
     }
 
     /**
-     * Default group operation.
+     * Default generator operation.
      * @param tupleCollection input tuple
      * @return grouped tuple collection.
      */
     @Override
-    public Collection<TupleCollection> group(Collection<TupleCollection> tupleCollection) {
+    public Collection<TupleCollection> generator(Collection<TupleCollection> tupleCollection) {
         return tupleCollection;
     }
 

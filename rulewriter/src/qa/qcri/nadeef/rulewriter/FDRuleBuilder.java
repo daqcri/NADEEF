@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.rulewriter;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.hash.HashFunction;
@@ -18,7 +17,6 @@ import qa.qcri.nadeef.tools.CommonTools;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -216,7 +214,10 @@ public class FDRuleBuilder extends RuleWriter {
         st.add("rightHandSideInitialize", rightColumnNames);
         if (Strings.isNullOrEmpty(ruleName)) {
             HashFunction hf = Hashing.md5();
-            int hashCode = Math.abs(hf.newHasher().putString(value).hash().asInt());
+            int hashCode =
+                Math.abs(
+                    hf.newHasher().putString(value.get(0)).hash().asInt()
+                );
             ruleName = "DefaultFD" + hashCode;
         } else {
             // remove all the empty spaces to make it a valid class name.
@@ -236,7 +237,7 @@ public class FDRuleBuilder extends RuleWriter {
         Set<String> rhsSet = new HashSet();
 
         // Here we assume the rule comes in with one line.
-        String line = value;
+        String line = value.get(0);
         String[] tokens = line.trim().split("\\|");
         String token;
         if (tokens.length != 2) {

@@ -6,10 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -38,8 +35,8 @@ public class FDRule extends PairTupleRule implements TextRule {
     @Override
     public void parse(StringReader input) {
         BufferedReader reader = new BufferedReader(input);
-        Set<Column> lhsSet = new HashSet();
-        Set<Column> rhsSet = new HashSet();
+        Set<Column> lhsSet = Sets.newHashSet();
+        Set<Column> rhsSet = Sets.newHashSet();
 
         // Here we assume the rule comes in with one line.
         try {
@@ -124,14 +121,14 @@ public class FDRule extends PairTupleRule implements TextRule {
     }
 
     /**
-     * Default group operation.
+     * Default generator operation.
      *
      * @param tupleCollections input tuple
-     * @return a group of tuple collection.
+     * @return a generator of tuple collection.
      */
     @Override
-    public Collection<TuplePair> group(Collection<TupleCollection> tupleCollections) {
-        ArrayList<TuplePair> result = new ArrayList();
+    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {
+        ArrayList<TuplePair> result = Lists.newArrayList();
         TupleCollection tupleCollection = Iterables.get(tupleCollections, 0);
         Collection<TupleCollection> groupResult = tupleCollection.groupOn(lhs);
         for (TupleCollection tuples : groupResult) {
@@ -144,6 +141,7 @@ public class FDRule extends PairTupleRule implements TextRule {
                         if (!left.get(column).equals(right.get(column))) {
                             TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
                             result.add(pair);
+                            break;
                         }
                     }
                 }
@@ -162,7 +160,7 @@ public class FDRule extends PairTupleRule implements TextRule {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
 
-        List<Violation> result = new ArrayList();
+        List<Violation> result = Lists.newArrayList();
         for (Column column : rhs) {
             Object lvalue = left.get(column);
             Object rvalue = right.get(column);

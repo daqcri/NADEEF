@@ -66,11 +66,11 @@ public abstract class Rule<TDetect, TIterator> {
     public abstract Collection<Fix> repair(Violation violation);
 
     /**
-     * Default group operation.
+     * Default generator operation.
      * @param tupleCollection input tuple
-     * @return a group of tuple collection.
+     * @return a generator of tuple collection.
      */
-    public abstract TIterator group(Collection<TupleCollection> tupleCollection);
+    public abstract TIterator generator(Collection<TupleCollection> tupleCollection);
 
     /**
      * Default scope operation.

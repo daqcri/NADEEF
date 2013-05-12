@@ -8,8 +8,8 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class Schema {
     public Schema(String tableName, List<Column> columns) {
         this.tableName = Preconditions.checkNotNull(tableName);
         Preconditions.checkArgument(columns != null && columns.size() > 0);
-        Map mapping = new HashMap(columns.size());
+        Map<Column, Integer> mapping = Maps.newHashMap();
 
         for (int i = 0; i < columns.size(); i ++) {
             mapping.put(columns.get(i), i);

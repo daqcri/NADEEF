@@ -22,7 +22,7 @@ public class AdultRule2 extends PairTupleRule {
     }
 
     @Override
-    public Collection<TuplePair> group(Collection<TupleCollection> tupleCollections) {
+    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {
         ArrayList<TuplePair> result = new ArrayList();
         TupleCollection tupleCollection = Iterables.get(tupleCollections, 0);
         Collection<TupleCollection> groupResult =
@@ -30,8 +30,13 @@ public class AdultRule2 extends PairTupleRule {
         for (TupleCollection tuples : groupResult) {
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
-                    TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    result.add(pair);
+                    Tuple left = tuples.get(i);
+                    Tuple right = tuples.get(j);
+                    if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
+                        TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                        result.add(pair);
+                        break;
+                    }
                 }
             }
         }
@@ -47,7 +52,7 @@ public class AdultRule2 extends PairTupleRule {
         if (t1.getString("race").equals(t2.getString("race"))) {
             int wgt1 = ((Integer)t1.get("fnlwgt")).intValue();
             int wgt2 = ((Integer)t2.get("fnlwgt")).intValue();
-            if (Math.abs(wgt1 - wgt2) >= wgt1 * 0.5) {
+            if (Math.abs(wgt1 - wgt2) <= wgt1 * 0.5) {
                 Violation violation = new Violation(this.id);
                 violation.addCell(t1.getCell("race"));
                 violation.addCell(t2.getCell("race"));

@@ -90,10 +90,7 @@ public class Cell {
     }
 
     public boolean containsAttribute(String attribute) {
-        if (column.getAttributeName().equalsIgnoreCase(attribute)) {
-            return true;
-        }
-        return false;
+        return column.getAttributeName().equalsIgnoreCase(attribute);
     }
 
     //</editor-fold>
@@ -107,10 +104,7 @@ public class Cell {
 
         Cell row = (Cell)obj;
 
-        if (row.column.equals(column) && row.tupleId == tupleId) {
-            return true;
-        }
-        return false;
+        return row.column.equals(column) && row.tupleId == tupleId;
     }
 
     @Override

@@ -17,7 +17,6 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.RuleWriter;
 import qa.qcri.nadeef.tools.CSVDumper;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -27,7 +26,10 @@ import qa.qcri.nadeef.tools.FileHelper;
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Nadeef cleaning plan.
@@ -63,9 +65,9 @@ public class CleanPlan {
         // a set which prevents generating new tables whenever encounters among multiple rules.
         Set<String> generatedTables = Sets.newHashSet();
         SQLDialect sqlDialect;
-        String sourceUrl = null;
-        String sourceTableUserName = null;
-        String sourceTableUserPassword = null;
+        String sourceUrl;
+        String sourceTableUserName;
+        String sourceTableUserPassword;
         String csvTableName = null;
         boolean isCSV = false;
 
@@ -112,7 +114,7 @@ public class CleanPlan {
             // TODO: adds verification on the table name check.
             // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match the pattern.
             JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
-            ArrayList<Rule> rules = new ArrayList();
+            ArrayList<Rule> rules = Lists.newArrayList();
             for (int i = 0; i < ruleArray.size(); i ++) {
                 JSONObject ruleObj = (JSONObject)ruleArray.get(i);
                 String name = (String)ruleObj.get("name");
@@ -159,7 +161,7 @@ public class CleanPlan {
                 switch (type) {
                     case "udf":
                         value = (JSONArray)ruleObj.get("value");
-                        Class udfClass = CommonTools.loadClass(className);
+                        Class udfClass = CommonTools.loadClass((String)value.get(0));
                         if (!Rule.class.isAssignableFrom(udfClass)) {
                             throw
                                 new IllegalArgumentException(
@@ -169,7 +171,7 @@ public class CleanPlan {
 
                         rule = (Rule)udfClass.newInstance();
                         // call internal initialization on the rule.
-                        rule.initialize(name, tableNames);
+                        rule.initialize(name, targetTableNames);
                         rules.add(rule);
                         break;
                     default:

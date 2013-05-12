@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.test.core;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,12 @@ public class RepairPhaseTest {
         Tracer.setInfo(true);
         ruleBuilder = new RuleBuilder();
         cacheManager = NodeCacheManager.getInstance();
+    }
+
+    @After
+    public void teardown() {
+        Assert.assertEquals(1, cacheManager.getSize());
+        cacheManager.clear();
     }
 
     @Test

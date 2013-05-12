@@ -22,10 +22,7 @@ public class DBInstaller {
         DatabaseMetaData metaData = conn.getMetaData();
         ResultSet resultSet = metaData.getTables(null, null, tableName, null);
 
-        if (resultSet.next()) {
-            return true;
-        }
-        return false;
+        return resultSet.next();
     }
 
     /**

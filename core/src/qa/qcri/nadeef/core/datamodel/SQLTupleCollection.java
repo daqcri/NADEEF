@@ -207,7 +207,7 @@ public class SQLTupleCollection extends TupleCollection {
     public Collection<TupleCollection> groupOn(Collection<Column> columns) {
         List result = Lists.newArrayList(this);
         for (Column column : columns) {
-            List tmp = Lists.newArrayList();
+            List<TupleCollection> tmp = Lists.newArrayList();
             for (Object collection : result) {
                 tmp.addAll(((SQLTupleCollection) collection).groupOn(column));
             }
@@ -360,7 +360,7 @@ public class SQLTupleCollection extends TupleCollection {
         }
 
         try {
-            tuples = new ArrayList();
+            tuples = Lists.newArrayList();
             Connection conn = DBConnectionFactory.createConnection(dbconfig);
             Statement stat = conn.createStatement();
             String sql = sqlQuery.build();
@@ -391,6 +391,7 @@ public class SQLTupleCollection extends TupleCollection {
                     values[i - 1] = resultSet.getObject(i);
                 }
 
+                tupleId ++;
                 tuples.add(new Tuple(tupleId, schema, values));
             }
             stat.close();

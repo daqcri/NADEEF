@@ -13,4 +13,9 @@ public class InvalidSchemaException extends Exception {
         super(innerException.getMessage());
         this.innerException = innerException;
     }
+
+    @Override
+    public String getMessage() {
+        return this.innerException.getMessage();
+    }
 }

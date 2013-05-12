@@ -6,8 +6,8 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,7 +113,7 @@ public class Tuple {
      */
     public ImmutableSet<Cell> getCells() {
         List<Column> columns = schema.getColumns().asList();
-        List<Cell> cells = new ArrayList();
+        List<Cell> cells = Lists.newArrayList();
         for (Column column : columns) {
             if (column.getAttributeName().equals("tid")) {
                 continue;

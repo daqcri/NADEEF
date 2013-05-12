@@ -8,10 +8,10 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.Maps;
 import qa.qcri.nadeef.tools.CommonTools;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,7 +24,7 @@ public class SimpleExpression {
      */
     private static final BiMap<Operation, String> operationMap;
     static {
-        Map<Operation, String> realMap = new HashMap();
+        Map<Operation, String> realMap = Maps.newHashMap();
         realMap.put(Operation.EQ, "=");
         realMap.put(Operation.GT, ">");
         realMap.put(Operation.LT, "<");

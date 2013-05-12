@@ -73,22 +73,22 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     private String getSQLInsert(int id, Fix fix) {
         int vid = fix.getVid();
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO");
-        sqlBuilder.append(' ');
-        sqlBuilder.append(
-            NadeefConfiguration.getSchemaName() +
-                "." + NadeefConfiguration.getRepairTableName()
-        );
-        sqlBuilder.append(" VALUES (");
-        sqlBuilder.append(id);
-        sqlBuilder.append(',');
-        sqlBuilder.append(vid);
-        sqlBuilder.append(',');
+        sqlBuilder.append(' ')
+            .append(NadeefConfiguration.getSchemaName())
+            .append(".")
+            .append(NadeefConfiguration.getRepairTableName())
+            .append(" VALUES (")
+            .append(id)
+            .append(',')
+            .append(vid)
+            .append(',');
+
         Cell cell = fix.getLeft();
         sqlBuilder.append(cell.getTupleId());
         sqlBuilder.append(',');
-        sqlBuilder.append("'" + cell.getColumn().getTableName() + "',");
-        sqlBuilder.append("'" + cell.getColumn().getAttributeName() + "',");
-        sqlBuilder.append("'" + cell.getAttributeValue().toString() + "',");
+        sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
+        sqlBuilder.append("'").append(cell.getColumn().getAttributeName()).append("',");
+        sqlBuilder.append("'").append(cell.getAttributeValue().toString()).append("',");
 
         sqlBuilder.append(fix.getOperation().getValue());
         sqlBuilder.append(',');
@@ -96,9 +96,9 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             cell = fix.getRight();
             sqlBuilder.append(cell.getTupleId());
             sqlBuilder.append(',');
-            sqlBuilder.append("'" + cell.getColumn().getTableName() + "',");
-            sqlBuilder.append("'" + cell.getColumn().getAttributeName() + "',");
-            sqlBuilder.append("'" + cell.getAttributeValue().toString() + "')");
+            sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
+            sqlBuilder.append("'").append(cell.getColumn().getAttributeName()).append("',");
+            sqlBuilder.append("'").append(cell.getAttributeValue().toString()).append("')");
         } else {
             sqlBuilder.append("null, null, null,'" + fix.getRightValue() + "')");
         }
