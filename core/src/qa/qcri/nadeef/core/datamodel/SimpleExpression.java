@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import qa.qcri.nadeef.tools.CommonTools;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class SimpleExpression {
         }
 
         Column column;
-        if (!Column.isValidFullAttributeName(splits[0])) {
+        if (!CommonTools.isValidColumnName(splits[0])) {
             column = new Column(defaultTableName, splits[0]);
         } else {
             column = new Column(splits[0]);

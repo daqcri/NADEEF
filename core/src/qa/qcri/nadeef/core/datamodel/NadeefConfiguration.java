@@ -8,14 +8,22 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.util.RuleWriter;
+import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Nadeef configuration class.
  * TODO: adds XML configuration support.
  */
 public class NadeefConfiguration {
+    private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
+
     private static boolean testMode = false;
     private static String url;
     private static String userName;
@@ -27,7 +35,7 @@ public class NadeefConfiguration {
     private static String schemaName = "public";
     private static String version = "1.0";
     private static int maxIterationNumber = 1;
-
+    private static HashMap<String, RuleWriter> ruleExtension;
     //<editor-fold desc="Public methods">
 
     /**
@@ -54,6 +62,24 @@ public class NadeefConfiguration {
 
         JSONObject general = (JSONObject)jsonObject.get("general");
         testMode = (Boolean)general.get("testmode");
+        if (general.containsKey("maxIterationNumber")) {
+            maxIterationNumber = (Integer)general.get("maxIterationNumber");
+        }
+
+        JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
+        Set<String> keySet = ruleext.keySet();
+        for (String key : keySet) {
+            String builderClassName = (String)ruleext.get(key);
+            try {
+                Class builderClass = CommonTools.loadClass(builderClassName);
+                RuleWriter writer = (RuleWriter)builderClass.newInstance();
+                ruleExtension.put(key, writer);
+            } catch (Exception e) {
+                tracer.err("Loading Rule extension " + key + " failed: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        testMode = (Boolean)general.get("fd");
         if (general.containsKey("maxIterationNumber")) {
             maxIterationNumber = (Integer)general.get("maxIterationNumber");
         }
@@ -89,6 +115,18 @@ public class NadeefConfiguration {
 
     public static String getType() {
         return type;
+    }
+
+    /**
+     * Try gets the rule builder from the extensions.
+     * @param typeName type name.
+     * @return RuleBuilder instance.
+     */
+    public static RuleWriter tryGetRuleBuilder(String typeName) {
+        if (ruleExtension.containsKey(typeName)) {
+            return ruleExtension.get(typeName);
+        }
+        return null;
     }
 
     /**

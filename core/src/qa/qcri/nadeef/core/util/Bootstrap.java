@@ -22,16 +22,6 @@ public class Bootstrap {
     private Bootstrap() {}
 
     /**
-     * Loads a class in runtime.
-     * @param className class name.
-     * @return Class type.
-     */
-    public static Class loadClass(String className) throws ClassNotFoundException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        return classLoader.loadClass(className);
-    }
-
-    /**
      * Initialize the Nadeef infrastructure.
      */
     public static synchronized boolean Start() {

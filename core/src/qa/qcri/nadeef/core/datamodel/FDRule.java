@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -59,7 +60,7 @@ public class FDRule extends PairTupleRule implements TextRule {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                if (!Column.isValidFullAttributeName(token)) {
+                if (!CommonTools.isValidColumnName(token)) {
                     newColumn = new Column(defaultTable, token);
                 } else {
                     newColumn = new Column(token);
@@ -81,7 +82,10 @@ public class FDRule extends PairTupleRule implements TextRule {
                     throw new IllegalArgumentException("Invalid rule description " + line);
                 }
 
-                if (!Strings.isNullOrEmpty(defaultTable) && !Column.isValidFullAttributeName(token)) {
+                if (
+                    !Strings.isNullOrEmpty(defaultTable) &&
+                    !CommonTools.isValidColumnName(token)
+                ) {
                     newColumn = new Column(defaultTable, token);
                 } else {
                     newColumn = new Column(token);

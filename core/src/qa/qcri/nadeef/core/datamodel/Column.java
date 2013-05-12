@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
+import qa.qcri.nadeef.tools.CommonTools;
 
 /**
  * Table attribute object, used as the operand in the rule hint.
@@ -27,7 +28,7 @@ public class Column {
      * Constructor.
      */
     public Column(String fullAttributeName) {
-        if (!isValidFullAttributeName(fullAttributeName)) {
+        if (!CommonTools.isValidColumnName(fullAttributeName)) {
             throw new IllegalArgumentException("Invalid full attribute name " + fullAttributeName);
         }
 
@@ -90,24 +91,6 @@ public class Column {
      */
     public String getFullAttributeName() {
         return tableName + "." + attributeName;
-    }
-
-    /**
-     * Returns <code>True</code> when the given attribute name is a valid full attribute name.
-     * @param attributeName Attribute name.
-     * @return <code>True</code> when the attribute name is valid.
-     */
-    public static boolean isValidFullAttributeName(String attributeName) {
-        String[] splits = attributeName.split("\\.");
-        // TODO: change to correct regexp.
-        if (
-            splits.length != 2 ||
-            Strings.isNullOrEmpty(splits[0]) || splits[0].contains(" ") ||
-            Strings.isNullOrEmpty(splits[1]) || splits[0].contains(" ")
-        ) {
-            return false;
-        }
-        return true;
     }
 
     //<editor-fold desc="Custom equal / hashcode">

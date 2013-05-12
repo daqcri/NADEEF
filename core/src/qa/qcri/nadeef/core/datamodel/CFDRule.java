@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -151,7 +152,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
 
                 if (
                     !Strings.isNullOrEmpty(defaultTable) &&
-                    !Column.isValidFullAttributeName(split)
+                    !CommonTools.isValidColumnName(split)
                 ) {
                     lhs.add(new Column(defaultTable, split));
                 } else {
@@ -169,7 +170,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
 
                 if (
                     !Strings.isNullOrEmpty(defaultTable) &&
-                    !Column.isValidFullAttributeName(split)
+                    !CommonTools.isValidColumnName(split)
                 ) {
                     rhs.add(new Column(defaultTable, split));
                 } else {

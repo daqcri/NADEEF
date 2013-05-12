@@ -12,6 +12,7 @@ import qa.qcri.nadeef.core.datamodel.FDRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.RuleType;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
+import qa.qcri.nadeef.tools.CommonTools;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class RuleBuilder {
                     break;
                 case UDF:
                     String className = values.get(0);
-                    Class udfClass = Bootstrap.loadClass(className);
+                    Class udfClass = CommonTools.loadClass(className);
                     if (!Rule.class.isAssignableFrom(udfClass)) {
                         throw
                             new IllegalArgumentException(

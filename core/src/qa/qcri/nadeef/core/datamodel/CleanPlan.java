@@ -18,17 +18,16 @@ import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.util.RuleWriter;
 import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.FileHelper;
 
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Nadeef cleaning plan.
@@ -156,46 +155,35 @@ public class CleanPlan {
                 type = (String)ruleObj.get("type");
                 Rule rule = null;
                 JSONArray value;
-                RuleBuilder ruleBuilder = new RuleBuilder();
                 value = (JSONArray)ruleObj.get("value");
                 switch (type) {
-                    case "fd":
-                        Preconditions.checkArgument(
-                            value != null && value.size() == 1,
-                            "Type value cannot be null or empty."
-                        );
-                        rule = ruleBuilder.type(RuleType.FD)
-                            .name(name)
-                            .table(targetTableNames)
-                            .value(value)
-                            .build();
-                        rules.add(rule);
-                        break;
                     case "udf":
                         value = (JSONArray)ruleObj.get("value");
-                        rule = ruleBuilder.type(RuleType.UDF)
-                            .name(name)
-                            .table(targetTableNames)
-                            .value(value)
-                            .build();
+                        Class udfClass = CommonTools.loadClass(className);
+                        if (!Rule.class.isAssignableFrom(udfClass)) {
+                            throw
+                                new IllegalArgumentException(
+                                    "The specified class is not a Rule class."
+                                );
+                        }
+
+                        rule = (Rule)udfClass.newInstance();
+                        // call internal initialization on the rule.
+                        rule.initialize(name, tableNames);
                         rules.add(rule);
                         break;
-                    case "cfd":
-                        // TODO: currently we parse each condition line in CFD
-                        // as a separate rule.
-                        String head = (String)value.get(0);
-                        for (int j = 1; j < value.size(); j ++) {
-                            String condition = (String)value.get(j);
-                            rule = ruleBuilder.type(RuleType.CFD)
-                                .name(name)
-                                .table(targetTableNames)
-                                .value(Lists.newArrayList(head, condition))
-                                .build();
-                            rules.add(rule);
+                    default:
+                        RuleWriter ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
+                        if (NadeefConfiguration.tryGetRuleBuilder(type) != null) {
+                            rules.addAll(
+                                ruleBuilder
+                                    .name(name)
+                                    .table(targetTableNames)
+                                    .value(value)
+                                    .build()
+                            );
                         }
                         break;
-                    default:
-                        throw new IllegalArgumentException("Unknown rule type.");
                 }
 
             }
