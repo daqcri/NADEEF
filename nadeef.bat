@@ -3,7 +3,7 @@
 
 if not exist "out\production" goto noCompile
 
-java -cp out\nadeef.jar qa.qcri.nadeef.console.Console
+java -d64 -Xmx2048M -cp out\nadeef.jar qa.qcri.nadeef.console.Console
 goto end
 
 :noCompile
