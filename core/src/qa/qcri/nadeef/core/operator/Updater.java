@@ -39,7 +39,6 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
 
     /**
      * Apply the fixes from EQ and modify the original database.
-     * TODO: store the audit message.
      *
      * @param fixes Fix collection.
      * @return output object.

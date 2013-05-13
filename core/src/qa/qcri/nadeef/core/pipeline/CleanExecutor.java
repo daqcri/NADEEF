@@ -64,7 +64,7 @@ public class CleanExecutor {
         // TODO: run multiple rules in parallel in process / thread.
         int nRule = getRuleSize();
         for (int i = 0; i < nRule; i ++) {
-            getDetectFlow(i).start();
+            detect(i);
         }
         return this;
     }
@@ -117,7 +117,7 @@ public class CleanExecutor {
         // TODO: run multiple rules in parallel in process / thread.
         int size = getRuleSize();
         for (int i = 0; i < size; i ++) {
-            getRepairFlow(i).start();
+            repair(i);
         }
 
         return this;
@@ -145,8 +145,8 @@ public class CleanExecutor {
             tracer.verbose("Running iteration " + count + 1);
             int size = getRuleSize();
             for (int i = 0; i < size; i ++) {
-                getDetectFlow(i).start();
-                getRepairFlow(i).start();
+                detect(i);
+                repair(i);
             }
 
             changedCells = ((Integer)getUpdateOutput()).intValue();

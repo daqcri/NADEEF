@@ -132,7 +132,7 @@ public class Tracer {
         List<String> tupleNums = Lists.newArrayList(stats.get(StatType.TupleNumber));
 
         for (int i = 0; i < detectStats.size(); i ++) {
-            out("Rule " + i + ":");
+            out("Rule " + i + " :");
             out("----------------------------------------------------------------");
             long time = Long.parseLong(detectStats.get(i));
             out(String.format("%-30s %10d ms", "Detect time", time));
