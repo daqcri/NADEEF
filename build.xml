@@ -64,6 +64,7 @@
                srcdir="core/src"
                destdir="${build.dir}"
                classpathref="vendors.jars">
+            <compilerarg value="-Xlint:unchecked" />
         </javac>
     </target>
 

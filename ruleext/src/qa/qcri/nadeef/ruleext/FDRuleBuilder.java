@@ -12,6 +12,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -203,26 +204,10 @@ public class FDRuleBuilder extends RuleBuilder {
      * @return generated file in full path.
      */
     protected File generate() throws IOException {
-        st = new ST(template, '$', '$');
-        // TODO: switch to multiple template group
-        ST columnTemplate = new ST("leftHandSide.add(new Column(\"$columnName$\"));\n", '$', '$');
-        List<String> leftColumnNames = Lists.newArrayList();
-        for (String column : lhs) {
-            columnTemplate.add("columnName", column);
-            leftColumnNames.add(columnTemplate.render());
-            columnTemplate.remove("columnName");
-        }
-        st.add("leftHandSideInitialize", leftColumnNames);
-
-        columnTemplate = new ST("rightHandSide.add(new Column(\"$columnName$\"));\n", '$', '$');
-        List<String> rightColumnNames = Lists.newArrayList();
-        for (String column : rhs) {
-            columnTemplate.add("columnName", column);
-            rightColumnNames.add(columnTemplate.render());
-            columnTemplate.remove("columnName");
-        }
-
-        st.add("rightHandSideInitialize", rightColumnNames);
+        STGroupFile stFile = new STGroupFile("ruleext/template" + File.separator + "FDRuleBuilder.stg", '$', '$');
+        st = stFile.getInstanceOf("fdTemplate");
+        st.add("leftHandSideInitialize", lhs);
+        st.add("rightHandSideInitialize", rhs);
         if (Strings.isNullOrEmpty(ruleName)) {
             HashFunction hf = Hashing.md5();
             int hashCode =
