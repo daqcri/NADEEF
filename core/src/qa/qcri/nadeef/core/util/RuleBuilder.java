@@ -5,100 +5,124 @@
 
 package qa.qcri.nadeef.core.util;
 
-import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.datamodel.CFDRule;
-import qa.qcri.nadeef.core.datamodel.FDRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.RuleType;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
-import qa.qcri.nadeef.tools.CommonTools;
 
-import java.io.StringReader;
-import java.util.ArrayList;
+import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Rule Builder.
+ * Abstract class RuleBuilder represents the extension point of writing new
+ * abstract rules (e.g. FD).
  */
-public class RuleBuilder {
-    private RuleType type;
-    private String name;
-    private List<String> tableNames;
-    private List<String> values;
-
-    //<editor-fold desc="Constructor">
-    public RuleBuilder(RuleType type) {
-        this.type = type;
-    }
+public abstract class RuleBuilder {
+    //<editor-fold desc="Private fields">
+    protected List<String> value;
+    protected String ruleName;
+    protected List<String> tableNames;
+    protected File outputPath;
+    //</editor-fold>
 
     public RuleBuilder() {}
+
+    //<editor-fold desc="Public methods">
+    /**
+     * Sets the rule value.
+     * @param value rule value.
+     */
+    public RuleBuilder value(String value) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
+        this.value = Lists.newArrayList(value);
+        parse();
+        return this;
+    }
+
+    /**
+     * Sets the rule value.
+     * @param values rule value.
+     */
+    public RuleBuilder value(List<String> values) {
+        this.value = Preconditions.checkNotNull(values);
+        parse();
+        return this;
+    }
+
+
+    /**
+     * Sets the table names.
+     * @param tableNames table name.
+     */
+    public RuleBuilder table(List<String> tableNames) {
+        Preconditions.checkArgument(tableNames != null && tableNames.size() > 0);
+        this.tableNames = tableNames;
+        return this;
+    }
+
+    /**
+     * Sets the table names.
+     * @param table1 table name.
+     */
+    public RuleBuilder table(String table1) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(table1));
+        this.tableNames = Lists.newArrayList(table1);
+        return this;
+    }
+
+    /**
+     * Sets the output path.
+     * @param outputPath output path.
+     */
+    public RuleBuilder out(File outputPath) {
+        Preconditions.checkArgument(outputPath != null && outputPath.isDirectory());
+        this.outputPath = outputPath;
+        return this;
+    }
+
+    /**
+     * Sets the rule name.
+     * @param ruleName rule name.
+     */
+    public RuleBuilder name(String ruleName) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleName));
+        this.ruleName = ruleName;
+        return this;
+    }
+
+    /**
+     * Generates the <code>Rule</code> class code.
+     * @return generated rule class.
+     */
+    public abstract Collection<Rule> build() throws Exception;
+
+    /**
+     * Generates and compiles the rule .class file without loading it.
+     * @return Output class file.
+     */
+    public abstract File compile() throws Exception;
+
     //</editor-fold>
 
-    //<editor-fold desc="Builder property">
-    public RuleBuilder type(RuleType type) {
-        this.type = type;
-        return this;
-    }
-
-    public RuleBuilder name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public RuleBuilder table(List<String> tables) {
-        this.tableNames = tables;
-        return this;
-    }
-
-    public RuleBuilder table(String table) {
-        tableNames = new ArrayList<String>(2);
-        tableNames.add(table);
-        return this;
-    }
-
-    public RuleBuilder value(String value) {
-        this.values = Lists.newArrayList(value);
-        return this;
-    }
-
-    public RuleBuilder value(List<String> values) {
-        this.values = values;
-        return this;
-    }
-
-    public Rule build() throws InvalidRuleException {
-        Joiner joiner = Joiner.on("\n").skipNulls();
-        String value = joiner.join(values);
-        try {
-            Rule rule = null;
-            switch (type) {
-                case FD:
-                    rule = new FDRule(name, tableNames, new StringReader(value));
-                    break;
-                case CFD:
-                    rule = new CFDRule(name, tableNames, new StringReader(value));
-                    break;
-                case UDF:
-                    String className = values.get(0);
-                    Class udfClass = CommonTools.loadClass(className);
-                    if (!Rule.class.isAssignableFrom(udfClass)) {
-                        throw
-                            new IllegalArgumentException(
-                                "The specified class is not a Rule class."
-                            );
-                    }
-
-                    rule = (Rule)udfClass.newInstance();
-                    // call internal initialization on the rule.
-                    rule.initialize(name, tableNames);
-            }
-            return rule;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new InvalidRuleException(ex);
+    //<editor-fold desc="Protected Fields">
+    /**
+     * Gets the compiled output file.
+     * @return output file.
+     */
+    protected File getOutputFile() {
+        String currentPath;
+        if (outputPath == null) {
+            currentPath = System.getProperty("user.dir");
+        } else {
+            currentPath = outputPath.getAbsolutePath();
         }
+        return new File(currentPath + File.separator + ruleName + ".java");
     }
+
+    /**
+     * Parse the value into a rule.
+     */
+    protected void parse() {}
     //</editor-fold>
 }
-

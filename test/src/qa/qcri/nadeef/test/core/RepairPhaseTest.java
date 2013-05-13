@@ -21,8 +21,6 @@ import qa.qcri.nadeef.tools.Tracer;
  * Test the repair phase of NADEEF.
  */
 public class RepairPhaseTest {
-    private RuleBuilder ruleBuilder;
-    private String tableName;
     private NodeCacheManager cacheManager;
 
     @Before
@@ -30,7 +28,6 @@ public class RepairPhaseTest {
         Bootstrap.Start();
         Tracer.setVerbose(true);
         Tracer.setInfo(true);
-        ruleBuilder = new RuleBuilder();
         cacheManager = NodeCacheManager.getInstance();
     }
 

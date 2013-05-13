@@ -7,6 +7,7 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.hash.Hashing;
 
 import javax.tools.*;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.List;
  * Common helper tools
  */
 public class CommonTools {
+    private static Tracer tracer = Tracer.getTracer(CommonTools.class);
 
     /**
      * Loads a class in runtime using specified classpath.
@@ -77,8 +79,8 @@ public class CommonTools {
      */
     public static boolean compileFile(File fullFilePath) throws IOException {
         Preconditions.checkArgument(fullFilePath != null && fullFilePath.isFile());
-
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        Preconditions.checkNotNull(compiler);
         DiagnosticCollector<JavaFileObject> diagnostics =
             new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager =
@@ -100,5 +102,21 @@ public class CommonTools {
         }
         fileManager.close();
         return result;
+    }
+
+    /**
+     * Converts a string into an integer hashcode.
+     * @param value string value.
+     * @return integer hashcode.
+     */
+    public static int toHashCode(String value) {
+        return Math.abs(
+            Hashing
+                .md5()
+                .newHasher()
+                .putString(value)
+                .hash()
+                .asInt()
+        );
     }
 }

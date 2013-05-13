@@ -9,6 +9,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,7 +19,7 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.RuleWriter;
+import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CSVDumper;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -117,11 +119,6 @@ public class CleanPlan {
             ArrayList<Rule> rules = Lists.newArrayList();
             for (int i = 0; i < ruleArray.size(); i ++) {
                 JSONObject ruleObj = (JSONObject)ruleArray.get(i);
-                String name = (String)ruleObj.get("name");
-                if (Strings.isNullOrEmpty(name)) {
-                    name = "Rule " + i;
-                }
-
                 List<String> sourceTableNames;
                 List<String> targetTableNames;
                 if (isCSV) {
@@ -158,6 +155,12 @@ public class CleanPlan {
                 Rule rule = null;
                 JSONArray value;
                 value = (JSONArray)ruleObj.get("value");
+                String ruleName = (String)ruleObj.get("name");
+                if (Strings.isNullOrEmpty(ruleName)) {
+                    // generate default rule name when it is not provided by the user, and
+                    // distinguished by the value of the rule.
+                    ruleName = "Rule" + CommonTools.toHashCode((String)value.get(0));
+                }
                 switch (type) {
                     case "udf":
                         value = (JSONArray)ruleObj.get("value");
@@ -171,15 +174,15 @@ public class CleanPlan {
 
                         rule = (Rule)udfClass.newInstance();
                         // call internal initialization on the rule.
-                        rule.initialize(name, targetTableNames);
+                        rule.initialize(ruleName, targetTableNames);
                         rules.add(rule);
                         break;
                     default:
-                        RuleWriter ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
-                        if (NadeefConfiguration.tryGetRuleBuilder(type) != null) {
+                        RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
+                        if (ruleBuilder != null) {
                             rules.addAll(
                                 ruleBuilder
-                                    .name(name)
+                                    .name(ruleName)
                                     .table(targetTableNames)
                                     .value(value)
                                     .build()

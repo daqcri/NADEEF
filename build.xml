@@ -60,7 +60,18 @@
         <mkdir dir="${build.dir}" />
         <javac includeantruntime="false"
                fork="true"
+               debug="on"
                srcdir="core/src"
+               destdir="${build.dir}"
+               classpathref="vendors.jars">
+        </javac>
+    </target>
+
+    <target name="ruleext" depends="core">
+        <mkdir dir="${build.dir}" />
+        <javac includeantruntime="false"
+               fork="true"
+               srcdir="ruleext/src"
                destdir="${build.dir}"
                classpathref="vendors.jars">
         </javac>
@@ -76,7 +87,7 @@
                classpathref="vendors.jars"/>
     </target>
 
-    <target name="test" depends="core, console, tools">
+    <target name="test" depends="core, console, tools, ruleext">
         <mkdir dir="${test.dir}" />
         <javac includeantruntime="false"
                debug="on"

@@ -12,6 +12,8 @@ import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -81,7 +83,6 @@ public class Console {
                 "Your NADEEF started in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
             );
 
-
             while ((line = console.readLine()) != null) {
                 line = line.trim();
                 Tracer.recreateStat();
@@ -104,6 +105,8 @@ public class Console {
                         // empty line
                     } else if (line.startsWith("set")) {
                         set(line);
+                    } else if (line.startsWith("fd")) {
+                        fd(line);
                     } else if (line.startsWith("schema")) {
                         schema(line);
                     } else {
@@ -148,9 +151,16 @@ public class Console {
         }
     }
 
+    // TODO: remove FD specification, and make it generic
     private static void fd(String cmdLine) throws Exception {
-        String[] tokens = cmdLine.split("\\s");
-
+        int index = cmdLine.indexOf("fd") + 2;
+        String value = cmdLine.substring(index);
+        RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
+        if (ruleBuilder != null) {
+            currentCleanPlan.getRules().addAll(
+                ruleBuilder.name("UserRule" + CommonTools.toHashCode(value)).value(value).build()
+            );
+        }
     }
 
     private static void load(String cmdLine) throws IOException {
@@ -165,7 +175,7 @@ public class Console {
         try {
             currentCleanPlan = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
         } catch (Exception ex) {
-            console.println(ex.getMessage());
+            console.println("Exception happens during loading JSON file: " + ex.getMessage());
             return;
         }
 

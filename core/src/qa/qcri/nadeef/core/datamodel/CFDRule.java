@@ -208,7 +208,7 @@ public class CFDRule extends PairTupleRule implements TextRule {
                 filterCache.put(curColumn, newFilter);
             }
         } catch (IOException ex) {
-            Tracer tracer = Tracer.getTracer(FDRule.class);
+            Tracer tracer = Tracer.getTracer(CFDRule.class);
             tracer.err(ex.getMessage());
         }
     }

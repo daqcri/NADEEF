@@ -7,6 +7,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.operator.*;
 import qa.qcri.nadeef.tools.Tracer;
@@ -22,9 +23,9 @@ public class CleanExecutor {
     private static Tracer tracer = Tracer.getTracer(CleanExecutor.class);
     private CleanPlan cleanPlan;
     private NodeCacheManager cacheManager;
-    private Flow[] detectFlows;
-    private Flow[] repairFlows;
-    private Flow[] updateFlows;
+    private List<Flow> detectFlows;
+    private List<Flow> repairFlows;
+    private List<Flow> updateFlows;
 
     //<editor-fold desc="Constructor">
     /**
@@ -34,23 +35,25 @@ public class CleanExecutor {
     public CleanExecutor(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
-        assembleFlow();
+        detectFlows = Lists.newArrayList();
+        repairFlows = Lists.newArrayList();
+        updateFlows = Lists.newArrayList();
     }
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
     public Object getDetectOutput() {
-        String key = detectFlows[detectFlows.length - 1].getLastOutputKey();
+        String key = detectFlows.get(detectFlows.size() - 1).getLastOutputKey();
         return cacheManager.get(key);
     }
 
     public Object getRepairOutput() {
-        String key = repairFlows[detectFlows.length - 1].getLastOutputKey();
+        String key = repairFlows.get(repairFlows.size() - 1).getLastOutputKey();
         return cacheManager.get(key);
     }
 
     public Object getUpdateOutput() {
-        String key = updateFlows[detectFlows.length - 1].getLastOutputKey();
+        String key = updateFlows.get(updateFlows.size() - 1).getLastOutputKey();
         return cacheManager.get(key);
     }
 
@@ -59,8 +62,9 @@ public class CleanExecutor {
      */
     public CleanExecutor detect() {
         // TODO: run multiple rules in parallel in process / thread.
-        for (int i = 0; i < detectFlows.length; i ++) {
-            detect(i);
+        int nRule = getRuleSize();
+        for (int i = 0; i < nRule; i ++) {
+            getDetectFlow(i).start();
         }
         return this;
     }
@@ -72,8 +76,7 @@ public class CleanExecutor {
         Preconditions.checkArgument(ruleIndex >= 0 && ruleIndex < cleanPlan.getRules().size());
         // TODO: run multiple rules in parallel in process / thread.
         Stopwatch stopwatch = new Stopwatch().start();
-        Flow flow = detectFlows[ruleIndex];
-        flow.start();
+        getDetectFlow(ruleIndex).start();
         Tracer.addStatEntry(
             Tracer.StatType.DetectTime,
             Long.toString(stopwatch.elapsed(TimeUnit.MILLISECONDS))
@@ -90,14 +93,14 @@ public class CleanExecutor {
         long elapseTime;
         // TODO: run multiple rules in parallel in process / thread.
         Stopwatch stopwatch = new Stopwatch().start();
-        repairFlows[ruleIndex].start();
+        getRepairFlow(ruleIndex).start();
         elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         Tracer.addStatEntry(
             Tracer.StatType.RepairTime,
             Long.toString(elapseTime)
         );
 
-        updateFlows[ruleIndex].start();
+        getUpdateFlow(ruleIndex).start();
         elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) - elapseTime;
         Tracer.addStatEntry(
             Tracer.StatType.EQTime,
@@ -112,8 +115,9 @@ public class CleanExecutor {
      */
     public CleanExecutor repair() {
         // TODO: run multiple rules in parallel in process / thread.
-        for (int i = 0; i < repairFlows.length; i ++) {
-            repair(i);
+        int size = getRuleSize();
+        for (int i = 0; i < size; i ++) {
+            getRepairFlow(i).start();
         }
 
         return this;
@@ -139,9 +143,10 @@ public class CleanExecutor {
         int count = 0;
         do {
             tracer.verbose("Running iteration " + count + 1);
-            for (int i = 0; i < repairFlows.length; i ++) {
-                detect(i);
-                repair(i);
+            int size = getRuleSize();
+            for (int i = 0; i < size; i ++) {
+                getDetectFlow(i).start();
+                getRepairFlow(i).start();
             }
 
             changedCells = ((Integer)getUpdateOutput()).intValue();
@@ -154,52 +159,98 @@ public class CleanExecutor {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Private members">
     /**
-     * Assemble the workflow.
+     * Gets the number of rules in the executor.
+     * @return number of rules.
+     */
+    private int getRuleSize() {
+        return cleanPlan.getRules().size();
+    }
+
+    /**
+     * Gets the DetectFlow.
+     */
+    private synchronized Flow getDetectFlow(int index) {
+        Preconditions.checkArgument(index < getRuleSize());
+        if (detectFlows.size() <= index) {
+            assembleFlow();
+        }
+        return detectFlows.get(index);
+    }
+
+    /**
+     * Gets the DetectFlow.
+     */
+    private synchronized Flow getRepairFlow(int index) {
+        Preconditions.checkArgument(index < getRuleSize());
+        if (repairFlows.size() <= index) {
+            assembleFlow();
+        }
+        return repairFlows.get(index);
+    }
+
+    /**
+     * Gets the DetectFlow.
+     */
+    private synchronized Flow getUpdateFlow(int index) {
+        Preconditions.checkArgument(index < getRuleSize());
+        if (updateFlows.size() <= index) {
+            assembleFlow();
+        }
+        return updateFlows.get(index);
+    }
+
+    /**
+     * Assemble the workflow on demand.
      */
     private void assembleFlow() {
         List<Rule> rules = cleanPlan.getRules();
         int nRule = rules.size();
-        detectFlows = new Flow[nRule];
-        repairFlows = new Flow[nRule];
-        updateFlows = new Flow[nRule];
 
         try {
+            Flow flow = null;
             for (int i = 0; i < nRule; i ++)  {
-                // assemble the detection flow.
-                detectFlows[i] = new Flow();
                 Rule rule = rules.get(i);
                 String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
-                detectFlows[i]
-                    .setInputKey(inputKey)
-                    .addNode(new SourceDeserializer(cleanPlan), "deserializer")
-                    .addNode(new QueryEngine(rule), "query");
-                if (rule.supportTwoInputs()) {
-                    // the case where the rule is working on multiple tables (2).
-                    detectFlows[i].addNode(new ViolationDetector<TuplePair>(rule), "detector");
-                } else {
-                    detectFlows[i].addNode(
-                        new ViolationDetector<TupleCollection>(rule),
-                        "detector"
-                    );
+                // assemble the detection flow.
+                if (detectFlows.size() <= i) {
+                    flow = new Flow();
+                    flow.setInputKey(inputKey)
+                        .addNode(new SourceDeserializer(cleanPlan), "deserializer")
+                        .addNode(new QueryEngine(rule), "query");
+                    if (rule.supportTwoInputs()) {
+                        // the case where the rule is working on multiple tables (2).
+                        flow.addNode(new ViolationDetector<TuplePair>(rule), "detector");
+                    } else {
+                        flow.addNode(
+                            new ViolationDetector<TupleCollection>(rule),
+                            "detector"
+                        );
+                    }
+                    flow.addNode(new ViolationExport(cleanPlan), "export");
+                    detectFlows.add(flow);
                 }
-                detectFlows[i].addNode(new ViolationExport(cleanPlan), "export");
 
-                // assemble the repair flow
-                repairFlows[i] = new Flow();
-                repairFlows[i]
-                    .setInputKey(inputKey)
-                    .addNode(new ViolationDeserializer(), "violation_deserializer")
-                    .addNode(new ViolationRepair(rule), "violation_repair")
-                    .addNode(new FixExport(cleanPlan), "fix export");
+                if (repairFlows.size() <= i) {
+                    // assemble the repair flow
+                    flow = new Flow();
+                    flow.setInputKey(inputKey)
+                        .addNode(new ViolationDeserializer(), "violation_deserializer")
+                        .addNode(new ViolationRepair(rule), "violation_repair")
+                        .addNode(new FixExport(cleanPlan), "fix export");
+                    repairFlows.add(flow);
+                }
 
-                // assemble the updater flow
-                updateFlows[i] = new Flow();
-                updateFlows[i]
-                    .setInputKey(inputKey)
-                    .addNode(new FixDeserializer(), "fix deserializer")
-                    .addNode(new FixDecisionMaker(), "eq")
-                    .addNode(new Updater(cleanPlan), "updater");
+                if (updateFlows.size() <= i) {
+                    // assemble the updater flow
+                    flow = new Flow();
+                    flow.setInputKey(inputKey)
+                        .addNode(new FixDeserializer(), "fix deserializer")
+                        .addNode(new FixDecisionMaker(), "eq")
+                        .addNode(new Updater(cleanPlan), "updater");
+                    updateFlows.add(flow);
+                }
             }
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
@@ -208,4 +259,5 @@ public class CleanExecutor {
             }
         }
     }
+    //</editor-fold>
 }

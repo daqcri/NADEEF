@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.rulewriter.FDRuleBuilder;
+import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 
 import java.io.File;
 import java.util.Collection;

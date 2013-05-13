@@ -3,8 +3,9 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.rulewriter;
+package qa.qcri.nadeef.ruleext;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.hash.HashFunction;
@@ -12,8 +13,9 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.stringtemplate.v4.ST;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.util.RuleWriter;
+import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,16 +24,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 /**
  * Template engine for FD rule.
  */
-public class FDRuleBuilder extends RuleWriter {
+public class FDRuleBuilder extends RuleBuilder {
     //<editor-fold desc="Private fields">
     private List<String> lhs;
     private List<String> rhs;
-
+    private static Tracer tracer = Tracer.getTracer(FDRuleBuilder.class);
     private static ST st;
 
     private static final String template =
@@ -39,10 +42,12 @@ public class FDRuleBuilder extends RuleWriter {
         "import java.util.*;\n" +
 
         "public class $FDName$ extends PairTupleRule {\n" +
-        "    protected List<Column> leftHandSide;\n" +
-        "    protected List<Column> rightHandSide;\n" +
-        "    public $FDName$(String id, List<String> tableNames) {\n" +
-        "        super(id, tableNames);\n" +
+        "    protected List<Column> leftHandSide = new ArrayList();\n" +
+        "    protected List<Column> rightHandSide = new ArrayList();\n" +
+        "    public $FDName$() {}\n" +
+        "    @Override\n" +
+        "    public void initialize(String id, List<String> tableNames) {\n" +
+        "        super.initialize(id, tableNames);\n" +
         "        $leftHandSideInitialize$\n" +
         "        $rightHandSideInitialize$\n" +
         "    }\n" +
@@ -66,7 +71,7 @@ public class FDRuleBuilder extends RuleWriter {
         "     * @return a group of tuple collection.\n" +
         "     */\n" +
         "    @Override\n" +
-        "    public Collection<TuplePair> group(Collection<TupleCollection> tupleCollections) {\n" +
+        "    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {\n" +
         "        ArrayList<TuplePair> result = new ArrayList();\n" +
         "        TupleCollection tupleCollection = tupleCollections.iterator().next();\n" +
         "        Collection<TupleCollection> groupResult = tupleCollection.groupOn(leftHandSide);\n" +
@@ -80,6 +85,7 @@ public class FDRuleBuilder extends RuleWriter {
         "                        if (!left.get(column).equals(right.get(column))) {\n" +
         "                            TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));\n"+
         "                            result.add(pair);\n" +
+        "                            break;\n" +
         "                        }\n" +
         "                    }\n" +
         "               }\n" +
@@ -124,7 +130,7 @@ public class FDRuleBuilder extends RuleWriter {
         "    @Override\n" +
         "    public Collection<Fix> repair(Violation violation) {\n" +
         "        List<Fix> result = new ArrayList();\n" +
-        "        List<Cell> cells = new ArrayList();\n" +
+        "        Collection<Cell> cells = violation.getCells();\n" +
         "        HashMap<Column, Cell> candidates = new HashMap<Column, Cell>();\n" +
         "        int vid = violation.getVid();\n" +
         "        Fix fix;\n" +
@@ -157,14 +163,19 @@ public class FDRuleBuilder extends RuleWriter {
      */
     @Override
     public Collection<Rule> build() throws Exception {
+        Stopwatch stopwatch = new Stopwatch().start();
         List<Rule> result = Lists.newArrayList();
         File outputFile = compile();
         String className = Files.getNameWithoutExtension(outputFile.getName());
         URL url = new URL("file://" + outputFile.getParent() + File.separator);
         Class ruleClass = CommonTools.loadClass(className, url);
-        Rule rule = (Rule)ruleClass.newInstance();
+        Rule rule = (Rule)ruleClass.getConstructor().newInstance();
         rule.initialize(ruleName, tableNames);
         result.add(rule);
+        tracer.info(
+            "FD Rule " + outputFile.getAbsolutePath() + " is built in "
+                + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms.");
+        stopwatch.stop();
         return result;
     }
 

@@ -10,9 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
-import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 import qa.qcri.nadeef.test.TestDataRepository;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 public class ViolationRepairTest {
     private Collection<Violation> violations;
-    private RuleBuilder ruleBuilder;
+    private FDRuleBuilder ruleBuilder;
 
     @Before
     public void setup() {
@@ -34,19 +33,18 @@ public class ViolationRepairTest {
             Assert.fail("Setup failed.");
             e.printStackTrace();
         }
-        ruleBuilder = new RuleBuilder();
+        ruleBuilder = new FDRuleBuilder();
     }
 
     @Test
     public void FDRepair1() {
         try {
-            Rule rule =
-                ruleBuilder.name("fd1")
-                    .type(RuleType.FD)
+            List<Rule> rules =
+                (List<Rule>) ruleBuilder.name("fd1")
                     .table("test")
                     .value("B|A,C")
                     .build();
-
+            Rule rule = rules.get(0);
             List<Fix> allFixes = Lists.newArrayList();
             for (Violation violation : violations) {
                 allFixes.addAll(rule.repair(violation));
@@ -69,8 +67,9 @@ public class ViolationRepairTest {
             Assert.assertEquals("test.a", right2.getColumn().getFullAttributeName());
             Assert.assertEquals(6, right2.getTupleId());
 
-        } catch (InvalidRuleException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            Assert.fail(e.getMessage());
         }
     }
 }

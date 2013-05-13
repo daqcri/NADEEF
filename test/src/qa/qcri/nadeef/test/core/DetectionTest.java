@@ -114,7 +114,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getAdultPlan2();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(365116);
+            verifyViolationResult(974);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
