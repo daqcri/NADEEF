@@ -12,6 +12,7 @@ import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.operator.*;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -217,16 +218,16 @@ public class CleanExecutor {
                 if (detectFlows.size() <= i) {
                     flow = new Flow();
                     flow.setInputKey(inputKey)
-                        .addNode(new SourceDeserializer(cleanPlan), "deserializer")
-                        .addNode(new QueryEngine(rule), "query");
+                        .addNode(new SourceDeserializer(cleanPlan), "deserializer");
                     if (rule.supportTwoInputs()) {
                         // the case where the rule is working on multiple tables (2).
-                        flow.addNode(new ViolationDetector<TuplePair>(rule), "detector");
+                        flow.addNode(
+                            new QueryEngine<TuplePair, Collection<TuplePair>>(rule), "query"
+                        ).addNode(new ViolationDetector<TuplePair>(rule), "detector");
                     } else {
                         flow.addNode(
-                            new ViolationDetector<TupleCollection>(rule),
-                            "detector"
-                        );
+                            new QueryEngine<Tuple, Collection<TupleCollection>>(rule), "query"
+                        ).addNode(new ViolationDetector<TupleCollection>(rule), "detector");
                     }
                     flow.addNode(new ViolationExport(cleanPlan), "export");
                     detectFlows.add(flow);

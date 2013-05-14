@@ -25,43 +25,39 @@ public class $FDName$ extends PairTupleRule {
     }
 
     /**
-     * FD scope.
-     * @param tupleCollections input tuple collections.
-     * @return tuples after filtering.
+     * Default block operation.
+     * @param tupleCollection a collection of tables.
+     * @return a collection of blocked tables.
      */
     @Override
-    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
+    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollections) {
         TupleCollection tupleCollection = tupleCollections.iterator().next();
-        tupleCollection.project(leftHandSide).project(rightHandSide);
-        return tupleCollections;
+        Collection<TupleCollection> groupResult = tupleCollection.groupOn(leftHandSide);
+        return groupResult;
     }
 
     /**
      * Default group operation.
      *
-     * @param tupleCollections input tuple
+     * @param tuples input tuple
      * @return a group of tuple collection.
      */
     @Override
-    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {
+    public Collection<TuplePair> iterator(TupleCollection tuples) {
         ArrayList<TuplePair> result = new ArrayList();
-        TupleCollection tupleCollection = tupleCollections.iterator().next();
-        Collection<TupleCollection> groupResult = tupleCollection.groupOn(leftHandSide);
-        for (TupleCollection tuples : groupResult) {
-            tuples.orderBy(rightHandSide);
-            for (int i = 0; i < tuples.size(); i ++) {
-                for (int j = i + 1; j < tuples.size(); j ++) {
-                    Tuple left = tuples.get(i);
-                    Tuple right = tuples.get(j);
-                    for (Column column : rightHandSide) {
-                        if (!left.get(column).equals(right.get(column))) {
-                            TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                            result.add(pair);
-                            break;
-                        }
+        tuples.orderBy(rightHandSide);
+        for (int i = 0; i < tuples.size(); i ++) {
+            for (int j = i + 1; j < tuples.size(); j ++) {
+                Tuple left = tuples.get(i);
+                Tuple right = tuples.get(j);
+                for (Column column : rightHandSide) {
+                    if (!left.get(column).equals(right.get(column))) {
+                        TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                        result.add(pair);
+                        break;
                     }
-               }
-            }
+                }
+           }
         }
         return result;
     }

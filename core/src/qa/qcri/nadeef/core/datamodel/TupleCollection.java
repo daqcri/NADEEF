@@ -126,6 +126,16 @@ public abstract class TupleCollection {
     /**
      * Partition the tuple collection into multiple tuple collections based
      * on the column.
+     * @param columnName Paritition based on column attribute name.
+     * @return A collection of tuple collections.
+     */
+    public Collection<TupleCollection> groupOn(String columnName) {
+        return groupOn(new Column(getSchema().getTableName(), columnName));
+    }
+
+    /**
+     * Partition the tuple collection into multiple tuple collections based
+     * on the column.
      * @param column Paritition based on column.
      * @return A collection of tuple collections.
      */

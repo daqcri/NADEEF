@@ -421,9 +421,10 @@ public class SQLTupleCollection extends TupleCollection {
         if (isInternal) {
             Connection conn = null;
             try {
+                // TODO: implement a connection pool
                 conn = DBConnectionFactory.createConnection(dbconfig);
                 Statement stat = conn.createStatement();
-                stat.execute("DROP TABLE IF EXISTS " + tableName);
+                stat.execute("DROP VIEW IF EXISTS " + tableName);
                 conn.commit();
             } catch (Exception ex) {
                 // ignore;

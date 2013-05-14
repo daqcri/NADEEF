@@ -32,13 +32,23 @@ public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair
     public abstract Collection<Violation> detect(TuplePair pair);
 
     /**
-     * Default generator operation.
+     * Default block operation.
+     * @param tupleCollection a collection of tables.
+     * @return a collection of blocked tables.
+     */
+    @Override
+    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollection) {
+        return tupleCollection;
+    }
+
+    /**
+     * Default iterator operation.
      *
      * @param tupleCollections input tuple
      * @return a generator of tuple collection.
      */
     @Override
-    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {
+    public Collection<TuplePair> iterator(TupleCollection tupleCollections) {
         ArrayList<TuplePair> result = Lists.newArrayList();
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
 

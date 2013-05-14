@@ -5,23 +5,26 @@
 
 package qa.qcri.nadeef.core.operator;
 
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Query engine operator, which generates optimized queries based on given hints.
  */
-public class QueryEngine<TRule extends Rule, TOutput>
-    extends Operator<Collection<TupleCollection>, TOutput> {
-    private TRule rule;
+// TODO: remove this class and make a separate operator for block, iterator, and scope
+public class QueryEngine<TDetect, TIteratorOutput>
+    extends Operator<Collection<TupleCollection>, TIteratorOutput> {
+    private Rule<TDetect, TIteratorOutput> rule;
 
     /**
      * Constructor.
      * @param rule
      */
-    public QueryEngine(TRule rule) {
+    public QueryEngine(Rule rule) {
         this.rule = rule;
     }
 
@@ -32,8 +35,18 @@ public class QueryEngine<TRule extends Rule, TOutput>
      * @return output object.
      */
     @Override
-    public TOutput execute(Collection<TupleCollection> tuples) throws Exception {
-        Collection<TupleCollection> result = rule.scope(tuples);
-        return (TOutput)rule.generator(result);
+    public TIteratorOutput execute(Collection<TupleCollection> tuples) throws Exception {
+        Collection<TupleCollection> scopeResult = rule.scope(tuples);
+        Collection<TupleCollection> blockResult = rule.block(scopeResult);
+        List result = Lists.newArrayList();
+        for (TupleCollection tupleCollection : blockResult) {
+            TIteratorOutput iteratorResult = rule.iterator(tupleCollection);
+            if (iteratorResult instanceof Collection) {
+                result.addAll((Collection)iteratorResult);
+            } else {
+                result.add(iteratorResult);
+            }
+        }
+        return (TIteratorOutput)result;
     }
 }

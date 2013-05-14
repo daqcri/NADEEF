@@ -5,13 +5,15 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.collect.Lists;
+
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Abstract base class for a rule providing the default behavior of scope and generator operation.
  */
-public abstract class SingleTupleRule extends Rule<Tuple, Collection<TupleCollection>> {
+public abstract class SingleTupleRule extends Rule<Tuple, TupleCollection> {
     /**
      * Default constructor.
      */
@@ -37,12 +39,22 @@ public abstract class SingleTupleRule extends Rule<Tuple, Collection<TupleCollec
     }
 
     /**
+     * Default block operation.
+     * @param tupleCollection a collection of tables.
+     * @return a collection of blocked tables.
+     */
+    @Override
+    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollection) {
+        return tupleCollection;
+    }
+
+    /**
      * Default generator operation.
      * @param tupleCollection input tuple
      * @return grouped tuple collection.
      */
     @Override
-    public Collection<TupleCollection> generator(Collection<TupleCollection> tupleCollection) {
+    public TupleCollection iterator(TupleCollection tupleCollection) {
         return tupleCollection;
     }
 

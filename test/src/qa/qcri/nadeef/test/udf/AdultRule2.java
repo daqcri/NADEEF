@@ -22,21 +22,22 @@ public class AdultRule2 extends PairTupleRule {
     }
 
     @Override
-    public Collection<TuplePair> generator(Collection<TupleCollection> tupleCollections) {
-        ArrayList<TuplePair> result = new ArrayList();
+    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollections) {
         TupleCollection tupleCollection = Iterables.get(tupleCollections, 0);
-        Collection<TupleCollection> groupResult =
-            tupleCollection.groupOn(new Column(tableNames.get(0), "race"));
-        for (TupleCollection tuples : groupResult) {
-            for (int i = 0; i < tuples.size(); i ++) {
-                for (int j = i + 1; j < tuples.size(); j ++) {
-                    Tuple left = tuples.get(i);
-                    Tuple right = tuples.get(j);
-                    if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
-                        TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                        result.add(pair);
-                        break;
-                    }
+        return tupleCollection.groupOn("race");
+    }
+
+    @Override
+    public Collection<TuplePair> iterator(TupleCollection tuples) {
+        ArrayList<TuplePair> result = new ArrayList();
+        for (int i = 0; i < tuples.size(); i ++) {
+            for (int j = i + 1; j < tuples.size(); j ++) {
+                Tuple left = tuples.get(i);
+                Tuple right = tuples.get(j);
+                if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
+                    TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                    result.add(pair);
+                    break;
                 }
             }
         }
