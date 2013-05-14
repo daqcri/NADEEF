@@ -20,10 +20,7 @@ import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.tools.CSVDumper;
-import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.FileHelper;
+import qa.qcri.nadeef.tools.*;
 
 import java.io.File;
 import java.io.Reader;
@@ -39,6 +36,7 @@ import java.util.Set;
 public class CleanPlan {
     private DBConfig source;
     private List<Rule> rules;
+    private static Tracer tracer = Tracer.getTracer(CleanPlan.class);
 
     //<editor-fold desc="Constructor">
     /**
@@ -187,7 +185,10 @@ public class CleanPlan {
                                     .value(value)
                                     .build()
                             );
+                        } else {
+                            tracer.err("Unknown Rule type: " + type);
                         }
+
                         break;
                 }
 

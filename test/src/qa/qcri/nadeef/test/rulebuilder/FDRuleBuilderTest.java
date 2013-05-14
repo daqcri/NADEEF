@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.test.rulewriter;
+package qa.qcri.nadeef.test.rulebuilder;
 
 import com.google.common.io.Files;
 import org.junit.AfterClass;
@@ -19,7 +19,7 @@ import java.util.Collection;
 /**
  * Test for FD Rule writer.
  */
-public class FDRuleWriterTest {
+public class FDRuleBuilderTest {
     private static File workingDirectory;
 
     @BeforeClass
@@ -34,7 +34,7 @@ public class FDRuleWriterTest {
     }
 
     @Test
-    public void testFileGeneration() {
+    public void testFDFileGeneration() {
         FDRuleBuilder fdRuleBuilder = new FDRuleBuilder();
         File output = null;
         try {
@@ -43,7 +43,7 @@ public class FDRuleWriterTest {
                 .table("table")
                 .out(workingDirectory)
                 .value("A|B, C")
-                .compile();
+                .compile().iterator().next();
             System.out.println("Write file in " + output.getAbsolutePath());
             Assert.assertTrue(output.exists());
 
@@ -51,7 +51,7 @@ public class FDRuleWriterTest {
                 .table("table")
                 .out(workingDirectory)
                 .value("D,E|F, GG")
-                .compile();
+                .compile().iterator().next();
             System.out.println("Write file in " + output.getAbsolutePath());
             Assert.assertTrue(output.exists());
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class FDRuleWriterTest {
     }
 
     @Test
-    public void testLoad() {
+    public void testFDLoad() {
         FDRuleBuilder fdRuleBuilder = new FDRuleBuilder();
         Collection<Rule> output = null;
         try {
@@ -79,7 +79,7 @@ public class FDRuleWriterTest {
     }
 
     @Test
-    public void testLoad2() {
+    public void testFDLoad2() {
         FDRuleBuilder fdRuleBuilder = new FDRuleBuilder();
         Collection<Rule> output = null;
         try {

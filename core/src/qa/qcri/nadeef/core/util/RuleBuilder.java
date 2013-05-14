@@ -6,13 +6,19 @@
 package qa.qcri.nadeef.core.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract class RuleBuilder represents the extension point of writing new
@@ -95,13 +101,32 @@ public abstract class RuleBuilder {
      * Generates the <code>Rule</code> class code.
      * @return generated rule class.
      */
-    public abstract Collection<Rule> build() throws Exception;
+    public Collection<Rule> build() throws Exception {
+        List<Rule> result = Lists.newArrayList();
+        Collection<File> outputFiles = compile();
+        Tracer tracer = Tracer.getTracer(RuleBuilder.class);
+        for (File outputFile: outputFiles) {
+            Stopwatch stopwatch = new Stopwatch().start();
+            String className = Files.getNameWithoutExtension(outputFile.getName());
+            URL url = new URL("file://" + outputFile.getParent() + File.separator);
+            Class ruleClass = CommonTools.loadClass(className, url);
+            Rule rule = (Rule)ruleClass.getConstructor().newInstance();
+            rule.initialize(ruleName, tableNames);
+            result.add(rule);
+            tracer.info(
+                "Rule file : " + outputFile.getAbsolutePath() + " is loaded in "
+                    + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+            );
+            stopwatch.stop();
+        }
+        return result;
+    }
 
     /**
      * Generates and compiles the rule .class file without loading it.
      * @return Output class file.
      */
-    public abstract File compile() throws Exception;
+    public abstract Collection<File> compile() throws Exception;
 
     //</editor-fold>
 

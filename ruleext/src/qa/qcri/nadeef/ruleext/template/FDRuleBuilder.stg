@@ -1,7 +1,12 @@
-leftItem(columnName) ::= <% leftHandSide.add(new Column("$columnName$")); %>
-rightItem(columnName) ::= <% rightHandSide.add(new Column("$columnName$"));%>
+leftItem(columnName) ::= <% leftHandSide.add(new Column("$columnName$")); $\n$%>
+rightItem(columnName) ::= <% rightHandSide.add(new Column("$columnName$")); $\n$%>
 
-fdTemplate(FDName, leftHandSideInitialize, rightHandSideInitialize) ::= <%
+fdTemplate(FDName, leftHandSideInitialize, rightHandSideInitialize) ::= <<
+
+/*
+ * Copyright (C) Qatar Computing Research Institute, 2013.
+ * All rights reserved.
+ */
 import qa.qcri.nadeef.core.datamodel.*;
 import java.util.*;
 
@@ -15,8 +20,8 @@ public class $FDName$ extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
-        $leftHandSideInitialize:leftItem()$;
-        $rightHandSideInitialize:rightItem()$;
+        $leftHandSideInitialize:leftItem()$
+        $rightHandSideInitialize:rightItem()$
     }
 
     /**
@@ -117,4 +122,4 @@ public class $FDName$ extends PairTupleRule {
         return result;
     }
 }
-%>
+>>

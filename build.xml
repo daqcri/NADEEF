@@ -37,7 +37,7 @@
         </manifestclasspath>
 
         <jar destfile="${build.root}/${project.name}.jar">
-        <fileset dir="${build.dir}" includes="**/*.class" />
+        <fileset dir="${build.dir}" includes="**/*" />
         <fileset dir="${vendor.dir}" />
         <manifest>
             <attribute name="Main-Class" value="${console.class}" />
@@ -76,6 +76,9 @@
                destdir="${build.dir}"
                classpathref="vendors.jars">
         </javac>
+        <copy todir="${build.dir}/qa/qcri/nadeef/ruleext/template">
+            <fileset dir="ruleext/src/qa/qcri/nadeef/ruleext/template" />
+        </copy>
     </target>
 
     <target name="tools">

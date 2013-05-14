@@ -164,6 +164,7 @@ public class Console {
     }
 
     private static void load(String cmdLine) throws IOException {
+        Stopwatch stopwatch = new Stopwatch().start();
         String[] splits = cmdLine.split("\\s");
         if (splits.length != 2) {
             throw new IllegalArgumentException(
@@ -180,7 +181,11 @@ public class Console {
         }
 
         executor = new CleanExecutor(currentCleanPlan);
-        console.println(currentCleanPlan.getRules().size() + " rules loaded.");
+        console.println(
+            currentCleanPlan.getRules().size()
+                + " rules loaded in "
+                + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+        );
     }
 
     private static void list() throws IOException {
