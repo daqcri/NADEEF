@@ -113,7 +113,7 @@ public abstract class RuleBuilder {
             Rule rule = (Rule)ruleClass.getConstructor().newInstance();
             rule.initialize(ruleName, tableNames);
             result.add(rule);
-            tracer.info(
+            tracer.verbose(
                 "Rule file : " + outputFile.getAbsolutePath() + " is loaded in "
                     + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
             );

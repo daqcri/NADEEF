@@ -13,11 +13,11 @@ import java.util.List;
  */
 public class AdultRule2 extends PairTupleRule {
     @Override
-    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
+    public Collection<TupleCollection> horizontalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
         TupleCollection tupleCollection = tupleCollections.iterator().next();
-        tupleCollection
-            .project(new Column(tableNames.get(0), "race"))
-            .project(new Column(tableNames.get(0), "fnlwgt"));
+        tupleCollection.project("race").project("fnlwgt");
         return tupleCollections;
     }
 

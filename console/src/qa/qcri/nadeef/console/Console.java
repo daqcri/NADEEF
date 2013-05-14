@@ -147,6 +147,9 @@ public class Console {
         Schema schema = sqlTupleCollection.getSchema();
         Set<Column> columns = schema.getColumns();
         for (Column column : columns) {
+            if (column.getAttributeName().equals("tid")) {
+                continue;
+            }
             console.println(String.format("\t%s", column.getAttributeName()));
         }
     }

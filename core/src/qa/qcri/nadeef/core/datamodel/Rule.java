@@ -80,11 +80,22 @@ public abstract class Rule<TDetect, TIteratorOutput> {
     public abstract TIteratorOutput iterator(TupleCollection tupleCollections);
 
     /**
-     * Default scope operation.
+     * Vertical scope operator.
      * @param tupleCollection input tuple collections.
-     * @return filtered tuple collection.
+     * @return scoped tuple collection.
      */
-    public abstract Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollection);
+    public abstract Collection<TupleCollection> verticalScope(
+        Collection<TupleCollection> tupleCollection
+    );
+
+    /**
+     * Horizontal scope operator.
+     * @param tupleCollection input tuple collections.
+     * @return scoped tuple collection.
+     */
+    public abstract Collection<TupleCollection> horizontalScope(
+        Collection<TupleCollection> tupleCollection
+    );
 
     /**
      * Returns <code>True</code> when the rule implements one tuple input.

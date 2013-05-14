@@ -36,8 +36,12 @@ public class QueryEngine<TDetect, TIteratorOutput>
      */
     @Override
     public TIteratorOutput execute(Collection<TupleCollection> tuples) throws Exception {
-        Collection<TupleCollection> scopeResult = rule.scope(tuples);
-        Collection<TupleCollection> blockResult = rule.block(scopeResult);
+        // Here the horizontalScope needs to be called before vertical Scope since
+        // it may needs the attributes which are going to be removed from verticals scope.
+        Collection<TupleCollection> horizontalScopeResult = rule.horizontalScope(tuples);
+        Collection<TupleCollection> verticalScopeResult =
+            rule.verticalScope(horizontalScopeResult);
+        Collection<TupleCollection> blockResult = rule.block(verticalScopeResult);
         List result = Lists.newArrayList();
         for (TupleCollection tupleCollection : blockResult) {
             TIteratorOutput iteratorResult = rule.iterator(tupleCollection);

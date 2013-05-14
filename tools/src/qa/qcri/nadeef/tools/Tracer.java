@@ -112,8 +112,8 @@ public class Tracer {
             int nCell = Integer.parseInt(cellStats.get(i));
             out(String.format("%-30s %10d", "Cell updated", nCell));
             totalChangedCell += nCell;
+            out("----------------------------------------------------------------");
         }
-        out("----------------------------------------------------------------");
         System.out.println(
             "Repair " + detectStats.size() + " rules finished in " + totalTime + " ms " +
             "with " + totalChangedCell + " cells changed.\n"

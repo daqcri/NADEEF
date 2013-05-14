@@ -34,7 +34,21 @@ public abstract class SingleTupleRule extends Rule<Tuple, TupleCollection> {
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollection) {
+    public Collection<TupleCollection> horizontalScope(
+        Collection<TupleCollection> tupleCollection
+    ) {
+        return tupleCollection;
+    }
+
+    /**
+     * Default scope operation.
+     * @param tupleCollection input tuple collections.
+     * @return filtered tuple collection.
+     */
+    @Override
+    public Collection<TupleCollection> verticalScope(
+        Collection<TupleCollection> tupleCollection
+    ) {
         return tupleCollection;
     }
 

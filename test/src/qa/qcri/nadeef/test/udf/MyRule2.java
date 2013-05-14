@@ -48,12 +48,21 @@ public class MyRule2 extends PairTupleRule {
     }
 
     @Override
-    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
+    public Collection<TupleCollection> horizontalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
         TupleCollection collection = tupleCollections.iterator().next();
         String tableName = tableNames.get(0);
-        collection.project(new Column(tableName, "city"))
-                .project(new Column(tableName, "zip"))
-                .filter(SimpleExpression.newEqual(new Column(tableName, "zip"), "1183JV"));
+        collection.filter(SimpleExpression.newEqual(new Column(tableName, "zip"), "1183JV"));
+        return tupleCollections;
+    }
+
+    @Override
+    public Collection<TupleCollection> verticalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
+        TupleCollection collection = tupleCollections.iterator().next();
+        collection.project("city").project("zip");
         return tupleCollections;
     }
 }

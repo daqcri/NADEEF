@@ -48,17 +48,29 @@ public class $CFDName$ extends PairTupleRule {
     }
 
     /**
-     * Scope the tuple collection.
-     * @param tupleCollections input tuple collections.
-     * @return
+     * Default horizontal scope operation.
+     * @param tupleCollection input tuple collections.
+     * @return filtered tuple collection.
      */
     @Override
-    public Collection<TupleCollection> scope(Collection<TupleCollection> tupleCollections) {
-        List<TupleCollection> collections = new ArrayList(tupleCollections);
-        TupleCollection collection = collections.get(0);
-        collection.project(lhs).project(rhs);
-        collection.filter(filterExpressions);
-        return collections;
+    public Collection<TupleCollection> horizontalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
+        tupleCollections.iterator().next().project(lhs).project(rhs);
+        return tupleCollections;
+    }
+
+    /**
+     * Default vertical scope operation.
+     * @param tupleCollection input tuple collections.
+     * @return filtered tuple collection.
+     */
+    @Override
+    public Collection<TupleCollection> verticalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
+        tupleCollections.iterator().next().filter(filterExpressions);
+        return tupleCollections;
     }
 
     /**
