@@ -30,6 +30,7 @@ public abstract class RuleBuilder {
     protected String ruleName;
     protected List<String> tableNames;
     protected File outputPath;
+
     //</editor-fold>
 
     public RuleBuilder() {}
