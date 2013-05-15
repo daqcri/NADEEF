@@ -137,11 +137,15 @@ public class Console {
 
         if (currentCleanPlan == null) {
             throw new NullPointerException(
-                "There is no rule loaded."
+                "There is no CleanPlan loaded."
             );
         }
 
         String tableName = splits[1];
+        if (!currentCleanPlan.getTableNames().contains(tableName)) {
+            throw new IllegalArgumentException("Unknown table names.");
+        }
+
         SQLTupleCollection sqlTupleCollection =
                 new SQLTupleCollection(tableName, currentCleanPlan.getSourceDBConfig());
         Schema schema = sqlTupleCollection.getSchema();

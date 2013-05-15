@@ -13,6 +13,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
+import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -35,6 +36,7 @@ public class FDRuleBuilder extends RuleBuilder {
     //<editor-fold desc="Private fields">
     private List<String> lhs;
     private List<String> rhs;
+
     private static Tracer tracer = Tracer.getTracer(FDRuleBuilder.class);
     private static ST st;
     //</editor-fold>
@@ -59,6 +61,7 @@ public class FDRuleBuilder extends RuleBuilder {
     }
 
     //</editor-fold>
+
     /**
      * Generates the code.
      * @return generated file in full path.
@@ -101,6 +104,7 @@ public class FDRuleBuilder extends RuleBuilder {
         // use the first one as default table name.
         String defaultTable = tableNames.get(0);
         String newColumn = null;
+        Set<Column> columnSet = schemas.get(0).getColumns();
         for (int i = 0; i < lhsSplits.length; i ++) {
             token = lhsSplits[i].trim().toLowerCase();
             if (Strings.isNullOrEmpty(token)) {
@@ -116,6 +120,13 @@ public class FDRuleBuilder extends RuleBuilder {
             if (lhsSet.contains(newColumn)) {
                 throw new IllegalArgumentException(
                     "FD cannot have duplicated column " + newColumn
+                );
+            }
+
+            // Here we assume FD only works with one table.
+            if (!columnSet.contains(new Column(newColumn))) {
+                throw new IllegalArgumentException(
+                    "Unknown column names " + newColumn
                 );
             }
             lhsSet.add(newColumn);
@@ -138,6 +149,13 @@ public class FDRuleBuilder extends RuleBuilder {
             if (rhsSet.contains(newColumn)) {
                 throw new IllegalArgumentException(
                     "FD cannot have duplicated column " + newColumn
+                );
+            }
+
+            // Here we assume FD only works with one table.
+            if (!columnSet.contains(new Column(newColumn))) {
+                throw new IllegalArgumentException(
+                    "Unknown column names " + newColumn
                 );
             }
             rhsSet.add(newColumn);

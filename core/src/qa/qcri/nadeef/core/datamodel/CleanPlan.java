@@ -25,6 +25,9 @@ import qa.qcri.nadeef.tools.*;
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +39,8 @@ import java.util.Set;
 public class CleanPlan {
     private DBConfig source;
     private List<Rule> rules;
+    private static List<String> tableNames;
+    private static List<Schema> schemas;
     private static Tracer tracer = Tracer.getTracer(CleanPlan.class);
 
     //<editor-fold desc="Constructor">
@@ -69,8 +74,10 @@ public class CleanPlan {
         String sourceTableUserName;
         String sourceTableUserPassword;
         String csvTableName = null;
-        boolean isCSV = false;
 
+        boolean isCSV = false;
+        tableNames = Lists.newArrayList();
+        schemas = Lists.newArrayList();
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
 
         try {
@@ -111,7 +118,6 @@ public class CleanPlan {
             // parsing the rules
             // ----------------------------------------
             // TODO: adds verification on the fd rule attributes arguments.
-            // TODO: adds verification on the table name check.
             // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match the pattern.
             JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
             ArrayList<Rule> rules = Lists.newArrayList();
@@ -121,8 +127,16 @@ public class CleanPlan {
                 List<String> targetTableNames;
                 if (isCSV) {
                     targetTableNames = Arrays.asList(csvTableName);
+                    tableNames.add(csvTableName);
                 } else {
                     sourceTableNames = (List<String>)ruleObj.get("table");
+                    if (!isValidTable(dbConfig, sourceTableNames)) {
+                        throw
+                            new InvalidCleanPlanException (
+                                "The specified table names cannot be found in the source."
+                            );
+                    }
+                    tableNames.addAll(sourceTableNames);
                     targetTableNames = (List<String>)ruleObj.get("target");
                     if (targetTableNames == null) {
                         // when user doesn't provide target tables we create a copy for them
@@ -165,7 +179,7 @@ public class CleanPlan {
                         Class udfClass = CommonTools.loadClass((String)value.get(0));
                         if (!Rule.class.isAssignableFrom(udfClass)) {
                             throw
-                                new IllegalArgumentException(
+                                new InvalidRuleException(
                                     "The specified class is not a Rule class."
                                 );
                         }
@@ -218,5 +232,39 @@ public class CleanPlan {
         return rules;
     }
 
+    /**
+     * Gets the list of table names in the CleanPlan.
+     * @return a list of table names in the CleanPlan.
+     */
+    public List<String> getTableNames() {
+        return tableNames;
+    }
+
     //</editor-fold>
+
+    private static boolean isValidTable(DBConfig dbConfig, List<String> tableNames)
+        throws Exception {
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.createConnection(dbConfig);
+            DatabaseMetaData meta = conn.getMetaData();
+            for (String tableName : tableNames) {
+                ResultSet tables = meta.getTables(null, null, tableName, null);
+                if (!tables.next()) {
+                    return false;
+                }
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
+        return true;
+    }
 }

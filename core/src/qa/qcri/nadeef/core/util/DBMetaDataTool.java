@@ -6,7 +6,9 @@
 package qa.qcri.nadeef.core.util;
 
 import org.jooq.SQLDialect;
-import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;import qa.qcri.nadeef.tools.DBConfig;
+import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
+import qa.qcri.nadeef.core.datamodel.Schema;
+import qa.qcri.nadeef.tools.DBConfig;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -78,5 +80,9 @@ public class DBMetaDataTool {
         conn.commit();
         stat.close();
         conn.close();
+    }
+
+    public static Schema getSchema(DBConfig dbConfig, String tableName) {
+
     }
 }

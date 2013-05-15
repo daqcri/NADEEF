@@ -11,7 +11,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
@@ -29,6 +31,7 @@ public abstract class RuleBuilder {
     protected List<String> value;
     protected String ruleName;
     protected List<String> tableNames;
+    protected List<Schema> schemas;
     protected File outputPath;
 
     //</editor-fold>
@@ -44,6 +47,15 @@ public abstract class RuleBuilder {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
         this.value = Lists.newArrayList(value);
         parse();
+        return this;
+    }
+
+    /**
+     * Sets the source of the Rule.
+     * @param schemas input schemas.
+     */
+    public RuleBuilder schema(List<Schema> schemas) {
+        this.schemas = Preconditions.checkNotNull(schemas);
         return this;
     }
 
