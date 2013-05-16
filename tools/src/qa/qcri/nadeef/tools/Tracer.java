@@ -20,11 +20,20 @@ public class Tracer {
     private static boolean verboseFlag = false;
 
     public enum StatType {
-        // detect
+        // Detection time
         DetectTime,
+        // Horizontal Scope Time
         HScopeTime,
+        // Vertical Scope Time
         VScopeTime,
+        // Number of tuples after Scope
+        AfterScopeTuple,
+        // Number of blocks after Block
+        Blocks,
+        // Iteration time
         IteratorTime,
+        // Iteration Tuple count
+        IterationCount,
         DetectCallTime,
         ViolationExport,
         ViolationExportTime,
@@ -137,6 +146,9 @@ public class Tracer {
         int totalViolation = 0;
         List<Long> detectStats = Lists.newArrayList(stats.get(StatType.DetectTime));
         List<Long> detectCallStats = Lists.newArrayList(stats.get(StatType.DetectCallTime));
+        List<Long> scopeTupleCount = Lists.newArrayList(stats.get(StatType.AfterScopeTuple));
+        List<Long> blocks = Lists.newArrayList(stats.get(StatType.Blocks));
+        List<Long> iterationCount = Lists.newArrayList(stats.get(StatType.IterationCount));
         List<Long> violationExport = Lists.newArrayList(stats.get(StatType.ViolationExport));
         List<Long> violationExportTime =
             Lists.newArrayList(stats.get(StatType.ViolationExportTime));
@@ -154,6 +166,12 @@ public class Tracer {
             time = vscope.get(i);
             out(String.format("%-30s %10d ms", "VScope time", time));
 
+            long blockCount = blocks.get(i);
+            out(String.format("%-30s %10d", "Blocks", blockCount));
+
+            long iteratorCount = iterationCount.get(i);
+            out(String.format("%-30s %10d", "Original tuple count", iteratorCount));
+
             time = iteratorTime.get(i);
             out(String.format("%-30s %10d ms", "Iterator time", time));
 
@@ -162,7 +180,7 @@ public class Tracer {
             totalTime += time;
 
             time = detectCallStats.get(i);
-            out(String.format("%-30s %10d ms", "Detect PerCall time", time));
+            out(String.format("%-30s %10d ms", "Detect Call time", time));
 
             long nTuple = detectCount.get(i);
             out(String.format("%-30s %10d", "Detect tuple count", nTuple));

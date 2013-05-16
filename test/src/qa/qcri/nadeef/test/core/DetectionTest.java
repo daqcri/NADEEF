@@ -121,19 +121,6 @@ public class DetectionTest {
         }
     }
 
-    @Test
-    public void cleanExecutorTest10k() {
-        try {
-            CleanPlan cleanPlan = TestDataRepository.getStressPlan10k();
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.detect();
-            verifyViolationResult(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
-    }
-
     private void verifyViolationResult(int expectRow)
         throws
         ClassNotFoundException,

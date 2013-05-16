@@ -53,10 +53,13 @@ public class QueryEngine<TDetect, TIteratorOutput>
         currentTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         Tracer.addStatEntry(Tracer.StatType.VScopeTime, currentTime - time);
         time = currentTime;
-
+        Tracer.addStatEntry(Tracer.StatType.AfterScopeTuple, verticalScopeResult.size());
         Collection<TupleCollection> blockResult = rule.block(verticalScopeResult);
+        Tracer.addStatEntry(Tracer.StatType.Blocks, blockResult.size());
         List result = Lists.newArrayList();
+        int count = 0;
         for (TupleCollection tupleCollection : blockResult) {
+            count += tupleCollection.size();
             TIteratorOutput iteratorResult = rule.iterator(tupleCollection);
             if (iteratorResult instanceof Collection) {
                 result.addAll((Collection)iteratorResult);
@@ -64,11 +67,13 @@ public class QueryEngine<TDetect, TIteratorOutput>
                 result.add(iteratorResult);
             }
         }
+
         Tracer.addStatEntry(
             Tracer.StatType.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS) - time
         );
 
+        Tracer.addStatEntry(Tracer.StatType.IterationCount, count);
         stopwatch.stop();
         return (TIteratorOutput)result;
     }

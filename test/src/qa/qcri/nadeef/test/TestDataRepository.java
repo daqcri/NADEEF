@@ -84,7 +84,12 @@ public class TestDataRepository {
     }
 
     public static File getStressPlan10kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan10.json";
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan10k.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getStressPlan30kFile() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan30k.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
@@ -152,4 +157,11 @@ public class TestDataRepository {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan10kFile()));
     }
 
+    public static CleanPlan getStressPlan30k()
+        throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan30kFile()));
+    }
 }

@@ -23,9 +23,6 @@ public class MyRule3 extends PairTupleRule {
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
         leftHandSide.add(new Column("csvtable_hospital_10k.zipcode"));
-
-        rightHandSide.add(new Column("csvtable_hospital_10k.address2"));
-        rightHandSide.add(new Column("csvtable_hospital_10k.address1"));
         rightHandSide.add(new Column("csvtable_hospital_10k.city"));
 
     }
@@ -65,21 +62,43 @@ public class MyRule3 extends PairTupleRule {
     public Collection<TuplePair> iterator(TupleCollection tuples) {
         ArrayList<TuplePair> result = new ArrayList();
         tuples.orderBy(rightHandSide);
-        for (int i = 0; i < tuples.size(); i ++) {
-            for (int j = i + 1; j < tuples.size(); j ++) {
-                Tuple left = tuples.get(i);
-                Tuple right = tuples.get(j);
+        int pos1 = 0, pos2 = 0;
+        boolean findViolation = false;
+
+        // ---------------------------------------------------
+        // two pointer loop via the block. Linear scan
+        // ---------------------------------------------------
+        while (pos1 < tuples.size()) {
+            findViolation = false;
+            for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
+                Tuple left = tuples.get(pos1);
+                Tuple right = tuples.get(pos2);
                 for (Column column : rightHandSide) {
                     Object lvalue = left.get(column);
                     Object rvalue = right.get(column);
-                    if (lvalue != rvalue || (lvalue != null && !lvalue.equals(rvalue))) {
-                        TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                        result.add(pair);
+                    if (
+                        (lvalue == null && rvalue != null) ||
+                        (lvalue != null && !lvalue.equals(rvalue))
+                    ) {
+                        findViolation = true;
                         break;
                     }
                 }
+
+                // generates all the violations between pos1 - pos2.
+                if (findViolation) {
+                    for (int i = pos1; i < pos2; i ++) {
+                        for (int j = pos2; j < tuples.size(); j++) {
+                            TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                            result.add(pair);
+                        }
+                    }
+                    break;
+                }
             }
+            pos1 = pos2;
         }
+
         return result;
     }
 

@@ -49,7 +49,7 @@ public class $CFDName$ extends PairTupleRule {
 
     /**
      * Default horizontal scope operation.
-     * @param tupleCollection input tuple collections.
+     * @param tupleCollections input tuple collections.
      * @return filtered tuple collection.
      */
     @Override
@@ -62,7 +62,7 @@ public class $CFDName$ extends PairTupleRule {
 
     /**
      * Default vertical scope operation.
-     * @param tupleCollection input tuple collections.
+     * @param tupleCollections input tuple collections.
      * @return filtered tuple collection.
      */
     @Override

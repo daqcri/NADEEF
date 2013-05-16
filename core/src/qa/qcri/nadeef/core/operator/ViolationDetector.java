@@ -64,7 +64,7 @@ public class ViolationDetector<T>
             }
         }
 
-        long averageTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / count;
+        long averageTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         Tracer.addStatEntry(Tracer.StatType.DetectCallTime, averageTime);
         Tracer.addStatEntry(Tracer.StatType.DetectCount, count);
         return resultCollection;

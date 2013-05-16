@@ -333,7 +333,6 @@ public class SQLTupleCollection extends TupleCollection {
             }
 
             schema = new Schema(tableName, columns);
-            conn.close();
         } catch (Exception ex) {
             tracer.err("Cannot get valid schema.", ex);
         } finally {
@@ -357,9 +356,10 @@ public class SQLTupleCollection extends TupleCollection {
             return false;
         }
 
+        Connection conn = null;
         try {
             tuples = Lists.newArrayList();
-            Connection conn = DBConnectionFactory.createConnection(dbconfig);
+            conn = DBConnectionFactory.createConnection(dbconfig);
             Statement stat = conn.createStatement();
             String sql = sqlQuery.build();
             tracer.verbose(sql);
@@ -396,6 +396,14 @@ public class SQLTupleCollection extends TupleCollection {
             conn.close();
         } catch (Exception ex) {
             tracer.err("Synchronization failed.", ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
         }
         return true;
     }
