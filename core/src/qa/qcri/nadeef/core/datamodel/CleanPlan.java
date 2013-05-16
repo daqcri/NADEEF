@@ -117,7 +117,6 @@ public class CleanPlan {
             // ----------------------------------------
             // parsing the rules
             // ----------------------------------------
-            // TODO: adds verification on the fd rule attributes arguments.
             // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match the pattern.
             JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
             ArrayList<Rule> rules = Lists.newArrayList();
@@ -128,13 +127,17 @@ public class CleanPlan {
                 if (isCSV) {
                     targetTableNames = Arrays.asList(csvTableName);
                     tableNames.add(csvTableName);
+                    schemas.add(DBMetaDataTool.getSchema(dbConfig, csvTableName));
                 } else {
                     sourceTableNames = (List<String>)ruleObj.get("table");
-                    if (!isValidTable(dbConfig, sourceTableNames)) {
-                        throw
-                            new InvalidCleanPlanException (
-                                "The specified table names cannot be found in the source."
-                            );
+                    for (String tableName : sourceTableNames) {
+                        if (!DBMetaDataTool.isTableExist(dbConfig, tableName)) {
+                            throw
+                                new InvalidCleanPlanException (
+                                    "The specified table " + tableName +
+                                        " cannot be found in the source database."
+                                );
+                        }
                     }
                     tableNames.addAll(sourceTableNames);
                     targetTableNames = (List<String>)ruleObj.get("target");
@@ -159,6 +162,9 @@ public class CleanPlan {
                             dbConfig,
                             sourceTableNames.get(j),
                             targetTableNames.get(j)
+                        );
+                        schemas.add(
+                            DBMetaDataTool.getSchema(dbConfig, sourceTableNames.get(j))
                         );
                     }
                 }
@@ -195,14 +201,14 @@ public class CleanPlan {
                             rules.addAll(
                                 ruleBuilder
                                     .name(ruleName)
+                                    .schema(schemas)
                                     .table(targetTableNames)
                                     .value(value)
                                     .build()
                             );
                         } else {
-                            tracer.err("Unknown Rule type: " + type);
+                            tracer.err("Unknown Rule type: " + type, null);
                         }
-
                         break;
                 }
 
@@ -241,30 +247,4 @@ public class CleanPlan {
     }
 
     //</editor-fold>
-
-    private static boolean isValidTable(DBConfig dbConfig, List<String> tableNames)
-        throws Exception {
-        Connection conn = null;
-        try {
-            conn = DBConnectionFactory.createConnection(dbConfig);
-            DatabaseMetaData meta = conn.getMetaData();
-            for (String tableName : tableNames) {
-                ResultSet tables = meta.getTables(null, null, tableName, null);
-                if (!tables.next()) {
-                    return false;
-                }
-            }
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
-        }
-        return true;
-    }
 }

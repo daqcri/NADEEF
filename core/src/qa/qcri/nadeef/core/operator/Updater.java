@@ -110,7 +110,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
             stat.executeBatch();
             auditInsertStat.executeBatch();
             conn.commit();
-            Tracer.addStatEntry(Tracer.StatType.UpdatedCellNumber, Integer.toString(count));
+            Tracer.addStatEntry(Tracer.StatType.UpdatedCellNumber, count);
         } finally {
             if (conn != null) {
                 conn.close();

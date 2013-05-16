@@ -12,6 +12,7 @@ import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.FileHelper;
@@ -146,9 +147,7 @@ public class Console {
             throw new IllegalArgumentException("Unknown table names.");
         }
 
-        SQLTupleCollection sqlTupleCollection =
-                new SQLTupleCollection(tableName, currentCleanPlan.getSourceDBConfig());
-        Schema schema = sqlTupleCollection.getSchema();
+        Schema schema = DBMetaDataTool.getSchema(currentCleanPlan.getSourceDBConfig(), tableName);
         Set<Column> columns = schema.getColumns();
         for (Column column : columns) {
             if (column.getAttributeName().equals("tid")) {

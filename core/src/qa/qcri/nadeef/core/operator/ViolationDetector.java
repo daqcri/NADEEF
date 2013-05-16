@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
@@ -13,6 +14,7 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper class for executing the violation detection.
@@ -34,6 +36,7 @@ public class ViolationDetector<T>
      */
     @Override
     public Collection<Violation> execute(T tuples) throws Exception {
+        Stopwatch stopwatch = new Stopwatch().start();
         ArrayList<Violation> resultCollection = Lists.newArrayList();
         Collection<Violation> result = null;
         Collection<?> collections = (Collection)tuples;
@@ -60,7 +63,10 @@ public class ViolationDetector<T>
                 count ++;
             }
         }
-        Tracer.addStatEntry(Tracer.StatType.TupleNumber, Integer.toString(count));
+
+        long averageTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / count;
+        Tracer.addStatEntry(Tracer.StatType.DetectCallTime, averageTime);
+        Tracer.addStatEntry(Tracer.StatType.DetectCount, count);
         return resultCollection;
     }
 }

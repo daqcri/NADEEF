@@ -23,6 +23,16 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getFailurePlanFile1() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*FailurePlan1.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getFailurePlanFile2() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*FailurePlan2.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static File getTestFile1() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan1.json";
         return new File(filePath.replace('*', File.separatorChar));

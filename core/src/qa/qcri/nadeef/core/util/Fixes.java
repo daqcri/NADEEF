@@ -47,8 +47,7 @@ public class Fixes {
             conn.close();
             return result;
         } catch (Exception ex) {
-            tracer.err("Unable to generate Fix id.");
-            ex.printStackTrace();
+            tracer.err("Unable to generate Fix id.", ex);
         }
         return 0;
     }

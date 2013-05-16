@@ -7,16 +7,14 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.collect.*;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Tracer is used for debugging / profiling / benchmarking purpose.
  * TODO: adds support for log4j.
  */
 public class Tracer {
-    private static Multimap<StatType, String> stats = ArrayListMultimap.create();
+    private static Multimap<StatType, Long> stats = ArrayListMultimap.create();
     private Class classType;
     private static boolean infoFlag = true;
     private static boolean verboseFlag = false;
@@ -24,11 +22,16 @@ public class Tracer {
     public enum StatType {
         // detect
         DetectTime,
+        HScopeTime,
+        VScopeTime,
+        IteratorTime,
+        DetectCallTime,
         ViolationExport,
         ViolationExportTime,
-        TupleNumber,
+        DetectCount,
         // repair
         RepairTime,
+        RepairCallTime,
         EQTime,
         FixExport,
         FixDeserialize,
@@ -58,17 +61,21 @@ public class Tracer {
         }
     }
 
-    public void err(String msg) {
-        System.err.println(":ERROR:" + classType.getName() + " : " + msg);
-    }
-
-    public static void addStatEntry(StatType statType, String value) {
-        stats.put(statType, value);
+    public void err(String message, Exception ex) {
+        System.err.println(":ERROR:" + classType.getName() + " : " + message);
+        // TODO: write back the exception message into a log file.
+        if (isInfoOn() && ex != null) {
+            ex.printStackTrace();
+        }
     }
 
     //</editor-fold>
 
     //<editor-fold desc="Static methods">
+    public static void addStatEntry(StatType statType, long value) {
+        stats.put(statType, value);
+    }
+
     public static void setInfo(boolean mode) {
         infoFlag = mode;
     }
@@ -91,31 +98,34 @@ public class Tracer {
 
     public static void printRepairSummary() {
         out("Repair summary:");
-        List<String> detectStats = Lists.newArrayList(stats.get(StatType.RepairTime));
-        List<String> eqStats = Lists.newArrayList(stats.get(StatType.EQTime));
-        List<String> cellStats = Lists.newArrayList(stats.get(StatType.UpdatedCellNumber));
+        List<Long> repairStats = Lists.newArrayList(stats.get(StatType.RepairTime));
+        List<Long> repairCallStats = Lists.newArrayList(stats.get(StatType.RepairCallTime));
+        List<Long> eqStats = Lists.newArrayList(stats.get(StatType.EQTime));
+        List<Long> cellStats = Lists.newArrayList(stats.get(StatType.UpdatedCellNumber));
 
         long totalTime = 0;
         int totalChangedCell = 0;
 
-        for (int i = 0; i < detectStats.size(); i ++) {
-            long time = Long.parseLong(detectStats.get(i));
+        for (int i = 0; i < repairStats.size(); i ++) {
+            long time = repairStats.get(i);
             out("Rule " + i + ":");
             out("----------------------------------------------------------------");
             out(String.format("%-30s %10d ms", "Repair time" , time));
             totalTime += time;
 
-            time = Long.parseLong(eqStats.get(i));
-            out(String.format("%-30s %10d ms", "EQ time", time));
-            totalTime += time;
+            time = repairCallStats.get(i);
+            out(String.format("%-30s %10d ms", "Repair PerCall time" , time));
 
-            int nCell = Integer.parseInt(cellStats.get(i));
+            time = eqStats.get(i);
+            out(String.format("%-30s %10d ms", "EQ time", time));
+
+            long nCell = cellStats.get(i);
             out(String.format("%-30s %10d", "Cell updated", nCell));
             totalChangedCell += nCell;
             out("----------------------------------------------------------------");
         }
         System.out.println(
-            "Repair " + detectStats.size() + " rules finished in " + totalTime + " ms " +
+            "Repair " + repairStats.size() + " rules finished in " + totalTime + " ms " +
             "with " + totalChangedCell + " cells changed.\n"
         );
     }
@@ -125,27 +135,43 @@ public class Tracer {
 
         long totalTime = 0;
         int totalViolation = 0;
-        List<String> detectStats = Lists.newArrayList(stats.get(StatType.DetectTime));
-        List<String> violationExport = Lists.newArrayList(stats.get(StatType.ViolationExport));
-        List<String> violationExportTime =
+        List<Long> detectStats = Lists.newArrayList(stats.get(StatType.DetectTime));
+        List<Long> detectCallStats = Lists.newArrayList(stats.get(StatType.DetectCallTime));
+        List<Long> violationExport = Lists.newArrayList(stats.get(StatType.ViolationExport));
+        List<Long> violationExportTime =
             Lists.newArrayList(stats.get(StatType.ViolationExportTime));
-        List<String> tupleNums = Lists.newArrayList(stats.get(StatType.TupleNumber));
+        List<Long> detectCount = Lists.newArrayList(stats.get(StatType.DetectCount));
+        List<Long> iteratorTime = Lists.newArrayList(stats.get(StatType.IteratorTime));
+        List<Long> hscope = Lists.newArrayList(stats.get(StatType.HScopeTime));
+        List<Long> vscope = Lists.newArrayList(stats.get(StatType.VScopeTime));
 
         for (int i = 0; i < detectStats.size(); i ++) {
             out("Rule " + i + " :");
             out("----------------------------------------------------------------");
-            long time = Long.parseLong(detectStats.get(i));
+            long time = hscope.get(i);
+            out(String.format("%-30s %10d ms", "HScope time", time));
+
+            time = vscope.get(i);
+            out(String.format("%-30s %10d ms", "VScope time", time));
+
+            time = iteratorTime.get(i);
+            out(String.format("%-30s %10d ms", "Iterator time", time));
+
+            time = detectStats.get(i);
             out(String.format("%-30s %10d ms", "Detect time", time));
             totalTime += time;
 
-            int nTuple = Integer.parseInt(tupleNums.get(i));
-            out(String.format("%-30s %10d", "Detect tuple", nTuple));
+            time = detectCallStats.get(i);
+            out(String.format("%-30s %10d ms", "Detect PerCall time", time));
 
-            int num = Integer.parseInt(violationExport.get(i));
+            long nTuple = detectCount.get(i);
+            out(String.format("%-30s %10d", "Detect tuple count", nTuple));
+
+            long num = violationExport.get(i);
             out(String.format("%-30s %10d", "Violation", num));
             totalViolation += num;
 
-            long exportTime = Long.parseLong(violationExportTime.get(i));
+            long exportTime = violationExportTime.get(i);
             out(String.format("%-30s %10d ms", "Violation export time", exportTime));
         }
         out("----------------------------------------------------------------");
@@ -161,7 +187,5 @@ public class Tracer {
             System.out.println(msg);
         }
     }
-
-
     //</editor-fold>
 }

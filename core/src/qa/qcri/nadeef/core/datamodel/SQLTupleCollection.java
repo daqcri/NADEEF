@@ -256,8 +256,7 @@ public class SQLTupleCollection extends TupleCollection {
                 }
                 conn.commit();
             } catch (Exception ex) {
-                ex.printStackTrace();
-                tracer.err(ex.getMessage());
+                tracer.err(ex.getMessage(), ex);
                 // as a backup plan we try to use in-memory solution.
                 result = super.groupOn(column);
             } finally {
@@ -336,8 +335,7 @@ public class SQLTupleCollection extends TupleCollection {
             schema = new Schema(tableName, columns);
             conn.close();
         } catch (Exception ex) {
-            tracer.err("Cannot get valid schema.");
-            ex.printStackTrace();
+            tracer.err("Cannot get valid schema.", ex);
         } finally {
             if (conn != null) {
                 try {
@@ -397,8 +395,7 @@ public class SQLTupleCollection extends TupleCollection {
             stat.close();
             conn.close();
         } catch (Exception ex) {
-            tracer.err("Synchronization failed.");
-            ex.printStackTrace();
+            tracer.err("Synchronization failed.", ex);
         }
         return true;
     }

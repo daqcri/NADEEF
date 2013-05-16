@@ -76,7 +76,7 @@ public class NadeefConfiguration {
                 RuleBuilder writer = (RuleBuilder)builderClass.getConstructor().newInstance();
                 ruleExtension.put(key, writer);
             } catch (Exception e) {
-                tracer.err("Loading Rule extension " + key + " failed: " + e.getMessage());
+                tracer.err("Loading Rule extension " + key + " failed: ", e);
                 e.printStackTrace();
             }
         }

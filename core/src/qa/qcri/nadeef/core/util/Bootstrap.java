@@ -48,11 +48,11 @@ public class Bootstrap {
             DBInstaller.install(conn, violationTableName, repairTableName, auditTableName);
             conn.commit();
             conn.close();
-        } catch (FileNotFoundException e) {
-            tracer.err("Nadeef configuration is not found.");
+        } catch (FileNotFoundException ex) {
+            tracer.err("Nadeef configuration is not found.", ex);
         } catch (Exception ex) {
             ex.printStackTrace();
-            tracer.err("Nadeef database is not able to install, abort.");
+            tracer.err("Nadeef database is not able to install, abort.", ex);
             System.exit(1);
         }
         return true;

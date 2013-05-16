@@ -75,13 +75,10 @@ public class CleanExecutor {
      */
     public CleanExecutor detect(int ruleIndex) {
         Preconditions.checkArgument(ruleIndex >= 0 && ruleIndex < cleanPlan.getRules().size());
-        // TODO: run multiple rules in parallel in process / thread.
         Stopwatch stopwatch = new Stopwatch().start();
+        // TODO: run multiple rules in parallel in process / thread.
         getDetectFlow(ruleIndex).start();
-        Tracer.addStatEntry(
-            Tracer.StatType.DetectTime,
-            Long.toString(stopwatch.elapsed(TimeUnit.MILLISECONDS))
-        );
+        Tracer.addStatEntry(Tracer.StatType.DetectTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         stopwatch.stop();
         return this;
     }
@@ -91,22 +88,16 @@ public class CleanExecutor {
      */
     public CleanExecutor repair(int ruleIndex) {
         Preconditions.checkArgument(ruleIndex >= 0 && ruleIndex < cleanPlan.getRules().size());
-        long elapseTime;
-        // TODO: run multiple rules in parallel in process / thread.
         Stopwatch stopwatch = new Stopwatch().start();
+        // TODO: run multiple rules in parallel in process / thread.
         getRepairFlow(ruleIndex).start();
-        elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.addStatEntry(
-            Tracer.StatType.RepairTime,
-            Long.toString(elapseTime)
-        );
+
+        long elapseTime = stopwatch.elapsedTime(TimeUnit.MILLISECONDS);
+        Tracer.addStatEntry(Tracer.StatType.RepairTime, elapseTime);
 
         getUpdateFlow(ruleIndex).start();
         elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) - elapseTime;
-        Tracer.addStatEntry(
-            Tracer.StatType.EQTime,
-            Long.toString(elapseTime)
-        );
+        Tracer.addStatEntry(Tracer.StatType.EQTime, elapseTime);
         stopwatch.stop();
         return this;
     }
@@ -254,7 +245,7 @@ public class CleanExecutor {
                 }
             }
         } catch (Exception ex) {
-            tracer.err("Exception happens during assembling the pipeline " + ex.getMessage());
+            tracer.err("Exception happens during assembling the pipeline ", ex);
             if (Tracer.isInfoOn()) {
                 ex.printStackTrace();
             }

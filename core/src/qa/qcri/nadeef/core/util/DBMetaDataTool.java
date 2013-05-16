@@ -7,13 +7,14 @@ package qa.qcri.nadeef.core.util;
 
 import org.jooq.SQLDialect;
 import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
+import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.SQLTupleCollection;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
 
-import java.sql.Connection;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A helper for getting the right meta data from different DBs.
@@ -82,7 +83,47 @@ public class DBMetaDataTool {
         conn.close();
     }
 
-    public static Schema getSchema(DBConfig dbConfig, String tableName) {
+    /**
+     * Gets the table schema given a database configuration.
+     * @param dbConfig database configuration.
+     * @param tableName table name.
+     * @return the table schema given a database configuration.
+     */
+    public static Schema getSchema(DBConfig dbConfig, String tableName)
+        throws Exception {
+        if (!isTableExist(dbConfig, tableName)) {
+            throw new IllegalArgumentException("Unknown table name " + tableName);
+        }
+        SQLTupleCollection sqlTupleCollection =
+            new SQLTupleCollection(tableName, dbConfig);
+        return sqlTupleCollection.getSchema();
+    }
 
+    /**
+     * Returns <code>True</code> when the given table exists in the connection.
+     * @param dbConfig database configuration.
+     * @param tableName table name.
+     * @return <code>True</code> when the given table exists in the connection.
+     */
+    public static boolean isTableExist(DBConfig dbConfig, String tableName)
+        throws Exception {
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.createConnection(dbConfig);
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet tables = meta.getTables(null, null, tableName, null);
+            if (!tables.next()) {
+                return false;
+            }
+            return true;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
     }
 }
