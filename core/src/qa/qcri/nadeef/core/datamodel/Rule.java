@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Abstract rule.
  */
-public abstract class Rule<TDetect, TIteratorOutput> {
+public abstract class Rule<E> {
     protected String id;
     protected List<String> tableNames;
 
@@ -56,7 +56,7 @@ public abstract class Rule<TDetect, TIteratorOutput> {
      * @param tuples input tuple.
      * @return Violation set.
      */
-    public abstract Collection<Violation> detect(TDetect tuples);
+    public abstract Collection<Violation> detect(E tuples);
 
     /**
      * Repair of this rule.
@@ -70,14 +70,20 @@ public abstract class Rule<TDetect, TIteratorOutput> {
      * @param tupleCollection input tuple
      * @return a generator of tuple collection.
      */
-    public abstract Collection<TupleCollection> block(Collection<TupleCollection> tupleCollection);
+    public abstract Collection<TupleCollection> block(
+            Collection<TupleCollection> tupleCollection
+    );
 
     /**
      * Iterator operator.
      * @param tupleCollections a collection of tables.
-     * @return a collection of detect primitives.
+     * @param iteratorOutput Iterator output object.
+     * @return <code>True</code> when iterator has generates new output.
      */
-    public abstract TIteratorOutput iterator(TupleCollection tupleCollections);
+    public abstract boolean iterator(
+            TupleCollection tupleCollections,
+            IteratorOutput<E> iteratorOutput
+    );
 
     /**
      * Vertical scope operator.
