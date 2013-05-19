@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.test.core;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,11 @@ public class StressDetectionTest {
     public void setUp() {
         Bootstrap.Start();
         Tracer.setVerbose(false);
+    }
+
+    @After
+    public void teardown() {
+        Tracer.printDetectSummary();
     }
 
     @Test
@@ -60,6 +66,30 @@ public class StressDetectionTest {
         Tracer.setInfo(false);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan30k();
+            List<String> tableNames = cleanPlan.getRules().get(0).getTableNames();
+            int correctResult =
+                getViolationCount(
+                    cleanPlan.getSourceDBConfig(),
+                    tableNames.get(0),
+                    "zipcode",
+                    "city"
+                );
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(correctResult);
+            Tracer.printDetectSummary();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest40k() {
+        Tracer.setVerbose(false);
+        Tracer.setInfo(false);
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
             List<String> tableNames = cleanPlan.getRules().get(0).getTableNames();
             int correctResult =
                 getViolationCount(

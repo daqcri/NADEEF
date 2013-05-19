@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit;
  * Query engine operator, which generates optimized queries based on given hints.
  */
 // TODO: remove this class and make a separate operator for block, iterator, and scope
-public class QueryEngine<TDetect, TIteratorOutput>
-    extends Operator<Collection<TupleCollection>, TIteratorOutput> {
-    private Rule<TDetect, TIteratorOutput> rule;
+public class QueryEngine<TDetect>
+    extends Operator<Collection<TupleCollection>, Collection<TupleCollection>> {
+    private Rule<TDetect, Collection<TupleCollection>> rule;
 
     /**
      * Constructor.
@@ -38,7 +38,8 @@ public class QueryEngine<TDetect, TIteratorOutput>
      * @return output object.
      */
     @Override
-    public TIteratorOutput execute(Collection<TupleCollection> tuples) throws Exception {
+    public Collection<TupleCollection> execute(Collection<TupleCollection> tuples) throws
+        Exception {
         Stopwatch stopwatch = new Stopwatch().start();
         // Here the horizontalScope needs to be called before vertical Scope since
         // it may needs the attributes which are going to be removed from verticals scope.
@@ -52,29 +53,10 @@ public class QueryEngine<TDetect, TIteratorOutput>
 
         currentTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         Tracer.addStatEntry(Tracer.StatType.VScopeTime, currentTime - time);
-        time = currentTime;
         Tracer.addStatEntry(Tracer.StatType.AfterScopeTuple, verticalScopeResult.size());
         Collection<TupleCollection> blockResult = rule.block(verticalScopeResult);
         Tracer.addStatEntry(Tracer.StatType.Blocks, blockResult.size());
-        List result = Lists.newArrayList();
-        int count = 0;
-        for (TupleCollection tupleCollection : blockResult) {
-            count += tupleCollection.size();
-            TIteratorOutput iteratorResult = rule.iterator(tupleCollection);
-            if (iteratorResult instanceof Collection) {
-                result.addAll((Collection)iteratorResult);
-            } else {
-                result.add(iteratorResult);
-            }
-        }
-
-        Tracer.addStatEntry(
-            Tracer.StatType.IteratorTime,
-            stopwatch.elapsed(TimeUnit.MILLISECONDS) - time
-        );
-
-        Tracer.addStatEntry(Tracer.StatType.IterationCount, count);
         stopwatch.stop();
-        return (TIteratorOutput)result;
+        return blockResult;
     }
 }

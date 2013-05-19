@@ -139,5 +139,37 @@ public class Tuple {
     public String getTableName() {
         return tableName;
     }
+
+    /**
+     * Returns <code>True</code> when given a tuple from the same schema, the values are
+     * also the same. There is no check on the schema but only do a check on the values.
+     * This is mainly used for optimization on tuple compare from the same schema.
+     * @param tuple
+     * @return <code>True</code> when the given tuple from the same schema also has the same
+     * values.
+     */
+    public boolean hasSameValue(Tuple tuple) {
+        if (tuple == null) {
+            return false;
+        }
+
+        if (this == tuple || this.values == tuple.values) {
+            return true;
+        }
+
+        if (values.length != tuple.values.length) {
+            return false;
+        }
+
+        for (int i = 0; i < values.length; i ++) {
+            if (values[i] == tuple.values[i]) {
+                continue;
+            }
+            if (!values[i].equals(tuple.values[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
     //</editor-fold>
 }

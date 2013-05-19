@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
  * Tuple Pair entity.
  */
 public class TuplePair {
-
     private Tuple left;
     private Tuple right;
 
@@ -23,6 +22,11 @@ public class TuplePair {
         this.right = right;
     }
 
+    /**
+     * Private constructor.
+     */
+    TuplePair() {}
+
     //<editor-fold desc="Getters">
     public Tuple getLeft() {
         return left;
@@ -31,5 +35,6 @@ public class TuplePair {
     public Tuple getRight() {
         return right;
     }
+
     //</editor-fold>
 }
