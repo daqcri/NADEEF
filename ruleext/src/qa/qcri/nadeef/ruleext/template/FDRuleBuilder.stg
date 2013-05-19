@@ -70,17 +70,8 @@ public class $FDName$ extends PairTupleRule {
             for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
                 Tuple left = tuples.get(pos1);
                 Tuple right = tuples.get(pos2);
-                for (Column column : rightHandSide) {
-                    Object lvalue = left.get(column);
-                    Object rvalue = right.get(column);
-                    if (
-                        (lvalue == null && rvalue != null) ||
-                        (lvalue != null && !lvalue.equals(rvalue))
-                    ) {
-                        findViolation = true;
-                        break;
-                    }
-                }
+
+                findViolation = !left.hasSameValue(right);
 
                 // generates all the violations between pos1 - pos2.
                 if (findViolation) {
