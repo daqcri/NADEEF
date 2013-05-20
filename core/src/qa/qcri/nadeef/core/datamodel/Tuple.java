@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -161,7 +162,21 @@ public class Tuple {
             return false;
         }
 
+        Optional<Integer> tidIndex = schema.getTidIndex();
+        if (tidIndex.isPresent()) {
+            // it returns true when the tid is the same.
+            int tid = tidIndex.get();
+            if (values[tid].equals(tuple.values[tid])) {
+                return true;
+            }
+        }
+
         for (int i = 0; i < values.length; i ++) {
+            // skip the TID compare
+            if (tidIndex.isPresent() && i == tidIndex.get()) {
+                continue;
+            }
+
             if (values[i] == tuple.values[i]) {
                 continue;
             }

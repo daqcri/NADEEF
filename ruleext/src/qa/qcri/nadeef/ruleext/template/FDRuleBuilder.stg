@@ -56,7 +56,7 @@ public class $FDName$ extends PairTupleRule {
      * @return a group of tuple collection.
      */
     @Override
-    public Collection<TuplePair> iterator(TupleCollection tuples) {
+    public boolean iterator(TupleCollection tuples, IteratorOutput output) {
         ArrayList<TuplePair> result = new ArrayList();
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
@@ -78,7 +78,7 @@ public class $FDName$ extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < tuples.size(); j++) {
                             TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                            result.add(pair);
+                            output.put(pair);
                         }
                     }
                     break;
@@ -87,7 +87,7 @@ public class $FDName$ extends PairTupleRule {
             pos1 = pos2;
         }
 
-        return result;
+        return true;
     }
 
     /**

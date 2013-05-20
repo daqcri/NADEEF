@@ -31,7 +31,7 @@ public class FlowTest {
         CountOperator countOperator = new CountOperator(null);
         cacheManager.put("Input", Integer.valueOf(0));
 
-        Flow flow = new Flow();
+        Flow flow = new Flow("test");
         flow.setInputKey("Input");
         flow.addNode(new Node(countOperator, "No.0"), 0);
         flow.addNode(new Node(countOperator, "No.1"), 1);
@@ -39,7 +39,8 @@ public class FlowTest {
         flow.addNode(new Node(countOperator, "No.3"), 3);
         flow.addNode(new Node(countOperator, "No.4"), 4);
         flow.start();
-        String resultKey = flow.getLastOutputKey();
+        flow.waitUntilFinish();
+        String resultKey = flow.getCurrentOutputKey();
         Integer result = (Integer)cacheManager.get(resultKey);
 
         Assert.assertEquals("Result is not correct", result.longValue(), 5);

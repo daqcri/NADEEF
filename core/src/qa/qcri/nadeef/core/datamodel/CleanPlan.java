@@ -164,7 +164,7 @@ public class CleanPlan {
                             targetTableNames.get(j)
                         );
                         schemas.add(
-                            DBMetaDataTool.getSchema(dbConfig, sourceTableNames.get(j))
+                            DBMetaDataTool.getSchema(dbConfig, targetTableNames.get(j))
                         );
                     }
                 }

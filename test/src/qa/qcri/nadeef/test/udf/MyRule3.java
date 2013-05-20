@@ -9,6 +9,7 @@ package qa.qcri.nadeef.test.udf;
  * Copyright (C) Qatar Computing Research Institute, 2013.
  * All rights reserved.
  */
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 import java.util.*;
 
@@ -59,8 +60,7 @@ public class MyRule3 extends PairTupleRule {
      * @return a group of tuple collection.
      */
     @Override
-    public Collection<TuplePair> iterator(TupleCollection tuples) {
-        ArrayList<TuplePair> result = new ArrayList();
+    public boolean iterator(TupleCollection tuples, IteratorOutput iteratorOutput) {
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
         boolean findViolation = false;
@@ -73,24 +73,14 @@ public class MyRule3 extends PairTupleRule {
             for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
                 Tuple left = tuples.get(pos1);
                 Tuple right = tuples.get(pos2);
-                for (Column column : rightHandSide) {
-                    Object lvalue = left.get(column);
-                    Object rvalue = right.get(column);
-                    if (
-                        (lvalue == null && rvalue != null) ||
-                        (lvalue != null && !lvalue.equals(rvalue))
-                    ) {
-                        findViolation = true;
-                        break;
-                    }
-                }
+                findViolation = !left.hasSameValue(right);
 
                 // generates all the violations between pos1 - pos2.
                 if (findViolation) {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < tuples.size(); j++) {
                             TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                            result.add(pair);
+                            iteratorOutput.put(pair);
                         }
                     }
                     break;
@@ -99,7 +89,7 @@ public class MyRule3 extends PairTupleRule {
             pos1 = pos2;
         }
 
-        return result;
+        return true;
     }
 
     /**
@@ -112,18 +102,10 @@ public class MyRule3 extends PairTupleRule {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
         List<Violation> result = new ArrayList();
-        for (Column column : rightHandSide) {
-            Object lvalue = left.get(column);
-            Object rvalue = right.get(column);
-            if (lvalue != rvalue || (lvalue != null && !lvalue.equals(rvalue))) {
-                Violation violation = new Violation(id);
-                violation.addTuple(left);
-                violation.addTuple(right);
-                result.add(violation);
-                break;
-            }
-        }
-        return result;
+        Violation violation = new Violation(id);
+        violation.addTuple(left);
+        violation.addTuple(right);
+        return Lists.newArrayList(violation);
     }
 
     /**

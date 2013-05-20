@@ -28,7 +28,10 @@ public class AdultRule2 extends PairTupleRule {
     }
 
     @Override
-    public Collection<TuplePair> iterator(TupleCollection tuples) {
+    public boolean iterator(
+        TupleCollection tuples,
+        IteratorOutput iteratorOutput
+    ) {
         ArrayList<TuplePair> result = new ArrayList();
         for (int i = 0; i < tuples.size(); i ++) {
             for (int j = i + 1; j < tuples.size(); j ++) {
@@ -36,12 +39,12 @@ public class AdultRule2 extends PairTupleRule {
                 Tuple right = tuples.get(j);
                 if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    result.add(pair);
+                    iteratorOutput.put(pair);
                     break;
                 }
             }
         }
-        return result;
+        return true;
     }
 
     @Override

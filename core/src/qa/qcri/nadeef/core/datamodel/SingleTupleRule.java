@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Abstract base class for a rule providing the default behavior of scope and generator operation.
  */
-public abstract class SingleTupleRule extends Rule<Tuple, TupleCollection> {
+public abstract class SingleTupleRule extends Rule<Tuple> {
     /**
      * Default constructor.
      */
@@ -68,8 +68,9 @@ public abstract class SingleTupleRule extends Rule<Tuple, TupleCollection> {
      * @return grouped tuple collection.
      */
     @Override
-    public TupleCollection iterator(TupleCollection tupleCollection) {
-        return tupleCollection;
+    public boolean iterator(TupleCollection tupleCollection, IteratorOutput iteratorOutput) {
+        iteratorOutput.put(tupleCollection);
+        return true;
     }
 
 }

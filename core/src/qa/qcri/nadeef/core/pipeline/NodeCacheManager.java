@@ -5,8 +5,12 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.collect.Maps;
+
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Node Cache manager manages the input/output of the node execution.
@@ -16,11 +20,12 @@ public class NodeCacheManager {
     private static HashMap<String, Object> cachePool;
     private static HashMap<String, Integer> refPool;
 
+    //<editor-fold desc="Singleton">
     private static final NodeCacheManager instance = new NodeCacheManager();
 
     private NodeCacheManager() {
-        cachePool = new HashMap<String, Object>(0);
-        refPool = new HashMap<String, Integer>(0);
+        cachePool = Maps.newHashMap();
+        refPool = Maps.newHashMap();
     }
 
     /**
@@ -29,6 +34,7 @@ public class NodeCacheManager {
     public static NodeCacheManager getInstance() {
         return instance;
     }
+    //</editor-fold>
 
     /**
      * Add key-value pair in the container.

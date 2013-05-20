@@ -186,7 +186,8 @@ public class Console {
             return;
         }
 
-        executor = new CleanExecutor(currentCleanPlan);
+        executor = CleanExecutor.getInstance();
+        executor.initialize(currentCleanPlan);
         console.println(
             currentCleanPlan.getRules().size()
                 + " rules loaded in "

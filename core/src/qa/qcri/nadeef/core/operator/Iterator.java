@@ -6,14 +6,12 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.IteratorOutput;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,7 +34,6 @@ public class Iterator extends Operator<Collection<TupleCollection>, Boolean> {
      */
     @Override
     public Boolean execute(Collection<TupleCollection> tupleCollections) throws Exception {
-        List result = Lists.newArrayList();
         int count = 0;
         Stopwatch stopwatch = new Stopwatch().start();
         for (TupleCollection tupleCollection : tupleCollections) {
@@ -44,6 +41,8 @@ public class Iterator extends Operator<Collection<TupleCollection>, Boolean> {
             rule.iterator(tupleCollection, output);
         }
 
+        // mark the end of the iteration output
+        output.markEnd();
         Tracer.addStatEntry(
             Tracer.StatType.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)

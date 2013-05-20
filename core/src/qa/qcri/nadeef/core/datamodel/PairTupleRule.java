@@ -12,8 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * PairTupleRule represents a rule which deals with pair of tuples.
  */
-public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair>> {
+public abstract class PairTupleRule extends Rule<TuplePair> {
     public PairTupleRule() {
         super();
     }
@@ -28,7 +29,6 @@ public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair
      * @param pair input tuple pair.
      * @return Violation set.
      */
-    @Override
     public abstract Collection<Violation> detect(TuplePair pair);
 
     /**
@@ -48,8 +48,7 @@ public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair
      * @return a generator of tuple collection.
      */
     @Override
-    public Collection<TuplePair> iterator(TupleCollection tupleCollections) {
-        ArrayList<TuplePair> result = Lists.newArrayList();
+    public boolean iterator(TupleCollection tupleCollections, IteratorOutput iteratorOutput) {
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
 
         if (collectionList.size() == 1) {
@@ -57,7 +56,7 @@ public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    result.add(pair);
+                    iteratorOutput.put(pair);
                 }
             }
         } else {
@@ -66,12 +65,12 @@ public abstract class PairTupleRule extends Rule<TuplePair, Collection<TuplePair
             for (int i = 0; i < left.size(); i ++) {
                 for (int j = i + 1; j < right.size(); j ++) {
                     TuplePair pair = new TuplePair(left.get(i), right.get(j));
-                    result.add(pair);
+                    iteratorOutput.put(pair);
                 }
             }
 
         }
-        return result;
+        return true;
     }
 
     /**

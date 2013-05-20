@@ -60,6 +60,16 @@ public abstract class RuleBuilder {
     }
 
     /**
+     * Sets the source of the Rule.
+     * @param schema input schemas.
+     */
+    public RuleBuilder schema(Schema schema) {
+        Preconditions.checkNotNull(schema);
+        schemas = Lists.newArrayList(schema);
+        return this;
+    }
+
+    /**
      * Sets the rule value.
      * @param values rule value.
      */

@@ -53,7 +53,7 @@ public class MyRule40k extends PairTupleRule {
      * @return a group of tuple collection.
      */
     @Override
-    public Collection<TuplePair> iterator(TupleCollection tuples) {
+    public boolean iterator(TupleCollection tuples, IteratorOutput iteratorOutput) {
         ArrayList<TuplePair> result = new ArrayList();
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
@@ -93,7 +93,7 @@ public class MyRule40k extends PairTupleRule {
             pos1 = pos2;
         }
 
-        return result;
+        return true;
     }
 
     /**

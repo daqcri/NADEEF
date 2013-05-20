@@ -5,9 +5,11 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;
@@ -20,6 +22,45 @@ public class Schema {
     private String tableName;
     private ImmutableMap<Column, Integer> map;
     private ImmutableSet<Column> columnSet;
+
+    //<editor-fold desc="Builder">
+    /**
+     * Builder class.
+     */
+    public static class Builder {
+        private String tableName;
+        List<Column> columns;
+
+        public Builder() {
+            columns = Lists.newArrayList();
+        }
+
+        public Builder table(String tableName) {
+            this.tableName = tableName;
+            return this;
+        }
+
+        public Builder column(Column column) {
+            columns.add(column);
+            return this;
+        }
+
+        public Builder column(String columnName) {
+            columns.add(new Column(tableName, columnName));
+            return this;
+        }
+
+        public Schema build() {
+            return new Schema(tableName, columns);
+        }
+
+        public Builder reset() {
+            columns.clear();
+            tableName = null;
+            return this;
+        }
+    }
+    //</editor-fold>
 
     /**
      * Constructor.
@@ -78,5 +119,17 @@ public class Schema {
      */
     public Integer get(Column column) {
         return map.get(column);
+    }
+
+    /**
+     * Returns the TID index of the schema. It returns absent when there is no TID column.
+     * @return Returns the TID index of the schema. It returns absent when there is no TID column.
+     */
+    public Optional<Integer> getTidIndex() {
+        Column tidColumn = new Column(tableName, "tid");
+        if (columnSet.contains(tidColumn)) {
+            return Optional.of(get(tidColumn));
+        }
+        return Optional.absent();
     }
 }

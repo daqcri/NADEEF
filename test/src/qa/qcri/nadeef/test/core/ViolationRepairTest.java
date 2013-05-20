@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static qa.qcri.nadeef.core.datamodel.Schema.*;
+
 /**
  * Violation repair test.
  */
@@ -39,8 +41,11 @@ public class ViolationRepairTest {
     @Test
     public void FDRepair1() {
         try {
+            Schema.Builder builder = new Schema.Builder();
+            Schema schema = builder.table("test").column("B").column("A").column("C").build();
             List<Rule> rules =
                 (List<Rule>) ruleBuilder.name("fd1")
+                    .schema(schema)
                     .table("test")
                     .value("B|A,C")
                     .build();

@@ -6,28 +6,25 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Query engine operator, which generates optimized queries based on given hints.
  */
-// TODO: remove this class and make a separate operator for block, iterator, and scope
-public class QueryEngine<TDetect>
+public class ScopeOperator<E>
     extends Operator<Collection<TupleCollection>, Collection<TupleCollection>> {
-    private Rule<TDetect, Collection<TupleCollection>> rule;
+    private Rule<E> rule;
 
     /**
      * Constructor.
      * @param rule
      */
-    public QueryEngine(Rule rule) {
+    public ScopeOperator(Rule rule) {
         this.rule = rule;
     }
 

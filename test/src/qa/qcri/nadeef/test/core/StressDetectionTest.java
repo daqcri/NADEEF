@@ -32,6 +32,7 @@ public class StressDetectionTest {
     public void setUp() {
         Bootstrap.Start();
         Tracer.setVerbose(false);
+        Tracer.setInfo(true);
     }
 
     @After
@@ -43,7 +44,8 @@ public class StressDetectionTest {
     public void cleanExecutorTest10k() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan10k();
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            CleanExecutor executor = CleanExecutor.getInstance();
+            executor.initialize(cleanPlan);
             List<String> tableNames = cleanPlan.getRules().get(0).getTableNames();
             int correctResult =
                 getViolationCount(
@@ -74,7 +76,8 @@ public class StressDetectionTest {
                     "zipcode",
                     "city"
                 );
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            CleanExecutor executor = CleanExecutor.getInstance();
+            executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(correctResult);
             Tracer.printDetectSummary();
@@ -98,7 +101,8 @@ public class StressDetectionTest {
                     "zipcode",
                     "city"
                 );
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            CleanExecutor executor = CleanExecutor.getInstance();
+            executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(correctResult);
         } catch (Exception e) {

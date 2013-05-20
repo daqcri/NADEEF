@@ -33,7 +33,7 @@ public class RepairPhaseTest {
 
     @After
     public void teardown() {
-        Assert.assertEquals(1, cacheManager.getSize());
+        Assert.assertEquals(2, cacheManager.getSize());
         cacheManager.clear();
     }
 
@@ -41,7 +41,8 @@ public class RepairPhaseTest {
     public void test1() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            CleanExecutor executor = CleanExecutor.getInstance();
+            executor.initialize(cleanPlan);
             Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(2, count.intValue());
 
@@ -60,7 +61,8 @@ public class RepairPhaseTest {
     public void test2() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            CleanExecutor executor = CleanExecutor.getInstance();
+            executor.initialize(cleanPlan);
             Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(8, count.intValue());
 

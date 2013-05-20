@@ -88,19 +88,19 @@ public class SQLTupleCollection extends TupleCollection {
 
     /**
      * Gets the size of the collection.
-     * It will call <code>sync</code> if the collection is not yet existed.
+     * It will call <code>syncData</code> if the collection is not yet existed.
      *
      * @return size of the collection.
      */
     @Override
     public int size() {
-        syncIfNeeded();
+        syncDataIfNeeded();
         return tuples.size();
     }
 
     @Override
     public Schema getSchema() {
-        syncIfNeeded();
+        syncSchemaIfNeeded();
         return schema;
     }
 
@@ -119,7 +119,7 @@ public class SQLTupleCollection extends TupleCollection {
      */
     @Override
     public Tuple get(int i) {
-        syncIfNeeded();
+        syncDataIfNeeded();
         return tuples.get(i);
     }
 
@@ -350,9 +350,9 @@ public class SQLTupleCollection extends TupleCollection {
      * Synchronize the collection data with the underlying database.
      * @return Returns <code>True</code> when the synchronization is successful.
      */
-    private synchronized boolean sync() {
+    private synchronized boolean syncData() {
         if (isOrphan()) {
-            tracer.info("TupleCollection is an orphan, sync failed.");
+            tracer.info("TupleCollection is an orphan, syncData failed.");
             return false;
         }
 
@@ -411,10 +411,16 @@ public class SQLTupleCollection extends TupleCollection {
     /**
      * Synchronize the schema and data if needed.
      */
-    private synchronized void syncIfNeeded() {
+    private synchronized void syncSchemaIfNeeded() {
         if (updateTimestamp < changeTimestamp) {
             syncSchema();
-            sync();
+            updateTimestamp = changeTimestamp;
+        }
+    }
+
+    private synchronized void syncDataIfNeeded() {
+        if (updateTimestamp < changeTimestamp) {
+            syncData();
             updateTimestamp = changeTimestamp;
         }
     }
