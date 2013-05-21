@@ -282,7 +282,8 @@ public class CleanExecutor {
                     }
                 }
 
-                String iteratorOutputKey = cacheManager.put(iteratorOutputs.get(i), 1);
+                String iteratorOutputKey =
+                    cacheManager.put(iteratorOutputs.get(i), Integer.MAX_VALUE);
                 // assemble the query flow.
                 if (queryFlows.size() <= i) {
                     flow = new Flow("query");
