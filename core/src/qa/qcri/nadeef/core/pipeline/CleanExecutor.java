@@ -78,6 +78,7 @@ public class CleanExecutor {
         detectFlows.clear();
         repairFlows.clear();
         updateFlows.clear();
+        iteratorOutputs.clear();
     }
 
     public Object getDetectOutput() {

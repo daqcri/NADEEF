@@ -37,7 +37,10 @@ public class Tracer {
         DetectCallTime,
         ViolationExport,
         ViolationExportTime,
+        // Detect tuple count
         DetectCount,
+        // Detection thread count
+        DetectThreadCount,
         // repair
         RepairTime,
         RepairCallTime,
@@ -145,52 +148,28 @@ public class Tracer {
         long totalTime = 0;
         int totalViolation = 0;
         List<Long> detectStats = Lists.newArrayList(stats.get(StatType.DetectTime));
-        List<Long> detectCallStats = Lists.newArrayList(stats.get(StatType.DetectCallTime));
-        List<Long> scopeTupleCount = Lists.newArrayList(stats.get(StatType.AfterScopeTuple));
-        List<Long> blocks = Lists.newArrayList(stats.get(StatType.Blocks));
-        List<Long> iterationCount = Lists.newArrayList(stats.get(StatType.IterationCount));
         List<Long> violationExport = Lists.newArrayList(stats.get(StatType.ViolationExport));
-        List<Long> violationExportTime =
-            Lists.newArrayList(stats.get(StatType.ViolationExportTime));
-        List<Long> detectCount = Lists.newArrayList(stats.get(StatType.DetectCount));
-        List<Long> iteratorTime = Lists.newArrayList(stats.get(StatType.IteratorTime));
-        List<Long> hscope = Lists.newArrayList(stats.get(StatType.HScopeTime));
-        List<Long> vscope = Lists.newArrayList(stats.get(StatType.VScopeTime));
 
         for (int i = 0; i < detectStats.size(); i ++) {
             out("Rule " + i + " :");
             out("----------------------------------------------------------------");
-            long time = hscope.get(i);
-            out(String.format("%-30s %10d ms", "HScope time", time));
+            out(formatEntry(StatType.HScopeTime, "HScope time", "ms", i));
+            out(formatEntry(StatType.VScopeTime, "VScope time", "ms", i));
+            out(formatEntry(StatType.Blocks, "Blocks", "", i));
+            out(formatEntry(StatType.IterationCount, "Original tuple count", "", i));
+            out(formatEntry(StatType.IteratorTime, "Iterator time", "ms", i));
+            out(formatEntry(StatType.DetectTime, "Detect time", "ms", i));
+            out(formatEntry(StatType.DetectCallTime, "Detect call time", "ms", i));
+            out(formatEntry(StatType.DetectThreadCount, "Detect thread count", "", i));
+            out(formatEntry(StatType.DetectCount, "Detect tuple count", "", i));
+            out(formatEntry(StatType.ViolationExport, "Violation", "", i));
+            out(formatEntry(StatType.ViolationExportTime, "Violation export time", "", i));
 
-            time = vscope.get(i);
-            out(String.format("%-30s %10d ms", "VScope time", time));
-
-            long blockCount = blocks.get(i);
-            out(String.format("%-30s %10d", "Blocks", blockCount));
-
-            long iteratorCount = iterationCount.get(i);
-            out(String.format("%-30s %10d", "Original tuple count", iteratorCount));
-
-            time = iteratorTime.get(i);
-            out(String.format("%-30s %10d ms", "Iterator time", time));
-
-            time = detectStats.get(i);
-            out(String.format("%-30s %10d ms", "Detect time", time));
+            long time = detectStats.get(i);
             totalTime += time;
 
-            time = detectCallStats.get(i);
-            out(String.format("%-30s %10d ms", "Detect Call time", time));
-
-            long nTuple = detectCount.get(i);
-            out(String.format("%-30s %10d", "Detect tuple count", nTuple));
-
             long num = violationExport.get(i);
-            out(String.format("%-30s %10d", "Violation", num));
             totalViolation += num;
-
-            long exportTime = violationExportTime.get(i);
-            out(String.format("%-30s %10d ms", "Violation export time", exportTime));
         }
         out("----------------------------------------------------------------");
 
@@ -198,6 +177,22 @@ public class Tracer {
             "Detection " + detectStats.size() + " rules finished in " + totalTime + " ms " +
             "and found " + totalViolation + " violations.\n"
         );
+    }
+
+    private static String formatEntry(
+        StatType type,
+        String prefix,
+        String suffix,
+        int index
+    ) {
+        List<Long> statValue = Lists.newArrayList(stats.get(type));
+        long value;
+        if (statValue.size() > index) {
+            value = statValue.get(index);
+        } else {
+            value = 0;
+        }
+        return String.format("%-30s %10d %s", prefix, value, suffix);
     }
 
     private static void out(String msg) {

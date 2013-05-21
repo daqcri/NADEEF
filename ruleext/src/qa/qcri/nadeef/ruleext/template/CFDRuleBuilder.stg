@@ -74,6 +74,47 @@ public class $CFDName$ extends PairTupleRule {
     }
 
     /**
+     * Default group operation.
+     *
+     * @param tuples input tuple
+     * @return a group of tuple collection.
+     */
+    @Override
+    public boolean iterator(TupleCollection tuples, IteratorOutput output) {
+        ArrayList<TuplePair> result = new ArrayList();
+        tuples.orderBy(rhs);
+        int pos1 = 0, pos2 = 0;
+        boolean findViolation = false;
+
+        // ---------------------------------------------------
+        // two pointer loop via the block. Linear scan
+        // ---------------------------------------------------
+        while (pos1 < tuples.size()) {
+            findViolation = false;
+            for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
+                Tuple left = tuples.get(pos1);
+                Tuple right = tuples.get(pos2);
+
+                findViolation = !left.hasSameValue(right);
+
+                // generates all the violations between pos1 - pos2.
+                if (findViolation) {
+                    for (int i = pos1; i < pos2; i ++) {
+                        for (int j = pos2; j < tuples.size(); j++) {
+                            TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                            output.put(pair);
+                        }
+                    }
+                    break;
+                }
+            }
+            pos1 = pos2;
+        }
+
+        return true;
+    }
+
+    /**
      * Detect rule with many tuples.
      *
      * @param tuplePair input tuple.
@@ -81,24 +122,13 @@ public class $CFDName$ extends PairTupleRule {
      */
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
+        List<Violation> result = new ArrayList();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-
-        Column[] rhsColumns = rhs.toArray(new Column[rhs.size()]);
-        List<Violation> result = new ArrayList();
-        for (Column column : rhsColumns) {
-            Object lvalue = left.get(column);
-            Object rvalue = right.get(column);
-
-            if (!lvalue.equals(rvalue)) {
-                Violation violation = new Violation(id);
-                violation.addTuple(left);
-                violation.addTuple(right);
-                result.add(violation);
-                break;
-            }
-        }
-
+        Violation violation = new Violation(id);
+        violation.addTuple(left);
+        violation.addTuple(right);
+        result.add(violation);
         return result;
     }
 

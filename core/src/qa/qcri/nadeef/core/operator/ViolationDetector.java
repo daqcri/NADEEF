@@ -6,27 +6,83 @@
 package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Wrapper class for executing the violation detection.
  */
 public class ViolationDetector<T>
     extends Operator<IteratorOutput<T>, Collection<Violation>> {
-    private Rule rule;
+    private static final int MAX_THREAD_NUM = 20;
 
+    private Rule rule;
+    private Collection<Violation> resultCollection;
+
+    private ExecutorService threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
+    private CompletionService<Integer> pool =
+        new ExecutorCompletionService<Integer>(threadExecutors);
+
+    /**
+     * Violation detector constructor.
+     * @param rule rule.
+     */
     public ViolationDetector(Rule rule) {
         Preconditions.checkNotNull(rule);
         this.rule = rule;
+        resultCollection = Lists.newArrayList();
+    }
+
+    /**
+     * Detector callable class.
+     */
+    class Detector<T> implements Callable<Integer> {
+        private List<T> tupleList;
+
+        public Detector(List tupleList) {
+            this.tupleList = tupleList;
+        }
+
+        /**
+         * Computes a result, or throws an exception if unable to do so.
+         *
+         * @return detection count
+         * @throws Exception if unable to compute a result
+         */
+        @Override
+        public Integer call() throws Exception {
+            int count = 0;
+            Collection<Violation> result = Lists.newArrayList();
+            for (int i = 0; i < tupleList.size(); i ++) {
+                T item = tupleList.get(i);
+                if (rule.supportOneInput()) {
+                    TupleCollection collection = (TupleCollection)item;
+                    for (int j = 0; j < collection.size(); j ++) {
+                        Tuple tuple = collection.get(j);
+                        result.addAll(rule.detect(tuple));
+                        count ++;
+                    }
+                } else if (rule.supportTwoInputs()) {
+                    TuplePair pair = (TuplePair)item;
+                    result.addAll(rule.detect(pair));
+                    count ++;
+                } else if (rule.supportManyInputs()) {
+                    TupleCollection collection = (TupleCollection)item;
+                    result.addAll(rule.detect(collection));
+                    count ++;
+                }
+            }
+
+            synchronized (ViolationDetector.class) {
+                resultCollection.addAll(result);
+            }
+            return count;
+        }
     }
 
     /**
@@ -37,11 +93,10 @@ public class ViolationDetector<T>
      */
     @Override
     public Collection<Violation> execute(IteratorOutput<T> iteratorOutput) throws Exception {
-        Stopwatch stopwatch = new Stopwatch();
-        ArrayList<Violation> resultCollection = Lists.newArrayList();
-        Collection<Violation> result = null;
+        resultCollection.clear();
         List<T> tupleList = null;
         int count = 0;
+        int detectThread = 0;
         long elapsedTime = 0l;
         while (true) {
             tupleList = iteratorOutput.poll();
@@ -49,50 +104,25 @@ public class ViolationDetector<T>
                 break;
             }
 
-            for (int i = 0; i < tupleList.size(); i ++) {
-                T item = tupleList.get(i);
-                if (elapsedTime == 0) {
-                    stopwatch.start();
-                }
-                if (rule.supportOneInput()) {
-                    TupleCollection collection = (TupleCollection)item;
-                    for (int j = 0; j < collection.size(); j ++) {
-                        Tuple a = collection.get(i);
-                        result = rule.detect(a);
-                        resultCollection.addAll(result);
-                        count ++;
-                        if (elapsedTime == 0) {
-                            elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-                        }
-                    }
-                } else if (rule.supportTwoInputs()) {
-                    TuplePair pair = (TuplePair)item;
-                    result = rule.detect(pair);
-                    resultCollection.addAll(result);
-                    count ++;
-                } else if (rule.supportManyInputs()) {
-                    TupleCollection collection = (TupleCollection)item;
-                    result = rule.detect(collection);
-                    resultCollection.addAll(result);
-                    count ++;
-                }
-                if (elapsedTime == 0) {
-                    elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-                }
-            }
+            detectThread ++;
+            pool.submit(new Detector<T>(tupleList));
         }
 
-        Tracer.addStatEntry(
-            Tracer.StatType.DetectCallTime,
-            elapsedTime
-        );
+        for (int i = 0; i < detectThread; i ++) {
+            count += pool.take().get();
+        }
 
-        stopwatch.stop();
+        Tracer.addStatEntry(Tracer.StatType.DetectCallTime, elapsedTime);
         Tracer.addStatEntry(Tracer.StatType.DetectCount, count);
+        Tracer.addStatEntry(Tracer.StatType.DetectThreadCount, detectThread);
+
         return resultCollection;
     }
 
-    private void detect(T item) {
-
+    @Override
+    public void finalize() {
+        if (!threadExecutors.isShutdown()) {
+            threadExecutors.shutdownNow();
+        }
     }
 }

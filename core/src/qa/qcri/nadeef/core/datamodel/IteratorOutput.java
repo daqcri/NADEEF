@@ -69,8 +69,8 @@ public class IteratorOutput<E> {
                 e.printStackTrace();
             }
             buffer = Lists.newArrayList();
-        } else {
-            buffer.add(item);
         }
+
+        buffer.add(item);
     }
 }

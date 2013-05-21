@@ -365,7 +365,7 @@ public class SQLTupleCollection extends TupleCollection {
             tracer.verbose(sql);
             ResultSet resultSet = stat.executeQuery(sql);
             conn.commit();
-            int tupleId = 1;
+            int tupleId = -1;
 
             // fill the schema
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -389,7 +389,6 @@ public class SQLTupleCollection extends TupleCollection {
                     values[i - 1] = resultSet.getObject(i);
                 }
 
-                tupleId ++;
                 tuples.add(new Tuple(tupleId, schema, values));
             }
             stat.close();

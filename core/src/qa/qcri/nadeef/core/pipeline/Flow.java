@@ -49,34 +49,6 @@ public class Flow {
         keyList = Lists.newArrayList();
         currentFlowPosition = 0;
         state = FlowState.Ready;
-        thread = new Thread() {
-            public void run() {
-                try {
-                    String inputKey_ = inputKey;
-                    for (int i = currentFlowPosition; i < nodeList.size(); i ++) {
-                        if (i != 0) {
-                            inputKey_ = keyList.get(i - 1);
-                        }
-                        Node node = nodeList.get(i);
-                        if (node.canExecute(inputKey_)) {
-                            String outputKey = node.execute(inputKey_);
-                            keyList.add(currentFlowPosition, outputKey);
-                            currentFlowPosition ++;
-                        } else {
-                            state = FlowState.Stopped;
-                            throw
-                                new IllegalStateException(
-                                    "Flow stops at node: " + currentFlowPosition
-                                );
-                        }
-                    }
-                } catch (Exception ex) {
-                    tracer.err("Flow stops at node" + currentFlowPosition, ex);
-                } finally {
-                    state = FlowState.Stopped;
-                }
-            }
-        };
     }
     //</editor-fold>
 
@@ -86,7 +58,7 @@ public class Flow {
      * Resets the flow.
      */
     public void reset() {
-        if (thread.isAlive()) {
+        if (thread != null && thread.isAlive()) {
             throw new RuntimeException("Flow cannot be reset during running.");
         }
         state = FlowState.Ready;
@@ -116,7 +88,7 @@ public class Flow {
      * @param index index.
      */
     public Flow addNode(Node node, int index) {
-        if (thread.isAlive()) {
+        if (thread != null && thread.isAlive()) {
             throw new RuntimeException("Flow cannot be modified during running.");
         }
 
@@ -131,7 +103,7 @@ public class Flow {
      * @return Flow itself.
      */
     public Flow addNode(Operator operator, String name) {
-        if (thread.isAlive()) {
+        if (thread != null && thread.isAlive()) {
             throw new RuntimeException("Flow cannot be modified during running.");
         }
 
@@ -143,13 +115,41 @@ public class Flow {
      * Starts the flow.
      */
     public void start() {
-        if (!thread.isAlive()) {
-            reset();
-            state = FlowState.Running;
-            thread.start();
-        } else {
+        if (thread != null && thread.isAlive()) {
             tracer.info("Flow " + name + " is already started.");
         }
+
+        reset();
+        state = FlowState.Running;
+        thread = new Thread() {
+            public void run() {
+                try {
+                    String inputKey_ = inputKey;
+                    for (int i = currentFlowPosition; i < nodeList.size(); i ++) {
+                        if (i != 0) {
+                            inputKey_ = keyList.get(i - 1);
+                        }
+                        Node node = nodeList.get(i);
+                        if (node.canExecute(inputKey_)) {
+                            String outputKey = node.execute(inputKey_);
+                            keyList.add(currentFlowPosition, outputKey);
+                            currentFlowPosition ++;
+                        } else {
+                            state = FlowState.Stopped;
+                            throw
+                                new IllegalStateException(
+                                    "Flow stops at node: " + currentFlowPosition
+                                );
+                        }
+                    }
+                } catch (Exception ex) {
+                    tracer.err("Flow stops at node" + currentFlowPosition, ex);
+                } finally {
+                    state = FlowState.Stopped;
+                }
+            }
+        };
+        thread.start();
     }
 
     /**
@@ -158,7 +158,9 @@ public class Flow {
      */
     public void waitUntilFinish() {
         try {
-            thread.join();
+            if (thread != null) {
+                thread.join();
+            }
         } catch (InterruptedException ex) {
             tracer.err("Flow " + name + " is interrupted.", ex);
         }

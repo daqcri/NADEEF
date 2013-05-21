@@ -37,6 +37,7 @@ public class DetectionTest {
             CleanExecutor executor = CleanExecutor.getInstance();
             executor.initialize(cleanPlan);
             executor.detect();
+            Tracer.printDetectSummary();
             verifyViolationResult(8);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,6 +52,7 @@ public class DetectionTest {
             CleanExecutor executor = CleanExecutor.getInstance();
             executor.initialize(cleanPlan);
             executor.detect();
+            Tracer.printDetectSummary();
             verifyViolationResult(56);
         } catch (Exception e) {
             e.printStackTrace();

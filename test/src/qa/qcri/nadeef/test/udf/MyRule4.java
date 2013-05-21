@@ -54,7 +54,6 @@ public class MyRule4 extends PairTupleRule {
      */
     @Override
     public boolean iterator(TupleCollection tuples, IteratorOutput iteratorOutput) {
-        ArrayList<TuplePair> result = new ArrayList();
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
         boolean findViolation = false;
@@ -63,28 +62,17 @@ public class MyRule4 extends PairTupleRule {
         // two pointer loop via the block. Linear scan
         // ---------------------------------------------------
         while (pos1 < tuples.size()) {
-            findViolation = false;
             for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
                 Tuple left = tuples.get(pos1);
                 Tuple right = tuples.get(pos2);
-                for (Column column : rightHandSide) {
-                    Object lvalue = left.get(column);
-                    Object rvalue = right.get(column);
-                    if (
-                        (lvalue == null && rvalue != null) ||
-                        (lvalue != null && !lvalue.equals(rvalue))
-                    ) {
-                        findViolation = true;
-                        break;
-                    }
-                }
+                findViolation = !left.hasSameValue(right);
 
                 // generates all the violations between pos1 - pos2.
                 if (findViolation) {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < tuples.size(); j++) {
                             TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                            result.add(pair);
+                            iteratorOutput.put(pair);
                         }
                     }
                     break;

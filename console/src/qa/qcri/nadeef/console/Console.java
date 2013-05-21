@@ -208,13 +208,18 @@ public class Console {
         }
     }
 
-    private static void detect(String cmd) {
+    private static void detect(String cmd) throws IOException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
                 new IllegalArgumentException(
                     "Wrong detect command. Run detect [id number] instead."
                 );
+        }
+
+        if (executor == null) {
+            console.println("There is no rule loaded.");
+            return;
         }
 
         if (tokens.length == 1) {
