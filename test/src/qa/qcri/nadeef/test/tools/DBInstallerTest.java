@@ -29,7 +29,7 @@ public class DBInstallerTest {
 
     @BeforeClass
     public static void setUp() {
-        Bootstrap.Start();
+        Bootstrap.start();
         try {
             conn =
                 DBConnectionFactory.createConnection(SQLDialect.POSTGRES, url, userName, password);

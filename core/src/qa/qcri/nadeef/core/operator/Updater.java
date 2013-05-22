@@ -25,15 +25,12 @@ import java.util.HashMap;
  */
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
-    private CleanPlan cleanPlan;
     private static HashMap<Cell, String> updateHistory = Maps.newHashMap();
 
     /**
      * Constructor.
-     * @param cleanPlan input clean plan.
      */
-    public Updater(CleanPlan cleanPlan) {
-        this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
+    public Updater() {
         updateHistory.clear();
     }
 
@@ -54,8 +51,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         String oldValue;
 
         try {
-            conn =
-                DBConnectionFactory.createConnection(cleanPlan.getSourceDBConfig());
+            conn = DBConnectionFactory.getSourceConnection();
             stat = conn.createStatement();
             auditInsertStat =
                 conn.prepareStatement(

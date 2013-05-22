@@ -9,8 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import org.jooq.SQLDialect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,9 +23,6 @@ import qa.qcri.nadeef.tools.*;
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,33 +81,33 @@ public class CleanPlan {
             // ----------------------------------------
             JSONObject src = (JSONObject)jsonObject.get("source");
             String type = (String)src.get("type");
+            DBConfig dbConfig;
             if (type.equalsIgnoreCase("csv")) {
                 isCSV = true;
                 String fileName = (String)src.get("file");
                 File file = FileHelper.getFile(fileName);
                 // source is a CSV file, dump it first.
-                Connection conn = DBConnectionFactory.createNadeefConnection();
+                Connection conn = DBConnectionFactory.getNadeefConnection();
                 // TODO: find a way to clean the table after exiting.
                 csvTableName = CSVDumper.dump(conn, file);
-                sqlDialect = SQLDialect.POSTGRES;
                 conn.close();
-                sourceUrl = NadeefConfiguration.getUrl();
-                sourceTableUserName = NadeefConfiguration.getUserName();
-                sourceTableUserPassword = NadeefConfiguration.getPassword();
+                dbConfig = NadeefConfiguration.getDbConfig();
             } else {
                 // TODO: support different type of DB.
                 sqlDialect = SQLDialect.POSTGRES;
                 sourceUrl = (String)src.get("url");
                 sourceTableUserName = (String)src.get("username");
                 sourceTableUserPassword = (String)src.get("password");
+                DBConfig.Builder builder = new DBConfig.Builder();
+                dbConfig =
+                    builder.username(sourceTableUserName)
+                        .password(sourceTableUserPassword)
+                        .url(sourceUrl)
+                        .dialect(sqlDialect)
+                        .build();
             }
-            DBConfig.Builder builder = new DBConfig.Builder();
-            DBConfig dbConfig =
-                builder.username(sourceTableUserName)
-                       .password(sourceTableUserPassword)
-                       .url(sourceUrl)
-                       .dialect(sqlDialect)
-                       .build();
+
+            DBConnectionFactory.initializeSource(dbConfig);
 
             // ----------------------------------------
             // parsing the rules
@@ -131,7 +126,7 @@ public class CleanPlan {
                 } else {
                     sourceTableNames = (List<String>)ruleObj.get("table");
                     for (String tableName : sourceTableNames) {
-                        if (!DBMetaDataTool.isTableExist(dbConfig, tableName)) {
+                        if (!DBMetaDataTool.isTableExist(tableName)) {
                             throw
                                 new InvalidCleanPlanException (
                                     "The specified table " + tableName +
@@ -159,7 +154,6 @@ public class CleanPlan {
 
                     for (int j = 0; j < sourceTableNames.size(); j ++) {
                         DBMetaDataTool.copy(
-                            dbConfig,
                             sourceTableNames.get(j),
                             targetTableNames.get(j)
                         );

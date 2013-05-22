@@ -29,7 +29,6 @@ public class CleanExecutor {
     private List<Flow> detectFlows;
     private List<Flow> repairFlows;
     private List<Flow> updateFlows;
-    private List<IteratorOutput> iteratorOutputs;
     private static CleanExecutor instance;
     //</editor-fold>
 
@@ -51,7 +50,6 @@ public class CleanExecutor {
         detectFlows = Lists.newArrayList();
         repairFlows = Lists.newArrayList();
         updateFlows = Lists.newArrayList();
-        iteratorOutputs = Lists.newArrayList();
     }
     //</editor-fold>
 
@@ -78,7 +76,6 @@ public class CleanExecutor {
         detectFlows.clear();
         repairFlows.clear();
         updateFlows.clear();
-        iteratorOutputs.clear();
     }
 
     public Object getDetectOutput() {
@@ -273,17 +270,6 @@ public class CleanExecutor {
             for (int i = 0; i < nRule; i ++)  {
                 Rule rule = rules.get(i);
                 String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
-
-                if (iteratorOutputs.size() <= i) {
-                    if (rule.supportTwoInputs()) {
-                        iteratorOutputs.add(new IteratorOutput<TuplePair>());
-                    } else {
-                        iteratorOutputs.add(new IteratorOutput<TupleCollection>());
-                    }
-                }
-
-                String iteratorOutputKey =
-                    cacheManager.put(iteratorOutputs.get(i), Integer.MAX_VALUE);
                 // assemble the query flow.
                 if (queryFlows.size() <= i) {
                     flow = new Flow("query");
@@ -293,11 +279,11 @@ public class CleanExecutor {
                         // the case where the rule is working on multiple tables (2).
                         flow.addNode(
                             new ScopeOperator<TuplePair>(rule), "scope"
-                        ).addNode(new Iterator(rule, iteratorOutputs.get(i)), "iterator");
+                        ).addNode(new Iterator<TuplePair>(rule), "iterator");
                     } else {
                         flow.addNode(
                             new ScopeOperator<Tuple>(rule), "scope"
-                        ).addNode(new Iterator(rule, iteratorOutputs.get(i)), "detector");
+                        ).addNode(new Iterator<TupleCollection>(rule), "detector");
                     }
                     queryFlows.add(flow);
                 }
@@ -305,7 +291,7 @@ public class CleanExecutor {
                 // detect flow
                 if (detectFlows.size() <= i) {
                     flow = new Flow("detect");
-                    flow.setInputKey(iteratorOutputKey);
+                    flow.setInputKey(inputKey);
                     if (rule.supportTwoInputs()) {
                         flow.addNode(new ViolationDetector<TuplePair>(rule), "detector");
                     } else {
@@ -333,7 +319,7 @@ public class CleanExecutor {
                     flow.setInputKey(inputKey)
                         .addNode(new FixDeserializer(), "fix deserializer")
                         .addNode(new FixDecisionMaker(), "eq")
-                        .addNode(new Updater(cleanPlan), "updater");
+                        .addNode(new Updater(), "updater");
                     updateFlows.add(flow);
                 }
             }

@@ -33,7 +33,7 @@ public class CleanPlanTest {
 
     @BeforeClass
     public static void start() {
-        Bootstrap.Start();
+        Bootstrap.start();
     }
 
     @Test
@@ -44,7 +44,7 @@ public class CleanPlanTest {
                     new FileReader(TestDataRepository.getTestFile1())
                 );
             DBConfig source = cleanPlan.getSourceDBConfig();
-            Assert.assertEquals("localhost/unittest", source.getUrl());
+            Assert.assertEquals("jdbc:postgresql://localhost/unittest", source.getUrl());
             Assert.assertEquals("tester", source.getUserName());
             Assert.assertEquals("tester", source.getPassword());
             Assert.assertEquals(SQLDialect.POSTGRES, source.getDialect());

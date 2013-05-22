@@ -34,6 +34,8 @@ public class Tracer {
         IteratorTime,
         // Iteration Tuple count
         IterationCount,
+        // DB load time
+        DBLoadTime,
         DetectCallTime,
         ViolationExport,
         ViolationExportTime,
@@ -158,13 +160,13 @@ public class Tracer {
             out(formatEntry(StatType.Blocks, "Blocks", "", i));
             out(formatEntry(StatType.IterationCount, "Original tuple count", "", i));
             out(formatEntry(StatType.IteratorTime, "Iterator time", "ms", i));
+            out(formatEntry(StatType.DBLoadTime, "DB load time", "ms", i));
             out(formatEntry(StatType.DetectTime, "Detect time", "ms", i));
             out(formatEntry(StatType.DetectCallTime, "Detect call time", "ms", i));
             out(formatEntry(StatType.DetectThreadCount, "Detect thread count", "", i));
             out(formatEntry(StatType.DetectCount, "Detect tuple count", "", i));
             out(formatEntry(StatType.ViolationExport, "Violation", "", i));
             out(formatEntry(StatType.ViolationExportTime, "Violation export time", "", i));
-
             long time = detectStats.get(i);
             totalTime += time;
 

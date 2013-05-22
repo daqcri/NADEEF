@@ -9,8 +9,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.Reader;
@@ -25,10 +27,7 @@ public class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
 
     private static boolean testMode = false;
-    private static String url;
-    private static String userName;
-    private static String password;
-    private static String type;
+    private static DBConfig dbConfig;
     private static String violationTable;
     private static String repairTable;
     private static String auditTable;
@@ -47,10 +46,19 @@ public class NadeefConfiguration {
         Preconditions.checkNotNull(reader);
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
         JSONObject database = (JSONObject)jsonObject.get("database");
-        url = (String)database.get("url");
-        userName = (String)database.get("username");
-        password = (String)database.get("password");
-        type = (String)database.get("type");
+        String url = (String)database.get("url");
+        String userName = (String)database.get("username");
+        String password = (String)database.get("password");
+        String type = (String)database.get("type");
+
+        DBConfig.Builder builder = new DBConfig.Builder();
+        dbConfig =
+            builder
+                .url(url)
+                .username(userName)
+                .password(password)
+                .dialect(CommonTools.getSQLDialect(type))
+                .build();
 
         JSONObject violation = (JSONObject)jsonObject.get("violation");
         violationTable = (String)violation.get("name");
@@ -98,20 +106,8 @@ public class NadeefConfiguration {
         return testMode;
     }
 
-    public static String getUrl() {
-        return url;
-    }
-
-    public static String getUserName() {
-        return userName;
-    }
-
-    public static String getPassword() {
-        return password;
-    }
-
-    public static String getType() {
-        return type;
+    public static DBConfig getDbConfig() {
+        return dbConfig;
     }
 
     /**

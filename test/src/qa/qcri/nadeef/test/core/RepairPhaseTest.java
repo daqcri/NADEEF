@@ -25,7 +25,7 @@ public class RepairPhaseTest {
 
     @Before
     public void setup() {
-        Bootstrap.Start();
+        Bootstrap.start();
         Tracer.setVerbose(true);
         Tracer.setInfo(true);
         cacheManager = NodeCacheManager.getInstance();

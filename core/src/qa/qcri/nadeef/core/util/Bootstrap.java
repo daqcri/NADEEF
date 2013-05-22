@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.util;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.tools.DBInstaller;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -17,18 +18,36 @@ import java.sql.Connection;
  * Bootstrapping Nadeef.
  */
 public class Bootstrap {
+    private static boolean isStarted;
     private static final String configurationFile = "nadeef.conf";
+    private static Tracer tracer = Tracer.getTracer(Bootstrap.class);
 
     private Bootstrap() {}
+
+    public static synchronized void shutdown() {
+        if (isStarted) {
+            DBConnectionFactory.shutdown();
+            NodeCacheManager cacheManager = NodeCacheManager.getInstance();
+            cacheManager.clear();
+            // try to collect the resources (removing views)
+            System.gc();
+        }
+    }
 
     /**
      * Initialize the Nadeef infrastructure.
      */
-    public static synchronized boolean Start() {
-        Tracer tracer = Tracer.getTracer(Bootstrap.class);
+    public static synchronized boolean start() {
+        if (isStarted) {
+            tracer.info("Nadeef is already started.");
+            return true;
+        }
+
         try {
             NadeefConfiguration.initialize(new FileReader(configurationFile));
-            Connection conn = DBConnectionFactory.createNadeefConnection();
+            DBConnectionFactory.initializeNadeefConnectionPool();
+
+            Connection conn = DBConnectionFactory.getNadeefConnection();
             String violationTableName = NadeefConfiguration.getViolationTableName();
             String repairTableName = NadeefConfiguration.getRepairTableName();
             String auditTableName = NadeefConfiguration.getAuditTableName();
@@ -55,6 +74,7 @@ public class Bootstrap {
             tracer.err("Nadeef database is not able to install, abort.", ex);
             System.exit(1);
         }
+        isStarted = true;
         return true;
     }
 }

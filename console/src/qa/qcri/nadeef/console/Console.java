@@ -61,7 +61,7 @@ public class Console {
         try {
             // bootstrap Nadeef.
             Stopwatch stopwatch = new Stopwatch().start();
-            Bootstrap.Start();
+            Bootstrap.start();
             String line;
 
             console = new ConsoleReader();
@@ -123,6 +123,8 @@ public class Console {
                 console.println("Bootstrap failed.");
                 ex.printStackTrace();
             } catch (Exception ignore) {}
+        } finally {
+            Bootstrap.shutdown();
         }
 
         System.exit(0);

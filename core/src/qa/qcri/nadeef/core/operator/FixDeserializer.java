@@ -24,7 +24,7 @@ public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
         Tracer tracer = Tracer.getTracer(FixDeserializer.class);
-        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Connection conn = DBConnectionFactory.getNadeefConnection();
         Collection<Fix> result = null;
         try {
             Statement stat = conn.createStatement();

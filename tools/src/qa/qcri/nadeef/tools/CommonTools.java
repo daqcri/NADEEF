@@ -8,6 +8,7 @@ package qa.qcri.nadeef.tools;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
+import org.jooq.SQLDialect;
 
 import javax.tools.*;
 import java.io.File;
@@ -33,6 +34,38 @@ public class CommonTools {
         URL[] urls = new URL[] { url };
         URLClassLoader ucl = new URLClassLoader(urls);
         return ucl.loadClass(className);
+    }
+
+    /**
+     * Builds up JDBC connection url.
+     * @param url url.
+     * @param dialect sql dialect.
+     * @return JDBC connection url string.
+     */
+    public static String buildJdbcUrl(String url, SQLDialect dialect) {
+        StringBuilder jdbcUrl = new StringBuilder("jdbc:");
+        switch (dialect) {
+            default:
+            case POSTGRES:
+                jdbcUrl.append("postgresql");
+        }
+
+        jdbcUrl.append("://");
+        jdbcUrl.append(url);
+        return jdbcUrl.toString();
+    }
+
+    /**
+     * Gets the <code>SQLDialect</code> from a string.
+     * @param type type string.
+     * @return sql dialect.
+     */
+    public static SQLDialect getSQLDialect(String type) {
+        switch (type) {
+            default:
+            case "postgres":
+                return SQLDialect.POSTGRES;
+        }
     }
 
     /**

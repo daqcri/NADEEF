@@ -33,7 +33,7 @@ public class TupleCollectionTest {
     public void setup() {
         Connection conn = null;
         try {
-            Bootstrap.Start();
+            Bootstrap.start();
             DBConfig.Builder builder = new DBConfig.Builder();
             dbconfig =
                 builder.url("localhost/unittest")
@@ -54,7 +54,7 @@ public class TupleCollectionTest {
     @After
     public void teardown() {
         try {
-            Connection conn = DBConnectionFactory.createNadeefConnection();
+            Connection conn = DBConnectionFactory.getNadeefConnection();
             Statement stat = conn.createStatement();
             stat.execute("DROP TABLE " + tableName + " CASCADE");
             conn.commit();

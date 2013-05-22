@@ -18,7 +18,7 @@ import java.util.concurrent.*;
  * Wrapper class for executing the violation detection.
  */
 public class ViolationDetector<T>
-    extends Operator<IteratorOutput<T>, Collection<Violation>> {
+    extends Operator<Rule, Collection<Violation>> {
     private static final int MAX_THREAD_NUM = 20;
 
     private Rule rule;
@@ -34,7 +34,6 @@ public class ViolationDetector<T>
      */
     public ViolationDetector(Rule rule) {
         Preconditions.checkNotNull(rule);
-        this.rule = rule;
         resultCollection = Lists.newArrayList();
     }
 
@@ -88,11 +87,13 @@ public class ViolationDetector<T>
     /**
      * Execute the operator.
      *
-     * @param iteratorOutput Iterator output.
+     * @param rule rule.
      * @return list of violations.
      */
     @Override
-    public Collection<Violation> execute(IteratorOutput<T> iteratorOutput) throws Exception {
+    public Collection<Violation> execute(Rule rule) throws Exception {
+        this.rule = rule;
+        IteratorOutput iteratorOutput = new IteratorOutput<T>();
         resultCollection.clear();
         List<T> tupleList = null;
         int count = 0;
@@ -120,7 +121,8 @@ public class ViolationDetector<T>
     }
 
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         if (!threadExecutors.isShutdown()) {
             threadExecutors.shutdownNow();
         }

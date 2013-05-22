@@ -22,7 +22,7 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 public class FlowTest {
     @Before
     public void setUp() {
-        Bootstrap.Start();
+        Bootstrap.start();
     }
 
     @Test

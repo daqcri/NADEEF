@@ -65,6 +65,12 @@ public abstract class TupleCollection {
     public abstract TupleCollection filter(List<SimpleExpression> expressions);
 
     /**
+     * Clean up the resources for this tuple collection. After recycling the collection should
+     * not be used any more.
+     */
+    public abstract void recycle();
+
+    /**
      * Partition the tuple collection into multiple tuple collections based
      * on a list of columns.
      * @param columns Paritition based on a list of column.

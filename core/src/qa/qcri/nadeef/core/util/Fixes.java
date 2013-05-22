@@ -34,7 +34,7 @@ public class Fixes {
         Tracer tracer = Tracer.getTracer(Fix.class);
         try {
             String tableName = NadeefConfiguration.getRepairTableName();
-            Connection conn = DBConnectionFactory.createNadeefConnection();
+            Connection conn = DBConnectionFactory.getNadeefConnection();
             Statement stat = conn.createStatement();
             ResultSet resultSet =
                 stat.executeQuery("SELECT MAX(id) + 1 as id from " + tableName);

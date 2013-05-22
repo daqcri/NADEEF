@@ -33,7 +33,7 @@ public class Violations {
             SQLException,
             InstantiationException,
             IllegalAccessException {
-        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Connection conn = DBConnectionFactory.getNadeefConnection();
         Statement stat = conn.createStatement();
         ResultSet resultSet =
             stat.executeQuery("SELECT COUNT(*) as count from violation");
@@ -58,7 +58,7 @@ public class Violations {
         SQLException,
         InstantiationException,
         IllegalAccessException {
-        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Connection conn = DBConnectionFactory.getNadeefConnection();
         Statement stat = conn.createStatement();
         ResultSet resultSet =
             stat.executeQuery("SELECT MAX(vid) + 1 as vid from violation");

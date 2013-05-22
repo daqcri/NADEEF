@@ -30,7 +30,7 @@ import java.util.List;
 public class StressDetectionTest {
     @Before
     public void setUp() {
-        Bootstrap.Start();
+        Bootstrap.start();
         Tracer.setVerbose(false);
         Tracer.setInfo(true);
     }

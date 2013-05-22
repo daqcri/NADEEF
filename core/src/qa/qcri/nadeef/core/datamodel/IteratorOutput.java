@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -17,20 +18,19 @@ import java.util.concurrent.TimeUnit;
  * Iterator output.
  */
 public class IteratorOutput<E> {
-    private final long TIMEOUT = 1024;
-    private final int BUFFER_BOUNDARY = 512;
+    private static final long TIMEOUT = 1024;
+    private static final int BUFFER_BOUNDARY = 1024;
 
     private static Tracer tracer = Tracer.getTracer(IteratorOutput.class);
 
-    private LinkedBlockingQueue<List<E>> queue;
+    private static LinkedBlockingQueue<List> queue = new LinkedBlockingQueue<List>();
     private List<E> buffer;
 
     /**
      * Constructor.
      */
     public IteratorOutput() {
-        this.queue = new LinkedBlockingQueue<List<E>>();
-        this.buffer = Lists.newArrayList();
+        this.buffer = new ArrayList<E>(BUFFER_BOUNDARY);
     }
 
     /**
@@ -47,10 +47,9 @@ public class IteratorOutput<E> {
     /**
      * Marks the end of the iteration output.
      */
-    public void markEnd() {
+    public static void markEnd() {
         try {
-            List<E> endList = Lists.newArrayList();
-            while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
+            List endList = Lists.newArrayList();
             while (!queue.offer(endList, TIMEOUT, TimeUnit.MILLISECONDS));
         } catch (InterruptedException ex) {
             tracer.err("Exception during marking the end of the queue.", ex);
@@ -61,7 +60,7 @@ public class IteratorOutput<E> {
      * Puts the item in the buffer.
      * @param item item.
      */
-    public synchronized void put(E item) {
+    public void put(E item) {
         if (buffer.size() == BUFFER_BOUNDARY) {
             try {
                 while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
@@ -72,5 +71,17 @@ public class IteratorOutput<E> {
         }
 
         buffer.add(item);
+    }
+
+    /**
+     * Flush the remaining buffer.
+     */
+    public void flush() {
+        try {
+            if (buffer.size() != 0)
+                while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

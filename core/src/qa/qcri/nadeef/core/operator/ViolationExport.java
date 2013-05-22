@@ -46,7 +46,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     public Integer execute(Collection<Violation> violations) throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
         StringBuilder sb = new StringBuilder();
-        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Connection conn = DBConnectionFactory.getNadeefConnection();
         CopyManager copyManager = ((PGConnection)conn).getCopyAPI();
         int count = 0;
 

@@ -46,7 +46,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         SQLException,
         InstantiationException,
         IllegalAccessException {
-        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Connection conn = DBConnectionFactory.getNadeefConnection();
         Statement stat = conn.createStatement();
         Integer count = 0;
         int id = Fixes.generateFixId();

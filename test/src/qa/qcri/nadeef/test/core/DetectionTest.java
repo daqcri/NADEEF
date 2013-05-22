@@ -5,9 +5,7 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
@@ -24,10 +22,15 @@ import java.sql.SQLException;
  */
 @RunWith(JUnit4.class)
 public class DetectionTest {
-    @Before
-    public void setUp() {
-        Bootstrap.Start();
+    @BeforeClass
+    public static void setup() {
+        Bootstrap.start();
         Tracer.setVerbose(true);
+    }
+
+    @AfterClass
+    public static void teardown() {
+        Bootstrap.shutdown();
     }
 
     @Test

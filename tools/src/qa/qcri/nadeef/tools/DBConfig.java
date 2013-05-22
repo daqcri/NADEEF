@@ -96,7 +96,30 @@ public class DBConfig {
     }
 
     public String getUrl() {
+        if (!url.contains("jdbc:")) {
+            return CommonTools.buildJdbcUrl(url, dialect);
+        }
         return url;
+    }
+
+    public String getDatabaseName() {
+        if (url != null) {
+            String[] tokens = url.split("/");
+            if (tokens.length > 1) {
+                return tokens[1];
+            }
+        }
+        return null;
+    }
+
+    public String getServerName() {
+        if (url != null) {
+            String[] tokens = url.split("/");
+            if (tokens.length != 0) {
+                return tokens[0];
+            }
+        }
+        return null;
     }
 
     public SQLDialect getDialect() {

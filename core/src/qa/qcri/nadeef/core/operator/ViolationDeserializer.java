@@ -29,7 +29,7 @@ public class ViolationDeserializer extends Operator<Rule, Collection<Violation>>
      */
     @Override
     public Collection<Violation> execute(Rule rule) throws Exception {
-        Connection conn = DBConnectionFactory.createNadeefConnection();
+        Connection conn = DBConnectionFactory.getNadeefConnection();
         Collection<Violation> result = null;
         try {
             Statement stat = conn.createStatement();

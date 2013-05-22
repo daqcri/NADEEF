@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -227,7 +229,7 @@ public class SQLTupleCollection extends TupleCollection {
             try {
                 String sql =
                     "SELECT DISTINCT(" + column.getAttributeName() + ") FROM " + tableName;
-                conn = DBConnectionFactory.createConnection(dbconfig);
+                conn = DBConnectionFactory.getSourceConnection();
                 Statement stat = conn.createStatement();
                 ResultSet distinctResult = stat.executeQuery(sql);
                 Statement viewStat = conn.createStatement();
@@ -320,7 +322,7 @@ public class SQLTupleCollection extends TupleCollection {
         try {
             SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
             builder.setLimit(1);
-            conn = DBConnectionFactory.createConnection(dbconfig);
+            conn = DBConnectionFactory.getSourceConnection();
             String sql = builder.build();
             tracer.verbose(sql);
             ResultSet resultSet = conn.createStatement().executeQuery(sql);
@@ -356,10 +358,11 @@ public class SQLTupleCollection extends TupleCollection {
             return false;
         }
 
+        Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         try {
             tuples = Lists.newArrayList();
-            conn = DBConnectionFactory.createConnection(dbconfig);
+            conn = DBConnectionFactory.getSourceConnection();
             Statement stat = conn.createStatement();
             String sql = sqlQuery.build();
             tracer.verbose(sql);
@@ -404,6 +407,9 @@ public class SQLTupleCollection extends TupleCollection {
                 }
             }
         }
+
+        Tracer.addStatEntry(Tracer.StatType.DBLoadTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        stopwatch.stop();
         return true;
     }
 
@@ -426,25 +432,31 @@ public class SQLTupleCollection extends TupleCollection {
     //</editor-fold>
 
     //<editor-fold desc="Finalization methods">
-    @Override
-    protected void finalize() throws Throwable {
+    public void recycle() {
         if (isInternal) {
             Connection conn = null;
             try {
-                // TODO: implement a connection pool
-                conn = DBConnectionFactory.createConnection(dbconfig);
+                conn = DBConnectionFactory.getSourceConnection();
                 Statement stat = conn.createStatement();
                 stat.execute("DROP VIEW IF EXISTS " + tableName);
                 conn.commit();
             } catch (Exception ex) {
-                // ignore;
+                tracer.err("Exception from the finalizer. ", ex);
             } finally {
                 if (conn != null) {
-                    conn.close();
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        // ignore
+                    }
                 }
             }
         }
-        super.finalize();
+        tuples.clear();
+        tuples = null;
+        tableName = null;
+        dbconfig = null;
+        updateTimestamp = Long.MAX_VALUE;
     }
     //</editor-fold>
 }
