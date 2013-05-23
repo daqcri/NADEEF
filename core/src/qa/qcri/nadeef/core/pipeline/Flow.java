@@ -5,12 +5,11 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import qa.qcri.nadeef.core.operator.Operator;
 import qa.qcri.nadeef.tools.Tracer;
+
+import java.util.List;
 
 /**
  * Flow state.

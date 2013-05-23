@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.test.tools;
 
-import org.jooq.SQLDialect;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,6 +14,7 @@ import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

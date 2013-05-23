@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;

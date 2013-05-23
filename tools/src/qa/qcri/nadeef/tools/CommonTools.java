@@ -8,7 +8,6 @@ package qa.qcri.nadeef.tools;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
-import org.jooq.SQLDialect;
 
 import javax.tools.*;
 import java.io.File;

@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.jooq.SQLDialect;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +18,7 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

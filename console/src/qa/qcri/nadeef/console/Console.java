@@ -229,8 +229,6 @@ public class Console {
         } else {
             executor.detect(Integer.valueOf(tokens[1]));
         }
-
-        Tracer.printDetectSummary();
     }
 
     private static void repair(String cmd) {
@@ -247,8 +245,6 @@ public class Console {
         } else {
             executor.repair(Integer.valueOf(tokens[1]));
         }
-
-        Tracer.printRepairSummary();
     }
 
     private static void run(String cmd) {
@@ -265,9 +261,6 @@ public class Console {
         } else {
             executor.run(Integer.valueOf(tokens[1]));
         }
-
-        Tracer.printDetectSummary();
-        Tracer.printRepairSummary();
     }
 
     private static void set(String cmd) throws IOException {

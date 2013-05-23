@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Strings;
 import qa.qcri.nadeef.tools.CommonTools;
 
 /**

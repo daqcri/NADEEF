@@ -10,10 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="5b89a124-ff25-4f8e-976e-827e36ab69b3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Bootstrap.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Bootstrap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/SQLDialect.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/CSVDumperTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/CSVDumperTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/CleanExecutor.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/CleanExecutor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/CleanPlan.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/CleanPlan.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/CommonTools.java" afterPath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/CommonTools.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/console/src/qa/qcri/nadeef/console/Console.java" afterPath="$PROJECT_DIR$/console/src/qa/qcri/nadeef/console/Console.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/DBConfig.java" afterPath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/DBConfig.java" />
@@ -21,31 +23,28 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/DBInstallerTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/DBInstallerTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBMetaDataTool.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBMetaDataTool.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DetectionTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DetectionTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/FixDeserializer.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/FixDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/FixExport.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/FixExport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Fixes.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Fixes.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/Iterator.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/Iterator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/FixDecisionMaker.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/FixDecisionMaker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Flow.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Flow.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/IteratorOutput.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/IteratorOutput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/NadeefConfiguration.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/NadeefConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/RepairPhaseTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/RepairPhaseTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SQLTupleCollection.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SQLTupleCollection.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/NodeCacheManager.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/NodeCacheManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/PairTupleRule.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/PairTupleRule.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/RuleBuilder.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/RuleBuilder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SingleTupleRule.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SingleTupleRule.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/SourceDeserializer.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/SourceDeserializer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/StressDetectionTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/StressDetectionTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java" afterPath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/TupleCollection.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/TupleCollection.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/TupleCollectionTest.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/TupleCollectionTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/Updater.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/Updater.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationDeserializer.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationDeserializer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationDetector.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationDetector.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationExport.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationExport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Violations.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Violations.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/console/console.iml" afterPath="$PROJECT_DIR$/console/console.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/core.iml" afterPath="$PROJECT_DIR$/core/core.iml" />
     </list>
     <ignored path="NADEEF.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Primitive.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1366006196377" ignored="false" />
-    <file path="/fragment.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369225413948" ignored="false" />
+    <file path="/fragment.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369301559555" ignored="false" />
     <file path="/Tuple.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369052707242" ignored="false" />
     <file path="/Violation.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1367483847818" ignored="false" />
     <file path="/Operator.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1366715600582" ignored="false" />
@@ -55,7 +54,7 @@
     <file path="/NodeCacheManager.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369026974183" ignored="false" />
     <file path="/FlowTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369224769147" ignored="false" />
     <file path="/Deserializer.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1365406334380" ignored="false" />
-    <file path="/Tracer.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369199823573" ignored="false" />
+    <file path="/Tracer.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369301566401" ignored="false" />
     <file path="/Dummy.txt" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369137396902" ignored="false" />
     <file path="/CountOperator.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1365404885815" ignored="false" />
     <file path="/CSVDumper.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1368687431483" ignored="false" />
@@ -87,7 +86,7 @@
     <file path="/OperatorInput.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1365505378262" ignored="false" />
     <file path="/FlowPlan.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1365506257889" ignored="false" />
     <file path="/CleanPlan.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369223409513" ignored="false" />
-    <file path="/CleanExecutor.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369204101702" ignored="false" />
+    <file path="/CleanExecutor.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369301162655" ignored="false" />
     <file path="/PairIterator.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1366618563368" ignored="false" />
     <file path="/FDRuleTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1366888650272" ignored="false" />
     <file path="/Console.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369224741179" ignored="false" />
@@ -207,7 +206,7 @@
     <file path="/hospital_10k.csv" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1368685081150" ignored="false" />
     <file path="/StressPlan30k.json" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1368700177403" ignored="false" />
     <file path="/MyRule4.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369121164056" ignored="false" />
-    <file path="/StressDetectionTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369224781099" ignored="false" />
+    <file path="/StressDetectionTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369300870650" ignored="false" />
     <file path="/MyRule40k.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369030312093" ignored="false" />
     <file path="/StressPlan40k.json" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1368941026016" ignored="false" />
     <file path="/BlockingQueueTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1368961089624" ignored="false" />
@@ -216,6 +215,7 @@
     <file path="/IteratorOutput.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369224347473" ignored="false" />
     <file path="/FDRuleBuilderTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369049471985" ignored="false" />
     <file path="/TupleCollectionTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369224764347" ignored="false" />
+    <file path="/SQLDialect.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369302479477" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -235,7 +235,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint url="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FixDecisionMakerTest.java" line="55" class="qa.qcri.nadeef.test.core.FixDecisionMakerTest" package="qa.qcri.nadeef.test.core">
         <option name="ENABLED" value="true" />
@@ -282,7 +281,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java" line="71" class="qa.qcri.nadeef.core.datamodel.Column" package="qa.qcri.nadeef.core.datamodel">
+      <breakpoint url="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java" line="70" class="qa.qcri.nadeef.core.datamodel.Column" package="qa.qcri.nadeef.core.datamodel">
         <option name="ENABLED" value="false" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -372,7 +371,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBConnectionFactory.java" line="144" class="qa.qcri.nadeef.core.util.DBConnectionFactory" package="qa.qcri.nadeef.core.util">
+      <breakpoint url="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DetectionTest.java" line="38" class="qa.qcri.nadeef.test.core.DetectionTest" package="qa.qcri.nadeef.test.core">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -388,6 +387,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </line_breakpoints>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -446,22 +446,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/IteratorOutput.java" />
-        <option value="$PROJECT_DIR$/console/src/qa/qcri/nadeef/console/Console.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/DBInstallerTest.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/TupleCollectionTest.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/RepairPhaseTest.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/StressDetectionTest.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationDetector.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DetectionTest.java" />
-        <option value="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/DBConfig.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBConnectionFactory.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Bootstrap.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/Iterator.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/TupleCollection.java" />
         <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SQLTupleCollection.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/TupleCollection.java" />
+        <option value="$PROJECT_DIR$/console/src/qa/qcri/nadeef/console/Console.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/StressDetectionTest.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/CleanExecutor.java" />
+        <option value="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DetectionTest.java" />
+        <option value="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/SQLDialect.java" />
+        <option value="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/DBConfig.java" />
+        <option value="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/CommonTools.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBMetaDataTool.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBConnectionFactory.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/DBInstallerTest.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/TupleCollectionTest.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/CSVDumperTest.java" />
       </list>
     </option>
   </component>
@@ -562,7 +562,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -610,18 +609,47 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="console" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="console" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="console" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="OverrideImplement.combined" value="false" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="true" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
@@ -1049,17 +1077,17 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34119782" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20624235" sideWeight="0.29465303" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31195337" sideWeight="0.496875" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32764506" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16115262" sideWeight="0.50145775" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16115262" sideWeight="0.5014549" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.6006826" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4002448" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16115262" sideWeight="0.49854228" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39067057" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16115262" sideWeight="0.49757516" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25364432" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31584063" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31195337" sideWeight="0.496875" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3984451" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1152,122 +1180,113 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/console/src/qa/qcri/nadeef/console/Console.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="126" column="33" selection-start="4552" selection-end="4552" vertical-scroll-proportion="0.42273182">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="19" selection-start="990" selection-end="990" vertical-scroll-proportion="0.21934198">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/DBInstallerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="19" selection-start="863" selection-end="863" vertical-scroll-proportion="0.23429711">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/TupleCollectionTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="23" selection-start="871" selection-end="871" vertical-scroll-proportion="0.21934198">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="19" selection-start="579" selection-end="579" vertical-scroll-proportion="0.20737787">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/RepairPhaseTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="19" selection-start="724" selection-end="724" vertical-scroll-proportion="0.21236292">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/StressDetectionTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="25" selection-start="1485" selection-end="1485" vertical-scroll-proportion="0.5264207">
-          <folding />
-        </state>
+        <state line="82" column="38" selection-start="2531" selection-end="2531" vertical-scroll-proportion="0.37061995" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/ViolationDetector.java">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/CleanExecutor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="20" selection-start="3848" selection-end="3848" vertical-scroll-proportion="0.9184692">
+        <state line="156" column="34" selection-start="4735" selection-end="4735" vertical-scroll-proportion="0.53908354" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="179" column="38" selection-start="5716" selection-end="5716" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#0#3959#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-            <element signature="e#828#837#0" expanded="true" />
+            <element signature="class#StatType#0;class#Tracer#0" expanded="false" />
+            <element signature="n#!!doc;n#Tracer#0;n#Tracer#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SQLTupleCollection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="132" column="9" selection-start="3795" selection-end="3795" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DetectionTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="28" selection-start="646" selection-end="646" vertical-scroll-proportion="0.31946754">
+        <state line="143" column="0" selection-start="4158" selection-end="4158" vertical-scroll-proportion="0.9568733">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/NodeCacheManager.java">
+    <entry file="file://$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/SQLDialect.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="138" column="0" selection-start="3668" selection-end="3668" vertical-scroll-proportion="0.9184692">
+        <state line="11" column="12" selection-start="191" selection-end="191" vertical-scroll-proportion="0.17512438">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/DBConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="96" column="0" selection-start="2504" selection-end="2504" vertical-scroll-proportion="0.14642262">
+        <state line="9" column="0" selection-start="206" selection-end="206" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/CommonTools.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="0" selection-start="245" selection-end="245" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBMetaDataTool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="42" selection-start="1352" selection-end="1352" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/DBConnectionFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="103" column="61" selection-start="3342" selection-end="3342" vertical-scroll-proportion="0.59900165">
+        <state line="106" column="17" selection-start="3400" selection-end="3400" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/DBInstallerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="126" selection-end="126" vertical-scroll-proportion="0.015920399">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="32" selection-start="1567" selection-end="1567" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/TupleCollectionTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="39" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/tools/CSVDumperTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="52" selection-start="1129" selection-end="1129" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/console/src/qa/qcri/nadeef/console/Console.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="0" selection-start="124" selection-end="124" vertical-scroll-proportion="-3.919403">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Bootstrap.java">
+    <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="60" selection-start="960" selection-end="960" vertical-scroll-proportion="0.3327787">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/operator/Iterator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="38" selection-start="2699" selection-end="2699" vertical-scroll-proportion="0.37770382">
-          <folding>
-            <element signature="e#835#844#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/TupleCollection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="28" selection-start="1983" selection-end="1983" vertical-scroll-proportion="0.82529116">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SQLTupleCollection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="439" column="16" selection-start="13959" selection-end="13959" vertical-scroll-proportion="0.8968386">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1343,7 +1362,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>core</last-edited>
+          <last-edited>console</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1355,7 +1374,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>postgresql-9.1-901.jdbc4</last-edited>
+          <last-edited>jline:jline:2.11</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

@@ -68,7 +68,7 @@ public abstract class TupleCollection {
      * Clean up the resources for this tuple collection. After recycling the collection should
      * not be used any more.
      */
-    public abstract void recycle();
+    public void recycle() {};
 
     /**
      * Partition the tuple collection into multiple tuple collections based
@@ -132,7 +132,7 @@ public abstract class TupleCollection {
     /**
      * Partition the tuple collection into multiple tuple collections based
      * on the column.
-     * @param columnName Paritition based on column attribute name.
+     * @param columnName Partition based on column attribute name.
      * @return A collection of tuple collections.
      */
     public Collection<TupleCollection> groupOn(String columnName) {

@@ -13,7 +13,6 @@ import com.google.common.io.Files;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;

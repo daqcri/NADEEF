@@ -6,10 +6,11 @@
 package qa.qcri.nadeef.core.util;
 
 import com.google.common.base.Preconditions;
-import org.jooq.SQLDialect;
+
 import org.postgresql.ds.PGPoolingDataSource;
-import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;

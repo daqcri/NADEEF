@@ -5,7 +5,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 

@@ -5,12 +5,11 @@
 
 package qa.qcri.nadeef.core.util;
 
-import org.jooq.SQLDialect;
 import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
-
 import qa.qcri.nadeef.core.datamodel.SQLTupleCollection;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.sql.*;
 

@@ -6,12 +6,6 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.tools.Tracer;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 /**
  * Fix represents a candidate fix in the <code>Fix</code> table.

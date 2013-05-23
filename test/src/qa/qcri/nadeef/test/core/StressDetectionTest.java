@@ -37,7 +37,7 @@ public class StressDetectionTest {
 
     @After
     public void teardown() {
-        Tracer.printDetectSummary();
+        Tracer.printDetectSummary("");
     }
 
     @Test

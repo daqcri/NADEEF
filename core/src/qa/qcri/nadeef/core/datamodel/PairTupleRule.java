@@ -7,7 +7,6 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 

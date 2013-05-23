@@ -128,8 +128,10 @@ public class CleanExecutor {
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
         stopwatch.stop();
+        Tracer.printDetectSummary(cleanPlan.getRules().get(ruleIndex).getId());
         return this;
     }
+
 
     /**
      * Runs the violation detection execution.
@@ -152,6 +154,7 @@ public class CleanExecutor {
         elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) - elapseTime;
         Tracer.addStatEntry(Tracer.StatType.EQTime, elapseTime);
         stopwatch.stop();
+        Tracer.printRepairSummary(cleanPlan.getRules().get(ruleIndex).getId());
         return this;
     }
 
