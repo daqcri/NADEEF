@@ -96,7 +96,7 @@
         <javac includeantruntime="false"
                debug="on"
                srcdir="test/src"
-               destdir="${build.dir}"
+               destdir="${test.dir}"
                classpath="${build.dir}"
                classpathref="vendors.jars"/>
     </target>
@@ -106,14 +106,15 @@
         <mkdir dir="${build.root}/testresult" />
         <junit printsummary="yes">
             <classpath>
-                <fileset dir="${build.root}" includes="${project.name}.jar" />
+                <fileset dir="${build.root}" includes="nadeef*.jar" />
+                <fileset dir="${vendor.dir}" includes="junit-4.11.jar"/>
             </classpath>
             <formatter type="plain" />
             <formatter type="xml" />
 
-            <batchtest fork="yes" todir="${build.root}/testresult">
-                <fileset dir="${test.dir}">
-                    <include name="**/*.class" />
+            <batchtest fork="no" todir="${build.root}/testresult">
+                <fileset dir="${build.dir}">
+                    <include name="**/*Test*.class" />
                 </fileset>
             </batchtest>
         </junit>
