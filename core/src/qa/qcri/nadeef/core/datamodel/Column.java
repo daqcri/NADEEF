@@ -8,7 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import qa.qcri.nadeef.tools.CommonTools;
 
 /**
- * Table attribute object, used as the operand in the rule hint.
+ * Column class.
  */
 public class Column {
     private String tableName;
@@ -104,11 +104,7 @@ public class Column {
         }
 
         Column column = (Column)obj;
-        if (
-            column.getAttributeName().equalsIgnoreCase(attributeName) &&
-            column.getSchemaName().equalsIgnoreCase(schemaName) &&
-            column.getTableName().equalsIgnoreCase(getTableName())
-        ) {
+        if (getFullAttributeName().equalsIgnoreCase(column.getFullAttributeName())) {
             return true;
         }
         return false;

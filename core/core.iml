@@ -19,16 +19,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/jooq-3.0.0-RC2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="postgresql-9.1-901.jdbc4" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../vendors/guava-14.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -36,6 +26,15 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="tools" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../vendors/postgresql-9.1-901.jdbc4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

@@ -5,11 +5,9 @@
 
 package qa.qcri.nadeef.core.util;
 
-import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
 import qa.qcri.nadeef.core.datamodel.SQLTupleCollection;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.sql.*;
 
@@ -17,44 +15,6 @@ import java.sql.*;
  * A helper for getting the right meta data from different DBs.
  */
 public class DBMetaDataTool {
-    /**
-     * Gets the base column name from a result set meta data.
-     * @param dialect SQL dialect.
-     * @param metaData metaData resultset.
-     * @param i index.
-     * @return Column name.
-     * @throws SQLException
-     */
-    public static String getBaseColumnName(SQLDialect dialect, ResultSetMetaData metaData, int i)
-            throws SQLException {
-        String result = null;
-        switch (dialect) {
-            default:
-            case POSTGRES:
-                result = ((Jdbc4ResultSetMetaData) metaData).getBaseColumnName(i);
-        }
-        return result;
-    }
-
-    /**
-     * Gets the base table name from a result set meta data.
-     * @param dialect SQL dialect.
-     * @param metaData metaData resultset.
-     * @param i index.
-     * @return Column name.
-     * @throws SQLException
-     */
-    public static String getBaseTableName(SQLDialect dialect, ResultSetMetaData metaData, int i)
-            throws SQLException {
-        String result = null;
-        switch (dialect) {
-            default:
-            case POSTGRES:
-                result = ((Jdbc4ResultSetMetaData) metaData).getBaseTableName(i);
-        }
-        return result;
-    }
-
     /**
      * Copy the table within the source database.
      * @param sourceTableName source table name.

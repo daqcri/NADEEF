@@ -18,6 +18,7 @@ public abstract class Rule<E> {
     protected String id;
     protected List<String> tableNames;
 
+    //<editor-fold desc="Constructor">
     /**
      * Default constructor.
      */
@@ -26,9 +27,10 @@ public abstract class Rule<E> {
     /**
      * Constructor. Checks for which signatures are implemented.
      */
-    public Rule(String id, List<String> tableNames) {
+    protected Rule(String id, List<String> tableNames) {
         initialize(id, tableNames);
     }
+    //</editor-fold>
 
     /**
      * Initialize a rule.
@@ -71,7 +73,7 @@ public abstract class Rule<E> {
      * @return a generator of tuple collection.
      */
     public abstract Collection<TupleCollection> block(
-            Collection<TupleCollection> tupleCollection
+        Collection<TupleCollection> tupleCollection
     );
 
     /**
@@ -81,8 +83,8 @@ public abstract class Rule<E> {
      * @return <code>True</code> when iterator has generates new output.
      */
     public abstract boolean iterator(
-            TupleCollection tupleCollections,
-            IteratorOutput<E> iteratorOutput
+        TupleCollection tupleCollections,
+        IteratorOutput<E> iteratorOutput
     );
 
     /**

@@ -8,7 +8,6 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -22,10 +21,10 @@ import qa.qcri.nadeef.tools.*;
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Nadeef cleaning plan.
@@ -62,11 +61,7 @@ public class CleanPlan {
             InvalidCleanPlanException {
         Preconditions.checkNotNull(reader);
         // a set which prevents generating new tables whenever encounters among multiple rules.
-        Set<String> generatedTables = Sets.newHashSet();
         SQLDialect sqlDialect;
-        String sourceUrl;
-        String sourceTableUserName;
-        String sourceTableUserPassword;
         String csvTableName = null;
 
         boolean isCSV = false;
@@ -74,6 +69,7 @@ public class CleanPlan {
         schemas = Lists.newArrayList();
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
 
+        Connection conn = null;
         try {
             // ----------------------------------------
             // parsing the source config
@@ -81,31 +77,30 @@ public class CleanPlan {
             JSONObject src = (JSONObject)jsonObject.get("source");
             String type = (String)src.get("type");
             DBConfig dbConfig;
-            if (type.equalsIgnoreCase("csv")) {
-                isCSV = true;
-                String fileName = (String)src.get("file");
-                File file = FileHelper.getFile(fileName);
-                // source is a CSV file, dump it first.
-                Connection conn = DBConnectionFactory.getNadeefConnection();
-                // TODO: find a way to clean the table after exiting.
-                csvTableName = CSVDumper.dump(conn, file);
-                conn.close();
-                dbConfig = NadeefConfiguration.getDbConfig();
-            } else {
-                // TODO: support different type of DB.
-                sqlDialect = SQLDialect.POSTGRES;
-                sourceUrl = (String)src.get("url");
-                sourceTableUserName = (String)src.get("username");
-                sourceTableUserPassword = (String)src.get("password");
-                DBConfig.Builder builder = new DBConfig.Builder();
-                dbConfig =
-                    builder.username(sourceTableUserName)
-                        .password(sourceTableUserPassword)
-                        .url(sourceUrl)
-                        .dialect(sqlDialect)
-                        .build();
+
+            switch (type) {
+                case "csv":
+                    isCSV = true;
+                    String fileName = (String)src.get("file");
+                    File file = FileHelper.getFile(fileName);
+                    // source is a CSV file, dump it to NADEEF database first.
+                    conn = DBConnectionFactory.getNadeefConnection();
+                    csvTableName = CSVDumper.dump(conn, file);
+                    dbConfig = NadeefConfiguration.getDbConfig();
+                    break;
+                default:
+                    // TODO: support different type of DB.
+                    sqlDialect = SQLDialect.POSTGRES;
+                    DBConfig.Builder builder = new DBConfig.Builder();
+                    dbConfig =
+                        builder.username((String)src.get("username"))
+                            .password((String)src.get("password"))
+                            .url((String)src.get("url"))
+                            .dialect(sqlDialect)
+                            .build();
             }
 
+            // Initialize the connection pool
             DBConnectionFactory.initializeSource(dbConfig);
 
             // ----------------------------------------
@@ -163,7 +158,7 @@ public class CleanPlan {
                 }
 
                 type = (String)ruleObj.get("type");
-                Rule rule = null;
+                Rule rule;
                 JSONArray value;
                 value = (JSONArray)ruleObj.get("value");
                 String ruleName = (String)ruleObj.get("name");
@@ -204,12 +199,17 @@ public class CleanPlan {
                         }
                         break;
                 }
-
             }
             return new CleanPlan(dbConfig, rules);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new InvalidCleanPlanException(ex.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {}
+            }
         }
     }
 

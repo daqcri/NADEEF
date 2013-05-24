@@ -14,6 +14,7 @@ import java.util.List;
  * PairTupleRule represents a rule which deals with pair of tuples.
  */
 public abstract class PairTupleRule extends Rule<TuplePair> {
+    //<editor-fold desc="Constructor">
     public PairTupleRule() {
         super();
     }
@@ -21,6 +22,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
     public PairTupleRule(String id, List<String> tableNames) {
         super(id, tableNames);
     }
+    //</editor-fold>
 
     /**
      * Detect rule with pair tuple.
