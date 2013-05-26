@@ -49,7 +49,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @return a generator of tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tupleCollections, IteratorOutput iteratorOutput) {
+    public boolean iterator(TupleCollection tupleCollections, IteratorStream iteratorStream) {
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
 
         if (collectionList.size() == 1) {
@@ -57,7 +57,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    iteratorOutput.put(pair);
+                    iteratorStream.put(pair);
                 }
             }
         } else {
@@ -66,7 +66,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
             for (int i = 0; i < left.size(); i ++) {
                 for (int j = i + 1; j < right.size(); j ++) {
                     TuplePair pair = new TuplePair(left.get(i), right.get(j));
-                    iteratorOutput.put(pair);
+                    iteratorStream.put(pair);
                 }
             }
 

@@ -35,6 +35,8 @@ public class Flow {
     private String inputKey;
     private Thread thread;
     private static Tracer tracer = Tracer.getTracer(Flow.class);
+    private boolean forceClose = false;
+
     //</editor-fold>
 
     //<editor-fold desc="Constructor">
@@ -98,15 +100,14 @@ public class Flow {
     /**
      * Adds an operator in the flow.
      * @param operator operator.
-     * @param name name of the operator.
      * @return Flow itself.
      */
-    public Flow addNode(Operator operator, String name) {
+    public Flow addNode(Operator operator) {
         if (thread != null && thread.isAlive()) {
             throw new RuntimeException("Flow cannot be modified during running.");
         }
 
-        nodeList.add(new Node(operator, name));
+        nodeList.add(new Node(operator, operator.getClass().getSimpleName()));
         return this;
     }
 
@@ -128,6 +129,11 @@ public class Flow {
                         if (i != 0) {
                             inputKey_ = keyList.get(i - 1);
                         }
+
+                        if (forceClose) {
+                            break;
+                        }
+
                         Node node = nodeList.get(i);
                         if (node.canExecute(inputKey_)) {
                             String outputKey = node.execute(inputKey_);
@@ -163,6 +169,13 @@ public class Flow {
         } catch (InterruptedException ex) {
             tracer.err("Flow " + name + " is interrupted.", ex);
         }
+    }
+
+    /**
+     * Forces the Flow to be closed.
+     */
+    public synchronized void forceClose() {
+        forceClose = true;
     }
 
     /**

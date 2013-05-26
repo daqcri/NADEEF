@@ -30,7 +30,7 @@ public class AdultRule2 extends PairTupleRule {
     @Override
     public boolean iterator(
         TupleCollection tuples,
-        IteratorOutput iteratorOutput
+        IteratorStream iteratorStream
     ) {
         ArrayList<TuplePair> result = new ArrayList();
         for (int i = 0; i < tuples.size(); i ++) {
@@ -39,7 +39,7 @@ public class AdultRule2 extends PairTupleRule {
                 Tuple right = tuples.get(j);
                 if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    iteratorOutput.put(pair);
+                    iteratorStream.put(pair);
                     break;
                 }
             }

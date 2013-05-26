@@ -31,6 +31,7 @@ public class Bootstrap {
             cacheManager.clear();
             // try to collect the resources (removing views)
             System.gc();
+            isStarted = false;
         }
     }
 

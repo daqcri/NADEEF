@@ -44,9 +44,9 @@ public class StressDetectionTest {
     public void cleanExecutorTest10k() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan10k();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
-            List<String> tableNames = cleanPlan.getRules().get(0).getTableNames();
+            List<String> tableNames = cleanPlan.getRule().getTableNames();
             int correctResult =
                 getViolationCount(
                     cleanPlan.getSourceDBConfig(),
@@ -68,7 +68,7 @@ public class StressDetectionTest {
         Tracer.setInfo(false);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan30k();
-            List<String> tableNames = cleanPlan.getRules().get(0).getTableNames();
+            List<String> tableNames = cleanPlan.getRule().getTableNames();
             int correctResult =
                 getViolationCount(
                     cleanPlan.getSourceDBConfig(),
@@ -76,8 +76,7 @@ public class StressDetectionTest {
                     "zipcode",
                     "city"
                 );
-            CleanExecutor executor = CleanExecutor.getInstance();
-            executor.initialize(cleanPlan);
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(correctResult);
             Tracer.printDetectSummary();
@@ -93,7 +92,7 @@ public class StressDetectionTest {
         Tracer.setInfo(false);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
-            List<String> tableNames = cleanPlan.getRules().get(0).getTableNames();
+            List<String> tableNames = cleanPlan.getRule().getTableNames();
             int correctResult =
                 getViolationCount(
                     cleanPlan.getSourceDBConfig(),
@@ -101,8 +100,7 @@ public class StressDetectionTest {
                     "zipcode",
                     "city"
                 );
-            CleanExecutor executor = CleanExecutor.getInstance();
-            executor.initialize(cleanPlan);
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(correctResult);
         } catch (Exception e) {

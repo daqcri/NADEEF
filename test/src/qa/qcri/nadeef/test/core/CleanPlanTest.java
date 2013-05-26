@@ -12,16 +12,21 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.tools.CSVDumper;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.SQLDialect;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -39,17 +44,20 @@ public class CleanPlanTest {
     @Test
     public void createFromJSONTest() {
         try {
-            CleanPlan cleanPlan =
+            List<CleanPlan> cleanPlans =
                 CleanPlan.createCleanPlanFromJSON(
                     new FileReader(TestDataRepository.getTestFile1())
                 );
+
+            Assert.assertEquals(1, cleanPlans.size());
+            CleanPlan cleanPlan = cleanPlans.get(0);
+
             DBConfig source = cleanPlan.getSourceDBConfig();
             Assert.assertEquals("jdbc:postgresql://localhost/unittest", source.getUrl());
             Assert.assertEquals("tester", source.getUserName());
             Assert.assertEquals("tester", source.getPassword());
             Assert.assertEquals(SQLDialect.POSTGRES, source.getDialect());
-            Assert.assertEquals(1, cleanPlan.getRules().size());
-            Rule rule = cleanPlan.getRules().get(0);
+            Rule rule = cleanPlan.getRule();
             List<String> tableNames = rule.getTableNames();
             Assert.assertEquals(1, tableNames.size());
             Assert.assertEquals("location_copy", tableNames.get(0));

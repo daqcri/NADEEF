@@ -16,11 +16,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * Iterator output.
  */
-public class IteratorOutput<E> {
+public class IteratorStream<E> {
     private static final long TIMEOUT = 1024;
     private static final int BUFFER_BOUNDARY = 1024;
 
-    private static Tracer tracer = Tracer.getTracer(IteratorOutput.class);
+    private static Tracer tracer = Tracer.getTracer(IteratorStream.class);
 
     private static LinkedBlockingQueue<List> queue = new LinkedBlockingQueue<List>();
     private List<E> buffer;
@@ -28,7 +28,7 @@ public class IteratorOutput<E> {
     /**
      * Constructor.
      */
-    public IteratorOutput() {
+    public IteratorStream() {
         this.buffer = new ArrayList<E>(BUFFER_BOUNDARY);
     }
 
@@ -79,6 +79,7 @@ public class IteratorOutput<E> {
         try {
             if (buffer.size() != 0)
                 while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
+            buffer = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

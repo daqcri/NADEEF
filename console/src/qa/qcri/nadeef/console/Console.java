@@ -12,6 +12,7 @@ import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -48,8 +50,8 @@ public class Console {
     private static final String[] commands =
         { "load", "run", "repair", "detect", "help", "set", "exit", "schema", "fd" };
     private static ConsoleReader console;
-    private static CleanPlan currentCleanPlan;
-    private static CleanExecutor executor;
+    private static List<CleanPlan> cleanPlans;
+    private static List<CleanExecutor> executors;
 
     //</editor-fold>
 
@@ -138,18 +140,18 @@ public class Console {
             );
         }
 
-        if (currentCleanPlan == null) {
+        if (cleanPlans == null) {
             throw new NullPointerException(
                 "There is no CleanPlan loaded."
             );
         }
 
         String tableName = splits[1];
-        if (!currentCleanPlan.getTableNames().contains(tableName)) {
+        if (!DBMetaDataTool.isTableExist(tableName)) {
             throw new IllegalArgumentException("Unknown table names.");
         }
 
-        Schema schema = DBMetaDataTool.getSchema(currentCleanPlan.getSourceDBConfig(), tableName);
+        Schema schema = DBMetaDataTool.getSchema(tableName);
         Set<Column> columns = schema.getColumns();
         for (Column column : columns) {
             if (column.getAttributeName().equals("tid")) {
@@ -164,10 +166,15 @@ public class Console {
         int index = cmdLine.indexOf("fd") + 2;
         String value = cmdLine.substring(index);
         RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
-        if (ruleBuilder != null) {
-            currentCleanPlan.getRules().addAll(
-                ruleBuilder.name("UserRule" + CommonTools.toHashCode(value)).value(value).build()
-            );
+        Collection<Rule> rules =
+            ruleBuilder
+                .name("UserRule" + CommonTools.toHashCode(value))
+                .value(value)
+                .build();
+        for (Rule rule : rules) {
+            CleanPlan cleanPlan =
+                new CleanPlan(DBConnectionFactory.getSourceDBConfig(), rule);
+            cleanPlans.add(cleanPlan);
         }
     }
 
@@ -182,31 +189,31 @@ public class Console {
         String fileName = splits[1];
         File file = FileHelper.getFile(fileName);
         try {
-            currentCleanPlan = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
+            cleanPlans = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
         } catch (Exception ex) {
             console.println("Exception happens during loading JSON file: " + ex.getMessage());
             return;
         }
 
-        executor = CleanExecutor.getInstance();
-        executor.initialize(currentCleanPlan);
+        for (CleanPlan cleanPlan : cleanPlans) {
+            executors.add(new CleanExecutor(cleanPlan));
+        }
         console.println(
-            currentCleanPlan.getRules().size()
+            cleanPlans.size()
                 + " rules loaded in "
                 + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
         );
     }
 
     private static void list() throws IOException {
-        if (currentCleanPlan == null) {
+        if (cleanPlans == null) {
             console.println("There are 0 rules loaded.");
             return;
         }
 
-        List<Rule> rules = currentCleanPlan.getRules();
-        console.println("There are " + rules.size() + " rules loaded.");
-        for (int i = 0; i < rules.size(); i ++) {
-            console.println("\t" + i + ": " + rules.get(i).getId());
+        console.println("There are " + cleanPlans.size() + " rules loaded.");
+        for (int i = 0; i < cleanPlans.size(); i ++) {
+            console.println("\t" + i + ": " + cleanPlans.get(i).getRule().getId());
         }
     }
 
@@ -219,19 +226,24 @@ public class Console {
                 );
         }
 
-        if (executor == null) {
+        if (executors == null) {
             console.println("There is no rule loaded.");
             return;
         }
 
         if (tokens.length == 1) {
-            executor.detect();
+            executors.get(0).detect();
         } else {
-            executor.detect(Integer.valueOf(tokens[1]));
+            int index = Integer.valueOf(tokens[1]);
+            if (index >= 0 && index < cleanPlans.size()) {
+                executors.get(index).detect();
+            } else {
+                console.println("Out of index.");
+            }
         }
     }
 
-    private static void repair(String cmd) {
+    private static void repair(String cmd) throws IOException{
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
@@ -241,13 +253,18 @@ public class Console {
         }
 
         if (tokens.length == 1) {
-            executor.repair();
+            executors.get(0).repair();
         } else {
-            executor.repair(Integer.valueOf(tokens[1]));
+            int index = Integer.valueOf(tokens[1]);
+            if (index >= 0 && index < cleanPlans.size()) {
+                executors.get(index).repair();
+            } else {
+                console.println("Out of index.");
+            }
         }
     }
 
-    private static void run(String cmd) {
+    private static void run(String cmd) throws IOException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
@@ -257,9 +274,14 @@ public class Console {
         }
 
         if (tokens.length == 1) {
-            executor.run();
+            executors.get(0).run();
         } else {
-            executor.run(Integer.valueOf(tokens[1]));
+            int index = Integer.valueOf(tokens[1]);
+            if (index >= 0 && index < cleanPlans.size()) {
+                executors.get(index).run();
+            } else {
+                console.println("Out of index.");
+            }
         }
     }
 

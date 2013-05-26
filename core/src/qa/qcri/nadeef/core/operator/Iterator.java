@@ -7,9 +7,10 @@ package qa.qcri.nadeef.core.operator;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.datamodel.IteratorOutput;
+import qa.qcri.nadeef.core.datamodel.IteratorStream;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
+import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
@@ -33,11 +34,11 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
     }
 
     class IteratorCallable implements Callable<Boolean> {
-        private IteratorOutput<E> iteratorOutput;
+        private IteratorStream<E> iteratorStream;
         private TupleCollection tupleCollection;
 
-        IteratorCallable(TupleCollection tupleCollection, IteratorOutput<E> iteratorOutput) {
-            this.iteratorOutput = iteratorOutput;
+        IteratorCallable(TupleCollection tupleCollection, IteratorStream<E> iteratorStream) {
+            this.iteratorStream = iteratorStream;
             this.tupleCollection = tupleCollection;
         }
 
@@ -49,8 +50,8 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
          */
         @Override
         public Boolean call() throws Exception {
-            rule.iterator(tupleCollection, iteratorOutput);
-            iteratorOutput.flush();
+            rule.iterator(tupleCollection, iteratorStream);
+            iteratorStream.flush();
             return true;
         }
     }
@@ -65,16 +66,16 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
     public Boolean execute(Collection<TupleCollection> tupleCollections) throws Exception {
         int count = 0;
         Stopwatch stopwatch = new Stopwatch().start();
-        List<IteratorOutput> iteratorOutputs = Lists.newArrayList();
+        List<IteratorStream> iteratorStreams = Lists.newArrayList();
 
         for (TupleCollection tupleCollection : tupleCollections) {
             count += tupleCollection.size();
-            IteratorOutput<E> iteratorOutput = new IteratorOutput<E>();
-            iteratorOutputs.add(iteratorOutput);
+            IteratorStream<E> iteratorStream = new IteratorStream<E>();
+            iteratorStreams.add(iteratorStream);
 
             pool.submit(
                 new IteratorCallable(
-                    tupleCollection, new IteratorOutput<E>()
+                    tupleCollection, new IteratorStream<E>()
                 )
             );
         }
@@ -83,12 +84,15 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
             pool.take().get();
         }
 
-        for (TupleCollection tupleCollection : tupleCollections) {
-            tupleCollection.recycle();
+        // recycle the collection when dealing with pairs. This is mainly used to remove views.
+        if (rule.supportTwoInputs()) {
+            for (TupleCollection tupleCollection : tupleCollections) {
+                tupleCollection.recycle();
+            }
         }
 
         // mark the end of the iteration output
-        IteratorOutput.markEnd();
+        IteratorStream.markEnd();
 
         Tracer.addStatEntry(
             Tracer.StatType.IteratorTime,

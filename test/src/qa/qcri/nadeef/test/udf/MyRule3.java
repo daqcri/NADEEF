@@ -60,7 +60,7 @@ public class MyRule3 extends PairTupleRule {
      * @return a group of tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tuples, IteratorOutput iteratorOutput) {
+    public boolean iterator(TupleCollection tuples, IteratorStream iteratorStream) {
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
         boolean findViolation = false;
@@ -80,7 +80,7 @@ public class MyRule3 extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < tuples.size(); j++) {
                             TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                            iteratorOutput.put(pair);
+                            iteratorStream.put(pair);
                         }
                     }
                     break;

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class CleanPlan {
     private DBConfig source;
-    private List<Rule> rules;
+    private Rule rule;
     private static List<String> tableNames;
     private static List<Schema> schemas;
     private static Tracer tracer = Tracer.getTracer(CleanPlan.class);
@@ -40,12 +40,9 @@ public class CleanPlan {
     /**
      * Constructor.
      */
-    public CleanPlan(
-        DBConfig sourceConfig,
-        List<Rule> rules
-    ) {
+    public CleanPlan(DBConfig sourceConfig, Rule rule) {
         this.source = sourceConfig;
-        this.rules = rules;
+        this.rule = rule;
     }
 
     //</editor-fold>
@@ -55,15 +52,15 @@ public class CleanPlan {
      * @param reader JSON string reader.
      * @return <code>CleanPlan</code> object.
      */
-    public static CleanPlan createCleanPlanFromJSON(Reader reader)
+    public static List<CleanPlan> createCleanPlanFromJSON(Reader reader)
         throws
             InvalidRuleException,
             InvalidCleanPlanException {
         Preconditions.checkNotNull(reader);
-        // a set which prevents generating new tables whenever encounters among multiple rules.
-        SQLDialect sqlDialect;
-        String csvTableName = null;
 
+        // a set which prevents generating new tables whenever encounters among multiple rules.
+        List<CleanPlan> result = Lists.newArrayList();
+        String csvTableName = null;
         boolean isCSV = false;
         tableNames = Lists.newArrayList();
         schemas = Lists.newArrayList();
@@ -90,7 +87,7 @@ public class CleanPlan {
                     break;
                 default:
                     // TODO: support different type of DB.
-                    sqlDialect = SQLDialect.POSTGRES;
+                    SQLDialect sqlDialect = SQLDialect.POSTGRES;
                     DBConfig.Builder builder = new DBConfig.Builder();
                     dbConfig =
                         builder.username((String)src.get("username"))
@@ -116,7 +113,7 @@ public class CleanPlan {
                 if (isCSV) {
                     targetTableNames = Arrays.asList(csvTableName);
                     tableNames.add(csvTableName);
-                    schemas.add(DBMetaDataTool.getSchema(dbConfig, csvTableName));
+                    schemas.add(DBMetaDataTool.getSchema(csvTableName));
                 } else {
                     sourceTableNames = (List<String>)ruleObj.get("table");
                     for (String tableName : sourceTableNames) {
@@ -152,7 +149,7 @@ public class CleanPlan {
                             targetTableNames.get(j)
                         );
                         schemas.add(
-                            DBMetaDataTool.getSchema(dbConfig, targetTableNames.get(j))
+                            DBMetaDataTool.getSchema(targetTableNames.get(j))
                         );
                     }
                 }
@@ -200,7 +197,11 @@ public class CleanPlan {
                         break;
                 }
             }
-            return new CleanPlan(dbConfig, rules);
+
+            for (int i = 0; i < rules.size(); i ++) {
+                result.add(new CleanPlan(dbConfig, rules.get(i)));
+            }
+            return result;
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new InvalidCleanPlanException(ex.getMessage());
@@ -224,20 +225,11 @@ public class CleanPlan {
     }
 
     /**
-     * Gets the rules in the <code>CleanPlan</code>.
-     * @return a list of <code>Rule</code>.
+     * Gets the rule.
+     * @return rule.
      */
-    public List<Rule> getRules() {
-        return rules;
+    public Rule getRule() {
+        return rule;
     }
-
-    /**
-     * Gets the list of table names in the CleanPlan.
-     * @return a list of table names in the CleanPlan.
-     */
-    public List<String> getTableNames() {
-        return tableNames;
-    }
-
     //</editor-fold>
 }

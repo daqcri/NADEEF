@@ -66,8 +66,8 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
      * @return grouped tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tupleCollection, IteratorOutput iteratorOutput) {
-        iteratorOutput.put(tupleCollection);
+    public boolean iterator(TupleCollection tupleCollection, IteratorStream iteratorStream) {
+        iteratorStream.put(tupleCollection);
         return true;
     }
 

@@ -103,7 +103,7 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile1()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile1())).get(0);
     }
 
     public static CleanPlan getCleanPlan2()
@@ -111,7 +111,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile2()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile2())).get(0);
     }
 
     public static CleanPlan getCleanPlan3()
@@ -119,7 +119,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile3()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile3())).get(0);
     }
 
     public static CleanPlan getCleanPlan4()
@@ -127,7 +127,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4())).get(0);
     }
 
     public static CleanPlan getCleanPlan5()
@@ -135,7 +135,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5())).get(0);
     }
 
     public static CleanPlan getAdultPlan1()
@@ -143,7 +143,7 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-            return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult1kPlan()));
+            return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult1kPlan())).get(0);
     }
 
     public static CleanPlan getAdultPlan2()
@@ -151,7 +151,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult30kPlan()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult30kPlan())).get(0);
     }
 
     public static CleanPlan getStressPlan10k()
@@ -159,7 +159,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan10kFile()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan10kFile())).get(0);
     }
 
     public static CleanPlan getStressPlan30k()
@@ -167,7 +167,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan30kFile()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan30kFile())).get(0);
     }
 
     public static CleanPlan getStressPlan40k()
@@ -175,7 +175,7 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan40kFile()));
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan40kFile())).get(0);
     }
 
 }

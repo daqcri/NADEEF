@@ -11,10 +11,13 @@ import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.CSVDumper;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -22,14 +25,32 @@ import java.sql.SQLException;
  */
 @RunWith(JUnit4.class)
 public class DetectionTest {
-    @BeforeClass
-    public static void setup() {
+
+    @Before
+    public void setup() {
         Bootstrap.start();
         Tracer.setVerbose(true);
+
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            CSVDumper.dump(conn, TestDataRepository.getLocationData1(), "location", "public");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assert.fail(ex.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
+        }
     }
 
-    @AfterClass
-    public static void teardown() {
+    @After
+    public void teardown() {
         Bootstrap.shutdown();
     }
 
@@ -37,8 +58,7 @@ public class DetectionTest {
     public void cleanExecutorTest() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
-            CleanExecutor executor = CleanExecutor.getInstance();
-            executor.initialize(cleanPlan);
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(8);
         } catch (Exception e) {
@@ -51,7 +71,7 @@ public class DetectionTest {
     public void cleanExecutorTest2() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(56);
@@ -65,7 +85,7 @@ public class DetectionTest {
     public void cleanExecutorTest3() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(2);
@@ -79,7 +99,7 @@ public class DetectionTest {
     public void cleanExecutorTest4() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan4();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(8);
@@ -93,7 +113,7 @@ public class DetectionTest {
     public void cleanExecutorTest5() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan5();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(84);
@@ -107,7 +127,7 @@ public class DetectionTest {
     public void cleanExecutorTest6() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getAdultPlan1();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(4);
@@ -121,7 +141,7 @@ public class DetectionTest {
     public void cleanExecutorTest7() {
         try {
             CleanPlan cleanPlan = TestDataRepository.getAdultPlan2();
-            CleanExecutor executor = CleanExecutor.getInstance();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
             verifyViolationResult(974);

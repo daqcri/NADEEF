@@ -80,7 +80,7 @@ public class $CFDName$ extends PairTupleRule {
      * @return a group of tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tuples, IteratorOutput output) {
+    public boolean iterator(TupleCollection tuples, IteratorStream output) {
         ArrayList<TuplePair> result = new ArrayList();
         tuples.orderBy(rhs);
         int pos1 = 0, pos2 = 0;

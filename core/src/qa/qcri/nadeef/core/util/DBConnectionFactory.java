@@ -53,6 +53,8 @@ public class DBConnectionFactory {
     public synchronized static void shutdown() {
         sourcePool.close();
         nadeefPool.close();
+        sourcePool = null;
+        nadeefPool = null;
     }
 
     /**
@@ -97,6 +99,14 @@ public class DBConnectionFactory {
         Connection conn = sourcePool.getConnection();
         conn.setAutoCommit(false);
         return conn;
+    }
+
+    /**
+     * Gets the source <code>DBConfig</code>.
+     * @return <code>DBConfig</code>.
+     */
+    public static DBConfig getSourceDBConfig() {
+        return dbConfig;
     }
 
     // </editor-fold>

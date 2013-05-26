@@ -93,14 +93,14 @@ public class ViolationDetector<T>
     @Override
     public Collection<Violation> execute(Rule rule) throws Exception {
         this.rule = rule;
-        IteratorOutput iteratorOutput = new IteratorOutput<T>();
+        IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
         List<T> tupleList = null;
         int count = 0;
         int detectThread = 0;
         long elapsedTime = 0l;
         while (true) {
-            tupleList = iteratorOutput.poll();
+            tupleList = iteratorStream.poll();
             if (tupleList.size() == 0) {
                 break;
             }

@@ -79,12 +79,12 @@ public abstract class Rule<E> {
     /**
      * Iterator operator.
      * @param tupleCollections a collection of tables.
-     * @param iteratorOutput Iterator output object.
+     * @param iteratorStream Iterator output object.
      * @return <code>True</code> when iterator has generates new output.
      */
     public abstract boolean iterator(
         TupleCollection tupleCollections,
-        IteratorOutput<E> iteratorOutput
+        IteratorStream<E> iteratorStream
     );
 
     /**

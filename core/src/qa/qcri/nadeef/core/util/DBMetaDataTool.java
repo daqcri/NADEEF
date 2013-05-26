@@ -7,7 +7,6 @@ package qa.qcri.nadeef.core.util;
 
 import qa.qcri.nadeef.core.datamodel.SQLTupleCollection;
 import qa.qcri.nadeef.core.datamodel.Schema;
-import qa.qcri.nadeef.tools.DBConfig;
 
 import java.sql.*;
 
@@ -32,7 +31,19 @@ public class DBMetaDataTool {
         Statement stat = conn.createStatement();
         stat.execute("DROP TABLE IF EXISTS " + targetTableName + " CASCADE");
         stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
-        stat.execute("ALTER TABLE " + targetTableName + " ADD COLUMN TID SERIAL");
+
+        conn.commit();
+        ResultSet resultSet =
+            stat.executeQuery(
+            "select * from information_schema.columns where table_name = " +
+            '\'' + targetTableName +
+            "\' and column_name = \'tid\'"
+        );
+        conn.commit();
+
+        if (!resultSet.next()) {
+            stat.execute("alter table " + targetTableName + " add column tid serial primary key");
+        }
         conn.commit();
         stat.close();
         conn.close();
@@ -40,17 +51,16 @@ public class DBMetaDataTool {
 
     /**
      * Gets the table schema given a database configuration.
-     * @param dbConfig database configuration.
      * @param tableName table name.
      * @return the table schema given a database configuration.
      */
-    public static Schema getSchema(DBConfig dbConfig, String tableName)
+    public static Schema getSchema(String tableName)
         throws Exception {
         if (!isTableExist(tableName)) {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
         SQLTupleCollection sqlTupleCollection =
-            new SQLTupleCollection(tableName, dbConfig);
+            new SQLTupleCollection(tableName, DBConnectionFactory.getSourceDBConfig());
         return sqlTupleCollection.getSchema();
     }
 
