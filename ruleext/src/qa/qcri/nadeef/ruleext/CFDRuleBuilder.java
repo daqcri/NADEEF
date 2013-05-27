@@ -5,19 +5,20 @@
 
 package qa.qcri.nadeef.ruleext;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
+
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.SimpleExpression;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Template engine for CFD rule.
@@ -37,7 +38,7 @@ public class CFDRuleBuilder extends RuleBuilder {
     public Collection<File> compile() throws Exception {
         List<File> result = Lists.newArrayList();
         stGroup =
-            new STGroupFile("qa/qcri/nadeef/ruleext/template/CFDRuleBuilder.stg", '$', '$');
+            new STGroupFile("qa/qcri/nadeef/ruleext/template/PCFDRuleBuilder.stg", '$', '$');
         ST st = stGroup.getInstanceOf("cfdTemplate");
         st.add("leftHandSide", lhs);
         st.add("rightHandSide", rhs);
@@ -47,7 +48,7 @@ public class CFDRuleBuilder extends RuleBuilder {
                 ruleName = "DefaultCFD" + CommonTools.toHashCode(value.get(i + 1)) + "_" + i;
             } else {
                 // remove all the empty spaces to make it a valid class name.
-                ruleName = ruleName.replace(" ", "") + "_" + i;
+                ruleName = originalRuleName.replace(" ", "") + "_" + i;
             }
 
             st.add("CFDName", ruleName);

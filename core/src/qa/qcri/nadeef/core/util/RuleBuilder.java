@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class RuleBuilder {
     //<editor-fold desc="Private fields">
     protected List<String> value;
+    protected String originalRuleName;
     protected String ruleName;
     protected List<String> tableNames;
     protected List<Schema> schemas;
@@ -115,6 +116,7 @@ public abstract class RuleBuilder {
      */
     public RuleBuilder name(String ruleName) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleName));
+        this.originalRuleName = ruleName;
         this.ruleName = ruleName;
         return this;
     }
@@ -123,7 +125,8 @@ public abstract class RuleBuilder {
      * Generates the <code>Rule</code> class code.
      * @return generated rule class.
      */
-    public Collection<Rule> build() throws Exception {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public Collection<Rule> build() throws Exception {
         List<Rule> result = Lists.newArrayList();
         Collection<File> outputFiles = compile();
         Tracer tracer = Tracer.getTracer(RuleBuilder.class);

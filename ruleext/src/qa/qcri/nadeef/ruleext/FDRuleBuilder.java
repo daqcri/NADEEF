@@ -68,7 +68,7 @@ public class FDRuleBuilder extends RuleBuilder {
             ruleName = "DefaultFD" + CommonTools.toHashCode(value.get(0));
         } else {
             // remove all the empty spaces to make it a valid class name.
-            ruleName = ruleName.replace(" ", "");
+            ruleName = originalRuleName.replace(" ", "");
         }
 
         st.add("FDName", ruleName);

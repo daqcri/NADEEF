@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * CFD rule.
+ * Single Tuple CFD rule.
  */
 public class $CFDName$ extends PairTupleRule {
     protected List<Column> lhs;
