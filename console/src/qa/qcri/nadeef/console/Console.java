@@ -7,6 +7,7 @@ package qa.qcri.nadeef.console;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.*;
@@ -51,7 +52,7 @@ public class Console {
         { "load", "run", "repair", "detect", "help", "set", "exit", "schema", "fd" };
     private static ConsoleReader console;
     private static List<CleanPlan> cleanPlans;
-    private static List<CleanExecutor> executors;
+    private static List<CleanExecutor> executors = Lists.newArrayList();
 
     //</editor-fold>
 
@@ -112,6 +113,8 @@ public class Console {
                         fd(line);
                     } else if (line.startsWith("schema")) {
                         schema(line);
+                    } else if (line.startsWith("test")) {
+                        testPrint(line);
                     } else {
                         console.println("I don't know this command.");
                     }
@@ -217,6 +220,18 @@ public class Console {
         }
     }
 
+    private static class DetectRunnable implements Runnable {
+        private CleanExecutor executor;
+        public DetectRunnable(CleanExecutor executor) {
+            this.executor = executor;
+        }
+
+        @Override
+        public void run() {
+            executor.detect();
+        }
+    }
+
     private static void detect(String cmd) throws IOException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
@@ -231,16 +246,64 @@ public class Console {
             return;
         }
 
+        CleanExecutor executor;
         if (tokens.length == 1) {
-            executors.get(0).detect();
+            executor = executors.get(0);
         } else {
             int index = Integer.valueOf(tokens[1]);
             if (index >= 0 && index < cleanPlans.size()) {
-                executors.get(index).detect();
+                executor = executors.get(index);
             } else {
                 console.println("Out of index.");
+                return;
             }
         }
+
+        Thread thread = new Thread(new DetectRunnable(executor));
+        thread.start();
+
+        while (thread.isAlive()) {
+            double percentage = executor.getDetectPercentage();
+            printProgress(percentage, "Detect");
+        }
+    }
+
+    private static void testPrint(String cmd) throws Exception {
+        String[] tokens = cmd.split("\\s");
+        if (tokens.length > 2) {
+            throw
+                new IllegalArgumentException(
+                    "Wrong detect command. Run detect [id number] instead."
+                );
+        }
+
+        for (double i = 0; i <= 1.0; i += 0.1) {
+            printProgress(i, "test");
+            Thread.sleep(1000);
+        }
+        console.println();
+    }
+
+    private static void printProgress(double percentage, String title) throws IOException {
+        console.redrawLine();
+        int ne = (int)Math.round(percentage * 50.f);
+        StringBuilder stringBuilder = new StringBuilder("[");
+        stringBuilder.append(title).append("][");
+        for (int i = 0; i < ne; i ++) {
+            stringBuilder.append("=");
+        }
+
+        if (ne < 50) {
+            stringBuilder.append(">");
+            for (int i = 0; i < 50 - ne; i ++) {
+                stringBuilder.append(" ");
+            }
+        }
+        stringBuilder.append("]");
+        stringBuilder.append(Math.round(Double.valueOf(percentage) * 100));
+        stringBuilder.append(" %");
+        console.print(stringBuilder.toString());
+        console.flush();
     }
 
     private static void repair(String cmd) throws IOException{

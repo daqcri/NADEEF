@@ -6,7 +6,7 @@
 package qa.qcri.nadeef.test.core;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.operator.Operator;
+import qa.qcri.nadeef.core.pipeline.Operator;
 import qa.qcri.nadeef.tools.Tracer;
 
 /**

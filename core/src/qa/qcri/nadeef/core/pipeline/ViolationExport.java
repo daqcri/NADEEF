@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -72,6 +72,8 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 }
                 vid ++;
             }
+
+            setPercentage(0.5f);
             reader.unread(sb.toString().toCharArray());
             copyManager.copyIn(
                 "COPY " +

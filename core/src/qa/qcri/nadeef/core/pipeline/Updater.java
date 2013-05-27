@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.collect.Maps;
 import qa.qcri.nadeef.core.datamodel.Cell;
@@ -104,6 +104,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     auditInsertStat.executeBatch();
                 }
                 count ++;
+                setPercentage(count / fixes.size());
             }
             stat.executeBatch();
             auditInsertStat.executeBatch();

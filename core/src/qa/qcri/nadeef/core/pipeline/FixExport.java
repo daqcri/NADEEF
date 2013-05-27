@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
@@ -22,7 +22,6 @@ import java.util.Collection;
  * Export fix in the repair database.
  */
 public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
-    private static Tracer tracer = Tracer.getTracer(FixExport.class);
 
     /**
      * Constructor.
@@ -58,7 +57,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             }
             id ++;
         }
-
+        setPercentage(0.5f);
         stat.executeBatch();
         conn.commit();
         stat.close();

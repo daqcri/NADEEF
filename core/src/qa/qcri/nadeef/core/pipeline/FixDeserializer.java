@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
@@ -23,7 +23,6 @@ import java.util.Collection;
 public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
-        Tracer tracer = Tracer.getTracer(FixDeserializer.class);
         Connection conn = DBConnectionFactory.getNadeefConnection();
         Collection<Fix> result = null;
         try {

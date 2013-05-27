@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
@@ -42,6 +42,7 @@ public class ViolationDeserializer extends Operator<Rule, Collection<Violation>>
             );
 
             result = Violations.fromQuery(resultSet);
+            setPercentage(1f);
         } finally {
             if (conn != null) {
                 conn.close();

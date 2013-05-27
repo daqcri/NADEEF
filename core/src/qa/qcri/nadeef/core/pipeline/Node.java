@@ -5,8 +5,6 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import qa.qcri.nadeef.core.operator.Operator;
-
 import java.util.UUID;
 
 /**
@@ -54,7 +52,9 @@ public class Node {
         // TODO: adds exception handling on node.
         if (operator.canExecute(input)) {
             try {
+                operator.setPercentage(0.0f);
                 result = operator.execute(input);
+                operator.setPercentage(1.0f);
                 String newKey = generateKey();
                 nodeCache.put(newKey, result, 1);
                 return newKey;
@@ -67,11 +67,26 @@ public class Node {
     }
 
     /**
-     * Gets of the node name.
+     * Gets the current progress percentage.
+     * @return progress percentage.
+     */
+    public double getPercentage() {
+        return operator.percentage();
+    }
+
+    /**
+     * Gets the node name.
      * @return Node name
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Interrupt is called in situation when the operator needs to shutdown during running.
+     */
+    void interrupt() {
+        operator.interrupt();
     }
     //</editor-fold>
 }

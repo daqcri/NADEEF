@@ -5,11 +5,13 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.operator.Operator;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Flow state.
@@ -25,18 +27,19 @@ enum FlowState {
  * Currently the design only allows for one line of connected nodes.
  */
 public class Flow {
-
     //<editor-fold desc="Private fields">
+    private static Tracer tracer = Tracer.getTracer(Flow.class);
+
     private List<Node> nodeList;
+    private List<Integer> weights;
     private List<String> keyList;
     private int currentFlowPosition;
     private FlowState state;
     private String name;
     private String inputKey;
     private Thread thread;
-    private static Tracer tracer = Tracer.getTracer(Flow.class);
-    private boolean forceClose = false;
-
+    private boolean forceStop = false;
+    private long elapsedTime;
     //</editor-fold>
 
     //<editor-fold desc="Constructor">
@@ -48,6 +51,7 @@ public class Flow {
         this.name = name;
         nodeList = Lists.newArrayList();
         keyList = Lists.newArrayList();
+        weights = Lists.newArrayList();
         currentFlowPosition = 0;
         state = FlowState.Ready;
     }
@@ -89,12 +93,21 @@ public class Flow {
      * @param index index.
      */
     public Flow addNode(Node node, int index) {
-        if (thread != null && thread.isAlive()) {
-            throw new RuntimeException("Flow cannot be modified during running.");
-        }
+        return addNode(node, index, 1);
+    }
 
-        nodeList.add(index, node);
-        return this;
+    /**
+     * Adds an operator in the flow.
+     * @param operator operator.
+     * @param weight percentage weight of the flow.
+     * @return Flow itself.
+     */
+    public Flow addNode(Operator operator, int weight) {
+        return addNode(
+            new Node(operator, operator.getClass().getSimpleName()),
+            nodeList.size(),
+            weight
+        );
     }
 
     /**
@@ -103,11 +116,31 @@ public class Flow {
      * @return Flow itself.
      */
     public Flow addNode(Operator operator) {
+        return addNode(
+            new Node(operator, operator.getClass().getSimpleName()),
+            nodeList.size(),
+            1
+        );
+    }
+
+    /**
+     * Adds an node in the flow.
+     * @param node flow node.
+     * @param index index.
+     * @param weight percentage weight.
+     * @return Flow itself.
+     */
+    public Flow addNode(Node node, int index, int weight) {
         if (thread != null && thread.isAlive()) {
             throw new RuntimeException("Flow cannot be modified during running.");
         }
 
-        nodeList.add(new Node(operator, operator.getClass().getSimpleName()));
+        Preconditions.checkArgument(
+            weight <= 100 && weight > 0,
+            "Weight needs to be between [1, 100]."
+        );
+        nodeList.add(index, node);
+        weights.add(weight);
         return this;
     }
 
@@ -123,14 +156,16 @@ public class Flow {
         state = FlowState.Running;
         thread = new Thread() {
             public void run() {
+                Stopwatch stopwatch = null;
                 try {
+                    stopwatch = new Stopwatch().start();
                     String inputKey_ = inputKey;
                     for (int i = currentFlowPosition; i < nodeList.size(); i ++) {
                         if (i != 0) {
                             inputKey_ = keyList.get(i - 1);
                         }
 
-                        if (forceClose) {
+                        if (forceStop) {
                             break;
                         }
 
@@ -151,6 +186,10 @@ public class Flow {
                     tracer.err("Flow stops at node" + currentFlowPosition, ex);
                 } finally {
                     state = FlowState.Stopped;
+                    elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                    for (int i = 0; i < nodeList.size(); i ++) {
+                        nodeList.get(i).interrupt();
+                    }
                 }
             }
         };
@@ -174,8 +213,8 @@ public class Flow {
     /**
      * Forces the Flow to be closed.
      */
-    public synchronized void forceClose() {
-        forceClose = true;
+    public synchronized void forceStop() {
+        forceStop = true;
     }
 
     /**
@@ -195,6 +234,30 @@ public class Flow {
      */
     public boolean isRunning() {
         return state == FlowState.Running;
+    }
+
+    /**
+     * Gets elapsed time for this flow.
+     * @return elapsed time.
+     */
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
+
+    /**
+     * Gets the current progress percentage.
+     */
+    public double getPercentage() {
+        int percentage = 0;
+        double weightSum = 0;
+        int weight;
+        for (int i = 0; i < weights.size(); i ++) {
+            weight = weights.get(i);
+            weightSum += weight;
+            Node node = nodeList.get(i);
+            percentage += node.getPercentage() * weight;
+        }
+        return (double)percentage / weightSum;
     }
     //</editor-fold>
 }

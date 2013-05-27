@@ -3,14 +3,13 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.IteratorStream;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
-import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
@@ -22,7 +21,6 @@ import java.util.concurrent.*;
  */
 public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> {
     private static final int MAX_THREAD_NUM = 10;
-
     private Rule rule;
 
     private ExecutorService threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
@@ -64,12 +62,13 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
      */
     @Override
     public Boolean execute(Collection<TupleCollection> tupleCollections) throws Exception {
+        int blockSize = 0;
         int count = 0;
         Stopwatch stopwatch = new Stopwatch().start();
         List<IteratorStream> iteratorStreams = Lists.newArrayList();
 
         for (TupleCollection tupleCollection : tupleCollections) {
-            count += tupleCollection.size();
+            blockSize += tupleCollection.size();
             IteratorStream<E> iteratorStream = new IteratorStream<E>();
             iteratorStreams.add(iteratorStream);
 
@@ -82,6 +81,8 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
 
         for (TupleCollection tupleCollection : tupleCollections) {
             pool.take().get();
+            count ++;
+            setPercentage(count / tupleCollections.size());
         }
 
         // recycle the collection when dealing with pairs. This is mainly used to remove views.
@@ -99,7 +100,7 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.addStatEntry(Tracer.StatType.IterationCount, count);
+        Tracer.addStatEntry(Tracer.StatType.IterationCount, blockSize);
         stopwatch.stop();
         return true;
     }
@@ -109,5 +110,10 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
         if (!threadExecutors.isShutdown()) {
             threadExecutors.shutdownNow();
         }
+    }
+
+    @Override
+    public void interrupt() {
+        IteratorStream.markEnd();
     }
 }

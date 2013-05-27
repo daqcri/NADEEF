@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.collect.*;
 import qa.qcri.nadeef.core.datamodel.Cell;
@@ -15,7 +15,6 @@ import java.util.*;
  * From the generated candidate fixes, find the good ones.
  */
 public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>> {
-
     /**
      * Execute the operator.
      *
@@ -32,7 +31,9 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         HashMap<Cell, Fix> fixMap = Maps.newHashMap();
 
         // Clustering all the fixes.
+        int count = 0;
         for (Fix fix : fixes) {
+            setPercentage(count / (fixes.size() * 2));
             Cell leftCell = fix.getLeft();
             fixMap.put(leftCell, fix);
 
@@ -116,6 +117,7 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         List<Fix> result = Lists.newArrayList();
         // for final execution of all the fixes, we use 0 as default as the fix id.
         Fix.Builder fixBuilder = new Fix.Builder();
+        count = 0;
         for (HashSet<Cell> cluster : clusters) {
             Multiset<Object> countSet = HashMultiset.create();
             for (Cell cell : cluster) {
@@ -137,6 +139,8 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
                         .build();
                 result.add(newFix);
             }
+            count ++;
+            setPercentage(count / (2 * clusters.size()) + 0.5);
         }
 
         // collect the remaining constant assign fix.

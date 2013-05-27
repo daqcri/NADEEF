@@ -3,8 +3,9 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
@@ -16,6 +17,7 @@ import java.lang.reflect.Type;
  * Abstract class for an Operator.
  */
 public abstract class Operator<TInput, TOutput> {
+    private double percentage;
     private TypeToken typeToken;
     protected CleanPlan cleanPlan;
 
@@ -71,11 +73,30 @@ public abstract class Operator<TInput, TOutput> {
     public abstract TOutput execute(TInput input) throws Exception;
 
     /**
+     * Gets the current progress percentage of this operator [0 - 100].
+     * @return percentage in integer.
+     */
+    double percentage() { return percentage; }
+
+    /**
+     * Interrupt is called in situation when the operator needs to shutdown during running.
+     */
+    void interrupt() {}
+
+    /**
+     * Sets the percentage.
+     */
+    void setPercentage(double percentage) {
+        Preconditions.checkArgument(percentage >= 0.0f && percentage <= 1.0f);
+        this.percentage = percentage;
+    }
+
+    /**
      * Check whether the operator is executable.
      * @param input input object.
      * @return True when the operator can execute on the given input object.
      */
-    public boolean canExecute(Object input) {
+    boolean canExecute(Object input) {
         Type inputClass = getInputType();
         return ((Class)inputClass).isInstance(input);
     }

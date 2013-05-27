@@ -6,7 +6,6 @@
 package qa.qcri.nadeef.core.util;
 
 import com.google.common.base.Preconditions;
-
 import org.postgresql.ds.PGPoolingDataSource;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -51,8 +50,13 @@ public class DBConnectionFactory {
      * Shutdown the connection pool.
      */
     public synchronized static void shutdown() {
-        sourcePool.close();
-        nadeefPool.close();
+        if (sourcePool != null) {
+            sourcePool.close();
+        }
+
+        if (nadeefPool != null) {
+            nadeefPool.close();
+        }
         sourcePool = null;
         nadeefPool = null;
     }

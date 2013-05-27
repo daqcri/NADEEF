@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.Rule;
@@ -41,6 +41,7 @@ public class ScopeOperator<E>
         // Here the horizontalScope needs to be called before vertical Scope since
         // it may needs the attributes which are going to be removed from verticals scope.
         Collection<TupleCollection> horizontalScopeResult = rule.horizontalScope(tuples);
+        setPercentage(0.5f);
         long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         long currentTime;
         Tracer.addStatEntry(Tracer.StatType.HScopeTime, time);

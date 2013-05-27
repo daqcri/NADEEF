@@ -8,7 +8,6 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.operator.*;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.concurrent.TimeUnit;
@@ -47,19 +46,19 @@ public class CleanExecutor {
     @Override
     public void finalize() {
         if (queryFlow != null && queryFlow.isRunning()) {
-            queryFlow.forceClose();
+            queryFlow.forceStop();
         }
 
         if (detectFlow != null && detectFlow.isRunning()) {
-            detectFlow.forceClose();
+            detectFlow.forceStop();
         }
 
         if (repairFlow != null && repairFlow.isRunning()) {
-            repairFlow.forceClose();
+            repairFlow.forceStop();
         }
 
         if (updateFlow != null && updateFlow.isRunning()) {
-            updateFlow.forceClose();
+            updateFlow.forceStop();
         }
 
         queryFlow = null;
@@ -86,10 +85,11 @@ public class CleanExecutor {
     }
 
     /**
-     * Runs the violation repair execution.
+     * Runs the violation detection. This is a non-blocking operation.
      */
     public CleanExecutor detect() {
         Stopwatch stopwatch = new Stopwatch().start();
+
         queryFlow.start();
         detectFlow.start();
 
@@ -101,8 +101,15 @@ public class CleanExecutor {
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
         stopwatch.stop();
-        Tracer.printDetectSummary(cleanPlan.getRule().getId());
         return this;
+    }
+
+    public double getDetectPercentage() {
+        return queryFlow.getPercentage() * 0.5 + detectFlow.getPercentage() * 0.5;
+    }
+
+    public double getRepairPercentage() {
+        return repairFlow.getPercentage();
     }
 
     /**
@@ -165,20 +172,20 @@ public class CleanExecutor {
                 // the case where the rule is working on multiple tables (2).
                 queryFlow
                     .addNode(new ScopeOperator<TuplePair>(rule))
-                    .addNode(new Iterator<TuplePair>(rule));
+                    .addNode(new Iterator<TuplePair>(rule), 6);
             } else {
                 queryFlow
                     .addNode(new ScopeOperator<Tuple>(rule))
-                    .addNode(new Iterator<TupleCollection>(rule));
+                    .addNode(new Iterator<TupleCollection>(rule), 6);
             }
 
             // assemble the detect flow
             detectFlow = new Flow("detect");
             detectFlow.setInputKey(inputKey);
             if (rule.supportTwoInputs()) {
-                detectFlow.addNode(new ViolationDetector<TuplePair>(rule));
+                detectFlow.addNode(new ViolationDetector<TuplePair>(rule), 6);
             } else {
-                detectFlow.addNode(new ViolationDetector<TupleCollection>(rule));
+                detectFlow.addNode(new ViolationDetector<TupleCollection>(rule), 6);
             }
             detectFlow.addNode(new ViolationExport(cleanPlan));
 
@@ -186,14 +193,14 @@ public class CleanExecutor {
             repairFlow = new Flow("repair");
             repairFlow.setInputKey(inputKey)
                 .addNode(new ViolationDeserializer())
-                .addNode(new ViolationRepair(rule))
+                .addNode(new ViolationRepair(rule), 6)
                 .addNode(new FixExport(cleanPlan));
 
             // assemble the updater flow
             updateFlow = new Flow("update");
             updateFlow.setInputKey(inputKey)
                 .addNode(new FixDeserializer())
-                .addNode(new FixDecisionMaker())
+                .addNode(new FixDecisionMaker(), 6)
                 .addNode(new Updater());
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline ", ex);

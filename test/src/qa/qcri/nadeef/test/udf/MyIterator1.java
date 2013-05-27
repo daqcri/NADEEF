@@ -8,7 +8,7 @@ package qa.qcri.nadeef.test.udf;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.TupleCollection;
 import qa.qcri.nadeef.core.datamodel.TuplePair;
-import qa.qcri.nadeef.core.operator.Operator;
+import qa.qcri.nadeef.core.pipeline.Operator;
 
 import java.util.ArrayList;
 import java.util.Collection;

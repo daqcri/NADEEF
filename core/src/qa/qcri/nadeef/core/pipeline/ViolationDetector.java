@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -96,9 +96,10 @@ public class ViolationDetector<T>
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
         List<T> tupleList = null;
-        int count = 0;
+        int detectCount = 0;
         int detectThread = 0;
         long elapsedTime = 0l;
+
         while (true) {
             tupleList = iteratorStream.poll();
             if (tupleList.size() == 0) {
@@ -110,11 +111,12 @@ public class ViolationDetector<T>
         }
 
         for (int i = 0; i < detectThread; i ++) {
-            count += pool.take().get();
+            setPercentage(i / detectThread);
+            detectCount += pool.take().get();
         }
 
         Tracer.addStatEntry(Tracer.StatType.DetectCallTime, elapsedTime);
-        Tracer.addStatEntry(Tracer.StatType.DetectCount, count);
+        Tracer.addStatEntry(Tracer.StatType.DetectCount, detectCount);
         Tracer.addStatEntry(Tracer.StatType.DetectThreadCount, detectThread);
 
         return resultCollection;

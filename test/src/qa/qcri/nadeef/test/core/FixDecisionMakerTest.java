@@ -11,7 +11,7 @@ import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.operator.FixDecisionMaker;
+import qa.qcri.nadeef.core.pipeline.FixDecisionMaker;
 import qa.qcri.nadeef.test.TestDataRepository;
 
 import java.io.BufferedReader;

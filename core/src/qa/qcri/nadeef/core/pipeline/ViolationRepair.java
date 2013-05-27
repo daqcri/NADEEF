@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package qa.qcri.nadeef.core.operator;
+package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
@@ -39,9 +39,12 @@ public class ViolationRepair
         throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
         List<Collection<Fix>> result = Lists.newArrayList();
+        int count = 0;
         for (Violation violation : violations) {
             Collection<Fix> fix = rule.repair(violation);
             result.add(fix);
+            count ++;
+            setPercentage(count / violations.size());
         }
         long elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / violations.size();
         Tracer.addStatEntry(Tracer.StatType.RepairCallTime, elapseTime);
