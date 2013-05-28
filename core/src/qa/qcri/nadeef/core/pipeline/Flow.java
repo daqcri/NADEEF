@@ -68,6 +68,9 @@ public class Flow {
         }
         state = FlowState.Ready;
         currentFlowPosition = 0;
+        for (int i = 0; i < nodeList.size(); i ++) {
+            nodeList.get(i).reset();
+        }
     }
 
     /**
@@ -152,7 +155,6 @@ public class Flow {
             tracer.info("Flow " + name + " is already started.");
         }
 
-        reset();
         state = FlowState.Running;
         thread = new Thread() {
             public void run() {

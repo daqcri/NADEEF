@@ -25,9 +25,8 @@ import java.sql.SQLException;
  */
 @RunWith(JUnit4.class)
 public class DetectionTest {
-
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void startup() {
         Bootstrap.start();
         Tracer.setVerbose(true);
 
@@ -47,6 +46,13 @@ public class DetectionTest {
                 }
             }
         }
+        Bootstrap.shutdown();
+    }
+
+    @Before
+    public void setup() {
+        Bootstrap.start();
+        Tracer.setVerbose(true);
     }
 
     @After
@@ -60,7 +66,7 @@ public class DetectionTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(8);
+            verifyViolationResult(12);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -74,7 +80,7 @@ public class DetectionTest {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.initialize(cleanPlan);
             executor.detect();
-            verifyViolationResult(56);
+            verifyViolationResult(84);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

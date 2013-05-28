@@ -14,7 +14,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Iterator output.
+ * Streaming output (Bounded Queued Buffer).
+ * TODO: make it a generic data structure.
  */
 public class IteratorStream<E> {
     private static final long TIMEOUT = 1024;
@@ -83,5 +84,12 @@ public class IteratorStream<E> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Clear the buffer queue.
+     */
+    public static void clear() {
+        queue.clear();
     }
 }

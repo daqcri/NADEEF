@@ -11,6 +11,8 @@ package qa.qcri.nadeef.test.udf;
  */
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.IteratorStream;
+
 import java.util.*;
 
 
@@ -25,7 +27,6 @@ public class MyRule3 extends PairTupleRule {
         super.initialize(id, tableNames);
         leftHandSide.add(new Column("csvtable_hospital_10k.zipcode"));
         rightHandSide.add(new Column("csvtable_hospital_10k.city"));
-
     }
 
     /**
@@ -69,7 +70,6 @@ public class MyRule3 extends PairTupleRule {
         // two pointer loop via the block. Linear scan
         // ---------------------------------------------------
         while (pos1 < tuples.size()) {
-            findViolation = false;
             for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
                 Tuple left = tuples.get(pos1);
                 Tuple right = tuples.get(pos2);
@@ -101,7 +101,6 @@ public class MyRule3 extends PairTupleRule {
     public Collection<Violation> detect(TuplePair tuplePair) {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        List<Violation> result = new ArrayList();
         Violation violation = new Violation(id);
         violation.addTuple(left);
         violation.addTuple(right);

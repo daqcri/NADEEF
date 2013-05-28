@@ -108,24 +108,32 @@ public class SqlQueryBuilder implements Cloneable {
         StringBuilder builder = new StringBuilder("SELECT ");
         if (distincts.size() > 0) {
             builder.append(" DISTINCT ON (");
-            builder.append(asString(distincts));
+            builder.append(asString(distincts, ","));
             builder.append(") ");
         }
 
         if (selects.size() != 0 && !selects.contains("tid")) {
             selects.add("tid");
         }
-        builder.append(asString(selects, "*"));
+
+        if (selects.size() == 0) {
+            builder.append("*");
+        } else {
+            builder.append(asString(selects, ","));
+        }
+
         builder.append(" FROM ");
-        builder.append(asString(froms));
+
+        builder.append(asString(froms, ","));
+
         if (wheres.size() > 0) {
             builder.append(" WHERE ");
-            builder.append(asString(wheres));
+            builder.append(asString(wheres, " AND "));
         }
 
         if (orders.size() > 0) {
             builder.append(" ORDER BY ");
-            builder.append(asString(orders));
+            builder.append(asString(orders, ","));
         }
 
         if (limit > 0) {
@@ -137,15 +145,10 @@ public class SqlQueryBuilder implements Cloneable {
     //</editor-fold>
 
     //<editor-fold desc="Private methods">
-    private String asString(Collection<String> list, String defaultString) {
-        if (list.size() == 0) {
-            return defaultString;
-        }
-        return asString(list);
+    private String asString(Collection<String> list, String separator) {
+        Preconditions.checkArgument(list != null && list.size() > 0);
+        return Joiner.on(separator).skipNulls().join(list);
     }
 
-    private String asString(Collection<String> list) {
-        return Joiner.on(',').skipNulls().join(list);
-    }
     //</editor-fold>
 }

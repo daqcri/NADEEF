@@ -3,6 +3,8 @@ package qa.qcri.nadeef.test.udf;/*
  * All rights reserved.
  */
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.IteratorStream;
+
 import java.util.*;
 
 

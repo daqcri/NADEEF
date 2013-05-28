@@ -52,7 +52,6 @@ public class Node {
         // TODO: adds exception handling on node.
         if (operator.canExecute(input)) {
             try {
-                operator.setPercentage(0.0f);
                 result = operator.execute(input);
                 operator.setPercentage(1.0f);
                 String newKey = generateKey();
@@ -71,7 +70,7 @@ public class Node {
      * @return progress percentage.
      */
     public double getPercentage() {
-        return operator.percentage();
+        return operator.getPercentage();
     }
 
     /**
@@ -88,5 +87,14 @@ public class Node {
     void interrupt() {
         operator.interrupt();
     }
+
+    /**
+     * Gets the current progress percentage.
+     * @return progress percentage.
+     */
+    void reset() {
+        operator.reset();
+    }
+
     //</editor-fold>
 }

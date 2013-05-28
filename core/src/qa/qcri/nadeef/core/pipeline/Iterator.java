@@ -116,4 +116,9 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
     public void interrupt() {
         IteratorStream.markEnd();
     }
+
+    @Override
+    public void reset() {
+        IteratorStream.clear();
+    }
 }

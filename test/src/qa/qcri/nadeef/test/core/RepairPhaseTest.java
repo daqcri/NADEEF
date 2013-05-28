@@ -62,7 +62,7 @@ public class RepairPhaseTest {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             Integer count = (Integer)executor.detect().getDetectOutput();
-            Assert.assertEquals(8, count.intValue());
+            Assert.assertEquals(12, count.intValue());
 
             count = (Integer)executor.repair().getRepairOutput();
             Assert.assertEquals(4, count.intValue());

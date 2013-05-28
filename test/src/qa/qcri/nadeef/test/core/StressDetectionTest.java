@@ -5,10 +5,8 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import com.google.common.collect.Lists;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
@@ -32,7 +30,7 @@ public class StressDetectionTest {
     public void setUp() {
         Bootstrap.start();
         Tracer.setVerbose(false);
-        Tracer.setInfo(true);
+        Tracer.setInfo(false);
     }
 
     @After
@@ -134,28 +132,34 @@ public class StressDetectionTest {
                     "select distinct(" + left + ") from " + tableName
                 );
 
-            ResultSet result = ps3.executeQuery();
-            while (result.next()) {
-                String lvalue = result.getString(left);
+            ResultSet rs3 = ps3.executeQuery();
+            while (rs3.next()) {
+                String lvalue = rs3.getString(left);
                 ps1.setString(1, lvalue);
                 ps2.setString(1, lvalue);
-                ResultSet countRs = ps1.executeQuery();
-                int count = 0;
-                int vcount = 1;
-                while (countRs.next()) {
+                ResultSet rs1 = ps1.executeQuery();
+                // distinct rhs with same lhs
+                List<Integer> distincts = Lists.newArrayList();
+                int totalDistinct = 0;
+                while (rs1.next()) {
                     // calc. the violations
-                    String rvalue = countRs.getString(right);
+                    String rvalue = rs1.getString(right);
                     ps2.setString(2, rvalue);
-                    ResultSet vcountSet = ps2.executeQuery();
-                    if (vcountSet.next()) {
-                        vcount *= vcountSet.getInt("count");
+                    ResultSet rs2 = ps2.executeQuery();
+                    if (rs2.next()) {
+                        distincts.add(rs2.getInt("count"));
                     }
-                    count ++;
+                    totalDistinct += rs2.getInt("count");
                 }
 
-                if (count > 1) {
-                    totalViolation += vcount;
+                int sum = 0;
+                for (int i = 0; i < distincts.size(); i ++) {
+                    int csize = distincts.get(i);
+                    sum += csize * (totalDistinct - csize);
+                    totalDistinct -= csize;
                 }
+
+                totalViolation += sum;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -170,7 +174,7 @@ public class StressDetectionTest {
             }
         }
 
-        return totalViolation * 2;
+        return totalViolation * 4;
     }
 
     private void verifyViolationResult(int expectRow)

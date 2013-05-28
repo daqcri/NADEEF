@@ -45,7 +45,11 @@ public class SimpleExpression {
      * @param left left column.
      * @param value right value.
      */
-    public SimpleExpression(Operation operation, Column left, String value) {
+    public SimpleExpression(
+        Operation operation,
+        Column left,
+        String value
+    ) {
         Preconditions.checkNotNull(operation);
         Preconditions.checkNotNull(left);
         Preconditions.checkNotNull(value);

@@ -67,7 +67,7 @@ public class Column {
      * @return original table name.
      */
     public String getTableName() {
-        if (tableName.startsWith("VIEW")) {
+        if (tableName.startsWith("VIEW_")) {
             String[] tokens = tableName.split("_");
             StringBuilder builder = new StringBuilder();
             for (int i = 1; i < tokens.length - 1; i ++) {
@@ -89,7 +89,7 @@ public class Column {
      * Generates a string with format of 'schemaName'.'tableName'.'attributeName'.
      */
     public String getFullAttributeName() {
-        return tableName + "." + attributeName;
+        return getTableName() + "." + attributeName;
     }
 
     //<editor-fold desc="Custom equal / hashcode">

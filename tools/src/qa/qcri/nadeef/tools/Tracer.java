@@ -5,8 +5,11 @@
 
 package qa.qcri.nadeef.tools;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 
+import java.io.PrintStream;
+import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,7 @@ public class Tracer {
     private Class classType;
     private static boolean infoFlag = true;
     private static boolean verboseFlag = false;
+    private static PrintStream console = System.out;
 
     public enum StatType {
         // Detection time
@@ -64,15 +68,19 @@ public class Tracer {
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
+    public static void setConsole(PrintStream console_) {
+        console = Preconditions.checkNotNull(console_);
+    }
+
     public void info(String msg) {
         if (infoFlag) {
-            System.out.println(":INFO:" + classType.getSimpleName() + " : " + msg);
+            console.println(":INFO:" + classType.getSimpleName() + " : " + msg);
         }
     }
 
     public void verbose(String msg) {
         if (verboseFlag) {
-            System.out.println(":VERBOSE:" + classType.getName() + " : " + msg);
+            console.println(":VERBOSE:" + classType.getName() + " : " + msg);
         }
     }
 
@@ -137,7 +145,7 @@ public class Tracer {
         out(formatEntry(StatType.EQTime, "EQ time", "ms"));
         out(formatEntry(StatType.UpdatedCellNumber, "Cell updated", ""));
         out("----------------------------------------------------------------");
-        System.out.println(
+        console.println(
             "Repair finished in " + totalTime + " ms " +
                 "with " + totalChangedCell + " cells changed.\n"
         );
@@ -166,7 +174,7 @@ public class Tracer {
         long totalTime = stats.get(StatType.DBLoadTime);
         long totalViolation = stats.get(StatType.ViolationExport);
         out("----------------------------------------------------------------");
-        System.out.println(
+        console.println(
             "Detection finished in " + totalTime + " ms " +
             "and found " + totalViolation + " violations.\n"
         );
@@ -183,7 +191,7 @@ public class Tracer {
 
     private static void out(String msg) {
         if (infoFlag) {
-            System.out.println(msg);
+            console.println(msg);
         }
     }
     //</editor-fold>

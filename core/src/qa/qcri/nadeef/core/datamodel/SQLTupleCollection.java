@@ -177,7 +177,7 @@ public class SQLTupleCollection extends TupleCollection {
     @Override
     public TupleCollection orderBy(Collection<Column> columns) {
         for (Column column : columns) {
-            sqlQuery.addSelect(column.getAttributeName());
+            sqlQuery.addOrder(column.getAttributeName());
         }
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -232,28 +232,20 @@ public class SQLTupleCollection extends TupleCollection {
                 conn = DBConnectionFactory.getSourceConnection();
                 Statement stat = conn.createStatement();
                 ResultSet distinctResult = stat.executeQuery(sql);
-                Statement viewStat = conn.createStatement();
-                while (distinctResult.next()) {
-                    // a hack to include original table name in the created view.
-                    String newTableName =
-                        "VIEW_" + tableName + "_" + UUID.randomUUID().toString().replace("-", "");
-                    Object value = distinctResult.getObject(1);
-                    if (value instanceof String) {
-                        value = '\'' + (String)value + '\'';
-                    }
 
-                    sql =
-                        "CREATE VIEW " +
-                        newTableName + " AS " +
-                        "SELECT * FROM " +
-                        tableName + " WHERE " +
-                        column.getAttributeName() + " = " +
-                        value.toString();
-                    tracer.verbose(sql);
-                    viewStat.execute(sql);
+                while (distinctResult.next()) {
+                    Object value = distinctResult.getObject(1);
+                    String stringValue = value.toString();
+                    if (value instanceof String) {
+                        stringValue = '\'' + value.toString() + '\'';
+                    }
+                    SimpleExpression columnFilter =
+                        SimpleExpression.newEqual(column, stringValue);
+
                     SQLTupleCollection newTupleCollection =
-                        new SQLTupleCollection(newTableName, dbconfig);
-                    newTupleCollection.setInternal(true);
+                        new SQLTupleCollection(tableName, dbconfig);
+                    newTupleCollection.sqlQuery = new SqlQueryBuilder(sqlQuery);
+                    newTupleCollection.sqlQuery.addWhere(columnFilter.toString());
                     result.add(newTupleCollection);
                 }
                 conn.commit();
@@ -458,5 +450,6 @@ public class SQLTupleCollection extends TupleCollection {
         dbconfig = null;
         updateTimestamp = Long.MAX_VALUE;
     }
+
     //</editor-fold>
 }

@@ -5,9 +5,7 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -22,6 +20,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.SQLDialect;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,9 +35,32 @@ import java.util.List;
 public class CleanPlanTest {
     private ExpectedException thrown = ExpectedException.none();
 
-    @BeforeClass
-    public static void start() {
+    @Before
+    public void setup() {
         Bootstrap.start();
+        Tracer.setVerbose(true);
+
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            CSVDumper.dump(conn, TestDataRepository.getLocationData1(), "location", "public");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assert.fail(ex.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    @After
+    public void teardown() {
+        Bootstrap.shutdown();
     }
 
     @Test

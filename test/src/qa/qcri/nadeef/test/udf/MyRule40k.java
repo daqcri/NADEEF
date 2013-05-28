@@ -3,6 +3,8 @@ package qa.qcri.nadeef.test.udf;/*
  * All rights reserved.
  */
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.IteratorStream;
+
 import java.util.*;
 
 
@@ -67,24 +69,15 @@ public class MyRule40k extends PairTupleRule {
             for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
                 Tuple left = tuples.get(pos1);
                 Tuple right = tuples.get(pos2);
-                for (Column column : rightHandSide) {
-                    Object lvalue = left.get(column);
-                    Object rvalue = right.get(column);
-                    if (
-                        (lvalue == null && rvalue != null) ||
-                            (lvalue != null && !lvalue.equals(rvalue))
-                        ) {
-                        findViolation = true;
-                        break;
-                    }
-                }
+
+                findViolation = !left.hasSameValue(right);
 
                 // generates all the violations between pos1 - pos2.
                 if (findViolation) {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < tuples.size(); j++) {
                             TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                            result.add(pair);
+                            iteratorStream.put(pair);
                         }
                     }
                     break;
@@ -103,20 +96,13 @@ public class MyRule40k extends PairTupleRule {
      */
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
+        List<Violation> result = new ArrayList();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        List<Violation> result = new ArrayList();
-        for (Column column : rightHandSide) {
-            Object lvalue = left.get(column);
-            Object rvalue = right.get(column);
-            if (!lvalue.equals(rvalue)) {
-                Violation violation = new Violation(id);
-                violation.addTuple(left);
-                violation.addTuple(right);
-                result.add(violation);
-                break;
-            }
-        }
+        Violation violation = new Violation(id);
+        violation.addTuple(left);
+        violation.addTuple(right);
+        result.add(violation);
         return result;
     }
 

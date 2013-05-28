@@ -76,7 +76,14 @@ public abstract class Operator<TInput, TOutput> {
      * Gets the current progress percentage of this operator [0 - 100].
      * @return percentage in integer.
      */
-    double percentage() { return percentage; }
+    double getPercentage() { return percentage; }
+
+    /**
+     * Reset is called before operator starts to function.
+     */
+    void reset() {
+        this.percentage = 0.0f;
+    }
 
     /**
      * Interrupt is called in situation when the operator needs to shutdown during running.

@@ -109,7 +109,12 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         sqlBuilder.append(',');
         sqlBuilder.append(column.getAttributeName());
         sqlBuilder.append(',');
-        sqlBuilder.append(cell.getAttributeValue().toString());
+        Object value = cell.getAttributeValue();
+        if (value == null) {
+            sqlBuilder.append("null");
+        } else {
+            sqlBuilder.append(value.toString());
+        }
         sqlBuilder.append('\n');
         return sqlBuilder.toString();
     }

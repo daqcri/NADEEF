@@ -88,7 +88,8 @@ public class CleanExecutor {
      * Runs the violation detection. This is a non-blocking operation.
      */
     public CleanExecutor detect() {
-        Stopwatch stopwatch = new Stopwatch().start();
+        queryFlow.reset();
+        detectFlow.reset();
 
         queryFlow.start();
         detectFlow.start();
@@ -98,9 +99,9 @@ public class CleanExecutor {
 
         Tracer.addStatEntry(
             Tracer.StatType.DetectTime,
-            stopwatch.elapsed(TimeUnit.MILLISECONDS)
+            queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
         );
-        stopwatch.stop();
+
         return this;
     }
 
@@ -112,25 +113,30 @@ public class CleanExecutor {
         return repairFlow.getPercentage();
     }
 
+    public double getRunPercentage() {
+        return getDetectPercentage() * 0.5 + getRepairPercentage() * 0.5;
+    }
+
+    public CleanPlan getCleanPlan() {
+        return cleanPlan;
+    }
+
     /**
      * Runs the violation detection execution.
      */
     public CleanExecutor repair() {
-        Stopwatch stopwatch = new Stopwatch().start();
+        repairFlow.reset();
+        updateFlow.reset();
 
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
-        long elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.addStatEntry(Tracer.StatType.RepairTime, elapseTime);
+        Tracer.addStatEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
 
         updateFlow.start();
         updateFlow.waitUntilFinish();
 
-        elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) - elapseTime;
-        Tracer.addStatEntry(Tracer.StatType.EQTime, elapseTime);
-        stopwatch.stop();
-        Tracer.printRepairSummary(cleanPlan.getRule().getId());
+        Tracer.addStatEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
         return this;
     }
 

@@ -56,6 +56,62 @@ public class Console {
 
     //</editor-fold>
 
+    //<editor-fold desc="Detect Thread class">
+    /**
+     * Detect thread.
+     */
+    private static class DetectRunnable implements Runnable {
+        private CleanExecutor executor;
+        public DetectRunnable(CleanExecutor executor) {
+            this.executor = executor;
+        }
+
+        @Override
+        public void run() {
+            executor.detect();
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Repair Thread class">
+
+    /**
+     * Repair thread class.
+     */
+    private static class RepairRunnable implements Runnable {
+        private CleanExecutor executor;
+
+        public RepairRunnable(CleanExecutor cleanExecutor) {
+            this.executor = cleanExecutor;
+        }
+
+        @Override
+        public void run() {
+            executor.repair();
+        }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Clean thread">
+    /**
+     * Clean thread class.
+     */
+    private static class CleanRunnable implements Runnable {
+        private CleanExecutor executor;
+
+        public CleanRunnable(CleanExecutor cleanExecutor) {
+            this.executor = cleanExecutor;
+        }
+
+        @Override
+        public void run() {
+            executor.run();
+        }
+    }
+
+    //</editor-fold>
+
     /**
      * Start of Console.
      * @param args user input.
@@ -68,6 +124,7 @@ public class Console {
             String line;
 
             console = new ConsoleReader();
+            Tracer.setConsole(new ConsoleReaderAdaptor(console));
             List<Completer> loadCompleter =
                 Arrays.asList(
                     new StringsCompleter(commands),
@@ -113,8 +170,6 @@ public class Console {
                         fd(line);
                     } else if (line.startsWith("schema")) {
                         schema(line);
-                    } else if (line.startsWith("test")) {
-                        testPrint(line);
                     } else {
                         console.println("I don't know this command.");
                     }
@@ -135,6 +190,7 @@ public class Console {
         System.exit(0);
     }
 
+    //<editor-fold desc="Schema command">
     private static void schema(String cmdLine) throws Exception {
         String[] splits = cmdLine.split("\\s");
         if (splits.length != 2) {
@@ -163,6 +219,7 @@ public class Console {
             console.println(String.format("\t%s", column.getAttributeName()));
         }
     }
+    //</editor-fold>
 
     // TODO: remove FD specification, and make it generic
     private static void fd(String cmdLine) throws Exception {
@@ -220,19 +277,7 @@ public class Console {
         }
     }
 
-    private static class DetectRunnable implements Runnable {
-        private CleanExecutor executor;
-        public DetectRunnable(CleanExecutor executor) {
-            this.executor = executor;
-        }
-
-        @Override
-        public void run() {
-            executor.detect();
-        }
-    }
-
-    private static void detect(String cmd) throws IOException {
+    private static void detect(String cmd) throws IOException, InterruptedException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
@@ -262,51 +307,22 @@ public class Console {
         Thread thread = new Thread(new DetectRunnable(executor));
         thread.start();
 
-        while (thread.isAlive()) {
+        do {
+            Thread.sleep(500);
             double percentage = executor.getDetectPercentage();
-            printProgress(percentage, "Detect");
-        }
-    }
+            printProgress(percentage, "DETECT");
+        } while (thread.isAlive());
 
-    private static void testPrint(String cmd) throws Exception {
-        String[] tokens = cmd.split("\\s");
-        if (tokens.length > 2) {
-            throw
-                new IllegalArgumentException(
-                    "Wrong detect command. Run detect [id number] instead."
-                );
-        }
-
-        for (double i = 0; i <= 1.0; i += 0.1) {
-            printProgress(i, "test");
-            Thread.sleep(1000);
-        }
+        // print out the final result.
+        String ruleName = executor.getCleanPlan().getRule().getId();
+        double percentage = executor.getDetectPercentage();
+        printProgress(percentage, "DETECT");
         console.println();
-    }
-
-    private static void printProgress(double percentage, String title) throws IOException {
-        console.redrawLine();
-        int ne = (int)Math.round(percentage * 50.f);
-        StringBuilder stringBuilder = new StringBuilder("[");
-        stringBuilder.append(title).append("][");
-        for (int i = 0; i < ne; i ++) {
-            stringBuilder.append("=");
-        }
-
-        if (ne < 50) {
-            stringBuilder.append(">");
-            for (int i = 0; i < 50 - ne; i ++) {
-                stringBuilder.append(" ");
-            }
-        }
-        stringBuilder.append("]");
-        stringBuilder.append(Math.round(Double.valueOf(percentage) * 100));
-        stringBuilder.append(" %");
-        console.print(stringBuilder.toString());
         console.flush();
+        Tracer.printDetectSummary(ruleName);
     }
 
-    private static void repair(String cmd) throws IOException{
+    private static void repair(String cmd) throws IOException, InterruptedException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
@@ -315,19 +331,38 @@ public class Console {
                 );
         }
 
+        CleanExecutor executor;
         if (tokens.length == 1) {
-            executors.get(0).repair();
+            executor = executors.get(0);
         } else {
             int index = Integer.valueOf(tokens[1]);
             if (index >= 0 && index < cleanPlans.size()) {
-                executors.get(index).repair();
+                executor = executors.get(index);
             } else {
                 console.println("Out of index.");
+                return;
             }
         }
+
+        Thread thread = new Thread(new RepairRunnable(executor));
+        thread.start();
+
+        do {
+            Thread.sleep(500);
+            double percentage = executor.getRepairPercentage();
+            printProgress(percentage, "REPAIR");
+        } while (thread.isAlive());
+
+        // print out the final result.
+        String ruleName = executor.getCleanPlan().getRule().getId();
+        double percentage = executor.getRepairPercentage();
+        printProgress(percentage, "REPAIR");
+        console.println();
+        console.flush();
+        Tracer.printRepairSummary(ruleName);
     }
 
-    private static void run(String cmd) throws IOException {
+    private static void run(String cmd) throws IOException, InterruptedException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
             throw
@@ -336,16 +371,36 @@ public class Console {
                 );
         }
 
+        CleanExecutor executor;
         if (tokens.length == 1) {
-            executors.get(0).run();
+            executor = executors.get(0);
         } else {
             int index = Integer.valueOf(tokens[1]);
             if (index >= 0 && index < cleanPlans.size()) {
-                executors.get(index).run();
+                executor = executors.get(index);
             } else {
                 console.println("Out of index.");
+                return;
             }
         }
+
+        Thread thread = new Thread(new CleanRunnable(executor));
+        thread.start();
+
+        do {
+            Thread.sleep(500);
+            double percentage = executor.getRunPercentage();
+            printProgress(percentage, "CLEAN");
+        } while (thread.isAlive());
+
+        // print out the final result.
+        String ruleName = executor.getCleanPlan().getRule().getId();
+        double percentage = executor.getRunPercentage();
+        printProgress(percentage, "CLEAN");
+        console.println();
+        console.flush();
+        Tracer.printDetectSummary(ruleName);
+        Tracer.printRepairSummary(ruleName);
     }
 
     private static void set(String cmd) throws IOException {
@@ -392,4 +447,29 @@ public class Console {
                 " |    exit the console (Ctrl + D).\n";
         console.println(help);
     }
+
+
+    //<editor-fold desc="Private helpers">
+    private static void printProgress(double percentage, String title) throws IOException {
+        console.redrawLine();
+        int ne = (int)Math.round(percentage * 50.f);
+        StringBuilder stringBuilder = new StringBuilder(512);
+        stringBuilder.append('[').append(title).append("][");
+        for (int i = 0; i < ne; i ++) {
+            stringBuilder.append("=");
+        }
+
+        if (ne < 50) {
+            stringBuilder.append(">");
+            for (int i = 0; i < 50 - ne; i ++) {
+                stringBuilder.append(" ");
+            }
+        }
+        stringBuilder.append("]");
+        stringBuilder.append(Math.round(Double.valueOf(percentage) * 100));
+        stringBuilder.append(" %");
+        console.print(stringBuilder.toString());
+        console.flush();
+    }
+    //</editor-fold>
 }

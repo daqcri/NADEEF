@@ -3,6 +3,8 @@ package qa.qcri.nadeef.test.udf;/*
  * All rights reserved.
  */
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.IteratorStream;
+
 import java.util.*;
 
 
@@ -91,20 +93,13 @@ public class MyRule4 extends PairTupleRule {
      */
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
+        List<Violation> result = new ArrayList();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        List<Violation> result = new ArrayList();
-        for (Column column : rightHandSide) {
-            Object lvalue = left.get(column);
-            Object rvalue = right.get(column);
-            if (!lvalue.equals(rvalue)) {
-                Violation violation = new Violation(id);
-                violation.addTuple(left);
-                violation.addTuple(right);
-                result.add(violation);
-                break;
-            }
-        }
+        Violation violation = new Violation(id);
+        violation.addTuple(left);
+        violation.addTuple(right);
+        result.add(violation);
         return result;
     }
 
