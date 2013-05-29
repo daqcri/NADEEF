@@ -1,0 +1,15 @@
+{
+    "source" : {
+        "url" : "localhost/unittest",
+        "username" : "tester",
+        "password" : "tester",
+        "type" : "postgres"
+    },
+    "rule" : [
+        {
+            "type" : "udf",
+            "table" : ["hospital", "zipcode"],
+            "value" : ["qa.qcri.nadeef.test.udf.MyRuleTwoTable"]
+        }
+    ]
+}

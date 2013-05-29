@@ -29,7 +29,7 @@ public class AdultRule2 extends PairTupleRule {
     }
 
     @Override
-    public boolean iterator(
+    public void iterator(
         TupleCollection tuples,
         IteratorStream iteratorStream
     ) {
@@ -45,7 +45,6 @@ public class AdultRule2 extends PairTupleRule {
                 }
             }
         }
-        return true;
     }
 
     @Override

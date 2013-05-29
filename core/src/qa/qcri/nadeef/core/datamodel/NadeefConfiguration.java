@@ -30,8 +30,6 @@ public class NadeefConfiguration {
     private static String violationTable;
     private static String repairTable;
     private static String auditTable;
-    private static String schemaName = "public";
-    private static String version = "1.0";
     private static int maxIterationNumber = 1;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
 
@@ -71,7 +69,7 @@ public class NadeefConfiguration {
         JSONObject general = (JSONObject)jsonObject.get("general");
         testMode = (Boolean)general.get("testmode");
         if (general.containsKey("maxIterationNumber")) {
-            maxIterationNumber = (Integer)general.get("maxIterationNumber");
+            maxIterationNumber = ((Long)general.get("maxIterationNumber")).intValue();
         }
 
         JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
@@ -134,6 +132,7 @@ public class NadeefConfiguration {
      * @return Nadeef DB schema name.
      */
     public static String getSchemaName() {
+        String schemaName = "public";
         return schemaName;
     }
 
@@ -158,6 +157,7 @@ public class NadeefConfiguration {
      * @return Nadeef version.
      */
     public static String getVersion() {
+        String version = "1.0";
         return version;
     }
 

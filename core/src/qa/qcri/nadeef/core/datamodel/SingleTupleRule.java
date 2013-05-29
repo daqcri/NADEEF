@@ -63,12 +63,10 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
     /**
      * Default generator operation.
      * @param tupleCollection input tuple
-     * @return grouped tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tupleCollection, IteratorStream iteratorStream) {
+    public void iterator(TupleCollection tupleCollection, IteratorStream iteratorStream) {
         iteratorStream.put(tupleCollection);
-        return true;
     }
 
 }

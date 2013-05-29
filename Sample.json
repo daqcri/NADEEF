@@ -5,8 +5,9 @@
     },
     "rule" : [
         {
-            "type" : "udf",
-            "value" : ["qa.qcri.nadeef.test.udf.MyRule3"]
+			"name" : "_sample"
+            "type" : "fd",
+            "value" : ["zipcode | city"]
         }
     ]
 }

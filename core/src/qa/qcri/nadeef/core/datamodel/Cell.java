@@ -95,7 +95,7 @@ public class Cell {
 
     //</editor-fold>
 
-    //<editor-fold desc="Override Equals and Hashcode">
+    //<editor-fold desc="Override Equals and Hash code">
     @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof Cell)) {

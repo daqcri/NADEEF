@@ -11,6 +11,8 @@ import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
+import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
@@ -53,6 +55,7 @@ public class Console {
     private static ConsoleReader console;
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
+    private static Tracer tracer = Tracer.getTracer(Console.class);
 
     //</editor-fold>
 
@@ -162,8 +165,6 @@ public class Console {
                         repair(line);
                     } else if (line.startsWith("run")) {
                         run(line);
-                    } else if (Strings.isNullOrEmpty(line)) {
-                        // empty line
                     } else if (line.startsWith("set")) {
                         set(line);
                     } else if (line.startsWith("fd")) {
@@ -174,14 +175,12 @@ public class Console {
                         console.println("I don't know this command.");
                     }
                 } catch (Exception ex) {
-                    console.println("Oops, something is wrong:");
-                    ex.printStackTrace();
+                    tracer.err("Oops, something is wrong: ", ex);
                 }
             }
         } catch (Exception ex) {
             try {
-                console.println("Bootstrap failed.");
-                ex.printStackTrace();
+                tracer.err("Bootstrap failed", ex);
             } catch (Exception ignore) {}
         } finally {
             Bootstrap.shutdown();
@@ -250,8 +249,11 @@ public class Console {
         File file = FileHelper.getFile(fileName);
         try {
             cleanPlans = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
-        } catch (Exception ex) {
-            console.println("Exception happens during loading JSON file: " + ex.getMessage());
+        } catch (InvalidCleanPlanException ex) {
+            tracer.err("Invalid CleanPlan file", ex);
+            return;
+        } catch (InvalidRuleException ex) {
+            tracer.err("Invalid Rule definition", ex);
             return;
         }
 
@@ -267,7 +269,7 @@ public class Console {
 
     private static void list() throws IOException {
         if (cleanPlans == null) {
-            console.println("There are 0 rules loaded.");
+            console.println("There is no rule loaded.");
             return;
         }
 
@@ -425,26 +427,28 @@ public class Console {
                 " |help : Print out this help information.\n" +
                 " |\n" +
                 " |load <input CleanPlan file> :\n" +
-                " |    load a configured nadeef clean plan.\n" +
+                " |    load a NADEEF clean plan.\n" +
                 " |\n" +
                 " |detect [rule id] :\n" +
-                " |    start the violation detection with a given rule id number.\n" +
+                " |    start the violation detection with a given rule id number (by default it is 0).\n" +
                 " |\n" +
                 " |list : \n" +
                 " |    list available rules.\n" +
                 " |\n" +
                 " |repair [rule id] :\n" +
-                " |    repair the data source with a given rule id number.\n" +
+                " |    repair the data source with a given rule id number (by default it is 0).\n" +
                 " |\n" +
-                " |run :\n" +
-                " |    clean the data source with maximum iteration number. \n" +
+                " |run [rule id]:\n" +
+                " |    run both detect and clean with a given rule id number (by default it is 0). \n" +
                 " |\n" +
                 " |schema [table name]: \n" +
-                " |    list the schema of the data source. \n" +
-                " |fd [table name] [fd rule]: \n" +
-                " |    run FD rule with specified table name on the source data. \n" +
+                " |    list the table schema from the data source. \n" +
+                " |\n" +
+                " |fd [table name] [fd rule value]: \n" +
+                " |    create FD rule with specified table name on the source data. \n" +
+                " |\n" +
                 " |exit :\n" +
-                " |    exit the console (Ctrl + D).\n";
+                " |    exit the console.\n";
         console.println(help);
     }
 

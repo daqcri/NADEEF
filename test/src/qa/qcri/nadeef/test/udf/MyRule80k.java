@@ -55,7 +55,7 @@ public class MyRule80k extends PairTupleRule {
      * @return a group of tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tuples, IteratorStream iteratorStream) {
+    public void iterator(TupleCollection tuples, IteratorStream iteratorStream) {
         ArrayList<TuplePair> result = new ArrayList();
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
@@ -83,8 +83,6 @@ public class MyRule80k extends PairTupleRule {
             }
             pos1 = pos2;
         }
-
-        return true;
     }
 
     /**

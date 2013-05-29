@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 import java.io.*;
@@ -34,9 +35,10 @@ public class Violations {
             InstantiationException,
             IllegalAccessException {
         Connection conn = DBConnectionFactory.getNadeefConnection();
+        String tableName = NadeefConfiguration.getViolationTableName();
         Statement stat = conn.createStatement();
         ResultSet resultSet =
-            stat.executeQuery("SELECT COUNT(*) as count from violation");
+            stat.executeQuery("SELECT COUNT(*) as count from " + tableName);
         int result = -1;
         if (resultSet.next()) {
             result = resultSet.getInt("count");
@@ -60,8 +62,9 @@ public class Violations {
         IllegalAccessException {
         Connection conn = DBConnectionFactory.getNadeefConnection();
         Statement stat = conn.createStatement();
+        String tableName = NadeefConfiguration.getViolationTableName();
         ResultSet resultSet =
-            stat.executeQuery("SELECT MAX(vid) + 1 as vid from violation");
+            stat.executeQuery("SELECT MAX(vid) + 1 as vid from " + tableName);
         int result = -1;
         if (resultSet.next()) {
             result = resultSet.getInt("vid");

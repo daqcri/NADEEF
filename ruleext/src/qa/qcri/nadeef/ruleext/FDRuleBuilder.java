@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.ruleext;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.stringtemplate.v4.ST;
@@ -30,7 +31,6 @@ public class FDRuleBuilder extends RuleBuilder {
     private List<String> rhs;
 
     private static Tracer tracer = Tracer.getTracer(FDRuleBuilder.class);
-    private static ST st;
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
@@ -61,7 +61,7 @@ public class FDRuleBuilder extends RuleBuilder {
     protected File generate() throws IOException {
         STGroupFile stFile =
             new STGroupFile("qa/qcri/nadeef/ruleext/template/FDRuleBuilder.stg", '$', '$');
-        st = stFile.getInstanceOf("fdTemplate");
+        ST st = stFile.getInstanceOf("fdTemplate");
         st.add("leftHandSideInitialize", lhs);
         st.add("rightHandSideInitialize", rhs);
         if (Strings.isNullOrEmpty(ruleName)) {
@@ -80,6 +80,7 @@ public class FDRuleBuilder extends RuleBuilder {
 
     @Override
     protected void parse() {
+        Preconditions.checkArgument(value != null && value.size() == 1, "Invalid FD content");
         Set<String> lhsSet = new HashSet();
         Set<String> rhsSet = new HashSet();
 

@@ -46,10 +46,9 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * Default iterator operation.
      *
      * @param tupleCollections input tuple
-     * @return a generator of tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tupleCollections, IteratorStream iteratorStream) {
+    public void iterator(TupleCollection tupleCollections, IteratorStream iteratorStream) {
         List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
 
         if (collectionList.size() == 1) {
@@ -71,7 +70,6 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
             }
 
         }
-        return true;
     }
 
     /**

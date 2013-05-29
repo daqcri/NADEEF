@@ -72,8 +72,11 @@ public class Bootstrap {
         } catch (FileNotFoundException ex) {
             tracer.err("Nadeef configuration is not found.", ex);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            tracer.err("Nadeef database is not able to install, abort.", ex);
+            tracer.err(
+                "There is something wrong with the NADEEF config. Nadeef database is not " +
+                "able to install, abort.",
+                ex
+            );
             System.exit(1);
         } finally {
             if (conn != null) {

@@ -52,10 +52,9 @@ public class MyRule4 extends PairTupleRule {
      * Default group operation.
      *
      * @param tuples input tuple
-     * @return a group of tuple collection.
      */
     @Override
-    public boolean iterator(TupleCollection tuples, IteratorStream iteratorStream) {
+    public void iterator(TupleCollection tuples, IteratorStream iteratorStream) {
         tuples.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
         boolean findViolation = false;
@@ -82,8 +81,6 @@ public class MyRule4 extends PairTupleRule {
             }
             pos1 = pos2;
         }
-
-        return true;
     }
 
     /**

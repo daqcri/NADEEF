@@ -32,8 +32,6 @@ import java.util.List;
 public class CleanPlan {
     private DBConfig source;
     private Rule rule;
-    private static List<String> tableNames;
-    private static List<Schema> schemas;
     private static Tracer tracer = Tracer.getTracer(CleanPlan.class);
 
     //<editor-fold desc="Constructor">
@@ -52,6 +50,7 @@ public class CleanPlan {
      * @param reader JSON string reader.
      * @return <code>CleanPlan</code> object.
      */
+    @SuppressWarnings("unchecked")
     public static List<CleanPlan> createCleanPlanFromJSON(Reader reader)
         throws
             InvalidRuleException,
@@ -62,8 +61,8 @@ public class CleanPlan {
         List<CleanPlan> result = Lists.newArrayList();
         String csvTableName = null;
         boolean isCSV = false;
-        tableNames = Lists.newArrayList();
-        schemas = Lists.newArrayList();
+        List<String> tableNames = Lists.newArrayList();
+        List<Schema> schemas = Lists.newArrayList();
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
 
         Connection conn = null;
@@ -119,7 +118,7 @@ public class CleanPlan {
                     for (String tableName : sourceTableNames) {
                         if (!DBMetaDataTool.isTableExist(tableName)) {
                             throw
-                                new InvalidCleanPlanException (
+                                new InvalidCleanPlanException(
                                     "The specified table " + tableName +
                                         " cannot be found in the source database."
                                 );
@@ -203,8 +202,10 @@ public class CleanPlan {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new InvalidCleanPlanException(ex.getMessage());
+            if (ex instanceof InvalidRuleException) {
+                throw (InvalidRuleException)ex;
+            }
+            throw new InvalidCleanPlanException(ex);
         } finally {
             if (conn != null) {
                 try {
