@@ -15,7 +15,7 @@ import java.util.List;
  * Abstract rule.
  */
 public abstract class Rule<E> {
-    protected String id;
+    protected String ruleName;
     protected List<String> tableNames;
 
     //<editor-fold desc="Constructor">
@@ -34,23 +34,23 @@ public abstract class Rule<E> {
 
     /**
      * Initialize a rule.
-     * @param id Rule id.
+     * @param ruleName Rule id.
      * @param tableNames table names.
      */
-    public void initialize(String id, List<String> tableNames) {
+    public void initialize(String ruleName, List<String> tableNames) {
         Preconditions.checkArgument(
-            !Strings.isNullOrEmpty(id) && tableNames != null && tableNames.size() > 0
+            !Strings.isNullOrEmpty(ruleName) && tableNames != null && tableNames.size() > 0
         );
 
-        this.id = id;
+        this.ruleName = ruleName;
         this.tableNames = tableNames;
     }
 
     /**
-     * Gets of rule Id.
+     * Gets of rule name.
      */
-    public String getId() {
-        return id;
+    public String getRuleName() {
+        return ruleName;
     }
 
     /**

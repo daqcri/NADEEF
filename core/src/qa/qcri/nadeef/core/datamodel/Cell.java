@@ -6,7 +6,8 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * A Cell contains a Column and a Value given a TupleId.
+ * A Cell represents a basic unit in a table (TupleCollection). A cell
+ * contains a <code>Column</code> and a Value given a TupleId.
  */
 public class Cell {
     //<editor-fold desc="Private fields">
@@ -16,7 +17,7 @@ public class Cell {
     //</editor-fold>
 
     /**
-     * Builder class.
+     * Cell builder class.
      */
     public static class Builder {
         private int tupleId;

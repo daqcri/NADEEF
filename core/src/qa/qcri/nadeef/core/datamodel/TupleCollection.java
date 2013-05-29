@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Abstract Tuple Collection.
+ * Abstract Tuple Collection. A tupleCollection represents a 'table' in the data.
  */
 public abstract class TupleCollection {
     protected Schema schema;

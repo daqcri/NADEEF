@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Abstract base class for a rule providing the default behavior of scope and generator operation.
+ * SingleTupleRule rule is an abstract class for rule which has detection using one tuple.
  */
 public abstract class SingleTupleRule extends Rule<Tuple> {
     /**

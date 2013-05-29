@@ -16,6 +16,7 @@ import java.util.Map;
 
 /**
  * Expression class describes a simple expression used in the scope.
+ * An expression contains a left operator and a assigned value.
  */
 public class SimpleExpression {
 
@@ -115,10 +116,18 @@ public class SimpleExpression {
         return operation;
     }
 
+    /**
+     * Gets the left operator column.
+     * @return left operator column.
+     */
     public Column getLeft() {
         return left;
     }
 
+    /**
+     * Gets the value of the operator.
+     * @return the value of the operator.
+     */
     public String getValue() {
         return value;
     }

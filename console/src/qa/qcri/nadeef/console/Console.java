@@ -6,7 +6,6 @@
 package qa.qcri.nadeef.console;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
@@ -275,7 +274,7 @@ public class Console {
 
         console.println("There are " + cleanPlans.size() + " rules loaded.");
         for (int i = 0; i < cleanPlans.size(); i ++) {
-            console.println("\t" + i + ": " + cleanPlans.get(i).getRule().getId());
+            console.println("\t" + i + ": " + cleanPlans.get(i).getRule().getRuleName());
         }
     }
 
@@ -316,7 +315,7 @@ public class Console {
         } while (thread.isAlive());
 
         // print out the final result.
-        String ruleName = executor.getCleanPlan().getRule().getId();
+        String ruleName = executor.getCleanPlan().getRule().getRuleName();
         double percentage = executor.getDetectPercentage();
         printProgress(percentage, "DETECT");
         console.println();
@@ -356,7 +355,7 @@ public class Console {
         } while (thread.isAlive());
 
         // print out the final result.
-        String ruleName = executor.getCleanPlan().getRule().getId();
+        String ruleName = executor.getCleanPlan().getRule().getRuleName();
         double percentage = executor.getRepairPercentage();
         printProgress(percentage, "REPAIR");
         console.println();
@@ -396,7 +395,7 @@ public class Console {
         } while (thread.isAlive());
 
         // print out the final result.
-        String ruleName = executor.getCleanPlan().getRule().getId();
+        String ruleName = executor.getCleanPlan().getRule().getRuleName();
         double percentage = executor.getRunPercentage();
         printProgress(percentage, "CLEAN");
         console.println();

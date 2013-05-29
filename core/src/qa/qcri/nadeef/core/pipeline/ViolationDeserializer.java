@@ -37,7 +37,7 @@ public class ViolationDeserializer extends Operator<Rule, Collection<Violation>>
                 "SELECT * FROM " +
                     NadeefConfiguration.getViolationTableName() +
                     " WHERE RID = '" +
-                    rule.getId() +
+                    rule.getRuleName() +
                     "' ORDER BY vid"
             );
 

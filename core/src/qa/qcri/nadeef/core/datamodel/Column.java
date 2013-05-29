@@ -8,7 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import qa.qcri.nadeef.tools.CommonTools;
 
 /**
- * Column class.
+ * A Column represents a Column in a table. It contains a table name and a attribute name.
  */
 public class Column {
     private String tableName;
@@ -67,26 +67,19 @@ public class Column {
      * @return original table name.
      */
     public String getTableName() {
-        if (tableName.startsWith("VIEW_")) {
-            String[] tokens = tableName.split("_");
-            StringBuilder builder = new StringBuilder();
-            for (int i = 1; i < tokens.length - 1; i ++) {
-                if (i != 1) {
-                    builder.append('_');
-                }
-                builder.append(tokens[i]);
-            }
-            return builder.toString();
-        }
         return tableName;
     }
 
+    /**
+     * Gets the attribute name.
+     * @return column attribute name.
+     */
     public String getAttributeName() {
         return attributeName;
     }
 
     /**
-     * Generates a string with format of 'schemaName'.'tableName'.'attributeName'.
+     * Generates a string with format of 'tableName'.'attributeName'.
      */
     public String getFullAttributeName() {
         return getTableName() + "." + attributeName;

@@ -34,7 +34,7 @@ public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
                     " r where r.vid in (select vid from " +
                     NadeefConfiguration.getViolationTableName() +
                     " where rid = '" +
-                    rule.getId() +
+                    rule.getRuleName() +
                     "') order by r.vid"
                 );
 

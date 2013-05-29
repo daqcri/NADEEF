@@ -3,7 +3,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 
 /**
- * Tuple Pair entity.
+ * Tuple Pair represents a pair of tuples.
  */
 public class TuplePair {
     private Tuple left;
@@ -28,10 +28,19 @@ public class TuplePair {
     TuplePair() {}
 
     //<editor-fold desc="Getters">
+
+    /**
+     * Get the left tuple.
+     * @return the left tuple.
+     */
     public Tuple getLeft() {
         return left;
     }
 
+    /**
+     * Gets the right tuple.
+     * @return the right tuple.
+     */
     public Tuple getRight() {
         return right;
     }

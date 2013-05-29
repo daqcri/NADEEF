@@ -103,6 +103,10 @@ public class NadeefConfiguration {
         return testMode;
     }
 
+    /**
+     * Gets the <code>DBConfig</code> of Nadeef metadata database.
+     * @return meta data <code>DBConfig</code>.
+     */
     public static DBConfig getDbConfig() {
         return dbConfig;
     }

@@ -18,7 +18,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -100,6 +99,10 @@ public class SQLTupleCollection extends TupleCollection {
         return tuples.size();
     }
 
+    /**
+     * Gets the schema of the TupleCollection.
+     * @return the schema.
+     */
     @Override
     public Schema getSchema() {
         syncSchemaIfNeeded();
@@ -125,8 +128,14 @@ public class SQLTupleCollection extends TupleCollection {
         return tuples.get(i);
     }
 
+    /**
+     * Projects the TupleCollection by column name.
+     * @param columnName column name.
+     * @return tuple collection itself.
+     */
     @Override
     public TupleCollection project(String columnName) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(columnName));
         sqlQuery.addSelect(columnName);
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -134,8 +143,14 @@ public class SQLTupleCollection extends TupleCollection {
         return this;
     }
 
+    /**
+     * Projects the <code>TupleCollection</code> by column.
+     * @param column Column.
+     * @return tuple collection itself.
+     */
     @Override
     public TupleCollection project(Column column) {
+        Preconditions.checkNotNull(column);
         sqlQuery.addSelect(column.getAttributeName());
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -145,6 +160,7 @@ public class SQLTupleCollection extends TupleCollection {
 
     @Override
     public TupleCollection project(Collection<Column> columns) {
+        Preconditions.checkNotNull(columns);
         for (Column column : columns) {
             sqlQuery.addSelect(column.getAttributeName());
         }
@@ -274,7 +290,6 @@ public class SQLTupleCollection extends TupleCollection {
      * @param collection target collection.
      * @return Returns <code>True</code> if the given collection is the same.
      */
-    // TODO: write hashcode override.
     @Override
     public boolean equals(Object collection) {
         if (collection == this) {
@@ -292,6 +307,16 @@ public class SQLTupleCollection extends TupleCollection {
 
         return this.tuples.equals(obj.tuples);
     }
+
+    /**
+     * Calculates the hash code of the <code>TupleCollection</code>.
+     * @return hash code.
+     */
+    @Override
+    public int hashCode() {
+        return dbconfig.hashCode() * tableName.hashCode();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private members">
@@ -309,6 +334,11 @@ public class SQLTupleCollection extends TupleCollection {
      * Synchronize the data schema with underneath database.
      */
     private synchronized void syncSchema() {
+        if (isOrphan()) {
+            tracer.info("Orphan SQLTupleCollection cannot be synced.");
+            return;
+        }
+
         Connection conn = null;
         try {
             SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);

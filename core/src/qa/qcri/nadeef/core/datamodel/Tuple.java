@@ -12,8 +12,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * Tuple class.
- * TODO: consider using Trove for better hashmap performance.
+ * Tuple class represents a tuple (row) in a table.
  */
 public class Tuple {
     //<editor-fold desc="Private Fields">

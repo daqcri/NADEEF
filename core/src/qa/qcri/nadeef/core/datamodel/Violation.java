@@ -15,7 +15,6 @@ import java.util.Set;
 
 /**
  * Violation class.
- * TODO: considering using ORM libraries like JOOQ.
  */
 public class Violation {
     public static final int UnknownId = -1;
@@ -87,6 +86,10 @@ public class Violation {
         return vid.or(-1);
     }
 
+    /**
+     * Sets the vid.
+     * @param vid vid.
+     */
     public void setVid(int vid) {
         this.vid = Optional.of(vid);
     }
