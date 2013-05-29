@@ -114,16 +114,16 @@ public class Fix {
     }
 
     /**
-     * Gets the right value
-     * @return
+     * Gets the right value as a cell.
+     * @return right value as a cell.
      */
     public Cell getRight() {
         return right;
     }
 
     /**
-     * Gets the right value
-     * @return
+     * Gets the right value in string.
+     * @return value in string.
      */
     public String getRightValue() {
         return rightValue;

@@ -83,9 +83,9 @@ public class SimpleExpression {
 
     /**
      * Create a <code>SimpleExpression</code> with <code>Equal</code> operation.
-     * @param column
-     * @param value
-     * @return
+     * @param column column name.
+     * @param value value of the column.
+     * @return An Equal expression.
      */
     public static SimpleExpression newEqual(Column column, String value) {
         return new SimpleExpression(Operation.EQ, column, value);

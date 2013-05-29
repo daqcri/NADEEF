@@ -101,6 +101,23 @@
                classpathref="vendors.jars"/>
     </target>
 
+    <!-- Doc -->
+    <target name="doc">
+        <mkdir dir="${build.root}/doc" />
+        <javadoc
+            sourcepath="core/src;tools/src"
+            classpathref="vendors.jars"
+            destdir="${build.root}/doc"
+            header="NADEEF Core"
+            packagenames=
+                    "qa.qcri.nadeef.core.datamodel,
+                     qa.qcri.nadeef.core.exception,
+                     qa.qcri.nadeef.core.pipeline,
+                     qa.qcri.nadeef.core.util,
+                     qa.qcri.nadeef.tools"
+            doctitle="NADEEF Core">
+        </javadoc>
+    </target>
     <!-- JUnit -->
     <target name="unittest" depends="compile">
         <mkdir dir="${build.root}/testresult" />

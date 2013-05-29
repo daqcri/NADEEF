@@ -307,7 +307,6 @@ public class SQLTupleCollection extends TupleCollection {
 
     /**
      * Synchronize the data schema with underneath database.
-     * @return
      */
     private synchronized void syncSchema() {
         Connection conn = null;
