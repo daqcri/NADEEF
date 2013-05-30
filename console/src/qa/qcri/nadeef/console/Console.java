@@ -376,36 +376,39 @@ public class Console {
                 );
         }
 
-        CleanExecutor executor;
-        if (tokens.length == 1) {
-            executor = executors.get(0);
-        } else {
-            int index = Integer.valueOf(tokens[1]);
-            if (index >= 0 && index < cleanPlans.size()) {
-                executor = executors.get(index);
-            } else {
+        int index = -1;
+        if (tokens.length == 2) {
+            index = Integer.valueOf(tokens[1]);
+            if (index < 0 && index >= cleanPlans.size()) {
                 console.println("Out of index.");
                 return;
             }
         }
 
-        Thread thread = new Thread(new CleanRunnable(executor));
-        thread.start();
+        for (int i = 0; i < executors.size(); i ++) {
+            if (index != -1 && i != index) {
+                continue;
+            }
 
-        do {
-            Thread.sleep(500);
+            CleanExecutor executor = executors.get(i);
+            Thread thread = new Thread(new CleanRunnable(executor));
+            thread.start();
+
+            do {
+                Thread.sleep(500);
+                double percentage = executor.getRunPercentage();
+                printProgress(percentage, "CLEAN");
+            } while (thread.isAlive());
+
+            // print out the final result.
+            String ruleName = executor.getCleanPlan().getRule().getRuleName();
             double percentage = executor.getRunPercentage();
             printProgress(percentage, "CLEAN");
-        } while (thread.isAlive());
-
-        // print out the final result.
-        String ruleName = executor.getCleanPlan().getRule().getRuleName();
-        double percentage = executor.getRunPercentage();
-        printProgress(percentage, "CLEAN");
-        console.println();
-        console.flush();
-        Tracer.printDetectSummary(ruleName);
-        Tracer.printRepairSummary(ruleName);
+            console.println();
+            console.flush();
+            Tracer.printDetectSummary(ruleName);
+            Tracer.printRepairSummary(ruleName);
+        }
     }
 
     private static void set(String cmd) throws IOException {
