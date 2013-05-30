@@ -41,6 +41,7 @@ public class Node {
         return operator.canExecute(nodeCache.tease(key));
     }
 
+    @SuppressWarnings("unchecked")
     public String execute(String key) {
         Object result = null;
         if (operator == null) {

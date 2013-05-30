@@ -57,7 +57,7 @@ public class AdultRule2 extends PairTupleRule {
             int wgt1 = ((Integer)t1.get("fnlwgt")).intValue();
             int wgt2 = ((Integer)t2.get("fnlwgt")).intValue();
             if (Math.abs(wgt1 - wgt2) <= wgt1 * 0.5) {
-                Violation violation = new Violation(this.id);
+                Violation violation = new Violation(this.ruleName);
                 violation.addCell(t1.getCell("race"));
                 violation.addCell(t2.getCell("race"));
                 result.add(violation);

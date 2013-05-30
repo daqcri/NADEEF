@@ -34,7 +34,7 @@ public class CSVDumper {
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
         String tableName = "csvtable_" + fileName; //  + '_' + System.currentTimeMillis();
-        dump(conn, file, tableName, "public");
+        dump(conn, file, tableName);
         return tableName;
     }
 
@@ -44,13 +44,11 @@ public class CSVDumper {
      * @param conn JDBC connection.
      * @param file CSV file.
      * @param tableName new created table name.
-     * @param schemaName schema name
      */
     public static void dump(
             Connection conn,
             File file,
-            String tableName,
-            String schemaName
+            String tableName
     ) throws IllegalAccessException, SQLException, IOException {
         Tracer tracer = Tracer.getTracer(CSVDumper.class);
         Stopwatch stopwatch = new Stopwatch().start();
@@ -64,7 +62,7 @@ public class CSVDumper {
             StringBuilder header = new StringBuilder(reader.readLine());
             // TODO: make it other DB compatible
             header.insert(0, "TID SERIAL PRIMARY KEY,");
-            String fullTableName = schemaName + "." + tableName;
+            String fullTableName = tableName;
             Statement stat = conn.createStatement();
             stat.setFetchSize(1024);
             String sql = "DROP TABLE IF EXISTS " + fullTableName + " CASCADE";

@@ -18,7 +18,6 @@ import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.FileHelper;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
@@ -148,7 +147,6 @@ public class Console {
 
             while ((line = console.readLine()) != null) {
                 line = line.trim();
-                Tracer.recreateStat();
                 try {
                     if (line.startsWith("exit")) {
                         break;
@@ -245,7 +243,7 @@ public class Console {
             );
         }
         String fileName = splits[1];
-        File file = FileHelper.getFile(fileName);
+        File file = CommonTools.getFile(fileName);
         try {
             cleanPlans = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
         } catch (InvalidCleanPlanException ex) {
@@ -292,35 +290,38 @@ public class Console {
             return;
         }
 
-        CleanExecutor executor;
-        if (tokens.length == 1) {
-            executor = executors.get(0);
-        } else {
-            int index = Integer.valueOf(tokens[1]);
-            if (index >= 0 && index < cleanPlans.size()) {
-                executor = executors.get(index);
-            } else {
+        int index = -1;
+        if (tokens.length == 2) {
+            index = Integer.valueOf(tokens[1]);
+            if (index < 0 || index >= cleanPlans.size()) {
                 console.println("Out of index.");
                 return;
             }
         }
 
-        Thread thread = new Thread(new DetectRunnable(executor));
-        thread.start();
+        for (int i = 0; i < executors.size(); i ++) {
+            if (index != -1 && i != index) {
+                continue;
+            }
 
-        do {
-            Thread.sleep(500);
+            CleanExecutor executor = executors.get(i);
+            Thread thread = new Thread(new DetectRunnable(executor));
+            thread.start();
+
+            do {
+                Thread.sleep(500);
+                double percentage = executor.getDetectPercentage();
+                printProgress(percentage, "DETECT");
+            } while (thread.isAlive());
+
+            // print out the final result.
+            String ruleName = executor.getCleanPlan().getRule().getRuleName();
             double percentage = executor.getDetectPercentage();
             printProgress(percentage, "DETECT");
-        } while (thread.isAlive());
-
-        // print out the final result.
-        String ruleName = executor.getCleanPlan().getRule().getRuleName();
-        double percentage = executor.getDetectPercentage();
-        printProgress(percentage, "DETECT");
-        console.println();
-        console.flush();
-        Tracer.printDetectSummary(ruleName);
+            console.println();
+            console.flush();
+            Tracer.printDetectSummary(ruleName);
+        }
     }
 
     private static void repair(String cmd) throws IOException, InterruptedException {
@@ -332,35 +333,38 @@ public class Console {
                 );
         }
 
-        CleanExecutor executor;
-        if (tokens.length == 1) {
-            executor = executors.get(0);
-        } else {
-            int index = Integer.valueOf(tokens[1]);
-            if (index >= 0 && index < cleanPlans.size()) {
-                executor = executors.get(index);
-            } else {
+        int index = -1;
+        if (tokens.length == 2) {
+            index = Integer.valueOf(tokens[1]);
+            if (index < 0 && index >= cleanPlans.size()) {
                 console.println("Out of index.");
                 return;
             }
         }
 
-        Thread thread = new Thread(new RepairRunnable(executor));
-        thread.start();
+        for (int i = 0; i < executors.size(); i ++) {
+            if (i != -1 && index != i) {
+                continue;
+            }
 
-        do {
-            Thread.sleep(500);
+            CleanExecutor executor = executors.get(i);
+            Thread thread = new Thread(new RepairRunnable(executor));
+            thread.start();
+
+            do {
+                Thread.sleep(500);
+                double percentage = executor.getRepairPercentage();
+                printProgress(percentage, "REPAIR");
+            } while (thread.isAlive());
+
+            // print out the final result.
+            String ruleName = executor.getCleanPlan().getRule().getRuleName();
             double percentage = executor.getRepairPercentage();
             printProgress(percentage, "REPAIR");
-        } while (thread.isAlive());
-
-        // print out the final result.
-        String ruleName = executor.getCleanPlan().getRule().getRuleName();
-        double percentage = executor.getRepairPercentage();
-        printProgress(percentage, "REPAIR");
-        console.println();
-        console.flush();
-        Tracer.printRepairSummary(ruleName);
+            console.println();
+            console.flush();
+            Tracer.printRepairSummary(ruleName);
+        }
     }
 
     private static void run(String cmd) throws IOException, InterruptedException {
@@ -429,16 +433,16 @@ public class Console {
                 " |    load a NADEEF clean plan.\n" +
                 " |\n" +
                 " |detect [rule id] :\n" +
-                " |    start the violation detection with a given rule id number (by default it is 0).\n" +
+                " |    start the violation detection with a given rule id number.\n" +
                 " |\n" +
                 " |list : \n" +
                 " |    list available rules.\n" +
                 " |\n" +
                 " |repair [rule id] :\n" +
-                " |    repair the data source with a given rule id number (by default it is 0).\n" +
+                " |    repair the data source with a given rule id number.\n" +
                 " |\n" +
                 " |run [rule id]:\n" +
-                " |    run both detect and clean with a given rule id number (by default it is 0). \n" +
+                " |    run both detect and clean with a given rule id number. \n" +
                 " |\n" +
                 " |schema [table name]: \n" +
                 " |    list the table schema from the data source. \n" +

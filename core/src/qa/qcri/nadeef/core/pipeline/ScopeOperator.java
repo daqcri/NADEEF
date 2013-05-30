@@ -24,7 +24,7 @@ public class ScopeOperator<E>
      * Constructor.
      * @param rule
      */
-    public ScopeOperator(Rule rule) {
+    public ScopeOperator(Rule<E> rule) {
         this.rule = rule;
     }
 
@@ -44,16 +44,16 @@ public class ScopeOperator<E>
         setPercentage(0.5f);
         long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         long currentTime;
-        Tracer.addStatEntry(Tracer.StatType.HScopeTime, time);
+        Tracer.putStatEntry(Tracer.StatType.HScopeTime, time);
 
         Collection<TupleCollection> verticalScopeResult =
             rule.verticalScope(horizontalScopeResult);
 
         currentTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.addStatEntry(Tracer.StatType.VScopeTime, currentTime - time);
-        Tracer.addStatEntry(Tracer.StatType.AfterScopeTuple, verticalScopeResult.size());
+        Tracer.putStatEntry(Tracer.StatType.VScopeTime, currentTime - time);
+        Tracer.putStatEntry(Tracer.StatType.AfterScopeTuple, verticalScopeResult.size());
         Collection<TupleCollection> blockResult = rule.block(verticalScopeResult);
-        Tracer.addStatEntry(Tracer.StatType.Blocks, blockResult.size());
+        Tracer.putStatEntry(Tracer.StatType.Blocks, blockResult.size());
         stopwatch.stop();
         return blockResult;
     }

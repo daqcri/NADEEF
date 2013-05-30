@@ -61,7 +61,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     " VALUES (default, ?, ?, ?, ?, ?, ?, current_timestamp)");
             for (Fix fix : fixes) {
                 Cell cell = fix.getLeft();
-                oldValue = cell.getAttributeValue().toString();
+                oldValue = cell.getValue().toString();
 
                 if (updateHistory.containsKey(cell)) {
                     String value = updateHistory.get(cell);
@@ -109,7 +109,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
             stat.executeBatch();
             auditInsertStat.executeBatch();
             conn.commit();
-            Tracer.addStatEntry(Tracer.StatType.UpdatedCellNumber, count);
+            Tracer.putStatEntry(Tracer.StatType.UpdatedCellNumber, count);
         } finally {
             if (conn != null) {
                 conn.close();

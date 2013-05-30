@@ -47,6 +47,7 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
          * @throws Exception if unable to compute a result
          */
         @Override
+        @SuppressWarnings("unchecked")
         public Boolean call() throws Exception {
             rule.iterator(tupleCollection, iteratorStream);
             iteratorStream.flush();
@@ -95,12 +96,12 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
         // mark the end of the iteration output
         IteratorStream.markEnd();
 
-        Tracer.addStatEntry(
+        Tracer.putStatEntry(
             Tracer.StatType.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.addStatEntry(Tracer.StatType.IterationCount, blockSize);
+        Tracer.putStatEntry(Tracer.StatType.IterationCount, blockSize);
         stopwatch.stop();
         return true;
     }

@@ -1,7 +1,7 @@
 {
     "source" : {
         "type" : "csv",
-        "file" : "test/src/qa/qcri/nadeef/test/input/hospital_30k.csv",
+        "file" : ["test/src/qa/qcri/nadeef/test/input/hospital_30k.csv"]
     },
     "rule" : [
         {

@@ -74,11 +74,11 @@ public class Cell {
         this.column = column;
     }
 
-    public Object getAttributeValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setAttributeValue(Object value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

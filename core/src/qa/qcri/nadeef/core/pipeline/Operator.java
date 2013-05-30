@@ -42,6 +42,7 @@ public abstract class Operator<TInput, TOutput> {
      * @return inputType class.
      */
     // TODO: solve the reflection in a better way
+    @SuppressWarnings("all")
     public Type getInputType() {
         Type genericSuperType = getClass().getGenericSuperclass();
         if (!(genericSuperType instanceof ParameterizedType)) {

@@ -222,6 +222,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<TupleCollection> groupOn(Collection<Column> columns) {
         List result = Lists.newArrayList(this);
         for (Column column : columns) {
@@ -429,7 +430,7 @@ public class SQLTupleCollection extends TupleCollection {
             }
         }
 
-        Tracer.addStatEntry(Tracer.StatType.DBLoadTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        Tracer.putStatEntry(Tracer.StatType.DBLoadTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         stopwatch.stop();
         return true;
     }

@@ -31,7 +31,7 @@ public class MyRule1 extends SingleTupleRule {
         String zip = tuple.getString("zip");
         if (zip.equalsIgnoreCase("1183JV")) {
             if (!city.equalsIgnoreCase("amsterdam")) {
-                Violation newViolation = new Violation(this.id);
+                Violation newViolation = new Violation(this.ruleName);
                 newViolation.addCell(tuple.getCell("city"));
                 newViolation.addCell(tuple.getCell("zip"));
                 result.add(newViolation);

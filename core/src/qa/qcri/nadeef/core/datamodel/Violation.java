@@ -60,6 +60,18 @@ public class Violation {
         return cells;
     }
 
+    public Cell getCell(String tableName, String columnName) {
+        for (Cell cell : cells) {
+            if (
+                cell.getColumn().getTableName().equals(tableName) &&
+                cell.getColumn().getAttributeName().equals(columnName)
+            ) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
     /**
      * Adds a new violated cell.
      * @param cell violated cell.

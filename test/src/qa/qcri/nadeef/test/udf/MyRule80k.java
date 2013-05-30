@@ -95,7 +95,7 @@ public class MyRule80k extends PairTupleRule {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
         List<Violation> result = new ArrayList();
-        Violation violation = new Violation(id);
+        Violation violation = new Violation(ruleName);
         violation.addTuple(left);
         violation.addTuple(right);
         result.add(violation);

@@ -62,7 +62,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         conn.commit();
         stat.close();
         conn.close();
-        Tracer.addStatEntry(Tracer.StatType.FixExport, count);
+        Tracer.putStatEntry(Tracer.StatType.FixExport, count);
         return count;
     }
 
@@ -87,7 +87,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         sqlBuilder.append(',');
         sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
         sqlBuilder.append("'").append(cell.getColumn().getAttributeName()).append("',");
-        sqlBuilder.append("'").append(cell.getAttributeValue().toString()).append("',");
+        sqlBuilder.append("'").append(cell.getValue().toString()).append("',");
 
         sqlBuilder.append(fix.getOperation().getValue());
         sqlBuilder.append(',');
@@ -97,7 +97,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             sqlBuilder.append(',');
             sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
             sqlBuilder.append("'").append(cell.getColumn().getAttributeName()).append("',");
-            sqlBuilder.append("'").append(cell.getAttributeValue().toString()).append("')");
+            sqlBuilder.append("'").append(cell.getValue().toString()).append("')");
         } else {
             sqlBuilder.append("null, null, null,'" + fix.getRightValue() + "')");
         }

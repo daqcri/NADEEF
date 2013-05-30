@@ -35,19 +35,20 @@ public class ViolationRepair
      * @return output object.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<Collection<Fix>> execute(Collection<Violation> violations)
         throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
         List<Collection<Fix>> result = Lists.newArrayList();
         int count = 0;
         for (Violation violation : violations) {
-            Collection<Fix> fix = rule.repair(violation);
+            Collection<Fix> fix = (Collection<Fix>)rule.repair(violation);
             result.add(fix);
             count ++;
             setPercentage(count / violations.size());
         }
         long elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / violations.size();
-        Tracer.addStatEntry(Tracer.StatType.RepairCallTime, elapseTime);
+        Tracer.putStatEntry(Tracer.StatType.RepairCallTime, elapseTime);
         stopwatch.stop();
         return result;
     }

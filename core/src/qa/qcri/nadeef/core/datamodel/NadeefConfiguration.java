@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  * Nadeef configuration class.
- * TODO: adds XML configuration support.
  */
 public class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
@@ -39,6 +38,7 @@ public class NadeefConfiguration {
      * Initialize configuration from string.
      * @param reader configuration string.
      */
+    @SuppressWarnings("unchecked")
     public synchronized static void initialize(Reader reader) {
         Preconditions.checkNotNull(reader);
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
@@ -73,12 +73,12 @@ public class NadeefConfiguration {
         }
 
         JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
-        Set<String> keySet = ruleext.keySet();
+        Set<String> keySet = (Set<String>)ruleext.keySet();
         for (String key : keySet) {
             String builderClassName = (String)ruleext.get(key);
             try {
                 Class builderClass = CommonTools.loadClass(builderClassName);
-                RuleBuilder writer = (RuleBuilder)builderClass.getConstructor().newInstance();
+                RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
                 ruleExtension.put(key, writer);
             } catch (Exception e) {
                 tracer.err("Loading Rule extension " + key + " failed: ", e);

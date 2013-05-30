@@ -43,7 +43,7 @@ public class ViolationDetector<T>
     class Detector<T> implements Callable<Integer> {
         private List<T> tupleList;
 
-        public Detector(List tupleList) {
+        public Detector(List<T> tupleList) {
             this.tupleList = tupleList;
         }
 
@@ -54,6 +54,7 @@ public class ViolationDetector<T>
          * @throws Exception if unable to compute a result
          */
         @Override
+        @SuppressWarnings("unchecked")
         public Integer call() throws Exception {
             int count = 0;
             Collection<Violation> result = Lists.newArrayList();
@@ -72,7 +73,7 @@ public class ViolationDetector<T>
                     count ++;
                 } else if (rule.supportManyInputs()) {
                     TupleCollection collection = (TupleCollection)item;
-                    result.addAll(rule.detect(collection));
+                    result.addAll((Collection<Violation>)rule.detect(collection));
                     count ++;
                 }
             }
@@ -91,17 +92,18 @@ public class ViolationDetector<T>
      * @return list of violations.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<Violation> execute(Rule rule) throws Exception {
         this.rule = rule;
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
-        List<T> tupleList = null;
+        List<T> tupleList;
         int detectCount = 0;
         int detectThread = 0;
         long elapsedTime = 0l;
 
         while (true) {
-            tupleList = iteratorStream.poll();
+            tupleList = (List<T>)iteratorStream.poll();
             if (tupleList.size() == 0) {
                 break;
             }
@@ -115,9 +117,9 @@ public class ViolationDetector<T>
             detectCount += pool.take().get();
         }
 
-        Tracer.addStatEntry(Tracer.StatType.DetectCallTime, elapsedTime);
-        Tracer.addStatEntry(Tracer.StatType.DetectCount, detectCount);
-        Tracer.addStatEntry(Tracer.StatType.DetectThreadCount, detectThread);
+        Tracer.putStatEntry(Tracer.StatType.DetectCallTime, elapsedTime);
+        Tracer.putStatEntry(Tracer.StatType.DetectCount, detectCount);
+        Tracer.putStatEntry(Tracer.StatType.DetectThreadCount, detectThread);
 
         return resultCollection;
     }

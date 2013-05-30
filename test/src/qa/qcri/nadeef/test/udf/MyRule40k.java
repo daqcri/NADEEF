@@ -96,7 +96,7 @@ public class MyRule40k extends PairTupleRule {
         List<Violation> result = new ArrayList();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(id);
+        Violation violation = new Violation(ruleName);
         violation.addTuple(left);
         violation.addTuple(right);
         result.add(violation);

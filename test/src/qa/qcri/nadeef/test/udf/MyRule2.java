@@ -27,7 +27,7 @@ public class MyRule2 extends PairTupleRule {
 
         Column city = new Column(tableNames.get(0), "city");
 
-        Violation violation = new Violation(id);
+        Violation violation = new Violation(ruleName);
         if (!left.get(city).equals(right.get(city))) {
             violation.addTuple(left);
 			violation.addTuple(right);

@@ -121,13 +121,13 @@ public class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>>
         for (HashSet<Cell> cluster : clusters) {
             Multiset<Object> countSet = HashMultiset.create();
             for (Cell cell : cluster) {
-                countSet.add(cell.getAttributeValue());
+                countSet.add(cell.getValue());
             }
 
             countSet = Multisets.copyHighestCountFirst(countSet);
             Object value = countSet.iterator().next();
             for (Cell cell : cluster) {
-                if (cell.getAttributeValue().equals(value)) {
+                if (cell.getValue().equals(value)) {
                     // skip the correct value.
                     continue;
                 }

@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -56,14 +57,12 @@ public class CleanPlan {
             InvalidRuleException,
             InvalidCleanPlanException {
         Preconditions.checkNotNull(reader);
+        JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
 
         // a set which prevents generating new tables whenever encounters among multiple rules.
         List<CleanPlan> result = Lists.newArrayList();
-        String csvTableName = null;
         boolean isCSV = false;
-        List<String> tableNames = Lists.newArrayList();
         List<Schema> schemas = Lists.newArrayList();
-        JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
 
         Connection conn = null;
         try {
@@ -77,11 +76,6 @@ public class CleanPlan {
             switch (type) {
                 case "csv":
                     isCSV = true;
-                    String fileName = (String)src.get("file");
-                    File file = FileHelper.getFile(fileName);
-                    // source is a CSV file, dump it to NADEEF database first.
-                    conn = DBConnectionFactory.getNadeefConnection();
-                    csvTableName = CSVDumper.dump(conn, file);
                     dbConfig = NadeefConfiguration.getDbConfig();
                     break;
                 default:
@@ -102,19 +96,42 @@ public class CleanPlan {
             // ----------------------------------------
             // parsing the rules
             // ----------------------------------------
-            // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match the pattern.
+            // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match the table pattern.
             JSONArray ruleArray = (JSONArray)jsonObject.get("rule");
             ArrayList<Rule> rules = Lists.newArrayList();
+            List<String> targetTableNames;
             for (int i = 0; i < ruleArray.size(); i ++) {
+                schemas.clear();
                 JSONObject ruleObj = (JSONObject)ruleArray.get(i);
-                List<String> sourceTableNames;
-                List<String> targetTableNames;
                 if (isCSV) {
-                    targetTableNames = Arrays.asList(csvTableName);
-                    tableNames.add(csvTableName);
-                    schemas.add(DBMetaDataTool.getSchema(csvTableName));
+                    // working with CSV
+                    List<String> fullFileNames = (List<String>)src.get("file");
+                    if (ruleObj.containsKey("target")) {
+                        targetTableNames = (List<String>)ruleObj.get("target");
+                        Preconditions.checkArgument(
+                            targetTableNames.size() <= 2,
+                            "NADEEF only supports MAX 2 tables per rule."
+                        );
+                    } else {
+                        // if the target table names does not exist, we use default naming.
+                        targetTableNames = Lists.newArrayList();
+                        for (String fullFileName : fullFileNames) {
+                            targetTableNames.add(
+                                Files.getNameWithoutExtension(fullFileName) + "_copy"
+                            );
+                        }
+                    }
+
+                    // source is a CSV file, dump it to NADEEF database.
+                    conn = DBConnectionFactory.getNadeefConnection();
+                    for (int j = 0; j < targetTableNames.size(); j ++) {
+                        File file = CommonTools.getFile(fullFileNames.get(j));
+                        CSVDumper.dump(conn, file, targetTableNames.get(j));
+                        schemas.add(DBMetaDataTool.getSchema(targetTableNames.get(j)));
+                    }
                 } else {
-                    sourceTableNames = (List<String>)ruleObj.get("table");
+                    // working with database
+                    List<String> sourceTableNames = (List<String>)ruleObj.get("table");
                     for (String tableName : sourceTableNames) {
                         if (!DBMetaDataTool.isTableExist(tableName)) {
                             throw
@@ -124,9 +141,10 @@ public class CleanPlan {
                                 );
                         }
                     }
-                    tableNames.addAll(sourceTableNames);
-                    targetTableNames = (List<String>)ruleObj.get("target");
-                    if (targetTableNames == null) {
+
+                    if (ruleObj.containsKey("target")) {
+                        targetTableNames = (List<String>)ruleObj.get("target");
+                    } else {
                         // when user doesn't provide target tables we create a copy for them
                         // with default table names.
                         targetTableNames = Lists.newArrayList();

@@ -40,7 +40,7 @@ public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
 
 
             result = Fixes.fromQuery(resultSet);
-            Tracer.addStatEntry(Tracer.StatType.FixDeserialize, result.size());
+            Tracer.putStatEntry(Tracer.StatType.FixDeserialize, result.size());
         } finally {
             if (conn != null) {
                 conn.close();

@@ -6,11 +6,8 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
@@ -97,7 +94,7 @@ public class CleanExecutor {
         queryFlow.waitUntilFinish();
         detectFlow.waitUntilFinish();
 
-        Tracer.addStatEntry(
+        Tracer.putStatEntry(
             Tracer.StatType.DetectTime,
             queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
         );
@@ -131,12 +128,12 @@ public class CleanExecutor {
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
-        Tracer.addStatEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
+        Tracer.putStatEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
 
         updateFlow.start();
         updateFlow.waitUntilFinish();
 
-        Tracer.addStatEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
+        Tracer.putStatEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
         return this;
     }
 
@@ -166,6 +163,7 @@ public class CleanExecutor {
     /**
      * Assemble the workflow on demand.
      */
+    @SuppressWarnings("unchecked")
     private void assembleFlow() {
         Rule rule = cleanPlan.getRule();
 

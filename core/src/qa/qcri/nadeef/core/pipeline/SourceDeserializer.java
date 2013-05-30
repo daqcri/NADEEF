@@ -39,10 +39,11 @@ public class SourceDeserializer extends Operator<Rule, Collection<TupleCollectio
      * @return output object.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<TupleCollection> execute(Rule rule) {
         Preconditions.checkNotNull(rule);
 
-        List<String> tableNames = rule.getTableNames();
+        List<String> tableNames = (List<String>)rule.getTableNames();
         List<TupleCollection> collections = new ArrayList<TupleCollection>();
         if (tableNames.size() == 2) {
             collections.add(new SQLTupleCollection(tableNames.get(0), dbConfig));

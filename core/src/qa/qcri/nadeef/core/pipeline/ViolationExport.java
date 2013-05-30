@@ -55,6 +55,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
             // TODO: this is not out-of-process safe.
             int vid = Violations.generateViolationId();
             for (Violation violation : violations) {
+                count ++;
                 List<Cell> cells = Lists.newArrayList(violation.getCells());
                 for (Cell cell : cells) {
                     sb.append(getSQLInsert(violation.getRuleId(), vid, cell));
@@ -68,7 +69,6 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                         );
                         sb.delete(0, sb.length());
                     }
-                    count ++;
                 }
                 vid ++;
             }
@@ -85,11 +85,11 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
 
         conn.commit();
         conn.close();
-        Tracer.addStatEntry(
+        Tracer.putStatEntry(
             Tracer.StatType.ViolationExportTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
-        Tracer.addStatEntry(Tracer.StatType.ViolationExport, count);
+        Tracer.putStatEntry(Tracer.StatType.ViolationExport, count);
         return count;
     }
 
@@ -109,7 +109,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         sqlBuilder.append(',');
         sqlBuilder.append(column.getAttributeName());
         sqlBuilder.append(',');
-        Object value = cell.getAttributeValue();
+        Object value = cell.getValue();
         if (value == null) {
             sqlBuilder.append("null");
         } else {

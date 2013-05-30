@@ -98,7 +98,7 @@ public class MyRule3 extends PairTupleRule {
     public Collection<Violation> detect(TuplePair tuplePair) {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(id);
+        Violation violation = new Violation(ruleName);
         violation.addTuple(left);
         violation.addTuple(right);
         return Lists.newArrayList(violation);

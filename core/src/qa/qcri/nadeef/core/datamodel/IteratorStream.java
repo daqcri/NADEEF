@@ -37,9 +37,9 @@ public class IteratorStream<E> {
      * Gets a buffer of objects from the queue.
      * @return a list of objects from the queue.
      */
+    @SuppressWarnings("unchecked")
     public List<E> poll() {
         List<E> item;
-
         while ((item = queue.poll()) == null);
         return item;
     }
@@ -60,7 +60,8 @@ public class IteratorStream<E> {
      * Puts the item in the buffer.
      * @param item item.
      */
-    public void put(E item) {
+    @SuppressWarnings("unchecked")
+    public void put(Object item) {
         if (buffer.size() == BUFFER_BOUNDARY) {
             try {
                 while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
@@ -70,7 +71,7 @@ public class IteratorStream<E> {
             buffer = Lists.newArrayList();
         }
 
-        buffer.add(item);
+        buffer.add((E)item);
     }
 
     /**

@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 /**
@@ -29,8 +30,12 @@ public class Fix {
         private Cell right;
         private String rightValue;
         private int vid;
+        private Optional<Operation> operation;
 
-        public Builder() {}
+        public Builder() {
+            operation = Optional.absent();
+        }
+
         public Builder(Violation violation) {
             this.vid = violation.getVid();
         }
@@ -57,13 +62,27 @@ public class Fix {
             return this;
         }
 
+        public Builder op(Operation operation) {
+            this.operation = Optional.of(operation);
+            return this;
+        }
+
         public Fix build() {
-            if (rightValue != null) {
-                return new Fix(vid, left, rightValue, Operation.CEQ);
+            Fix fix;
+            if (operation.isPresent()) {
+                fix = new Fix(vid, left, right, operation.get());
+                operation = Optional.absent();
+            } else {
+                if (rightValue != null) {
+                    fix = new Fix(vid, left, rightValue, Operation.CEQ);
+                } else {
+                    fix = new Fix(vid, left, right, Operation.EQ);
+                }
             }
-            return new Fix(vid, left, right, Operation.EQ);
+            return fix;
         }
     }
+
     //<editor-fold desc="Constructor">
     protected Fix(int vid, Cell left, Operation operation) {
         this.left = Preconditions.checkNotNull(left);

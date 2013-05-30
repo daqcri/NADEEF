@@ -43,7 +43,7 @@ public class CleanPlanTest {
         Connection conn = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
-            CSVDumper.dump(conn, TestDataRepository.getLocationData1(), "location", "public");
+            CSVDumper.dump(conn, TestDataRepository.getLocationData1(), "location");
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());

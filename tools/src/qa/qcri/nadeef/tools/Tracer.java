@@ -101,13 +101,8 @@ public class Tracer {
      * @param statType type.
      * @param value value.
      */
-    public static synchronized void addStatEntry(StatType statType, long value) {
-        if (stats.containsKey(statType)) {
-            Long oldValue = stats.get(statType);
-            stats.put(statType, value + oldValue);
-        } else {
-            stats.put(statType, value);
-        }
+    public static synchronized void putStatEntry(StatType statType, long value) {
+        stats.put(statType, value);
     }
 
     public static void setInfo(boolean mode) {
@@ -124,14 +119,6 @@ public class Tracer {
 
     public static boolean isVerboseOn() {
         return verboseFlag;
-    }
-
-    public static void recreateStat() {
-        stats.clear();
-    }
-
-    public static void printRepairSummary() {
-        printDetectSummary(null);
     }
 
     public static void printRepairSummary(String ruleName) {
@@ -171,7 +158,7 @@ public class Tracer {
         out(formatEntry(StatType.DetectCount, "Detect tuple count", ""));
         out(formatEntry(StatType.ViolationExport, "Violation", ""));
         out(formatEntry(StatType.ViolationExportTime, "Violation export time", ""));
-        long totalTime = stats.get(StatType.DBLoadTime);
+        long totalTime = stats.get(StatType.DetectTime);
         long totalViolation = stats.get(StatType.ViolationExport);
         out("----------------------------------------------------------------");
         console.println(
