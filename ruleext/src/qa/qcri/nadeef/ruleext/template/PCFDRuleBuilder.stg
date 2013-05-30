@@ -61,6 +61,18 @@ public class $CFDName$ extends PairTupleRule {
     }
 
     /**
+     * Default block operation.
+     * @param tupleCollections a collection of tables.
+     * @return a collection of blocked tables.
+     */
+    @Override
+    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollections) {
+        TupleCollection tupleCollection = tupleCollections.iterator().next();
+        Collection<TupleCollection> groupResult = tupleCollection.groupOn(lhs);
+        return groupResult;
+    }
+
+    /**
      * Default vertical scope operation.
      * @param tupleCollections input tuple collections.
      * @return filtered tuple collection.

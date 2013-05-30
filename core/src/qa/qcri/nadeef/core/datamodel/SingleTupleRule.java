@@ -19,11 +19,11 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
 
     /**
      * Internal method to initialize a rule.
-     * @param id Rule id.
+     * @param name Rule name.
      * @param tableNames Table names.
      */
-    public void initialize(String id, List<String> tableNames) {
-        super.initialize(id, tableNames);
+    public void initialize(String name, List<String> tableNames) {
+        super.initialize(name, tableNames);
     }
 
     /**
@@ -66,7 +66,9 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
      */
     @Override
     public void iterator(TupleCollection tupleCollection, IteratorStream iteratorStream) {
-        iteratorStream.put(tupleCollection);
+        for (int i = 0; i < tupleCollection.size(); i ++) {
+            iteratorStream.put(tupleCollection.get(i));
+        }
     }
 
 }

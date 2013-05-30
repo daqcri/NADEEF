@@ -60,21 +60,16 @@ public class ViolationDetector<T>
             Collection<Violation> result = Lists.newArrayList();
             for (int i = 0; i < tupleList.size(); i ++) {
                 T item = tupleList.get(i);
+                count ++;
                 if (rule.supportOneInput()) {
-                    TupleCollection collection = (TupleCollection)item;
-                    for (int j = 0; j < collection.size(); j ++) {
-                        Tuple tuple = collection.get(j);
-                        result.addAll(rule.detect(tuple));
-                        count ++;
-                    }
+                    Tuple tuple = (Tuple)item;
+                    result.addAll(rule.detect(tuple));
                 } else if (rule.supportTwoInputs()) {
                     TuplePair pair = (TuplePair)item;
                     result.addAll(rule.detect(pair));
-                    count ++;
                 } else if (rule.supportManyInputs()) {
                     TupleCollection collection = (TupleCollection)item;
                     result.addAll((Collection<Violation>)rule.detect(collection));
-                    count ++;
                 }
             }
 

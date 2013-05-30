@@ -172,7 +172,12 @@ public class CleanExecutor {
             // assemble the query flow.
             queryFlow = new Flow("query");
             queryFlow.setInputKey(inputKey).addNode(new SourceDeserializer(cleanPlan));
-            if (rule.supportTwoInputs()) {
+
+            if (rule.supportOneInput()) {
+                queryFlow
+                    .addNode(new ScopeOperator<Tuple>(rule))
+                    .addNode(new Iterator<Tuple>(rule), 6);
+            } else if (rule.supportTwoInputs()) {
                 // the case where the rule is working on multiple tables (2).
                 queryFlow
                     .addNode(new ScopeOperator<TuplePair>(rule))

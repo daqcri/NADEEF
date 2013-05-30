@@ -31,16 +31,16 @@ public class ScopeOperator<E>
     /**
      * Execute the operator.
      *
-     * @param tuples a collection of <code>TupleCollection</code> (tables).
+     * @param tupleCollections a collection of <code>TupleCollection</code> (tables).
      * @return output object.
      */
     @Override
-    public Collection<TupleCollection> execute(Collection<TupleCollection> tuples) throws
-        Exception {
+    public Collection<TupleCollection> execute(Collection<TupleCollection> tupleCollections)
+        throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
         // Here the horizontalScope needs to be called before vertical Scope since
         // it may needs the attributes which are going to be removed from verticals scope.
-        Collection<TupleCollection> horizontalScopeResult = rule.horizontalScope(tuples);
+        Collection<TupleCollection> horizontalScopeResult = rule.horizontalScope(tupleCollections);
         setPercentage(0.5f);
         long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         long currentTime;

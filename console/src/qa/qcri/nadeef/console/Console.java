@@ -343,7 +343,7 @@ public class Console {
         }
 
         for (int i = 0; i < executors.size(); i ++) {
-            if (i != -1 && index != i) {
+            if (index != -1 && index != i) {
                 continue;
             }
 
