@@ -1,0 +1,127 @@
+leftItem(columnName) ::= <% lhs.add(new Column("$columnName$")); $\n$%>
+
+rightItem(columnName) ::= <% rhs.add(new Column("$columnName$")); $\n$%>
+
+lExpressionItem(columnName, value) ::= <<
+leftFilterExpressions.add(SimpleExpression.newEqual(new Column("$columnName$"), "$value$"));$\n$
+>>
+
+rExpressionItem(columnName, value) ::= <<
+rightFilterExpressions.add(SimpleExpression.newEqual(new Column("$columnName$"), "$value$"));$\n$
+>>
+
+cfdTemplate(CFDName, leftHandSide, rightHandSide, lExpression, rExpression) ::= <<
+
+/*
+ * Copyright (C) Qatar Computing Research Institute, 2013.
+ * All rights reserved.
+ */
+import qa.qcri.nadeef.core.datamodel.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * Single Tuple CFD rule.
+ *
+ * @author Amr Ebaid (aebaid@qf.org.qa)
+ */
+public class $CFDName$ extends SingleTupleRule {
+    protected List<Column> lhs;
+    protected List<Column> rhs;
+    protected List<SimpleExpression> leftFilterExpressions;
+    protected List<SimpleExpression> rightFilterExpressions;
+    protected HashMap<Column, SimpleExpression> filterCache;
+
+    public $CFDName$() {}
+
+    @Override
+    public void initialize(String id, List<String> tableNames) {
+        super.initialize(id, tableNames);
+
+        lhs = new ArrayList<Column>();
+        rhs = new ArrayList<Column>();
+        leftFilterExpressions = new ArrayList<SimpleExpression>();
+        rightFilterExpressions = new ArrayList<SimpleExpression>();
+        filterCache = new HashMap<Column, SimpleExpression>();
+
+        $leftHandSide:leftItem()$
+        $rightHandSide:rightItem()$
+        $lExpression$
+        $rExpression$
+    }
+
+    /**
+     * Default horizontal scope operation.
+     * @param tupleCollections input tuple collections.
+     * @return filtered tuple collection.
+     */
+    @Override
+    public Collection<TupleCollection> horizontalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
+        tupleCollections.iterator().next().project(lhs).project(rhs);
+        return tupleCollections;
+    }
+
+    /**
+     * Default vertical scope operation.
+     * @param tupleCollections input tuple collections.
+     * @return filtered tuple collection.
+     */
+    @Override
+    public Collection<TupleCollection> verticalScope(
+        Collection<TupleCollection> tupleCollections
+    ) {
+        tupleCollections.iterator().next().filter(leftFilterExpressions);
+        return tupleCollections;
+    }
+
+    /**
+     * Default group operation.
+     *
+     * @param tuples input tuple
+     * @return a group of tuple collection.
+     */
+    @Override
+    public void iterator(TupleCollection tuples, IteratorStream output) {
+        ArrayList<Tuple> result = new ArrayList();
+        int pos = 0;
+       	while (pos < tuples.size()) {
+            Tuple t = tuples.get(pos++);
+            if (!t.getString(rhs.get(0)).equals(rightFilterExpressions.get(0).getValue())) {            
+                output.put(t);
+        	}
+    	}
+    }
+
+    /**
+     * Detect rule with many tuples.
+     *
+     * @param tuplePair input tuple.
+     * @return Violation collection.
+     */
+    @Override
+    public Collection<Violation> detect(Tuple tuple) {
+        List<Violation> result = new ArrayList();
+        Violation violation = new Violation(ruleName);
+        violation.addTuple(tuple);
+        result.add(violation);
+        return result;
+    }
+
+    /**
+     * Repair of this rule.
+     *
+     * @param violation violation input.
+     * @return a candidate fix.
+     */
+    @Override
+    public Collection<Fix> repair(Violation violation) {
+        List<Fix> result = new ArrayList();
+        return result;
+    }
+}
+>>

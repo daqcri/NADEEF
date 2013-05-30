@@ -2,11 +2,7 @@ leftItem(columnName) ::= <% lhs.add(new Column("$columnName$")); $\n$%>
 
 rightItem(columnName) ::= <% rhs.add(new Column("$columnName$")); $\n$%>
 
-expressionItem(columnName, value) ::= <<
-filterExpressions.add(SimpleExpression.newEqual(new Column("$columnName$"), "$value$"));$\n$
->>
-
-cfdTemplate(CFDName, leftHandSide, rightHandSide, expression) ::= <<
+cfdTemplate(CFDName, leftHandSide, rightHandSide, lExpression) ::= <<
 
 /*
  * Copyright (C) Qatar Computing Research Institute, 2013.
@@ -14,21 +10,21 @@ cfdTemplate(CFDName, leftHandSide, rightHandSide, expression) ::= <<
  */
 import qa.qcri.nadeef.core.datamodel.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Single Tuple CFD rule.
+ * Pair Tuple CFD rule.
+ *
+ * @author Amr Ebaid (aebaid@qf.org.qa)
+ * @author Si Yin (siyin@qf.org.qa)
  */
 public class $CFDName$ extends PairTupleRule {
     protected List<Column> lhs;
     protected List<Column> rhs;
-    protected List<SimpleExpression> filterExpressions;
+    protected List<SimpleExpression> leftFilterExpressions;
     protected HashMap<Column, SimpleExpression> filterCache;
 
     public $CFDName$() {}
@@ -39,12 +35,12 @@ public class $CFDName$ extends PairTupleRule {
 
         lhs = new ArrayList<Column>();
         rhs = new ArrayList<Column>();
-        filterExpressions = new ArrayList<SimpleExpression>();
+        leftFilterExpressions = new ArrayList<SimpleExpression>();
         filterCache = new HashMap<Column, SimpleExpression>();
 
         $leftHandSide:leftItem()$
         $rightHandSide:rightItem()$
-        $expression$
+        $lExpression$
     }
 
     /**
@@ -69,14 +65,27 @@ public class $CFDName$ extends PairTupleRule {
     public Collection<TupleCollection> verticalScope(
         Collection<TupleCollection> tupleCollections
     ) {
-        tupleCollections.iterator().next().filter(filterExpressions);
+    	tupleCollections.iterator().next().filter(leftFilterExpressions);
         return tupleCollections;
+    }
+    
+    /**
+     * Default block operation.
+     * @param tupleCollections a collection of tables.
+     * @return a collection of blocked tables.
+     */
+    @Override
+    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollections) {
+        TupleCollection tupleCollection = tupleCollections.iterator().next();
+        Collection<TupleCollection> groupResult = tupleCollection.groupOn(lhs);
+        return groupResult;
     }
 
     /**
      * Default group operation.
      *
      * @param tuples input tuple
+     * @return a group of tuple collection.
      */
     @Override
     public void iterator(TupleCollection tuples, IteratorStream output) {
