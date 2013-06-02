@@ -19,6 +19,7 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Tests for CleanExecutor.
@@ -118,11 +119,12 @@ public class DetectionTest {
     @Test
     public void cleanExecutorTest5() {
         try {
-            CleanPlan cleanPlan = TestDataRepository.getCleanPlan5();
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.initialize(cleanPlan);
-            executor.detect();
-            verifyViolationResult(84);
+            List<CleanPlan> cleanPlans = TestDataRepository.getCleanPlan5();
+            for (CleanPlan cleanPlan : cleanPlans) {
+                CleanExecutor executor = new CleanExecutor(cleanPlan);
+                executor.detect();
+            }
+            verifyViolationResult(104 );
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

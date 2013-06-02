@@ -12,16 +12,16 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Abstract Tuple Collection. A tupleCollection represents a 'table' in the data.
+ * A Table represents a collection of <code>Tuples</code>.
  */
-public abstract class TupleCollection {
+public abstract class Table {
     protected Schema schema;
 
     /**
      * Constructor.
      * @param schema schema.
      */
-    public TupleCollection(Schema schema) {
+    public Table(Schema schema) {
         this.schema = schema;
     }
 
@@ -34,11 +34,11 @@ public abstract class TupleCollection {
     }
 
     /**
-     * Creates a tuple collection from a collection of tuples.
+     * Creates a <code>Table</code> from a collection of tuples.
      * @param tuples a collection of tuples.
-     * @return <code>TupleCollection</code> instance.
+     * @return <code>Table</code> instance.
      */
-    protected abstract TupleCollection newTupleCollection(Collection<Tuple> tuples);
+    protected abstract Table newTable(Collection<Tuple> tuples);
 
     /**
      * Gets the size of the collection.
@@ -53,30 +53,29 @@ public abstract class TupleCollection {
      */
     public abstract Tuple get(int i);
 
-    //<editor-fold desc="Default TupleCollection behavior">
+    //<editor-fold desc="Default Table behavior">
     // TODO: implements default behaviors
-    public abstract TupleCollection project(String columnName);
-    public abstract TupleCollection project(Column column);
-    public abstract TupleCollection project(Collection<Column> columns);
-    public abstract TupleCollection orderBy(String columnName);
-    public abstract TupleCollection orderBy(Column column);
-    public abstract TupleCollection orderBy(Collection<Column> columns);
-    public abstract TupleCollection filter(SimpleExpression expression);
-    public abstract TupleCollection filter(List<SimpleExpression> expressions);
+    public abstract Table project(String columnName);
+    public abstract Table project(Column column);
+    public abstract Table project(Collection<Column> columns);
+    public abstract Table orderBy(String columnName);
+    public abstract Table orderBy(Column column);
+    public abstract Table orderBy(Collection<Column> columns);
+    public abstract Table filter(SimpleExpression expression);
+    public abstract Table filter(List<SimpleExpression> expressions);
 
     /**
-     * Clean up the resources for this tuple collection. After recycling the collection should
-     * not be used any more.
+     * Clean up the resources for this <code>Table</code>. After recycling the table instance
+     * should not be used any more.
      */
     public void recycle() {};
 
     /**
-     * Partition the tuple collection into multiple tuple collections based
-     * on a list of columns.
-     * @param columns Paritition based on a list of column.
+     * Partition the Table into multiple tuple Table based on a list of columns.
+     * @param columns Partitions based on a list of column.
      * @return A collection of tuple collections.
      */
-    public Collection<TupleCollection> groupOn(Collection<Column> columns) {
+    public Collection<Table> groupOn(Collection<Column> columns) {
         Preconditions.checkNotNull(columns);
         Schema schema = getSchema();
 
@@ -89,7 +88,7 @@ public abstract class TupleCollection {
             }
         }
 
-        List<TupleCollection> groups = Lists.newArrayList();
+        List<Table> groups = Lists.newArrayList();
         orderBy(columns);
         if (size() < 2) {
             groups.add(this);
@@ -117,7 +116,7 @@ public abstract class TupleCollection {
             if (isSameGroup) {
                 curList.add(tuple);
             } else {
-                groups.add(newTupleCollection(curList));
+                groups.add(newTable(curList));
                 curList = Lists.newArrayList();
                 curList.add(tuple);
             }
@@ -125,27 +124,27 @@ public abstract class TupleCollection {
             lastTuple = tuple;
         }
 
-        groups.add(newTupleCollection(curList));
+        groups.add(newTable(curList));
         return groups;
     }
 
     /**
-     * Partition the tuple collection into multiple tuple collections based
+     * Partition the table into multiple table based
      * on the column.
      * @param columnName Partition based on column attribute name.
      * @return A collection of tuple collections.
      */
-    public Collection<TupleCollection> groupOn(String columnName) {
+    public Collection<Table> groupOn(String columnName) {
         return groupOn(new Column(getSchema().getTableName(), columnName));
     }
 
     /**
-     * Partition the tuple collection into multiple tuple collections based
+     * Partition the table into multiple table based
      * on the column.
      * @param column Paritition based on column.
      * @return A collection of tuple collections.
      */
-    public Collection<TupleCollection> groupOn(Column column) {
+    public Collection<Table> groupOn(Column column) {
         Schema schema = getSchema();
 
         if (!schema.hasColumn(column)) {
@@ -155,7 +154,7 @@ public abstract class TupleCollection {
                 );
         }
 
-        List<TupleCollection> groups = Lists.newArrayList();
+        List<Table> groups = Lists.newArrayList();
         if (size() < 2) {
             groups.add(this);
             return groups;
@@ -174,15 +173,15 @@ public abstract class TupleCollection {
             if (lvalue.equals(rvalue)) {
                 curList.add(tuple);
             } else {
-                groups.add(newTupleCollection(curList));
+                groups.add(newTable(curList));
                 curList = Lists.newArrayList();
                 curList.add(tuple);
             }
             lastTuple = tuple;
         }
 
-        groups.add(newTupleCollection(curList));
+        groups.add(newTable(curList));
         return groups;
     }
-    //</editor-fold desc="Default TupleCollection behavior">
+    //</editor-fold desc="Default Table behavior">
 }

@@ -9,7 +9,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.IteratorStream;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.TupleCollection;
+import qa.qcri.nadeef.core.datamodel.Table;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 /**
  * Iterator.
  */
-public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> {
+public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     private static final int MAX_THREAD_NUM = 10;
     private Rule rule;
 
@@ -33,11 +33,16 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
 
     class IteratorCallable implements Callable<Boolean> {
         private IteratorStream<E> iteratorStream;
-        private TupleCollection tupleCollection;
+        private Collection<Table> tables;
 
-        IteratorCallable(TupleCollection tupleCollection, IteratorStream<E> iteratorStream) {
+        IteratorCallable(Collection<Table> tables, IteratorStream<E> iteratorStream) {
             this.iteratorStream = iteratorStream;
-            this.tupleCollection = tupleCollection;
+            this.tables = tables;
+        }
+
+        IteratorCallable(Table table, IteratorStream<E> iteratorStream) {
+            this.iteratorStream = iteratorStream;
+            this.tables = Lists.newArrayList(table);
         }
 
         /**
@@ -49,47 +54,64 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
         @Override
         @SuppressWarnings("unchecked")
         public Boolean call() throws Exception {
-            rule.iterator(tupleCollection, iteratorStream);
+            rule.iterator(tables, iteratorStream);
             iteratorStream.flush();
             return true;
         }
     }
 
     /**
-     * Execute the operator.
+     * Iterator operator execution.
      *
-     * @param tupleCollections input object.
-     * @return output object.
+     * @param tables input tables.
+     * @return iteration output.
      */
     @Override
-    public Boolean execute(Collection<TupleCollection> tupleCollections) throws Exception {
+    public Boolean execute(Collection<Table> tables) throws Exception {
         int blockSize = 0;
         int count = 0;
         Stopwatch stopwatch = new Stopwatch().start();
         List<IteratorStream> iteratorStreams = Lists.newArrayList();
 
-        for (TupleCollection tupleCollection : tupleCollections) {
-            blockSize += tupleCollection.size();
+        if (rule.supportTwoTables()) {
+            // Rule runs on two tables.
             IteratorStream<E> iteratorStream = new IteratorStream<E>();
             iteratorStreams.add(iteratorStream);
 
             pool.submit(
                 new IteratorCallable(
-                    tupleCollection, new IteratorStream<E>()
+                    tables, new IteratorStream<E>()
                 )
             );
-        }
 
-        for (TupleCollection tupleCollection : tupleCollections) {
             pool.take().get();
             count ++;
-            setPercentage(count / tupleCollections.size());
+            setPercentage(1.0f);
+        } else {
+            // Rule runs on each table.
+            for (Table table : tables) {
+                blockSize += table.size();
+                IteratorStream<E> iteratorStream = new IteratorStream<E>();
+                iteratorStreams.add(iteratorStream);
+
+                pool.submit(
+                    new IteratorCallable(
+                        table, new IteratorStream<E>()
+                    )
+                );
+            }
+
+            for (Table table : tables) {
+                pool.take().get();
+                count ++;
+                setPercentage(count / tables.size());
+            }
         }
 
         // recycle the collection when dealing with pairs. This is mainly used to remove views.
         if (rule.supportTwoInputs()) {
-            for (TupleCollection tupleCollection : tupleCollections) {
-                tupleCollection.recycle();
+            for (Table table : tables) {
+                table.recycle();
             }
         }
 
@@ -106,6 +128,9 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
         return true;
     }
 
+    /**
+     * Finalize the Iterator.
+     */
     @Override
     public void finalize() {
         if (!threadExecutors.isShutdown()) {
@@ -113,11 +138,18 @@ public class Iterator<E> extends Operator<Collection<TupleCollection>, Boolean> 
         }
     }
 
+    /**
+     * Interrupt is called when the Iterator is stopped in the middle. A typical scenario is
+     * that there is exception happened during iterator execution.
+     */
     @Override
     public void interrupt() {
         IteratorStream.markEnd();
     }
 
+    /**
+     * Reset is called before iterator starts to execute.
+     */
     @Override
     public void reset() {
         IteratorStream.clear();

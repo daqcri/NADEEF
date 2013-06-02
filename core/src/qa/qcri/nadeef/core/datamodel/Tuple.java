@@ -133,11 +133,20 @@ public class Tuple {
     }
 
     /**
-     * Gets the table names.
-     * @return table names.
+     * Returns <code>True</code> when the tuple is from the given table name.
+     * @param tableName table name.
+     * @return <code>True</code> when the tuple is from the given table name.
      */
-    public String getTableName() {
-        return tableName;
+    public boolean isFromTable(String tableName) {
+        if (this.tableName.equalsIgnoreCase(tableName)) {
+            return true;
+        }
+
+        if (this.tableName.startsWith("csv_")) {
+            String originalTableName = this.tableName.substring(4);
+            return originalTableName.equalsIgnoreCase(tableName);
+        }
+        return false;
     }
 
     /**

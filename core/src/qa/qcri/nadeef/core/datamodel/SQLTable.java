@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Tuple collection class.
  */
-public class SQLTupleCollection extends TupleCollection {
+public class SQLTable extends Table {
     private DBConfig dbconfig;
     private String tableName;
     private SqlQueryBuilder sqlQuery;
@@ -36,7 +36,7 @@ public class SQLTupleCollection extends TupleCollection {
     // after finalize.
     private boolean isInternal;
 
-    private static Tracer tracer = Tracer.getTracer(SQLTupleCollection.class);
+    private static Tracer tracer = Tracer.getTracer(SQLTable.class);
 
 
     //<editor-fold desc="Constructor">
@@ -44,10 +44,10 @@ public class SQLTupleCollection extends TupleCollection {
     /**
      * Constructor.
      * @param collection a collection of <code>Tuples</code>, by
-     *                   using this constructor the result <code>TupleCollection</code>
+     *                   using this constructor the result <code>Table</code>
      *                   will be an orphan collection (no database connection behind).
      */
-    public SQLTupleCollection(Collection<Tuple> collection) {
+    public SQLTable(Collection<Tuple> collection) {
         super(null);
         if (collection.size() <= 0) {
             throw new IllegalArgumentException("Input collection cannot be empty.");
@@ -63,7 +63,7 @@ public class SQLTupleCollection extends TupleCollection {
      * @param tableName tuple collection table name.
      * @param dbconfig used database connection.
      */
-    public SQLTupleCollection(String tableName, DBConfig dbconfig) {
+    public SQLTable(String tableName, DBConfig dbconfig) {
         super(null);
         this.dbconfig = Preconditions.checkNotNull(dbconfig);
         Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
@@ -74,17 +74,17 @@ public class SQLTupleCollection extends TupleCollection {
 
     //</editor-fold>
 
-    //<editor-fold desc="TupleCollection Interface">
+    //<editor-fold desc="Table Interface">
 
     /**
      * Creates a tuple collection from a collection of tuples.
      *
      * @param tuples a collection of tuples.
-     * @return <code>TupleCollection</code> instance.
+     * @return <code>Table</code> instance.
      */
     @Override
-    protected TupleCollection newTupleCollection(Collection<Tuple> tuples) {
-        return new SQLTupleCollection(tuples);
+    protected Table newTable(Collection<Tuple> tuples) {
+        return new SQLTable(tuples);
     }
 
     /**
@@ -100,7 +100,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     /**
-     * Gets the schema of the TupleCollection.
+     * Gets the schema of the Table.
      * @return the schema.
      */
     @Override
@@ -129,12 +129,12 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     /**
-     * Projects the TupleCollection by column name.
+     * Projects the Table by column name.
      * @param columnName column name.
      * @return tuple collection itself.
      */
     @Override
-    public TupleCollection project(String columnName) {
+    public Table project(String columnName) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(columnName));
         sqlQuery.addSelect(columnName);
         synchronized (this) {
@@ -144,12 +144,12 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     /**
-     * Projects the <code>TupleCollection</code> by column.
+     * Projects the <code>Table</code> by column.
      * @param column Column.
      * @return tuple collection itself.
      */
     @Override
-    public TupleCollection project(Column column) {
+    public Table project(Column column) {
         Preconditions.checkNotNull(column);
         sqlQuery.addSelect(column.getAttributeName());
         synchronized (this) {
@@ -159,7 +159,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public TupleCollection project(Collection<Column> columns) {
+    public Table project(Collection<Column> columns) {
         Preconditions.checkNotNull(columns);
         for (Column column : columns) {
             sqlQuery.addSelect(column.getAttributeName());
@@ -171,7 +171,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public TupleCollection orderBy(String columnName) {
+    public Table orderBy(String columnName) {
         sqlQuery.addOrder(columnName);
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -181,7 +181,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public TupleCollection orderBy(Column column) {
+    public Table orderBy(Column column) {
         sqlQuery.addOrder(column.getAttributeName());
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -191,7 +191,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public TupleCollection orderBy(Collection<Column> columns) {
+    public Table orderBy(Collection<Column> columns) {
         for (Column column : columns) {
             sqlQuery.addOrder(column.getAttributeName());
         }
@@ -202,7 +202,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public TupleCollection filter(SimpleExpression expression) {
+    public Table filter(SimpleExpression expression) {
         sqlQuery.addWhere(expression.toString());
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -211,7 +211,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public TupleCollection filter(List<SimpleExpression> expressions) {
+    public Table filter(List<SimpleExpression> expressions) {
         for (SimpleExpression expression : expressions) {
             sqlQuery.addWhere(expression.toString());
         }
@@ -223,12 +223,12 @@ public class SQLTupleCollection extends TupleCollection {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<TupleCollection> groupOn(Collection<Column> columns) {
+    public Collection<Table> groupOn(Collection<Column> columns) {
         List result = Lists.newArrayList(this);
         for (Column column : columns) {
-            List<TupleCollection> tmp = Lists.newArrayList();
+            List<Table> tmp = Lists.newArrayList();
             for (Object collection : result) {
-                tmp.addAll(((SQLTupleCollection) collection).groupOn(column));
+                tmp.addAll(((SQLTable) collection).groupOn(column));
             }
             result = tmp;
         }
@@ -236,8 +236,8 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     @Override
-    public Collection<TupleCollection> groupOn(Column column) {
-        Collection<TupleCollection> result = null;
+    public Collection<Table> groupOn(Column column) {
+        Collection<Table> result = null;
         if (isOrphan()) {
             result = super.groupOn(column);
         } else {
@@ -259,8 +259,8 @@ public class SQLTupleCollection extends TupleCollection {
                     SimpleExpression columnFilter =
                         SimpleExpression.newEqual(column, stringValue);
 
-                    SQLTupleCollection newTupleCollection =
-                        new SQLTupleCollection(tableName, dbconfig);
+                    SQLTable newTupleCollection =
+                        new SQLTable(tableName, dbconfig);
                     newTupleCollection.sqlQuery = new SqlQueryBuilder(sqlQuery);
                     newTupleCollection.sqlQuery.addWhere(columnFilter.toString());
                     result.add(newTupleCollection);
@@ -297,11 +297,11 @@ public class SQLTupleCollection extends TupleCollection {
             return true;
         }
 
-        if (collection == null || !(collection instanceof SQLTupleCollection)) {
+        if (collection == null || !(collection instanceof SQLTable)) {
             return false;
         }
 
-        SQLTupleCollection obj = (SQLTupleCollection)collection;
+        SQLTable obj = (SQLTable)collection;
         if (dbconfig.equals(obj.dbconfig) && tableName.equals(obj.tableName)) {
             return true;
         }
@@ -310,7 +310,7 @@ public class SQLTupleCollection extends TupleCollection {
     }
 
     /**
-     * Calculates the hash code of the <code>TupleCollection</code>.
+     * Calculates the hash code of the <code>Table</code>.
      * @return hash code.
      */
     @Override
@@ -336,7 +336,7 @@ public class SQLTupleCollection extends TupleCollection {
      */
     private synchronized void syncSchema() {
         if (isOrphan()) {
-            tracer.info("Orphan SQLTupleCollection cannot be synced.");
+            tracer.info("Orphan SQLTable cannot be synced.");
             return;
         }
 
@@ -376,7 +376,7 @@ public class SQLTupleCollection extends TupleCollection {
      */
     private synchronized boolean syncData() {
         if (isOrphan()) {
-            tracer.info("TupleCollection is an orphan, syncData failed.");
+            tracer.info("Table is an orphan, syncData failed.");
             return false;
         }
 

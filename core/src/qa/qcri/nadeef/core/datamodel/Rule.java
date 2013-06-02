@@ -54,14 +54,14 @@ public abstract class Rule<E> {
     }
 
     /**
-     * Detect rule with one tuple.
+     * Detect operator.
      * @param tuples input tuple.
      * @return Violation set.
      */
     public abstract Collection<Violation> detect(E tuples);
 
     /**
-     * Repair of this rule.
+     * Repair operator.
      * @param violation violation input.
      * @return a candidate fix.
      */
@@ -69,40 +69,34 @@ public abstract class Rule<E> {
 
     /**
      * Block operator.
-     * @param tupleCollection input tuple
+     * @param table input tuple
      * @return a generator of tuple collection.
      */
-    public abstract Collection<TupleCollection> block(
-        Collection<TupleCollection> tupleCollection
-    );
+    public abstract Collection<Table> block(Collection<Table> table);
 
     /**
      * Iterator operator.
-     * @param tupleCollections a collection of tables.
+     * @param tables a collection of tables.
      * @param iteratorStream Iterator output object.
      */
     public abstract void iterator(
-        TupleCollection tupleCollections,
+        Collection<Table> tables,
         IteratorStream<E> iteratorStream
     );
 
     /**
      * Vertical scope operator.
-     * @param tupleCollection input tuple collections.
+     * @param table input tuple collections.
      * @return scoped tuple collection.
      */
-    public abstract Collection<TupleCollection> verticalScope(
-        Collection<TupleCollection> tupleCollection
-    );
+    public abstract Collection<Table> verticalScope(Collection<Table> table);
 
     /**
      * Horizontal scope operator.
-     * @param tupleCollection input tuple collections.
+     * @param table input tuple collections.
      * @return scoped tuple collection.
      */
-    public abstract Collection<TupleCollection> horizontalScope(
-        Collection<TupleCollection> tupleCollection
-    );
+    public abstract Collection<Table> horizontalScope(Collection<Table> table);
 
     /**
      * Returns <code>True</code> when the rule implements one tuple input.

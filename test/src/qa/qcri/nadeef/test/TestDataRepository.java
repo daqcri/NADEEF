@@ -12,6 +12,7 @@ import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.List;
 
 /**
  * Factory class to get TestData.
@@ -20,6 +21,11 @@ public class TestDataRepository {
 
     public static File getDumpTestCSVFile() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*dumptest.csv";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getPairCleanPlanFile1() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*PairTableCleanPlan1.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
@@ -145,12 +151,12 @@ public class TestDataRepository {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4())).get(0);
     }
 
-    public static CleanPlan getCleanPlan5()
+    public static List<CleanPlan> getCleanPlan5()
         throws
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
     }
 
     public static CleanPlan getAdultPlan1()
@@ -193,4 +199,27 @@ public class TestDataRepository {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan40kFile())).get(0);
     }
 
+    public static CleanPlan getStressPlan80k()
+        throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan80kFile())).get(0);
+    }
+
+    public static CleanPlan getStressPlan90k()
+        throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan90kFile())).get(0);
+    }
+
+    public static CleanPlan getPairCleanPlan1()
+        throws
+            InvalidRuleException,
+            FileNotFoundException,
+            InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getPairCleanPlanFile1())).get(0);
+    }
 }

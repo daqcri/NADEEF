@@ -158,8 +158,19 @@ public class Tracer {
         out(formatEntry(StatType.DetectCount, "Detect tuple count", ""));
         out(formatEntry(StatType.ViolationExport, "Violation", ""));
         out(formatEntry(StatType.ViolationExportTime, "Violation export time", ""));
-        long totalTime = stats.get(StatType.DetectTime);
-        long totalViolation = stats.get(StatType.ViolationExport);
+        long totalTime;
+        long totalViolation;
+        if (stats.containsKey(StatType.DetectTime)) {
+            totalTime = stats.get(StatType.DetectTime);
+        } else {
+            totalTime = 0l;
+        }
+
+        if (stats.containsKey(StatType.ViolationExport)) {
+            totalViolation = stats.get(StatType.ViolationExport);
+        } else {
+            totalViolation = 0l;
+        }
         out("----------------------------------------------------------------");
         console.println(
             "Detection finished in " + totalTime + " ms " +

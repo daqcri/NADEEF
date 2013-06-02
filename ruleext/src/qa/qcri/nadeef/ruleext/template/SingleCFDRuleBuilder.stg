@@ -55,38 +55,33 @@ public class $CFDName$ extends SingleTupleRule {
 
     /**
      * Default horizontal scope operation.
-     * @param tupleCollections input tuple collections.
-     * @return filtered tuple collection.
+     * @param tables input tables.
+     * @return filtered tables.
      */
     @Override
-    public Collection<TupleCollection> horizontalScope(
-        Collection<TupleCollection> tupleCollections
-    ) {
-        tupleCollections.iterator().next().project(lhs).project(rhs);
-        return tupleCollections;
+    public Collection<Table> horizontalScope(Collection<Table> tables) {
+        tables.iterator().next().project(lhs).project(rhs);
+        return tables;
     }
 
     /**
      * Default vertical scope operation.
-     * @param tupleCollections input tuple collections.
-     * @return filtered tuple collection.
+     * @param tables input tables.
+     * @return filtered tables.
      */
     @Override
-    public Collection<TupleCollection> verticalScope(
-        Collection<TupleCollection> tupleCollections
-    ) {
-        tupleCollections.iterator().next().filter(leftFilterExpressions);
-        return tupleCollections;
+    public Collection<Table> verticalScope(Collection<Table> tables) {
+        tables.iterator().next().filter(leftFilterExpressions);
+        return tables;
     }
 
     /**
-     * Default group operation.
+     * Default iterator operation.
      *
-     * @param tuples input tuple
-     * @return a group of tuple collection.
+     * @param tables input table
      */
     @Override
-    public void iterator(TupleCollection tuples, IteratorStream output) {
+    public void iterator(Collection<Table> tables, IteratorStream<Tuple> output) {
         ArrayList<Tuple> result = new ArrayList();
         int pos = 0;
        	while (pos < tuples.size()) {
@@ -98,9 +93,9 @@ public class $CFDName$ extends SingleTupleRule {
     }
 
     /**
-     * Detect rule with many tuples.
+     * Detect rule with one tuple.
      *
-     * @param tuplePair input tuple.
+     * @param tuple input tuple.
      * @return Violation collection.
      */
     @Override

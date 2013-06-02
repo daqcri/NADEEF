@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Pair table test.
@@ -23,9 +24,10 @@ public class MyRule5 extends PairTupleRule {
      */
     @Override
     public Collection<Violation> detect(TuplePair pair) {
+        List<Violation> result = Lists.newArrayList();
         Tuple bankTuple;
         Tuple tranTuple;
-        if (pair.getLeft().getTableName().equals("bank1")) {
+        if (pair.getLeft().isFromTable("bank1")) {
             bankTuple = pair.getLeft();
             tranTuple = pair.getRight();
         } else {
@@ -51,9 +53,9 @@ public class MyRule5 extends PairTupleRule {
             violation.addCell(tranTuple.getCell("str"));
             violation.addCell(tranTuple.getCell("city"));
             violation.addCell(tranTuple.getCell("phn"));
-            return Lists.newArrayList(violation);
+            result.add(violation);
         }
-        return null;
+        return result;
     }
 
     /**

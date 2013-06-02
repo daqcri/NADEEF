@@ -185,7 +185,7 @@ public class CleanExecutor {
             } else {
                 queryFlow
                     .addNode(new ScopeOperator<Tuple>(rule))
-                    .addNode(new Iterator<TupleCollection>(rule), 6);
+                    .addNode(new Iterator<Table>(rule), 6);
             }
 
             // assemble the detect flow
@@ -194,7 +194,7 @@ public class CleanExecutor {
             if (rule.supportTwoInputs()) {
                 detectFlow.addNode(new ViolationDetector<TuplePair>(rule), 6);
             } else {
-                detectFlow.addNode(new ViolationDetector<TupleCollection>(rule), 6);
+                detectFlow.addNode(new ViolationDetector<Table>(rule), 6);
             }
             detectFlow.addNode(new ViolationExport(cleanPlan));
 

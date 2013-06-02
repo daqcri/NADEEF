@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
@@ -45,11 +46,12 @@ public class FDRuleBuilder extends RuleBuilder {
         // check whether the class file is already there, if so we skip the compiling phrase.
         String fullPath = inputFile.getAbsolutePath();
         File classFile = new File(fullPath.replace(".java", ".class"));
-        if (classFile.exists() || CommonTools.compileFile(inputFile)) {
-            return Lists.newArrayList(classFile);
+        boolean alwaysCompile = NadeefConfiguration.getAlwaysCompile();
+        if (alwaysCompile || !classFile.exists()) {
+            CommonTools.compileFile(inputFile);
         }
 
-        return null;
+        return Lists.newArrayList(classFile);
     }
 
     //</editor-fold>

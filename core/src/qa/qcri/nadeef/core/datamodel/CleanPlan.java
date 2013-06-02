@@ -99,24 +99,38 @@ public class CleanPlan {
 			JSONArray ruleArray = (JSONArray) jsonObject.get("rule");
 			ArrayList<Rule> rules = Lists.newArrayList();
 			List<String> targetTableNames;
+            List<String> fileNames = Lists.newArrayList();
+
 			for (int i = 0; i < ruleArray.size(); i++) {
 				schemas.clear();
 				JSONObject ruleObj = (JSONObject) ruleArray.get(i);
 				if (isCSV) {
 					// working with CSV
 					List<String> fullFileNames = (List<String>) src.get("file");
-					if (ruleObj.containsKey("target")) {
-						targetTableNames = (List<String>) ruleObj.get("target");
+                    for (String fullFileName : fullFileNames) {
+                        fileNames.add(Files.getNameWithoutExtension(fullFileName));
+                    }
+
+					if (ruleObj.containsKey("table")) {
+						targetTableNames = (List<String>) ruleObj.get("table");
 						Preconditions.checkArgument(
 					        targetTableNames.size() <= 2,
 							"NADEEF only supports MAX 2 tables per rule."
                         );
+                        for (String targetTableName : targetTableNames) {
+                            if (!fileNames.contains(targetTableName)) {
+                                throw new InvalidCleanPlanException("Unknown table name.");
+                            }
+                        }
 					} else {
 						// if the target table names does not exist, we use
-						// default naming.
+						// default naming and only the first two tables are touched.
 						targetTableNames = Lists.newArrayList();
-						for (String fullFileName : fullFileNames) {
-							targetTableNames.add(Files.getNameWithoutExtension(fullFileName));
+						for (String fileName : fileNames) {
+							targetTableNames.add(fileName);
+                            if (targetTableNames.size() == 2) {
+                                break;
+                            }
 						}
 					}
 
@@ -124,8 +138,9 @@ public class CleanPlan {
 					conn = DBConnectionFactory.getNadeefConnection();
 					for (int j = 0; j < targetTableNames.size(); j++) {
 						File file = CommonTools.getFile(fullFileNames.get(j));
-						CSVDumper.dump(conn, file, targetTableNames.get(j));
-						schemas.add(DBMetaDataTool.getSchema(targetTableNames.get(j)));
+						String tableName = CSVDumper.dump(conn, file, targetTableNames.get(j));
+                        targetTableNames.set(j, tableName);
+						schemas.add(DBMetaDataTool.getSchema(tableName));
 					}
 				} else {
 					// working with database

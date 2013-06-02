@@ -37,6 +37,7 @@ public class Fix {
         }
 
         public Builder(Violation violation) {
+            this();
             this.vid = violation.getVid();
         }
 

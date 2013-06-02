@@ -6,7 +6,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * A Cell represents a basic unit in a table (TupleCollection). A cell
+ * A Cell represents a basic unit in a table (Table). A cell
  * contains a <code>Column</code> and a Value given a TupleId.
  */
 public class Cell {

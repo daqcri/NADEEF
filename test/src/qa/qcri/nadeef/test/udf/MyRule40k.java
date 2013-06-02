@@ -17,65 +17,66 @@ public class MyRule40k extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
-        leftHandSide.add(new Column("csvtable_hospital_40k.zipcode"));
+        leftHandSide.add(new Column("csv_hospital_40k.zipcode"));
 
-        rightHandSide.add(new Column("csvtable_hospital_40k.city"));
+        rightHandSide.add(new Column("csv_hospital_40k.city"));
 
     }
 
     /**
      * Default horizontal scope operation.
-     * @param tupleCollections input tuple collections.
+     * @param tables input tuple collections.
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<TupleCollection> horizontalScope(
-        Collection<TupleCollection> tupleCollections
+    public Collection<Table> horizontalScope(
+        Collection<Table> tables
     ) {
-        tupleCollections.iterator().next().project(leftHandSide).project(rightHandSide);
-        return tupleCollections;
+        tables.iterator().next().project(leftHandSide).project(rightHandSide);
+        return tables;
     }
 
     /**
      * Default block operation.
-     * @param tupleCollections a collection of tables.
+     * @param tables a collection of tables.
      * @return a collection of blocked tables.
      */
     @Override
-    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollections) {
-        TupleCollection tupleCollection = tupleCollections.iterator().next();
-        Collection<TupleCollection> groupResult = tupleCollection.groupOn(leftHandSide);
+    public Collection<Table> block(Collection<Table> tables) {
+        Table table = tables.iterator().next();
+        Collection<Table> groupResult = table.groupOn(leftHandSide);
         return groupResult;
     }
 
     /**
-     * Default group operation.
+     * Default iterator operation.
      *
-     * @param tuples input tuple
+     * @param tables input table.
      */
     @Override
-    public void iterator(TupleCollection tuples, IteratorStream iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+        Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
-        tuples.orderBy(rightHandSide);
+        table.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
         boolean findViolation = false;
 
         // ---------------------------------------------------
         // two pointer loop via the block. Linear scan
         // ---------------------------------------------------
-        while (pos1 < tuples.size()) {
+        while (pos1 < table.size()) {
             findViolation = false;
-            for (pos2 = pos1 + 1; pos2 < tuples.size(); pos2 ++) {
-                Tuple left = tuples.get(pos1);
-                Tuple right = tuples.get(pos2);
+            for (pos2 = pos1 + 1; pos2 < table.size(); pos2 ++) {
+                Tuple left = table.get(pos1);
+                Tuple right = table.get(pos2);
 
                 findViolation = !left.hasSameValue(right);
 
                 // generates all the violations between pos1 - pos2.
                 if (findViolation) {
                     for (int i = pos1; i < pos2; i ++) {
-                        for (int j = pos2; j < tuples.size(); j++) {
-                            TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                        for (int j = pos2; j < table.size(); j++) {
+                            TuplePair pair = new TuplePair(table.get(i), table.get(j));
                             iteratorStream.put(pair);
                         }
                     }

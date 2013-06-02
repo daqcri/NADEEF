@@ -66,7 +66,7 @@ public class TupleCollectionTest {
 
     @Test
     public void testProjection() {
-        SQLTupleCollection collection = new SQLTupleCollection(tableName, dbconfig);
+        SQLTable collection = new SQLTable(tableName, dbconfig);
         collection.project(new Column(tableName + ".c"));
         Assert.assertEquals(12, collection.size());
         Tuple tuple = collection.get(0);
@@ -78,7 +78,7 @@ public class TupleCollectionTest {
 
     @Test
     public void testFilter() {
-        SQLTupleCollection collection = new SQLTupleCollection(tableName, dbconfig);
+        SQLTable collection = new SQLTable(tableName, dbconfig);
         collection.filter(SimpleExpression.newEqual(new Column(tableName, "c"), "c1"))
                 .project(new Column(tableName, "c"));
         Assert.assertEquals(7, collection.size());
@@ -91,11 +91,11 @@ public class TupleCollectionTest {
 
     @Test
     public void testGroup() {
-        SQLTupleCollection collection = new SQLTupleCollection(tableName, dbconfig);
+        SQLTable collection = new SQLTable(tableName, dbconfig);
         Column targetColumn = new Column(tableName, "c");
-        Collection<TupleCollection> result = collection.groupOn(targetColumn);
+        Collection<Table> result = collection.groupOn(targetColumn);
         Assert.assertEquals(3, result.size());
-        for (TupleCollection t : result) {
+        for (Table t : result) {
             Tuple tuple = t.get(0);
             String value =(String) tuple.get("c");
             switch (value) {

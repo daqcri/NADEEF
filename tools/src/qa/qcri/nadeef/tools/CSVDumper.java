@@ -33,7 +33,7 @@ public class CSVDumper {
     public static String dump(Connection conn, File file)
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
-        String tableName = "csvtable_" + fileName; //  + '_' + System.currentTimeMillis();
+        String tableName = "csv_" + fileName; //  + '_' + System.currentTimeMillis();
         dump(conn, file, tableName);
         return tableName;
     }
@@ -44,14 +44,18 @@ public class CSVDumper {
      * @param conn JDBC connection.
      * @param file CSV file.
      * @param tableName new created table name.
+     *
+     * @return new created table name.
      */
-    public static void dump(
+    public static String dump(
             Connection conn,
             File file,
             String tableName
     ) throws IllegalAccessException, SQLException, IOException {
         Tracer tracer = Tracer.getTracer(CSVDumper.class);
         Stopwatch stopwatch = new Stopwatch().start();
+        String fullTableName = null;
+
         try {
             if (conn.isClosed()) {
                 throw new IllegalAccessException("JDBC connection is already closed.");
@@ -62,7 +66,7 @@ public class CSVDumper {
             StringBuilder header = new StringBuilder(reader.readLine());
             // TODO: make it other DB compatible
             header.insert(0, "TID SERIAL PRIMARY KEY,");
-            String fullTableName = tableName;
+            fullTableName = "csv_" + tableName;
             Statement stat = conn.createStatement();
             stat.setFetchSize(1024);
             String sql = "DROP TABLE IF EXISTS " + fullTableName + " CASCADE";
@@ -73,7 +77,7 @@ public class CSVDumper {
             sql = "CREATE TABLE " + fullTableName + "( " + header + ")";
             tracer.verbose(sql);
             stat.execute(sql);
-            tracer.info("Successfully created table " + tableName);
+            tracer.info("Successfully created table " + fullTableName);
 
             // Batch load the data
             StringBuilder sb = new StringBuilder();
@@ -121,6 +125,7 @@ public class CSVDumper {
                 conn.commit();
             }
         }
+        return fullTableName;
     }
     // </editor-fold>
 }

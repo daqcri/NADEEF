@@ -28,46 +28,46 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
 
     /**
      * Default scope operation.
-     * @param tupleCollection input tuple collections.
-     * @return filtered tuple collection.
+     * @param table input tables.
+     * @return filtered table.
      */
     @Override
-    public Collection<TupleCollection> horizontalScope(
-        Collection<TupleCollection> tupleCollection
-    ) {
-        return tupleCollection;
+    public Collection<Table> horizontalScope(Collection<Table> table) {
+        return table;
     }
 
     /**
      * Default scope operation.
-     * @param tupleCollection input tuple collections.
-     * @return filtered tuple collection.
+     * @param table input table.
+     * @return filtered table.
      */
     @Override
-    public Collection<TupleCollection> verticalScope(
-        Collection<TupleCollection> tupleCollection
-    ) {
-        return tupleCollection;
+    public Collection<Table> verticalScope(Collection<Table> table) {
+        return table;
     }
 
     /**
-     * Default block operation.
-     * @param tupleCollection a collection of tables.
+     * Block operator.
+     *
+     * Current we don't support blocking given multiple tables (co-group). So when a rule
+     * is using more than 1 table the block operator is going to be ignored.
+     * @param table a collection of tables.
      * @return a collection of blocked tables.
      */
     @Override
-    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollection) {
-        return tupleCollection;
+    public Collection<Table> block(Collection<Table> table) {
+        return table;
     }
 
     /**
-     * Default generator operation.
-     * @param tupleCollection input tuple
+     * Default iterator operation.
+     * @param tables input table collection.
      */
     @Override
-    public void iterator(TupleCollection tupleCollection, IteratorStream iteratorStream) {
-        for (int i = 0; i < tupleCollection.size(); i ++) {
-            iteratorStream.put(tupleCollection.get(i));
+    public void iterator(Collection<Table> tables, IteratorStream<Tuple> iteratorStream) {
+        Table table = tables.iterator().next();
+        for (int i = 0; i < table.size(); i ++) {
+            iteratorStream.put(table.get(i));
         }
     }
 

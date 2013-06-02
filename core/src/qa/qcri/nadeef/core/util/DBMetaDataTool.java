@@ -5,7 +5,7 @@
 
 package qa.qcri.nadeef.core.util;
 
-import qa.qcri.nadeef.core.datamodel.SQLTupleCollection;
+import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Schema;
 
 import java.sql.*;
@@ -59,8 +59,8 @@ public class DBMetaDataTool {
         if (!isTableExist(tableName)) {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
-        SQLTupleCollection sqlTupleCollection =
-            new SQLTupleCollection(tableName, DBConnectionFactory.getSourceDBConfig());
+        SQLTable sqlTupleCollection =
+            new SQLTable(tableName, DBConnectionFactory.getSourceDBConfig());
         return sqlTupleCollection.getSchema();
     }
 

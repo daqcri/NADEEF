@@ -29,8 +29,8 @@ public class StressDetectionTest {
     @Before
     public void setUp() {
         Bootstrap.start();
-        Tracer.setVerbose(false);
-        Tracer.setInfo(false);
+        Tracer.setVerbose(true);
+        Tracer.setInfo(true);
     }
 
     @After
@@ -90,6 +90,27 @@ public class StressDetectionTest {
         Tracer.setInfo(false);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
+            List<String> tableNames = cleanPlan.getRule().getTableNames();
+            int correctResult =
+                getViolationCount(
+                    cleanPlan.getSourceDBConfig(),
+                    tableNames.get(0),
+                    "zipcode",
+                    "city"
+                );
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(correctResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest80k() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getStressPlan80k();
             List<String> tableNames = cleanPlan.getRule().getTableNames();
             int correctResult =
                 getViolationCount(

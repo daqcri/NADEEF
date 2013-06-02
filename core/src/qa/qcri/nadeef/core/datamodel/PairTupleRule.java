@@ -33,26 +33,26 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
     public abstract Collection<Violation> detect(TuplePair pair);
 
     /**
-     * Default block operation.
-     * @param tupleCollection a collection of tables.
+     * Block operation.
+     * @param table a collection of tables.
      * @return a collection of blocked tables.
      */
     @Override
-    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollection) {
-        return tupleCollection;
+    public Collection<Table> block(Collection<Table> table) {
+        return table;
     }
 
     /**
-     * Default iterator operation.
+     * Iterator operation.
      *
-     * @param tupleCollections input tuple
+     * @param tables input tuple
      */
     @Override
-    public void iterator(TupleCollection tupleCollections, IteratorStream iteratorStream) {
-        List<TupleCollection> collectionList = Lists.newArrayList(tupleCollections);
+    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+        List<Table> collectionList = Lists.newArrayList(tables);
 
         if (collectionList.size() == 1) {
-            TupleCollection tuples = collectionList.get(0);
+            Table tuples = collectionList.get(0);
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
@@ -60,39 +60,38 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
                 }
             }
         } else {
-            TupleCollection left = collectionList.get(0);
-            TupleCollection right = collectionList.get(0);
+            Table left = collectionList.get(0);
+            Table right = collectionList.get(1);
             for (int i = 0; i < left.size(); i ++) {
-                for (int j = i + 1; j < right.size(); j ++) {
+                for (int j = 0; j < right.size(); j ++) {
                     TuplePair pair = new TuplePair(left.get(i), right.get(j));
                     iteratorStream.put(pair);
                 }
             }
-
         }
     }
 
     /**
      * Default scope operation.
-     * @param tupleCollection input tuple collections.
+     * @param table input tuple collections.
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<TupleCollection> horizontalScope(
-        Collection<TupleCollection> tupleCollection
+    public Collection<Table> horizontalScope(
+        Collection<Table> table
     ) {
-        return tupleCollection;
+        return table;
     }
 
     /**
      * Default scope operation.
-     * @param tupleCollection input tuple collections.
+     * @param table input tuple collections.
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<TupleCollection> verticalScope(
-        Collection<TupleCollection> tupleCollection
+    public Collection<Table> verticalScope(
+        Collection<Table> table
     ) {
-        return tupleCollection;
+        return table;
     }
 }

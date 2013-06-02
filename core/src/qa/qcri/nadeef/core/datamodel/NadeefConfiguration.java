@@ -30,6 +30,7 @@ public class NadeefConfiguration {
     private static String repairTable;
     private static String auditTable;
     private static int maxIterationNumber = 1;
+    private static boolean alwaysCompile = false;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
 
     //<editor-fold desc="Public methods">
@@ -70,6 +71,10 @@ public class NadeefConfiguration {
         testMode = (Boolean)general.get("testmode");
         if (general.containsKey("maxIterationNumber")) {
             maxIterationNumber = ((Long)general.get("maxIterationNumber")).intValue();
+        }
+
+        if (general.containsKey("alwaysCompile")) {
+            alwaysCompile = (Boolean)(general.get("alwaysCompile"));
         }
 
         JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
@@ -154,6 +159,22 @@ public class NadeefConfiguration {
      */
     public static String getRepairTableName() {
         return repairTable;
+    }
+
+    /**
+     * Sets AlwaysCompile value.
+     * @param alwaysCompile_ alwaysCompile value.
+     */
+    public static void setAlwaysCompile(boolean alwaysCompile_) {
+        alwaysCompile = alwaysCompile_;
+    }
+
+    /**
+     * Gets AlwaysCompile option.
+     * @return alwaysCompile value.
+     */
+    public static boolean getAlwaysCompile() {
+        return alwaysCompile;
     }
 
     /**

@@ -219,18 +219,28 @@ public class Console {
 
     // TODO: remove FD specification, and make it generic
     private static void fd(String cmdLine) throws Exception {
+        if (cleanPlans.size() == 0) {
+            console.println("There is no rule loaded.");
+            return;
+        }
+
         int index = cmdLine.indexOf("fd") + 2;
         String value = cmdLine.substring(index);
         RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
+        String tableName = (String) cleanPlans.get(0).getRule().getTableNames().get(0);
+        Schema schema = DBMetaDataTool.getSchema(tableName);
         Collection<Rule> rules =
             ruleBuilder
                 .name("UserRule" + CommonTools.toHashCode(value))
+                .table(tableName)
+                .schema(schema)
                 .value(value)
                 .build();
         for (Rule rule : rules) {
             CleanPlan cleanPlan =
                 new CleanPlan(DBConnectionFactory.getSourceDBConfig(), rule);
             cleanPlans.add(cleanPlan);
+            executors.add(new CleanExecutor(cleanPlan));
         }
     }
 
@@ -285,7 +295,7 @@ public class Console {
                 );
         }
 
-        if (executors == null) {
+        if (executors == null || executors.size() == 0) {
             console.println("There is no rule loaded.");
             return;
         }
@@ -331,6 +341,11 @@ public class Console {
                 new IllegalArgumentException(
                     "Wrong detect command. Run detect [id number] instead."
                 );
+        }
+
+        if (executors == null || executors.size() == 0) {
+            console.println("There is no rule loaded.");
+            return;
         }
 
         int index = -1;
@@ -412,17 +427,23 @@ public class Console {
     }
 
     private static void set(String cmd) throws IOException {
-        String[] splits = cmd.split("\\s");
-        if (splits[1].equalsIgnoreCase("verbose")) {
+        String[] tokens = cmd.split("\\s");
+        if (tokens[1].equalsIgnoreCase("verbose")) {
             boolean mode = !Tracer.isVerboseOn();
             console.println("set verbose " + (mode ? "on" : "off"));
             Tracer.setVerbose(mode);
         }
 
-        if (splits[1].equalsIgnoreCase("info")) {
+        if (tokens[1].equalsIgnoreCase("info")) {
             boolean mode = !Tracer.isInfoOn();
             console.println("set info " + (mode ? "on" : "off"));
             Tracer.setInfo(mode);
+        }
+
+        if (tokens[1].equalsIgnoreCase("alwaysCompile")) {
+            boolean mode = !NadeefConfiguration.getAlwaysCompile();
+            console.println("set alwaysCompile " + (mode ? "on" : "off"));
+            NadeefConfiguration.setAlwaysCompile(mode);
         }
     }
 

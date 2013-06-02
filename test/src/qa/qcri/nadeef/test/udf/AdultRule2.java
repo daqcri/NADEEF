@@ -14,32 +14,33 @@ import java.util.List;
  */
 public class AdultRule2 extends PairTupleRule {
     @Override
-    public Collection<TupleCollection> horizontalScope(
-        Collection<TupleCollection> tupleCollections
+    public Collection<Table> horizontalScope(
+        Collection<Table> tables
     ) {
-        TupleCollection tupleCollection = tupleCollections.iterator().next();
-        tupleCollection.project("race").project("fnlwgt");
-        return tupleCollections;
+        Table table = tables.iterator().next();
+        table.project("race").project("fnlwgt");
+        return tables;
     }
 
     @Override
-    public Collection<TupleCollection> block(Collection<TupleCollection> tupleCollections) {
-        TupleCollection tupleCollection = Iterables.get(tupleCollections, 0);
-        return tupleCollection.groupOn("race");
+    public Collection<Table> block(Collection<Table> tables) {
+        Table table = Iterables.get(tables, 0);
+        return table.groupOn("race");
     }
 
     @Override
     public void iterator(
-        TupleCollection tuples,
-        IteratorStream iteratorStream
+        Collection<Table> tables,
+        IteratorStream<TuplePair> iteratorStream
     ) {
+        Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
-        for (int i = 0; i < tuples.size(); i ++) {
-            for (int j = i + 1; j < tuples.size(); j ++) {
-                Tuple left = tuples.get(i);
-                Tuple right = tuples.get(j);
+        for (int i = 0; i < table.size(); i ++) {
+            for (int j = i + 1; j < table.size(); j ++) {
+                Tuple left = table.get(i);
+                Tuple right = table.get(j);
                 if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
-                    TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
+                    TuplePair pair = new TuplePair(table.get(i), table.get(j));
                     iteratorStream.put(pair);
                     break;
                 }
