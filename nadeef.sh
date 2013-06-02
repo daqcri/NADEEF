@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -f javac ]; then
-    echo Java cannot be found, please first check your PATH.
+    echo JDK cannot be found, please first check your PATH.
 else if ! [ -d "out" ]; then
     echo Nadeef is not yet compiled, please first run 'ant' to build it.
 else

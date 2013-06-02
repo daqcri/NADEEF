@@ -5,27 +5,23 @@
 
 package qa.qcri.nadeef.ruleext;
 
-import java.io.File;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.SimpleExpression;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Template engine for CFD rule.
- * 
- * @author Amr Ebaid (aebaid@qf.org.qa)
- * @author Si Yin (siyin@qf.org.qa)
+ *
  */
 public class CFDRuleBuilder extends RuleBuilder {
 	protected List<String> lhs;
@@ -39,20 +35,13 @@ public class CFDRuleBuilder extends RuleBuilder {
 	 * 
 	 * @return Output class file.
 	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see qa.qcri.nadeef.core.util.RuleBuilder#compile()
-	 */
 	@Override
 	public Collection<File> compile() throws Exception {
 		List<File> result = Lists.newArrayList();
 		singleSTGroup = new STGroupFile(
-				"qa/qcri/nadeef/ruleext/template/SingleCFDRuleBuilder.stg",
-				'$', '$');
+			"qa/qcri/nadeef/ruleext/template/SingleCFDRuleBuilder.stg", '$', '$');
 		pairSTGroup = new STGroupFile(
-				"qa/qcri/nadeef/ruleext/template/PairCFDRuleBuilder.stg", '$',
-				'$');
+			"qa/qcri/nadeef/ruleext/template/PairCFDRuleBuilder.stg", '$', '$');
 
 		ST sst = singleSTGroup.getInstanceOf("cfdTemplate");
 		ST pst = pairSTGroup.getInstanceOf("cfdTemplate");
@@ -63,8 +52,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 
 		for (int i = 0; i < filterExpressions.size(); i++) {
 			List<SimpleExpression> filters = filterExpressions.get(i);
-			ST leftExpressionST = singleSTGroup
-					.getInstanceOf("lExpressionItem");
+			ST leftExpressionST = singleSTGroup.getInstanceOf("lExpressionItem");
 			List<String> leftExpressions = Lists.newArrayList();
 
 			// Pass over items of lhs
@@ -72,8 +60,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 				SimpleExpression expression = filters.get(j);
 				String eValue = expression.getValue();
 				if (!eValue.equals("_")) {
-					leftExpressionST.add("columnName", expression.getLeft()
-							.getFullAttributeName());
+					leftExpressionST.add("columnName", expression.getLeft().getFullAttributeName());
 					leftExpressionST.add("value", eValue);
 					leftExpressions.add(leftExpressionST.render());
 					leftExpressionST.remove("columnName");
@@ -88,10 +75,10 @@ public class CFDRuleBuilder extends RuleBuilder {
 				SimpleExpression expression = filters.get(j + lhs.size());
 				String eValue = expression.getValue();
 				if (!eValue.equals("_")) {
-					ST rightExpressionST = singleSTGroup
-							.getInstanceOf("rExpressionItem");
-					rightExpressionST.add("columnName", expression.getLeft()
-							.getFullAttributeName());
+					ST rightExpressionST = singleSTGroup.getInstanceOf("rExpressionItem");
+					rightExpressionST.add(
+                        "columnName", expression.getLeft().getFullAttributeName()
+                    );
 					rightExpressionST.add("value", eValue);
 					List<String> rightExpressions = Lists.newArrayList();
 					rightExpressions.add(rightExpressionST.render());
@@ -159,8 +146,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 		String[] splits = head.trim().split("\\|");
 		String split;
 		if (splits.length != 2) {
-			throw new IllegalArgumentException("Invalid rule description "
-					+ head);
+			throw new IllegalArgumentException("Invalid rule description " + head);
 		}
 
 		// parse the LHS
@@ -170,12 +156,10 @@ public class CFDRuleBuilder extends RuleBuilder {
 		for (int i = 0; i < lhsSplits.length; i++) {
 			split = lhsSplits[i].trim().toLowerCase();
 			if (Strings.isNullOrEmpty(split)) {
-				throw new IllegalArgumentException("Invalid rule description "
-						+ head);
+				throw new IllegalArgumentException("Invalid rule description " + head);
 			}
 
-			if (!Strings.isNullOrEmpty(defaultTable)
-					&& !CommonTools.isValidColumnName(split)) {
+			if (!Strings.isNullOrEmpty(defaultTable) && !CommonTools.isValidColumnName(split)) {
 				lhs.add(new Column(defaultTable, split).getFullAttributeName());
 			} else {
 				lhs.add(split);
@@ -187,12 +171,10 @@ public class CFDRuleBuilder extends RuleBuilder {
 		for (int i = 0; i < rhsSplits.length; i++) {
 			split = rhsSplits[i].trim().toLowerCase();
 			if (split.isEmpty()) {
-				throw new IllegalArgumentException("Invalid rule description "
-						+ head);
+				throw new IllegalArgumentException("Invalid rule description " + head);
 			}
 
-			if (!Strings.isNullOrEmpty(defaultTable)
-					&& !CommonTools.isValidColumnName(split)) {
+			if (!Strings.isNullOrEmpty(defaultTable) && !CommonTools.isValidColumnName(split)) {
 				rhs.add(new Column(defaultTable, split).getFullAttributeName());
 			} else {
 				rhs.add(split);
@@ -211,16 +193,12 @@ public class CFDRuleBuilder extends RuleBuilder {
 
 			splits = line.trim().split(",");
 			if (splits.length != lhs.size() + rhs.size()) {
-				throw new IllegalArgumentException("Invalid rule description "
-						+ line);
+				throw new IllegalArgumentException("Invalid rule description " + line);
 			}
 
 			String curColumn;
 			for (int j = 0; j < splits.length; j++) {
 				split = splits[j].trim().toLowerCase();
-				// if (split.equals("_")) {
-				// continue;
-				// }
 				if (j < lhs.size()) {
 					curColumn = lhs.get(j);
 				} else {
@@ -228,12 +206,11 @@ public class CFDRuleBuilder extends RuleBuilder {
 				}
 
 				if (Strings.isNullOrEmpty(split)) {
-					throw new IllegalArgumentException(
-							"Invalid rule description " + line);
+					throw new IllegalArgumentException("Invalid rule description " + line);
 				}
 
-				SimpleExpression newFilter = SimpleExpression.newEqual(
-						new Column(curColumn), split);
+				SimpleExpression newFilter =
+                    SimpleExpression.newEqual(new Column(curColumn), split);
 				filter.add(newFilter);
 			}
 			filterExpressions.add(filter);
@@ -252,7 +229,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 	/**
 	 * Gets of RHS.
 	 * 
-	 * @return
+	 * @return RHS.
 	 */
 	public List<String> getRhs() {
 		return rhs;

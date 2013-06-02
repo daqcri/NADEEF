@@ -24,8 +24,6 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -50,8 +48,7 @@ public class CleanPlan {
 	/**
 	 * Creates a <code>CleanPlan</code> from JSON string.
 	 * 
-	 * @param reader
-	 *            JSON string reader.
+	 * @param reader JSON string reader.
 	 * @return <code>CleanPlan</code> object.
 	 */
 	@SuppressWarnings("unchecked")
@@ -84,7 +81,8 @@ public class CleanPlan {
 				// TODO: support different type of DB.
 				SQLDialect sqlDialect = SQLDialect.POSTGRES;
 				DBConfig.Builder builder = new DBConfig.Builder();
-				dbConfig = builder.username((String) src.get("username"))
+				dbConfig =
+                    builder.username((String) src.get("username"))
 						.password((String) src.get("password"))
 						.url((String) src.get("url")).dialect(sqlDialect)
 						.build();
@@ -110,16 +108,15 @@ public class CleanPlan {
 					if (ruleObj.containsKey("target")) {
 						targetTableNames = (List<String>) ruleObj.get("target");
 						Preconditions.checkArgument(
-								targetTableNames.size() <= 2,
-								"NADEEF only supports MAX 2 tables per rule.");
+					        targetTableNames.size() <= 2,
+							"NADEEF only supports MAX 2 tables per rule."
+                        );
 					} else {
 						// if the target table names does not exist, we use
 						// default naming.
 						targetTableNames = Lists.newArrayList();
 						for (String fullFileName : fullFileNames) {
-							targetTableNames.add(Files
-									.getNameWithoutExtension(fullFileName)
-									+ "_copy");
+							targetTableNames.add(Files.getNameWithoutExtension(fullFileName));
 						}
 					}
 
@@ -128,19 +125,17 @@ public class CleanPlan {
 					for (int j = 0; j < targetTableNames.size(); j++) {
 						File file = CommonTools.getFile(fullFileNames.get(j));
 						CSVDumper.dump(conn, file, targetTableNames.get(j));
-						schemas.add(DBMetaDataTool.getSchema(targetTableNames
-								.get(j)));
+						schemas.add(DBMetaDataTool.getSchema(targetTableNames.get(j)));
 					}
 				} else {
 					// working with database
-					List<String> sourceTableNames = (List<String>) ruleObj
-							.get("table");
+					List<String> sourceTableNames = (List<String>) ruleObj.get("table");
 					for (String tableName : sourceTableNames) {
 						if (!DBMetaDataTool.isTableExist(tableName)) {
-							throw new InvalidCleanPlanException(
-									"The specified table "
-											+ tableName
-											+ " cannot be found in the source database.");
+                            throw new InvalidCleanPlanException(
+                                "The specified table " +
+                                tableName +
+                                " cannot be found in the source database.");
 						}
 					}
 
@@ -156,19 +151,23 @@ public class CleanPlan {
 						}
 					}
 
-					Preconditions
-							.checkArgument(
-									sourceTableNames.size() == targetTableNames
-											.size()
-											&& sourceTableNames.size() <= 2
-											&& sourceTableNames.size() >= 1,
-									"Invalid Rule property, rule needs to have one or two tables.");
+					Preconditions.checkArgument(
+                        sourceTableNames.size() == targetTableNames.size() &&
+                        sourceTableNames.size() <= 2 &&
+                        sourceTableNames.size() >= 1,
+                        "Invalid Rule property, rule needs to have one or two tables.");
 
 					for (int j = 0; j < sourceTableNames.size(); j++) {
-						DBMetaDataTool.copy(sourceTableNames.get(j),
-								targetTableNames.get(j));
-						schemas.add(DBMetaDataTool.getSchema(targetTableNames
-								.get(j)));
+						DBMetaDataTool.copy(
+                            sourceTableNames.get(j),
+						    targetTableNames.get(j)
+                        );
+
+                        schemas.add(
+                            DBMetaDataTool.getSchema(
+                                targetTableNames.get(j)
+                            )
+                        );
 					}
 				}
 
@@ -177,22 +176,20 @@ public class CleanPlan {
 				JSONArray value;
 				value = (JSONArray) ruleObj.get("value");
 				String ruleName = (String) ruleObj.get("name");
-				if (Strings.isNullOrEmpty(ruleName)) {
-					// generate default rule name when it is not provided by the
-					// user, and
-					// distinguished by the value of the rule.
-					ruleName = "Rule"
-							+ CommonTools.toHashCode(Calendar.getInstance()
-									.getTime().toString());
-				}
+                if (Strings.isNullOrEmpty(ruleName)) {
+                    // generate default rule name when it is not provided by the user, and
+                    // distinguished by the value of the rule.
+                    ruleName = "Rule" + CommonTools.toHashCode((String)value.get(0));
+                }
 				switch (type) {
 				case "udf":
 					value = (JSONArray) ruleObj.get("value");
-					Class udfClass = CommonTools.loadClass((String) value
-							.get(0));
+					Class udfClass =
+                        CommonTools.loadClass((String) value.get(0));
 					if (!Rule.class.isAssignableFrom(udfClass)) {
 						throw new InvalidRuleException(
-								"The specified class is not a Rule class.");
+						    "The specified class is not a Rule class."
+                        );
 					}
 
 					rule = (Rule) udfClass.newInstance();
@@ -201,11 +198,15 @@ public class CleanPlan {
 					rules.add(rule);
 					break;
 				default:
-					RuleBuilder ruleBuilder = NadeefConfiguration
-							.tryGetRuleBuilder(type);
+					RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
 					if (ruleBuilder != null) {
-						rules.addAll(ruleBuilder.name(ruleName).schema(schemas)
-								.table(targetTableNames).value(value).build());
+						rules.addAll(
+                            ruleBuilder.name(ruleName)
+                                .schema(schemas)
+								.table(targetTableNames)
+                                .value(value)
+                                .build()
+                        );
 					} else {
 						tracer.err("Unknown Rule type: " + type, null);
 					}

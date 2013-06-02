@@ -24,9 +24,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * Abstract class RuleBuilder represents the extension point of writing new
  * abstract rules (e.g. FD).
- * 
- * @author Amr Ebaid (aebaid@qf.org.qa)
- * @author Si Yin (siyin@qf.org.qa)
  */
 public abstract class RuleBuilder {
 	// <editor-fold desc="Private fields">
@@ -39,15 +36,13 @@ public abstract class RuleBuilder {
 
 	// </editor-fold>
 
-	public RuleBuilder() {
-	}
+	public RuleBuilder() {}
 
 	// <editor-fold desc="Public methods">
 	/**
 	 * Sets the rule value.
 	 * 
-	 * @param value
-	 *            rule value.
+	 * @param value rule value.
 	 */
 	public RuleBuilder value(String value) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
@@ -59,8 +54,7 @@ public abstract class RuleBuilder {
 	/**
 	 * Sets the source of the Rule.
 	 * 
-	 * @param schemas
-	 *            input schemas.
+	 * @param schemas input schemas.
 	 */
 	public RuleBuilder schema(List<Schema> schemas) {
 		this.schemas = Preconditions.checkNotNull(schemas);
@@ -70,8 +64,7 @@ public abstract class RuleBuilder {
 	/**
 	 * Sets the source of the Rule.
 	 * 
-	 * @param schema
-	 *            input schemas.
+	 * @param schema input schemas.
 	 */
 	public RuleBuilder schema(Schema schema) {
 		Preconditions.checkNotNull(schema);
@@ -82,8 +75,7 @@ public abstract class RuleBuilder {
 	/**
 	 * Sets the rule value.
 	 * 
-	 * @param values
-	 *            rule value.
+	 * @param values rule value.
 	 */
 	public RuleBuilder value(List<String> values) {
 		this.value = Preconditions.checkNotNull(values);
@@ -94,12 +86,10 @@ public abstract class RuleBuilder {
 	/**
 	 * Sets the table names.
 	 * 
-	 * @param tableNames
-	 *            table name.
+	 * @param tableNames table name.
 	 */
 	public RuleBuilder table(List<String> tableNames) {
-		Preconditions
-				.checkArgument(tableNames != null && tableNames.size() > 0);
+		Preconditions.checkArgument(tableNames != null && tableNames.size() > 0);
 		this.tableNames = tableNames;
 		return this;
 	}
@@ -107,24 +97,21 @@ public abstract class RuleBuilder {
 	/**
 	 * Sets the table names.
 	 * 
-	 * @param table1
-	 *            table name.
+	 * @param table table name.
 	 */
-	public RuleBuilder table(String table1) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(table1));
-		this.tableNames = Lists.newArrayList(table1);
+	public RuleBuilder table(String table) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(table));
+		this.tableNames = Lists.newArrayList(table);
 		return this;
 	}
 
 	/**
 	 * Sets the output path.
 	 * 
-	 * @param outputPath
-	 *            output path.
+	 * @param outputPath output path.
 	 */
 	public RuleBuilder out(File outputPath) {
-		Preconditions.checkArgument(outputPath != null
-				&& outputPath.isDirectory());
+		Preconditions.checkArgument(outputPath != null && outputPath.isDirectory());
 		this.outputPath = outputPath;
 		return this;
 	}
@@ -132,8 +119,7 @@ public abstract class RuleBuilder {
 	/**
 	 * Sets the rule name.
 	 * 
-	 * @param ruleName
-	 *            rule name.
+	 * @param ruleName rule name.
 	 */
 	public RuleBuilder name(String ruleName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleName));
@@ -154,15 +140,17 @@ public abstract class RuleBuilder {
 		Tracer tracer = Tracer.getTracer(RuleBuilder.class);
 		for (File outputFile : outputFiles) {
 			Stopwatch stopwatch = new Stopwatch().start();
-			String className = Files.getNameWithoutExtension(outputFile
-					.getName());
-			URL url = new URL("file://" + outputFile.getParent()
-					+ File.separator);
+			String className =
+                Files.getNameWithoutExtension(outputFile.getName());
+			URL url =
+                new URL("file://" + outputFile.getParent() + File.separator);
 			Class ruleClass = CommonTools.loadClass(className, url);
 			Rule rule = (Rule) ruleClass.getConstructor().newInstance();
-			rule.initialize(
-					outputFile.getName().substring(0,
-							outputFile.getName().lastIndexOf('.')), tableNames);
+
+            rule.initialize(
+				outputFile.getName().substring( 0,outputFile.getName().lastIndexOf('.')),
+                tableNames
+            );
 			result.add(rule);
 			tracer.verbose("Rule file : " + outputFile.getAbsolutePath()
 					+ " is loaded in "
