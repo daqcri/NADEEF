@@ -82,10 +82,11 @@ public class $CFDName$ extends SingleTupleRule {
      */
     @Override
     public void iterator(Collection<Table> tables, IteratorStream<Tuple> output) {
+        Table table = tables.iterator().next();
         ArrayList<Tuple> result = new ArrayList();
         int pos = 0;
-       	while (pos < tuples.size()) {
-            Tuple t = tuples.get(pos++);
+       	while (pos < table.size()) {
+            Tuple t = table.get(pos++);
             if (!t.getString(rhs.get(0)).equals(rightFilterExpressions.get(0).getValue())) {            
                 output.put(t);
         	}
