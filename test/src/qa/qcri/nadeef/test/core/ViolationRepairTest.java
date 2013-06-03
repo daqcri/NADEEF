@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static qa.qcri.nadeef.core.datamodel.Schema.*;
-
 /**
  * Violation repair test.
  */
@@ -62,14 +60,14 @@ public class ViolationRepairTest {
             Cell left2 = fix2.getLeft();
             Cell right2 = fix2.getRight();
 
-            Assert.assertEquals("test.c", left1.getColumn().getFullAttributeName());
+            Assert.assertEquals("test.c", left1.getColumn().getFullColumnName());
             Assert.assertEquals(8, left1.getTupleId());
-            Assert.assertEquals("test.c", right1.getColumn().getFullAttributeName());
+            Assert.assertEquals("test.c", right1.getColumn().getFullColumnName());
             Assert.assertEquals(6, right1.getTupleId());
 
-            Assert.assertEquals("test.a", left2.getColumn().getFullAttributeName());
+            Assert.assertEquals("test.a", left2.getColumn().getFullColumnName());
             Assert.assertEquals(8, left2.getTupleId());
-            Assert.assertEquals("test.a", right2.getColumn().getFullAttributeName());
+            Assert.assertEquals("test.a", right2.getColumn().getFullColumnName());
             Assert.assertEquals(6, right2.getTupleId());
 
         } catch (Exception e) {

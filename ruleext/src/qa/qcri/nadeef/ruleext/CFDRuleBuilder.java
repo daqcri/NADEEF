@@ -67,7 +67,7 @@ public class CFDRuleBuilder extends RuleBuilder {
                 String eValue = expression.getValue();
                 if (!eValue.equals("_")) {
                     leftExpressionST.add("columnName", expression.getLeft()
-                            .getFullAttributeName());
+                            .getFullColumnName());
                     leftExpressionST.add("value", eValue);
                     leftExpressions.add(leftExpressionST.render());
                     leftExpressionST.remove("columnName");
@@ -85,7 +85,7 @@ public class CFDRuleBuilder extends RuleBuilder {
                     ST rightExpressionST = singleSTGroup
                             .getInstanceOf("rExpressionItem");
                     rightExpressionST.add("columnName", expression.getLeft()
-                            .getFullAttributeName());
+                            .getFullColumnName());
                     rightExpressionST.add("value", eValue);
                     List<String> rightExpressions = Lists.newArrayList();
                     rightExpressions.add(rightExpressionST.render());
@@ -169,7 +169,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 
             if (!Strings.isNullOrEmpty(defaultTable)
                     && !CommonTools.isValidColumnName(split)) {
-                lhs.add(new Column(defaultTable, split).getFullAttributeName());
+                lhs.add(new Column(defaultTable, split).getFullColumnName());
             } else {
                 lhs.add(split);
             }
@@ -186,7 +186,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 
             if (!Strings.isNullOrEmpty(defaultTable)
                     && !CommonTools.isValidColumnName(split)) {
-                rhs.add(new Column(defaultTable, split).getFullAttributeName());
+                rhs.add(new Column(defaultTable, split).getFullColumnName());
             } else {
                 rhs.add(split);
             }

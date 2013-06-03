@@ -86,7 +86,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         sqlBuilder.append(cell.getTupleId());
         sqlBuilder.append(',');
         sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
-        sqlBuilder.append("'").append(cell.getColumn().getAttributeName()).append("',");
+        sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");
         sqlBuilder.append("'").append(cell.getValue().toString()).append("',");
 
         sqlBuilder.append(fix.getOperation().getValue());
@@ -96,7 +96,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             sqlBuilder.append(cell.getTupleId());
             sqlBuilder.append(',');
             sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
-            sqlBuilder.append("'").append(cell.getColumn().getAttributeName()).append("',");
+            sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");
             sqlBuilder.append("'").append(cell.getValue().toString()).append("')");
         } else {
             sqlBuilder.append("null, null, null,'" + fix.getRightValue() + "')");

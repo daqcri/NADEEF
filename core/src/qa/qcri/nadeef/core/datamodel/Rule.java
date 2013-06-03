@@ -86,15 +86,15 @@ public abstract class Rule<E> {
 
     /**
      * Vertical scope operator.
-     * @param table input tuple collections.
-     * @return scoped tuple collection.
+     * @param table input tables.
+     * @return scoped tables.
      */
     public abstract Collection<Table> verticalScope(Collection<Table> table);
 
     /**
      * Horizontal scope operator.
-     * @param table input tuple collections.
-     * @return scoped tuple collection.
+     * @param table input tables.
+     * @return scoped tables.
      */
     public abstract Collection<Table> horizontalScope(Collection<Table> table);
 

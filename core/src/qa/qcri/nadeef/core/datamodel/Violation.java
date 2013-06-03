@@ -62,9 +62,10 @@ public class Violation {
 
     public Cell getCell(String tableName, String columnName) {
         for (Cell cell : cells) {
+            Column column = cell.getColumn();
             if (
-                cell.getColumn().getTableName().equals(tableName) &&
-                cell.getColumn().getAttributeName().equals(columnName)
+                column.isFromTable(tableName) &&
+                column.getColumnName().equalsIgnoreCase(columnName)
             ) {
                 return cell;
             }

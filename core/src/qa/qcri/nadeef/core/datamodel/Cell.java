@@ -90,8 +90,8 @@ public class Cell {
         this.tupleId = tupleId;
     }
 
-    public boolean containsAttribute(String attribute) {
-        return column.getAttributeName().equalsIgnoreCase(attribute);
+    public boolean hasColumnName(String columnName) {
+        return column.getColumnName().equalsIgnoreCase(columnName);
     }
 
     //</editor-fold>

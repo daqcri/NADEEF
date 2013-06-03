@@ -89,14 +89,14 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 String tableName = column.getTableName();
                 String updateSql =
                     "UPDATE " + tableName +
-                    " SET " + column.getAttributeName() + " = " + rightValue +
+                    " SET " + column.getColumnName() + " = " + rightValue +
                     " WHERE tid = " + cell.getTupleId();
                 tracer.verbose(updateSql);
                 stat.addBatch(updateSql);
                 auditInsertStat.setInt(1, fix.getVid());
                 auditInsertStat.setInt(2, cell.getTupleId());
                 auditInsertStat.setString(3, column.getTableName());
-                auditInsertStat.setString(4, column.getAttributeName());
+                auditInsertStat.setString(4, column.getColumnName());
                 auditInsertStat.setString(5, oldValue);
                 auditInsertStat.setString(6, rightValue);
                 auditInsertStat.addBatch();

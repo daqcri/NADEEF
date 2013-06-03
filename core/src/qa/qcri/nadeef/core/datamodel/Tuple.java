@@ -115,7 +115,7 @@ public class Tuple {
         List<Column> columns = schema.getColumns().asList();
         List<Cell> cells = Lists.newArrayList();
         for (Column column : columns) {
-            if (column.getAttributeName().equals("tid")) {
+            if (column.getColumnName().equals("tid")) {
                 continue;
             }
             Cell cell = new Cell(column, tupleId, get(column));

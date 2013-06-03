@@ -209,10 +209,10 @@ public class Console {
         Schema schema = DBMetaDataTool.getSchema(tableName);
         Set<Column> columns = schema.getColumns();
         for (Column column : columns) {
-            if (column.getAttributeName().equals("tid")) {
+            if (column.getColumnName().equals("tid")) {
                 continue;
             }
-            console.println(String.format("\t%s", column.getAttributeName()));
+            console.println(String.format("\t%s", column.getColumnName()));
         }
     }
     //</editor-fold>

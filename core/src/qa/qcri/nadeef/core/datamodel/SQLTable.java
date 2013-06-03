@@ -151,7 +151,7 @@ public class SQLTable extends Table {
     @Override
     public Table project(Column column) {
         Preconditions.checkNotNull(column);
-        sqlQuery.addSelect(column.getAttributeName());
+        sqlQuery.addSelect(column.getColumnName());
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
         }
@@ -162,7 +162,7 @@ public class SQLTable extends Table {
     public Table project(Collection<Column> columns) {
         Preconditions.checkNotNull(columns);
         for (Column column : columns) {
-            sqlQuery.addSelect(column.getAttributeName());
+            sqlQuery.addSelect(column.getColumnName());
         }
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -182,7 +182,7 @@ public class SQLTable extends Table {
 
     @Override
     public Table orderBy(Column column) {
-        sqlQuery.addOrder(column.getAttributeName());
+        sqlQuery.addOrder(column.getColumnName());
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
         }
@@ -193,7 +193,7 @@ public class SQLTable extends Table {
     @Override
     public Table orderBy(Collection<Column> columns) {
         for (Column column : columns) {
-            sqlQuery.addOrder(column.getAttributeName());
+            sqlQuery.addOrder(column.getColumnName());
         }
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -245,7 +245,7 @@ public class SQLTable extends Table {
             Connection conn = null;
             try {
                 String sql =
-                    "SELECT DISTINCT(" + column.getAttributeName() + ") FROM " + tableName;
+                    "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
                 conn = DBConnectionFactory.getSourceConnection();
                 Statement stat = conn.createStatement();
                 ResultSet distinctResult = stat.executeQuery(sql);

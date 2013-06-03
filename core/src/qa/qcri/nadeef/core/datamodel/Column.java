@@ -63,7 +63,7 @@ public class Column {
     }
 
     /**
-     * Gets the table name. It also deals with situation where the table is a view.
+     * Gets the table name.
      * @return original table name.
      */
     public String getTableName() {
@@ -71,17 +71,34 @@ public class Column {
     }
 
     /**
-     * Gets the attribute name.
-     * @return column attribute name.
+     * Returns <code>True</code> when the tuple is from the given table name.
+     * @param tableName table name.
+     * @return <code>True</code> when the tuple is from the given table name.
      */
-    public String getAttributeName() {
+    public boolean isFromTable(String tableName) {
+        if (this.tableName.equalsIgnoreCase(tableName)) {
+            return true;
+        }
+
+        if (this.tableName.startsWith("csv_")) {
+            String originalTableName = this.tableName.substring(4);
+            return originalTableName.equalsIgnoreCase(tableName);
+        }
+        return false;
+    }
+
+    /**
+     * Gets the column name.
+     * @return column name.
+     */
+    public String getColumnName() {
         return attributeName;
     }
 
     /**
-     * Generates a string with format of 'tableName'.'attributeName'.
+     * Gets a string with format of 'tableName'.'attributeName'.
      */
-    public String getFullAttributeName() {
+    public String getFullColumnName() {
         return getTableName() + "." + attributeName;
     }
 
@@ -97,7 +114,7 @@ public class Column {
         }
 
         Column column = (Column)obj;
-        if (getFullAttributeName().equalsIgnoreCase(column.getFullAttributeName())) {
+        if (getFullColumnName().equalsIgnoreCase(column.getFullColumnName())) {
             return true;
         }
         return false;

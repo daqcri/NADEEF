@@ -52,7 +52,7 @@ public class AdultRule1 extends SingleTupleRule {
         List<Cell> violatedCells = Lists.newArrayList(violation.getCells());
         Fix.Builder fixBuilder = new Fix.Builder(violation);
         for (Cell cell : violatedCells) {
-            if (cell.containsAttribute("relationship")) {
+            if (cell.hasColumnName("relationship")) {
                 Fix fix = fixBuilder.left(cell).right("Unmarried").build();
                 result.add(fix);
             }

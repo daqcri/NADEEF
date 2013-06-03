@@ -1,15 +1,8 @@
 package qa.qcri.nadeef.test.udf;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVDumper;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -53,7 +46,7 @@ public class MyRule1 extends SingleTupleRule {
         List<Cell> cells = Lists.newArrayList(violation.getCells());
         Fix.Builder fixBuilder = new Fix.Builder(violation);
         for (Cell cell : cells) {
-            if (cell.containsAttribute("city")) {
+            if (cell.hasColumnName("city")) {
                 Fix fix = fixBuilder.left(cell).right("amsterdam").build();
                 result.add(fix);
             }

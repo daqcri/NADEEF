@@ -73,7 +73,7 @@ public class TupleCollectionTest {
         Set cellSets = tuple.getCells();
         Assert.assertEquals(1, cellSets.size());
         Cell cell = (Cell)cellSets.iterator().next();
-        Assert.assertEquals(tableName + ".c", cell.getColumn().getFullAttributeName());
+        Assert.assertEquals(tableName + ".c", cell.getColumn().getFullColumnName());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class TupleCollectionTest {
         Set cellSets = tuple.getCells();
         Assert.assertEquals(1, cellSets.size());
         Cell cell = (Cell)cellSets.iterator().next();
-        Assert.assertEquals(tableName + ".c", cell.getColumn().getFullAttributeName());
+        Assert.assertEquals(tableName + ".c", cell.getColumn().getFullColumnName());
     }
 
     @Test

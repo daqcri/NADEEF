@@ -100,7 +100,7 @@ public class SimpleExpression {
      * as string in SQL.
      */
     public String toString() {
-        StringBuilder builder = new StringBuilder(left.getFullAttributeName());
+        StringBuilder builder = new StringBuilder(left.getFullColumnName());
         builder.append(operationMap.get(operation));
         if (value.matches("^[0-9]+$") || value.contains("'") || value.contains("\"")) {
             builder.append(value);
