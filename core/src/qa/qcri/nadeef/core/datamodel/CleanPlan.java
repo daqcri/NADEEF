@@ -103,6 +103,7 @@ public class CleanPlan {
 
 			for (int i = 0; i < ruleArray.size(); i++) {
 				schemas.clear();
+                fileNames.clear();
 				JSONObject ruleObj = (JSONObject) ruleArray.get(i);
 				if (isCSV) {
 					// working with CSV
