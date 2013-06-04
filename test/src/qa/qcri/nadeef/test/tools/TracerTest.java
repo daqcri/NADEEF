@@ -14,7 +14,7 @@ import qa.qcri.nadeef.tools.Tracer;
 public class TracerTest {
     @Test
     public void test() {
-        Tracer.putStatEntry(Tracer.StatType.DetectTime, 1);
-        Tracer.printDetectSummary();
+        Tracer.putStatsEntry(Tracer.StatType.DetectTime, 1);
+        Tracer.printDetectSummary("");
     }
 }

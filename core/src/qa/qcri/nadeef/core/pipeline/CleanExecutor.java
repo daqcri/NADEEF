@@ -94,7 +94,7 @@ public class CleanExecutor {
         queryFlow.waitUntilFinish();
         detectFlow.waitUntilFinish();
 
-        Tracer.putStatEntry(
+        Tracer.putStatsEntry(
             Tracer.StatType.DetectTime,
             queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
         );
@@ -128,12 +128,12 @@ public class CleanExecutor {
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
-        Tracer.putStatEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
+        Tracer.putStatsEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
 
         updateFlow.start();
         updateFlow.waitUntilFinish();
 
-        Tracer.putStatEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
+        Tracer.putStatsEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
         return this;
     }
 

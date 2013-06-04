@@ -118,12 +118,12 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         // mark the end of the iteration output
         IteratorStream.markEnd();
 
-        Tracer.putStatEntry(
+        Tracer.putStatsEntry(
             Tracer.StatType.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.putStatEntry(Tracer.StatType.IterationCount, blockSize);
+        Tracer.putStatsEntry(Tracer.StatType.IterationCount, blockSize);
         stopwatch.stop();
         return true;
     }

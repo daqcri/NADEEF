@@ -77,7 +77,7 @@ public class StressDetectionTest {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(correctResult);
-            Tracer.printDetectSummary();
+            Tracer.printDetectSummary("");
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

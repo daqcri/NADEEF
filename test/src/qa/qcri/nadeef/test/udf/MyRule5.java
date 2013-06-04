@@ -69,7 +69,7 @@ public class MyRule5 extends PairTupleRule {
         Fix.Builder builder = new Fix.Builder();
         Cell tran = violation.getCell("tran1", "phn");
         Cell bank = violation.getCell("bank1", "tel");
-        Fix fix = builder.left(tran).right(bank).build();
+        Fix fix = builder.left(tran).right(bank.getValue().toString()).build();
         return Lists.newArrayList(fix);
     }
 }

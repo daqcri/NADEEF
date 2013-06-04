@@ -31,6 +31,7 @@ public class TupleCollectionTest {
 
     @Before
     public void setup() {
+        Bootstrap.start();
         Connection conn = null;
         try {
             Bootstrap.start();
@@ -41,26 +42,42 @@ public class TupleCollectionTest {
                        .password("tester")
                        .dialect(SQLDialect.POSTGRES)
                        .build();
-
+            DBConnectionFactory.initializeSource(dbconfig);
             conn = DBConnectionFactory.createConnection(dbconfig);
             tableName = CSVDumper.dump(conn, TestDataRepository.getDumpTestCSVFile());
-            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
         }
     }
 
     @After
     public void teardown() {
+        Connection conn = null;
         try {
-            Connection conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionFactory.getNadeefConnection();
             Statement stat = conn.createStatement();
             stat.execute("DROP TABLE " + tableName + " CASCADE");
             conn.commit();
-            conn.close();
+            Bootstrap.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
         }
     }
 

@@ -182,7 +182,7 @@ public class NadeefConfiguration {
      * @return Nadeef version.
      */
     public static String getVersion() {
-        String version = "1.0";
+        String version = "Alpha";
         return version;
     }
 

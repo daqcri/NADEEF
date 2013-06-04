@@ -85,11 +85,11 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
 
         conn.commit();
         conn.close();
-        Tracer.putStatEntry(
+        Tracer.putStatsEntry(
             Tracer.StatType.ViolationExportTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
-        Tracer.putStatEntry(Tracer.StatType.ViolationExport, count);
+        Tracer.putStatsEntry(Tracer.StatType.ViolationExport, count);
         return count;
     }
 

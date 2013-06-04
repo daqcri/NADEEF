@@ -117,9 +117,9 @@ public class ViolationDetector<T>
             detectCount += pool.take().get();
         }
 
-        Tracer.putStatEntry(Tracer.StatType.DetectCallTime, elapsedTime);
-        Tracer.putStatEntry(Tracer.StatType.DetectCount, detectCount);
-        Tracer.putStatEntry(Tracer.StatType.DetectThreadCount, detectThread);
+        Tracer.putStatsEntry(Tracer.StatType.DetectCallTime, elapsedTime);
+        Tracer.putStatsEntry(Tracer.StatType.DetectCount, detectCount);
+        Tracer.putStatsEntry(Tracer.StatType.DetectThreadCount, detectThread);
 
         return resultCollection;
     }

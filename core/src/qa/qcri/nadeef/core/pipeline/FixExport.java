@@ -62,7 +62,7 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         conn.commit();
         stat.close();
         conn.close();
-        Tracer.putStatEntry(Tracer.StatType.FixExport, count);
+        Tracer.putStatsEntry(Tracer.StatType.FixExport, count);
         return count;
     }
 

@@ -147,6 +147,9 @@ public class Console {
 
             while ((line = console.readLine()) != null) {
                 line = line.trim();
+                // clear the statistics for every run.
+                // TODO: move inside the executor.
+                Tracer.clearStats();
                 try {
                     if (line.startsWith("exit")) {
                         break;

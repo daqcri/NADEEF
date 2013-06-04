@@ -8,21 +8,28 @@ package qa.qcri.nadeef.tools;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 
-import java.io.PrintStream;
-import java.io.Reader;
+import java.io.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Tracer is used for debugging / profiling / benchmarking purpose.
- * TODO: adds support for log4j.
+ * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
  */
+// TODO: adds support for log4j.
 public class Tracer {
-    private static Map<StatType, Long> stats = Maps.newHashMap();
-    private Class classType;
+
+    //<editor-fold desc="Private fields">
+    private static Multimap<StatType, Long> stats = LinkedHashMultimap.create();
+
+    private String infoHeader;
+    private String errHeader;
+    private String verboseHeader;
+
     private static boolean infoFlag = true;
     private static boolean verboseFlag = false;
     private static PrintStream console = System.out;
+    //</editor-fold>
 
     public enum StatType {
         // Detection time
@@ -59,36 +66,60 @@ public class Tracer {
 
     //<editor-fold desc="Tracer creation">
     private Tracer(Class classType) {
-        this.classType = classType;
+        infoHeader = ":INFO:" + classType.getSimpleName() + ":";
+        errHeader = ":ERROR:" + classType.getSimpleName() + ":";
+        verboseHeader = ":VERBOSE:" + classType.getSimpleName() + ":";
     }
 
+    /**
+     * Creates a tracer class
+     * @param classType
+     * @return
+     */
     public static Tracer getTracer(Class classType) {
         return new Tracer(classType);
     }
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
+
+    /**
+     * Set the output stream.
+     * @param console_
+     */
     public static void setConsole(PrintStream console_) {
         console = Preconditions.checkNotNull(console_);
     }
 
+    /**
+     * Print out info message.
+     * @param msg info message.
+     */
     public void info(String msg) {
-        if (infoFlag) {
-            console.println(":INFO:" + classType.getSimpleName() + " : " + msg);
-        }
+        info(msg, infoHeader);
     }
 
+    /**
+     * Print out verbose message.
+     * @param msg message.
+     */
     public void verbose(String msg) {
-        if (verboseFlag) {
-            console.println(":VERBOSE:" + classType.getName() + " : " + msg);
-        }
+        verbose(msg, verboseHeader);
     }
 
+    /**
+     * Print out error message.
+     * @param message error message.
+     * @param ex exceptions.
+     */
     public void err(String message, Exception ex) {
-        System.err.println(":ERROR:" + classType.getName() + " : " + message);
+        console.println(errHeader + message);
         // TODO: write back the exception message into a log file.
         if (isInfoOn() && ex != null) {
-            ex.printStackTrace();
+            Writer writer = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(writer);
+            ex.printStackTrace(printWriter);
+            console.println(writer.toString());
         }
     }
 
@@ -97,99 +128,183 @@ public class Tracer {
     //<editor-fold desc="Static methods">
 
     /**
-     * Adds values to the trace entry.
+     * Puts values to the trace statistic entry.
      * @param statType type.
      * @param value value.
      */
-    public static synchronized void putStatEntry(StatType statType, long value) {
+    public static synchronized void putStatsEntry(StatType statType, long value) {
         stats.put(statType, value);
     }
 
+    /**
+     * Accumulate values in the trace statistic entry.
+     * @param statType type.
+     * @param value value.
+     */
+    public static synchronized void addStatsEntry(StatType statType, long value) {
+        if (!stats.containsKey(statType)) {
+            stats.put(statType, value);
+        } else {
+            Collection<Long> values = stats.get(statType);
+            if (values.size() > 1) {
+                throw new IllegalStateException(
+                    "Entry " + statType + " is found more than once in the statistic dictionary."
+                );
+            }
+            Long newValue = stats.get(statType).iterator().next() + value;
+            stats.removeAll(statType);
+            stats.put(statType, newValue);
+        }
+    }
+
+
+    /**
+     * Turn on / off info printing flag.
+     * @param mode on / off.
+     */
     public static void setInfo(boolean mode) {
         infoFlag = mode;
     }
 
+    /**
+     * Turn on / off verbose printing flag.
+     * @param mode on / off.
+     */
     public static void setVerbose(boolean mode) {
         verboseFlag = mode;
     }
 
+    /**
+     * Returns <code>True</code> when Info flag is on.
+     * @return <code>True</code> when Info flag is on.
+     */
     public static boolean isInfoOn() {
         return infoFlag;
     }
 
+    /**
+     * Returns <code>True</code> when Verbose flag is on.
+     * @return <code>True</code> when Verbose flag is on.
+     */
     public static boolean isVerboseOn() {
         return verboseFlag;
     }
 
+    /**
+     * Clear out the current statistic records.
+     */
+    public static void clearStats() {
+        stats.clear();
+    }
+
+    /**
+     * Print Repair summary.
+     * @param ruleName rule name.
+     */
     public static void printRepairSummary(String ruleName) {
-        out("Repair summary:");
-        long totalTime = stats.get(StatType.RepairTime);
-        long totalChangedCell = stats.get(StatType.UpdatedCellNumber);
-        out(formatEntry(StatType.RepairTime, "Repair time", "ms"));
-        out("Rule : " + ruleName);
-        out("----------------------------------------------------------------");
-        out(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"));
-        out(formatEntry(StatType.EQTime, "EQ time", "ms"));
-        out(formatEntry(StatType.UpdatedCellNumber, "Cell updated", ""));
-        out("----------------------------------------------------------------");
+        info("Repair summary:", null);
+        info(formatEntry(StatType.RepairTime, "Repair time", "ms"), null);
+        info("Rule : " + ruleName, null);
+        info("----------------------------------------------------------------", null);
+        info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"), null);
+        info(formatEntry(StatType.EQTime, "EQ time", "ms"), null);
+        info(formatEntry(StatType.UpdatedCellNumber, "Cell updated", ""), null);
+        info("----------------------------------------------------------------", null);
+
+        Collection<Long> totalTimes = stats.get(StatType.RepairTime);
+        Collection<Long> totalChangedCells = stats.get(StatType.UpdatedCellNumber);
+
+        Long totalTime = 0l;
+        Long totalChangedCell = 0l;
+        for (Long tmp : totalTimes) {
+            totalTime += tmp;
+        }
+
+        for (Long tmp : totalChangedCells) {
+            totalChangedCell += tmp;
+        }
         console.println(
             "Repair finished in " + totalTime + " ms " +
                 "with " + totalChangedCell + " cells changed.\n"
         );
     }
 
-    public static void printDetectSummary() {
-        printDetectSummary(null);
-    }
-
     public static void printDetectSummary(String ruleName) {
-        out("Detection summary:");
-        out("Rule :" + ruleName);
-        out("----------------------------------------------------------------");
-        out(formatEntry(StatType.HScopeTime, "HScope time", "ms"));
-        out(formatEntry(StatType.VScopeTime, "VScope time", "ms"));
-        out(formatEntry(StatType.Blocks, "Blocks", ""));
-        out(formatEntry(StatType.IterationCount, "Original tuple count", ""));
-        out(formatEntry(StatType.IteratorTime, "Iterator time", "ms"));
-        out(formatEntry(StatType.DBLoadTime, "DB load time", "ms"));
-        out(formatEntry(StatType.DetectTime, "Detect time", "ms"));
-        out(formatEntry(StatType.DetectCallTime, "Detect call time", "ms"));
-        out(formatEntry(StatType.DetectThreadCount, "Detect thread count", ""));
-        out(formatEntry(StatType.DetectCount, "Detect tuple count", ""));
-        out(formatEntry(StatType.ViolationExport, "Violation", ""));
-        out(formatEntry(StatType.ViolationExportTime, "Violation export time", ""));
-        long totalTime;
-        long totalViolation;
-        if (stats.containsKey(StatType.DetectTime)) {
-            totalTime = stats.get(StatType.DetectTime);
-        } else {
-            totalTime = 0l;
+        info("Detection summary:", null);
+        info("Rule :" + ruleName, null);
+        info("----------------------------------------------------------------", null);
+        info(formatEntry(StatType.HScopeTime, "HScope time", "ms"), null);
+        info(formatEntry(StatType.VScopeTime, "VScope time", "ms"), null);
+        info(formatEntry(StatType.Blocks, "Blocks", ""), null);
+        info(formatEntry(StatType.IterationCount, "Original tuple count", ""), null);
+        info(formatEntry(StatType.IteratorTime, "Iterator time", "ms"), null);
+        info(formatEntry(StatType.DBLoadTime, "DB load time", "ms"), null);
+        info(formatEntry(StatType.DetectTime, "Detect time", "ms"), null);
+        info(formatEntry(StatType.DetectCallTime, "Detect call time", "ms"), null);
+        info(formatEntry(StatType.DetectThreadCount, "Detect thread count", ""), null);
+        info(formatEntry(StatType.DetectCount, "Detect tuple count", ""), null);
+        info(formatEntry(StatType.ViolationExport, "Violation", ""), null);
+        info(formatEntry(StatType.ViolationExportTime, "Violation export time", ""), null);
+
+        long totalTime = 0l;
+        long totalViolation = 0l;
+        Collection<Long> totalTimes = stats.get(StatType.DetectTime);
+        Collection<Long> totalViolations = stats.get(StatType.ViolationExport);
+
+        for (Long tmp : totalTimes) {
+            totalTime += tmp;
         }
 
-        if (stats.containsKey(StatType.ViolationExport)) {
-            totalViolation = stats.get(StatType.ViolationExport);
-        } else {
-            totalViolation = 0l;
+        for (Long tmp : totalViolations) {
+            totalViolation += tmp;
         }
-        out("----------------------------------------------------------------");
+
+        info("----------------------------------------------------------------", null);
         console.println(
             "Detection finished in " + totalTime + " ms " +
             "and found " + totalViolation + " violations.\n"
         );
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Private Helper">
     private static String formatEntry(
         StatType type,
         String prefix,
         String suffix
     ) {
-        long value = stats.containsKey(type) ? stats.get(type) : 0l;
-        return String.format("%-40s %10d %s", prefix, value, suffix);
+        String value;
+        if (!stats.containsKey(type)) {
+            value = "";
+        } else {
+            Collection<Long> values = stats.get(type);
+            StringBuilder outputBuilder = new StringBuilder(50);
+            for (Long tmp : values) {
+                outputBuilder.append(String.format("%5d", tmp));
+            }
+            value = outputBuilder.toString();
+        }
+        return String.format("%-40s %s %s", prefix, value, suffix);
     }
 
-    private static void out(String msg) {
+    private static void verbose(String msg, String header) {
+        if (verboseFlag) {
+            if (header != null) {
+                console.println(header + msg);
+            } else {
+                console.println(msg);
+            }
+        }
+    }
+
+    private static void info(String msg, String header) {
         if (infoFlag) {
-            console.println(msg);
+            if (header != null) {
+                console.println(header + msg);
+            } else {
+                console.println(msg);
+            }
         }
     }
     //</editor-fold>

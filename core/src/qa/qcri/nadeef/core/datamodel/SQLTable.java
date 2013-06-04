@@ -430,7 +430,7 @@ public class SQLTable extends Table {
             }
         }
 
-        Tracer.putStatEntry(Tracer.StatType.DBLoadTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        Tracer.addStatsEntry(Tracer.StatType.DBLoadTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         stopwatch.stop();
         return true;
     }

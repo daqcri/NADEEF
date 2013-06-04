@@ -10,6 +10,7 @@ if not exist "%JAVA_HOME%\bin\javac.exe" goto noJDK
 if not exist "out\nadeef.jar" goto noCompile
 
 :START
+set BuildVersion=1.0.974
 "%JAVA_HOME%\bin\java" -d64 -Xmx2048M -cp out\nadeef.jar;out\test qa.qcri.nadeef.console.Console
 goto end
 
