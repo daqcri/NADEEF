@@ -235,7 +235,8 @@ public class CleanPlan {
 			}
 			return result;
 		} catch (Exception ex) {
-			if (ex instanceof InvalidRuleException) {
+			ex.printStackTrace();
+            if (ex instanceof InvalidRuleException) {
 				throw (InvalidRuleException) ex;
 			}
 			throw new InvalidCleanPlanException(ex);
