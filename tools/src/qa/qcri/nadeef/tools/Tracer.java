@@ -6,6 +6,7 @@
 package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.*;
 
 import java.io.*;
@@ -284,7 +285,10 @@ public class Tracer {
             }
             value = outputBuilder.toString();
         }
-        return String.format("%-40s (%s) %s", prefix, suffix, value);
+        if (!Strings.isNullOrEmpty(suffix)) {
+            prefix = prefix + " (" + suffix + ")";
+        }
+        return String.format("%-40s %s", prefix, value);
     }
 
     private static void verbose(String msg, String header) {

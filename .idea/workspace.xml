@@ -11,7 +11,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="5b89a124-ff25-4f8e-976e-827e36ab69b3" name="Default" comment="- code refactor">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/SqlQueryBuilder.java" afterPath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/SqlQueryBuilder.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java" afterPath="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java" />
     </list>
     <ignored path="NADEEF.iws" />
@@ -27,7 +26,7 @@
     <file path="/NodeCacheManager.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369026974183" ignored="false" />
     <file path="/FlowTest.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369224769147" ignored="false" />
     <file path="/Deserializer.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1365406334380" ignored="false" />
-    <file path="/Tracer.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1370345181161" ignored="false" />
+    <file path="/Tracer.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1370346660740" ignored="false" />
     <file path="/Dummy.txt" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1369911588104" ignored="false" />
     <file path="/CountOperator.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1365404885815" ignored="false" />
     <file path="/CSVDumper.java" changelist="5b89a124-ff25-4f8e-976e-827e36ab69b3" time="1370341473573" ignored="false" />
@@ -470,7 +469,7 @@
       <file leaf-file-name="Tracer.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="204" column="38" selection-start="5339" selection-end="5339" vertical-scroll-proportion="0.16177958">
+            <state line="290" column="49" selection-start="8938" selection-end="8938" vertical-scroll-proportion="0.56319517">
               <folding>
                 <element signature="class#StatType#0;class#Tracer#0" expanded="false" />
                 <element signature="n#!!doc;n#Tracer#0;n#Tracer#0" expanded="false" />
@@ -1194,7 +1193,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1184" extended-state="7" />
+    <frame x="-9" y="-9" width="1938" height="1184" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32608697" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1301,10 +1300,11 @@
         <filter targetName="jar" isVisible="false" />
         <filter targetName="console" isVisible="false" />
         <filter targetName="core" isVisible="false" />
+        <filter targetName="ruleext" isVisible="false" />
         <filter targetName="tools" isVisible="false" />
         <filter targetName="test" isVisible="false" />
+        <filter targetName="doc" isVisible="false" />
         <filter targetName="unittest" isVisible="false" />
-        <filter targetName="ruleext" isVisible="false" />
       </targetFilters>
       <expanded value="true" />
     </buildFile>
@@ -1416,7 +1416,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/Tracer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="204" column="38" selection-start="5339" selection-end="5339" vertical-scroll-proportion="0.16177958">
+        <state line="290" column="49" selection-start="8938" selection-end="8938" vertical-scroll-proportion="0.56319517">
           <folding>
             <element signature="class#StatType#0;class#Tracer#0" expanded="false" />
             <element signature="n#!!doc;n#Tracer#0;n#Tracer#0" expanded="false" />
