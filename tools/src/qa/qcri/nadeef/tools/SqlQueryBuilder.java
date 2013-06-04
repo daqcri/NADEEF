@@ -7,6 +7,7 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,11 +31,11 @@ public class SqlQueryBuilder implements Cloneable {
      * Constructor.
      */
     public SqlQueryBuilder() {
-        selects = new HashSet(5);
-        wheres = new HashSet(5);
-        froms = new HashSet(5);
-        orders = new HashSet(5);
-        distincts = new HashSet(5);
+        selects = Sets.newHashSet();
+        wheres = Sets.newHashSet();
+        froms = Sets.newHashSet();
+        orders = Sets.newHashSet();
+        distincts = Sets.newHashSet();
         limit = -1;
     }
 
@@ -42,11 +43,11 @@ public class SqlQueryBuilder implements Cloneable {
      * Copy Constructor.
      */
     public SqlQueryBuilder(SqlQueryBuilder obj) {
-        selects = new HashSet(obj.selects);
-        wheres = new HashSet(obj.wheres);
-        froms = new HashSet(obj.froms);
-        orders = new HashSet(obj.orders);
-        distincts = new HashSet(obj.distincts);
+        selects = new HashSet<String>(obj.selects);
+        wheres = new HashSet<String>(obj.wheres);
+        froms = new HashSet<String>(obj.froms);
+        orders = new HashSet<String>(obj.orders);
+        distincts = new HashSet<String>(obj.distincts);
         limit = obj.limit;
     }
     //</editor-fold>

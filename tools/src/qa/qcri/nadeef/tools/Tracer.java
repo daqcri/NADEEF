@@ -203,7 +203,6 @@ public class Tracer {
      */
     public static void printRepairSummary(String ruleName) {
         info("Repair summary:", null);
-        info(formatEntry(StatType.RepairTime, "Repair time", "ms"), null);
         info("Rule : " + ruleName, null);
         info("----------------------------------------------------------------", null);
         info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"), null);
@@ -285,7 +284,7 @@ public class Tracer {
             }
             value = outputBuilder.toString();
         }
-        return String.format("%-40s %s %s", prefix, value, suffix);
+        return String.format("%-40s (%s) %s", prefix, suffix, value);
     }
 
     private static void verbose(String msg, String header) {

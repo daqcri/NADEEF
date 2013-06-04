@@ -2,15 +2,15 @@
     "source" : {
         "type" : "csv",
         "file" : [
-            "test/src/qa/qcri/nadeef/test/input/bank1.csv",
-            "test/src/qa/qcri/nadeef/test/input/tran1.csv"
+            "./examples/bank1.csv",
+            "./examples/tran1.csv"
         ]
     },
     "rule" : [
         {
             "type" : "udf",
             "target" : ["bank1", "tran1"],
-            "value" : ["qa.qcri.nadeef.test.udf.MyRule5"]
+            "value" : ["MyRule"]
         }
     ]
 }

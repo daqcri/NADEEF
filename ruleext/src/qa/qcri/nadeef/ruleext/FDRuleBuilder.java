@@ -83,8 +83,8 @@ public class FDRuleBuilder extends RuleBuilder {
     @Override
     protected void parse() {
         Preconditions.checkArgument(value != null && value.size() == 1, "Invalid FD content");
-        Set<String> lhsSet = new HashSet();
-        Set<String> rhsSet = new HashSet();
+        Set<String> lhsSet = new HashSet<String>();
+        Set<String> rhsSet = new HashSet<String>();
 
         // Here we assume the rule comes in with one line.
         String line = value.get(0);

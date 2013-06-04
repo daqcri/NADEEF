@@ -75,6 +75,7 @@
                srcdir="ruleext/src"
                destdir="${build.dir}"
                classpathref="vendors.jars">
+            <compilerarg value="-Xlint:unchecked" />
         </javac>
         <copy todir="${build.dir}/qa/qcri/nadeef/ruleext/template">
             <fileset dir="ruleext/src/qa/qcri/nadeef/ruleext/template" />
@@ -88,7 +89,9 @@
                srcdir="tools/src"
                destdir="${build.dir}"
                classpath="${vendor.dir}"
-               classpathref="vendors.jars"/>
+               classpathref="vendors.jars">
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
     </target>
 
     <target name="test" depends="core, console, tools, ruleext">
