@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
@@ -21,7 +22,7 @@ import java.util.Map;
 public class Tracer {
 
     //<editor-fold desc="Private fields">
-    private static Multimap<StatType, Long> stats = LinkedHashMultimap.create();
+    private static Map<StatType, List<Long>> stats = Maps.newHashMap();
 
     private String infoHeader;
     private String errHeader;
@@ -134,7 +135,14 @@ public class Tracer {
      * @param value value.
      */
     public static synchronized void putStatsEntry(StatType statType, long value) {
-        stats.put(statType, value);
+        if (stats.containsKey(statType)) {
+            List<Long> values = stats.get(statType);
+            values.add(value);
+        } else {
+            List<Long> values = Lists.newArrayList();
+            values.add(value);
+            stats.put(statType, values);
+        }
     }
 
     /**
@@ -144,17 +152,16 @@ public class Tracer {
      */
     public static synchronized void addStatsEntry(StatType statType, long value) {
         if (!stats.containsKey(statType)) {
-            stats.put(statType, value);
+            putStatsEntry(statType, value);
         } else {
-            Collection<Long> values = stats.get(statType);
+            List<Long> values = stats.get(statType);
             if (values.size() > 1) {
                 throw new IllegalStateException(
                     "Entry " + statType + " is found more than once in the statistic dictionary."
                 );
             }
-            Long newValue = stats.get(statType).iterator().next() + value;
-            stats.removeAll(statType);
-            stats.put(statType, newValue);
+            Long newValue = values.get(0) + value;
+            values.set(0, newValue);
         }
     }
 
@@ -281,7 +288,7 @@ public class Tracer {
             Collection<Long> values = stats.get(type);
             StringBuilder outputBuilder = new StringBuilder(50);
             for (Long tmp : values) {
-                outputBuilder.append(String.format("%5d", tmp));
+                outputBuilder.append(String.format("%9d", tmp));
             }
             value = outputBuilder.toString();
         }
