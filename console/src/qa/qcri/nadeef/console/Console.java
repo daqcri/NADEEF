@@ -119,6 +119,13 @@ public class Console {
      */
     public static void main(String[] args) {
         try {
+            // check Java version
+            String jdkVersion = System.getProperty("java.version");
+            if (!jdkVersion.startsWith("1.7")) {
+                System.err.println("NADEEF console needs to be used with JDK 1.7+.");
+                System.exit(1);
+            }
+
             // bootstrap Nadeef.
             Stopwatch stopwatch = new Stopwatch().start();
             Bootstrap.start();

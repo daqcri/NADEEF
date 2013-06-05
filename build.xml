@@ -14,6 +14,11 @@
         <fileset dir="${vendor.dir}" includes="*.jar" />
     </path>
 
+    <!-- JDK 1.7 check -->
+    <condition property="version1.7">
+        <equals arg1="${ant.java.version}" arg2="1.7" />
+    </condition>
+
     <!-- Targets -->
     <target name="clean">
         <delete dir="${build.root}" includeemptydirs="true" />
@@ -48,6 +53,7 @@
 
     <!-- Targets per component -->
     <target name="console" depends="core">
+        <fail message="JDK 1.7 required" unless="version1.7" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="console/src"
@@ -58,6 +64,7 @@
 
     <target name="core" depends="tools">
         <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
         <javac includeantruntime="false"
                fork="true"
                debug="on"
@@ -70,6 +77,7 @@
 
     <target name="ruleext" depends="core">
         <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="ruleext/src"
@@ -84,6 +92,7 @@
 
     <target name="tools">
         <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="tools/src"
