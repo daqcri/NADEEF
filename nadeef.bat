@@ -6,7 +6,7 @@ call :ProgInPath javac.exe
 if "%PROG%" == "" (
     goto noJDK
 ) else (
-    echo.Use Java from %PROG%
+    echo.Use Javac from %PROG%
     goto START
 )
 

@@ -151,20 +151,26 @@ public abstract class RuleBuilder {
         Tracer tracer = Tracer.getTracer(RuleBuilder.class);
         for (File outputFile : outputFiles) {
             Stopwatch stopwatch = new Stopwatch().start();
-            String className = Files.getNameWithoutExtension(outputFile
-                    .getName());
-            URL url = new URL("file://" + outputFile.getParent()
-                    + File.separator);
+            String className =
+                Files.getNameWithoutExtension(outputFile.getName());
+
+            URL url =
+                new URL(
+                    "file://" + outputFile.getParent() + File.separator
+                );
             Class ruleClass = CommonTools.loadClass(className, url);
             Rule rule = (Rule) ruleClass.getConstructor().newInstance();
 
             rule.initialize(
-                    Files.getNameWithoutExtension(outputFile.getName()),
-                    tableNames);
+                Files.getNameWithoutExtension(outputFile.getName()),
+                tableNames
+            );
             result.add(rule);
-            tracer.verbose("Rule file : " + outputFile.getAbsolutePath()
-                    + " is loaded in "
-                    + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms.");
+            tracer.verbose(
+                "Rule file : " + outputFile.getAbsolutePath() +
+                " is loaded in " +
+                stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+            );
             stopwatch.stop();
         }
         return result;

@@ -36,15 +36,15 @@ public class CFDRuleBuilderTest {
                 .value(value)
                 .build();
 
-            Assert.assertEquals(2, rules.size());
+            Assert.assertEquals(8, rules.size());
 
             Assert.assertEquals(5, ruleBuilder.getLhs().size());
             Assert.assertEquals(4, ruleBuilder.getRhs().size());
             Assert.assertEquals(2, ruleBuilder.getFilterExpressions().size());
             List<SimpleExpression> filter = ruleBuilder.getFilterExpressions().get(0);
-            Assert.assertEquals(4, filter.size());
+            Assert.assertEquals(9, filter.size());
             filter = ruleBuilder.getFilterExpressions().get(1);
-            Assert.assertEquals(3, filter.size());
+            Assert.assertEquals(9, filter.size());
         } catch (Exception ignore) {
             ignore.printStackTrace();
             Assert.fail(ignore.getMessage());

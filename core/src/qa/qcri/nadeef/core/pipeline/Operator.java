@@ -8,7 +8,6 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -53,10 +52,6 @@ public abstract class Operator<TInput, TOutput> {
         Type[] types = parameterizedType.getActualTypeArguments();
         // loop all the type signature to find the actual input type.
         for (Type type : types) {
-            if (type instanceof TypeVariableImpl) {
-                continue;
-            }
-
             if (type instanceof ParameterizedType) {
                 return ((ParameterizedType)type).getRawType();
             } else {
