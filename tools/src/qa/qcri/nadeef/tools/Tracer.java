@@ -204,7 +204,7 @@ public class Tracer {
      */
     public static void printRepairSummary(String ruleName) {
         info("Repair summary:", null);
-        info("Rule : " + ruleName, null);
+        info("Rule: " + ruleName, null);
         info("----------------------------------------------------------------", null);
         info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"), null);
         info(formatEntry(StatType.EQTime, "EQ time", "ms"), null);
@@ -231,7 +231,7 @@ public class Tracer {
 
     public static void printDetectSummary(String ruleName) {
         info("Detection summary:", null);
-        info("Rule :" + ruleName, null);
+        info("Rule: " + ruleName, null);
         info("----------------------------------------------------------------", null);
         info(formatEntry(StatType.HScopeTime, "HScope time", "ms"), null);
         info(formatEntry(StatType.VScopeTime, "VScope time", "ms"), null);
