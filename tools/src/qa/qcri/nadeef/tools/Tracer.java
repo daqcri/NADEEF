@@ -76,7 +76,7 @@ public class Tracer {
     /**
      * Creates a tracer class
      * @param classType
-     * @return
+     * @return Tracer instance.
      */
     public static Tracer getTracer(Class classType) {
         return new Tracer(classType);

@@ -20,11 +20,12 @@ public class CountOperator extends Operator<Integer, Integer> {
         super(plan);
     }
 
+
     /**
      * Execute the operator.
      */
     @Override
-    public Integer execute(Integer count) {
+    protected Integer execute(Integer count) throws Exception {
         tracer.info("This is " + count);
         count ++;
         return count;

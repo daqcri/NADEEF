@@ -5,13 +5,14 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
 
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
- * start the execution.
+ * drives the cleaning execution.
  */
 public class CleanExecutor {
 
@@ -34,12 +35,19 @@ public class CleanExecutor {
         initialize(cleanPlan);
     }
 
+    /**
+     * Initialize <code>CleanExecutor</code> with a cleanPlan.
+     * @param cleanPlan
+     */
     public void initialize(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
         assembleFlow();
     }
 
+    /**
+     * CleanExecutor finalizer.
+     */
     @Override
     public void finalize() {
         if (queryFlow != null && queryFlow.isRunning()) {
@@ -66,23 +74,60 @@ public class CleanExecutor {
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
+
+    /**
+     * Gets the output from Detect.
+     * @return output object from Detect.
+     */
     public Object getDetectOutput() {
         String key = detectFlow.getCurrentOutputKey();
         return cacheManager.get(key);
     }
 
+    /**
+     * Gets the output from Repair.
+     * @return output object from repair.
+     */
     public Object getRepairOutput() {
         String key = repairFlow.getCurrentOutputKey();
         return cacheManager.get(key);
     }
 
+    /**
+     * Gets the output from Update.
+     * @return output object from update.
+     */
     public Object getUpdateOutput() {
         String key = updateFlow.getCurrentOutputKey();
         return cacheManager.get(key);
     }
 
     /**
-     * Runs the violation detection. This is a non-blocking operation.
+     * Gets the current percentage of Detect.
+     * @return current percentage of Detect.
+     */
+    public double getDetectPercentage() {
+        return queryFlow.getPercentage() * 0.5 + detectFlow.getPercentage() * 0.5;
+    }
+
+    /**
+     * Gets the current percentage of Repair.
+     * @return current percentage of Repair.
+     */
+    public double getRepairPercentage() {
+        return repairFlow.getPercentage();
+    }
+
+    /**
+     * Gets the current percentage of Run.
+     * @return current percentage of Run.
+     */
+    public double getRunPercentage() {
+        return getDetectPercentage() * 0.5 + getRepairPercentage() * 0.5;
+    }
+
+    /**
+     * Runs the violation detection.
      */
     public CleanExecutor detect() {
         queryFlow.reset();
@@ -102,24 +147,16 @@ public class CleanExecutor {
         return this;
     }
 
-    public double getDetectPercentage() {
-        return queryFlow.getPercentage() * 0.5 + detectFlow.getPercentage() * 0.5;
-    }
-
-    public double getRepairPercentage() {
-        return repairFlow.getPercentage();
-    }
-
-    public double getRunPercentage() {
-        return getDetectPercentage() * 0.5 + getRepairPercentage() * 0.5;
-    }
-
+    /**
+     * Gets the CleanPlan.
+     * @return the CleanPlan.
+     */
     public CleanPlan getCleanPlan() {
         return cleanPlan;
     }
 
     /**
-     * Runs the violation detection execution.
+     * Runs the violation repair.
      */
     public CleanExecutor repair() {
         repairFlow.reset();
@@ -139,7 +176,6 @@ public class CleanExecutor {
 
     /**
      * Run both the detection and repair.
-     * @return itself.
      */
     public CleanExecutor run() {
         int changedCells = 0;
@@ -207,15 +243,32 @@ public class CleanExecutor {
 
             // assemble the updater flow
             updateFlow = new Flow("update");
+            Optional<Class> eqClass = NadeefConfiguration.getDecisionMakerClass();
+            // check whether user provides a customized DecisionMaker class, if so, replace it
+            // with default EQ class.
+            FixDecisionMaker fixDecisionMaker = null;
+            if (eqClass.isPresent()) {
+                Class customizedClass = eqClass.get();
+                if (!FixDecisionMaker.class.isAssignableFrom(customizedClass)) {
+                    throw
+                        new IllegalArgumentException(
+                            "FixDecisionMaker class is not a class inherit from FixDecisionMaker"
+                        );
+                }
+
+                fixDecisionMaker =
+                    (FixDecisionMaker)customizedClass.getConstructor().newInstance();
+            } else {
+                fixDecisionMaker = new EquivalentClass();
+            }
+
             updateFlow.setInputKey(inputKey)
-                .addNode(new FixDeserializer())
-                .addNode(new FixDecisionMaker(), 6)
+                .addNode(new FixImport())
+                .addNode(fixDecisionMaker, 6)
                 .addNode(new Updater());
+
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline ", ex);
-            if (Tracer.isInfoOn()) {
-                ex.printStackTrace();
-            }
         }
     }
     //</editor-fold>

@@ -40,7 +40,6 @@ public abstract class Operator<TInput, TOutput> {
      * Gets the generic input class information at runtime.
      * @return inputType class.
      */
-    // TODO: solve the reflection in a better way
     @SuppressWarnings("all")
     public Type getInputType() {
         Type genericSuperType = getClass().getGenericSuperclass();
@@ -66,7 +65,7 @@ public abstract class Operator<TInput, TOutput> {
      * @param input input object.
      * @return output object.
      */
-    public abstract TOutput execute(TInput input) throws Exception;
+    protected abstract TOutput execute(TInput input) throws Exception;
 
     /**
      * Gets the current progress percentage of this operator [0 - 100].

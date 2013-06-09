@@ -8,6 +8,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,6 +25,7 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -137,11 +139,16 @@ public class CleanPlan {
 
 					// source is a CSV file, dump it to NADEEF database.
 					conn = DBConnectionFactory.getNadeefConnection();
-					for (int j = 0; j < targetTableNames.size(); j++) {
+                    // This hashset is to prevent that tables are dumped for multiple times.
+                    HashSet<String> copiedTables = Sets.newHashSet();
+                    for (int j = 0; j < targetTableNames.size(); j++) {
 						File file = CommonTools.getFile(fullFileNames.get(j));
-						String tableName = CSVDumper.dump(conn, file, targetTableNames.get(j));
-                        targetTableNames.set(j, tableName);
-						schemas.add(DBMetaDataTool.getSchema(tableName));
+                        // target table name already exists in the hashset.
+                        if (!copiedTables.contains(targetTableNames.get(j))) {
+                            String tableName = CSVDumper.dump(conn, file, targetTableNames.get(j));
+                            targetTableNames.set(j, tableName);
+                            schemas.add(DBMetaDataTool.getSchema(tableName));
+                        }
 					}
 				} else {
 					// working with database

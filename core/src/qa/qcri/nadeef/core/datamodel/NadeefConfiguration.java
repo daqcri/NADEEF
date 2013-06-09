@@ -5,6 +5,7 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.json.simple.JSONObject;
@@ -26,13 +27,10 @@ public class NadeefConfiguration {
 
     private static boolean testMode = false;
     private static DBConfig dbConfig;
-    private static String violationTable;
-    private static String repairTable;
-    private static String auditTable;
     private static int maxIterationNumber = 1;
     private static boolean alwaysCompile = false;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
-
+    private static Optional<Class> decisionMakerClass;
     //<editor-fold desc="Public methods">
 
     /**
@@ -40,7 +38,7 @@ public class NadeefConfiguration {
      * @param reader configuration string.
      */
     @SuppressWarnings("unchecked")
-    public synchronized static void initialize(Reader reader) {
+    public synchronized static void initialize(Reader reader) throws Exception {
         Preconditions.checkNotNull(reader);
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
         JSONObject database = (JSONObject)jsonObject.get("database");
@@ -58,17 +56,12 @@ public class NadeefConfiguration {
                 .dialect(CommonTools.getSQLDialect(type))
                 .build();
 
-        JSONObject violation = (JSONObject)jsonObject.get("violation");
-        violationTable = (String)violation.get("name");
-
-        JSONObject repair = (JSONObject)jsonObject.get("repair");
-        repairTable = (String)repair.get("name");
-
-        JSONObject audit = (JSONObject)jsonObject.get("audit");
-        auditTable = (String)audit.get("name");
-
         JSONObject general = (JSONObject)jsonObject.get("general");
-        testMode = (Boolean)general.get("testmode");
+        if (general.containsKey("testmode")) {
+            testMode = (Boolean)general.get("testmode");
+            Tracer.setVerbose(testMode);
+        }
+
         if (general.containsKey("maxIterationNumber")) {
             maxIterationNumber = ((Long)general.get("maxIterationNumber")).intValue();
         }
@@ -77,18 +70,21 @@ public class NadeefConfiguration {
             alwaysCompile = (Boolean)(general.get("alwaysCompile"));
         }
 
+        if (general.containsKey("fixdecisionmaker")) {
+            String className = (String)general.get("fixdecisionmaker");
+            Class customizedClass = CommonTools.loadClass(className);
+            decisionMakerClass = Optional.of(customizedClass);
+        } else {
+            decisionMakerClass = Optional.absent();
+        }
+
         JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
         Set<String> keySet = (Set<String>)ruleext.keySet();
         for (String key : keySet) {
             String builderClassName = (String)ruleext.get(key);
-            try {
-                Class builderClass = CommonTools.loadClass(builderClassName);
-                RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
-                ruleExtension.put(key, writer);
-            } catch (Exception e) {
-                tracer.err("Loading Rule extension " + key + " failed: ", e);
-                e.printStackTrace();
-            }
+            Class builderClass = CommonTools.loadClass(builderClassName);
+            RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
+            ruleExtension.put(key, writer);
         }
     }
 
@@ -150,7 +146,7 @@ public class NadeefConfiguration {
      * @return violation table name.
      */
     public static String getViolationTableName() {
-        return violationTable;
+        return "violation";
     }
 
     /**
@@ -158,7 +154,7 @@ public class NadeefConfiguration {
      * @return violation table name.
      */
     public static String getRepairTableName() {
-        return repairTable;
+        return "repair";
     }
 
     /**
@@ -186,8 +182,20 @@ public class NadeefConfiguration {
         return version;
     }
 
+    /**
+     * Gets the Audit table name.
+     * @return audit table name.
+     */
     public static String getAuditTableName() {
-        return auditTable;
+        return "audit";
+    }
+
+    /**
+     * Gets the decision maker class.
+     * @return decision maker class. It is absent when user is not providing a customized
+     */
+    public static Optional<Class> getDecisionMakerClass() {
+        return decisionMakerClass;
     }
     //</editor-fold>
 }

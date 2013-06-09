@@ -16,7 +16,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Bootstrapping Nadeef.
+ * Bootstrapping prepares runtime environment for NADEEF. It is invoked before NADEEF starts
+ * and also after NADEEF exits.
  */
 public class Bootstrap {
     private static boolean isStarted;
@@ -25,6 +26,9 @@ public class Bootstrap {
 
     private Bootstrap() {}
 
+    /**
+     * Shutdown NADEEF.
+     */
     public static synchronized void shutdown() {
         if (isStarted) {
             DBConnectionFactory.shutdown();
@@ -37,7 +41,7 @@ public class Bootstrap {
     }
 
     /**
-     * Initialize the Nadeef infrastructure.
+     * Initialize the NADEEF.
      */
     public static synchronized boolean start() {
         if (isStarted) {

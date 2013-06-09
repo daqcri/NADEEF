@@ -18,9 +18,9 @@ import java.sql.Statement;
 import java.util.Collection;
 
 /**
- * Deserialize the fix data from database.
+ * Imports the fix data from database.
  */
-public class FixDeserializer extends Operator<Rule, Collection<Fix>> {
+class FixImport extends Operator<Rule, Collection<Fix>> {
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
         Connection conn = DBConnectionFactory.getNadeefConnection();

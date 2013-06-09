@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 /**
  * Iterator.
  */
-public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
+class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     private static final int MAX_THREAD_NUM = 10;
     private Rule rule;
 

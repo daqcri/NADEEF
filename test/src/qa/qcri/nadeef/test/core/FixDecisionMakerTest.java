@@ -11,6 +11,7 @@ import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Violation;
+import qa.qcri.nadeef.core.pipeline.EquivalentClass;
 import qa.qcri.nadeef.core.pipeline.FixDecisionMaker;
 import qa.qcri.nadeef.test.TestDataRepository;
 
@@ -22,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Test for FixDecisionMaker.
+ * Test for FixDecisionMakerBase.
  */
 public class FixDecisionMakerTest {
     private List<Fix> loadFix(File path) throws IOException {
@@ -51,8 +52,8 @@ public class FixDecisionMakerTest {
     public void test1() {
         try {
             List<Fix> fixes = loadFix(TestDataRepository.getFixTestData1());
-            FixDecisionMaker eq = new FixDecisionMaker();
-            Collection<Fix> result = eq.execute(fixes);
+            FixDecisionMaker eq = new EquivalentClass();
+            Collection<Fix> result = eq.decide(fixes);
             Assert.assertEquals(3, result.size());
             for (Fix fix : result) {
                 Cell left = fix.getLeft();

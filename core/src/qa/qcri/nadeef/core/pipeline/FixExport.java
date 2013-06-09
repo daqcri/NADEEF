@@ -19,9 +19,9 @@ import java.sql.Statement;
 import java.util.Collection;
 
 /**
- * Export fix in the repair database.
+ * Export fix into the repair database.
  */
-public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
+class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
 
     /**
      * Constructor.
@@ -40,29 +40,39 @@ public class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
      */
     @Override
     public synchronized Integer execute(Collection<Collection<Fix>> fixCollection)
-        throws
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException {
-        Connection conn = DBConnectionFactory.getNadeefConnection();
-        Statement stat = conn.createStatement();
-        Integer count = 0;
-        int id = Fixes.generateFixId();
-        for (Collection<Fix> fixes : fixCollection) {
-            for (Fix fix : fixes) {
-                String sql = getSQLInsert(id, fix);
-                stat.addBatch(sql);
-                count ++;
+        throws SQLException {
+        Connection conn = null;
+        Statement stat = null;
+        int count = 0;
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            stat = conn.createStatement();
+            int id = Fixes.generateFixId();
+            for (Collection<Fix> fixes : fixCollection) {
+                for (Fix fix : fixes) {
+                    String sql = getSQLInsert(id, fix);
+                    stat.addBatch(sql);
+                    count ++;
+                }
+                id ++;
             }
-            id ++;
+            setPercentage(0.5f);
+            stat.executeBatch();
+            conn.commit();
+        } catch (Exception ex) {
+            stat.close();
+            conn.close();
+        } finally {
+            Tracer.putStatsEntry(Tracer.StatType.FixExport, count);
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
         }
-        setPercentage(0.5f);
-        stat.executeBatch();
-        conn.commit();
-        stat.close();
-        conn.close();
-        Tracer.putStatsEntry(Tracer.StatType.FixExport, count);
+
         return count;
     }
 
