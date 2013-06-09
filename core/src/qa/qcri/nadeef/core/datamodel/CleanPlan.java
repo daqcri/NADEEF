@@ -102,6 +102,7 @@ public class CleanPlan {
 			ArrayList<Rule> rules = Lists.newArrayList();
 			List<String> targetTableNames;
             List<String> fileNames = Lists.newArrayList();
+            HashSet<String> copiedTables = Sets.newHashSet();
 
 			for (int i = 0; i < ruleArray.size(); i++) {
 				schemas.clear();
@@ -140,7 +141,6 @@ public class CleanPlan {
 					// source is a CSV file, dump it to NADEEF database.
 					conn = DBConnectionFactory.getNadeefConnection();
                     // This hashset is to prevent that tables are dumped for multiple times.
-                    HashSet<String> copiedTables = Sets.newHashSet();
                     for (int j = 0; j < targetTableNames.size(); j++) {
 						File file = CommonTools.getFile(fullFileNames.get(j));
                         // target table name already exists in the hashset.
@@ -148,6 +148,7 @@ public class CleanPlan {
                             String tableName = CSVDumper.dump(conn, file, targetTableNames.get(j));
                             targetTableNames.set(j, tableName);
                             schemas.add(DBMetaDataTool.getSchema(tableName));
+                            copiedTables.add(targetTableNames.get(j));
                         }
 					}
 				} else {
