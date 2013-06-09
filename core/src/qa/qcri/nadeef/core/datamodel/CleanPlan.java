@@ -182,16 +182,19 @@ public class CleanPlan {
                         "Invalid Rule property, rule needs to have one or two tables.");
 
 					for (int j = 0; j < sourceTableNames.size(); j++) {
-						DBMetaDataTool.copy(
-                            sourceTableNames.get(j),
-						    targetTableNames.get(j)
-                        );
-
-                        schemas.add(
-                            DBMetaDataTool.getSchema(
+                        if (!copiedTables.contains(targetTableNames.get(j))) {
+                            DBMetaDataTool.copy(
+                                sourceTableNames.get(j),
                                 targetTableNames.get(j)
-                            )
-                        );
+                            );
+
+                            schemas.add(
+                                DBMetaDataTool.getSchema(
+                                    targetTableNames.get(j)
+                                )
+                            );
+                            copiedTables.add(targetTableNames.get(j));
+                        }
 					}
 				}
 
