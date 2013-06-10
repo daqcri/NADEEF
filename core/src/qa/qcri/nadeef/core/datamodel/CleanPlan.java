@@ -146,9 +146,9 @@ public class CleanPlan {
                         // target table name already exists in the hashset.
                         if (!copiedTables.contains(targetTableNames.get(j))) {
                             String tableName = CSVDumper.dump(conn, file, targetTableNames.get(j));
+                            copiedTables.add(targetTableNames.get(j));
                             targetTableNames.set(j, tableName);
                             schemas.add(DBMetaDataTool.getSchema(tableName));
-                            copiedTables.add(targetTableNames.get(j));
                         }
 					}
 				} else {
