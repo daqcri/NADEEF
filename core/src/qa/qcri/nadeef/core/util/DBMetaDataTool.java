@@ -11,11 +11,11 @@ import qa.qcri.nadeef.core.datamodel.Schema;
 import java.sql.*;
 
 /**
- * A helper for getting the right meta data from different DBs.
+ * An utility class for getting meta data from database.
  */
-public class DBMetaDataTool {
+public final class DBMetaDataTool {
     /**
-     * Copy the table within the source database.
+     * Copies the table within the source database.
      * @param sourceTableName source table name.
      * @param targetTableName target table name.
      */
@@ -27,26 +27,36 @@ public class DBMetaDataTool {
         SQLException,
         InstantiationException,
         IllegalAccessException {
-        Connection conn = DBConnectionFactory.getSourceConnection();
-        Statement stat = conn.createStatement();
-        stat.execute("DROP TABLE IF EXISTS " + targetTableName + " CASCADE");
-        stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
+        Connection conn = null;
+        Statement stat = null;
+        try {
+            conn = DBConnectionFactory.getSourceConnection();
+            stat = conn.createStatement();
+            stat.execute("DROP TABLE IF EXISTS " + targetTableName + " CASCADE");
+            stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
 
-        conn.commit();
-        ResultSet resultSet =
-            stat.executeQuery(
-            "select * from information_schema.columns where table_name = " +
-            '\'' + targetTableName +
-            "\' and column_name = \'tid\'"
-        );
-        conn.commit();
+            conn.commit();
+            ResultSet resultSet =
+                stat.executeQuery(
+                "select * from information_schema.columns where table_name = " +
+                '\'' + targetTableName +
+                "\' and column_name = \'tid\'"
+            );
+            conn.commit();
 
-        if (!resultSet.next()) {
-            stat.execute("alter table " + targetTableName + " add column tid serial primary key");
+            if (!resultSet.next()) {
+                stat.execute("alter table " + targetTableName + " add column tid serial primary key");
+            }
+            conn.commit();
+        } finally {
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
         }
-        conn.commit();
-        stat.close();
-        conn.close();
     }
 
     /**
@@ -82,11 +92,7 @@ public class DBMetaDataTool {
             return true;
         } finally {
             if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
+                conn.close();
             }
         }
     }

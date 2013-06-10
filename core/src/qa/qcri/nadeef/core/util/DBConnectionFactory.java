@@ -17,7 +17,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Creates DB connection.
+ * Database JDBC Connection Factory class.
  */
 public class DBConnectionFactory {
     private static final int MAX_CONNECTION = 20;

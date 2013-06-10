@@ -12,7 +12,7 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import java.util.*;
 
 /**
- * EquivalentClass is an implementation of @see FixDecisionMakerBase based on EquivalentClass
+ * EquivalentClass is an implementation of {@link FixDecisionMaker} based on EquivalentClass
  * algorithm.
  */
 public class EquivalentClass extends FixDecisionMaker {
@@ -20,7 +20,7 @@ public class EquivalentClass extends FixDecisionMaker {
      * Decides which fixes are right given a collection of candidate fixes.
      *
      * @param fixes candidate fixes.
-     * @return a collection of right @see Fix.
+     * @return a collection of final {@link Fix}.
      */
     @Override
     public Collection<Fix> decide(Collection<Fix> fixes) {
@@ -69,10 +69,7 @@ public class EquivalentClass extends FixDecisionMaker {
                             clusterMap.put(cell, leftCluster);
                         }
 
-                        for (Cell cell : rightCluster) {
-                            rightCluster.remove(cell);
-                        }
-
+                        rightCluster.clear();
                         clusters.remove(rightCluster);
                     } else {
                         clusterMap.put(rightCell, leftCluster);

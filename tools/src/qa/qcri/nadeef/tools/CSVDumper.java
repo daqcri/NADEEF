@@ -16,7 +16,7 @@ import java.sql.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * CSVDumper is a simple tool which dumps CSV data into database with a new created table.
+ * CSVDumper is a simple tool which dumps CSV data into database given a table name.
  */
 public class CSVDumper {
     private static final int BULKSIZE = 1024;
@@ -25,7 +25,7 @@ public class CSVDumper {
 
     // <editor-fold desc="Public methods">
     /**
-     * Dump CSV file content into a database with default schema name and generated table name.
+     * Dumps CSV file content into a database with default schema name and generated table name.
      * @param conn JDBC connection.
      * @param file CSV file.
      * @return new created table name.
@@ -38,7 +38,7 @@ public class CSVDumper {
     }
 
     /**
-     * Dump CSV file content into a specified database. It replaces the table if the table
+     * Dumps CSV file content into a specified database. It replaces the table if the table
      * already existed.
      * @param conn JDBC connection.
      * @param file CSV file.

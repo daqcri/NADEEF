@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Common helper tools
  */
-public class CommonTools {
+public final class CommonTools {
     private static Tracer tracer = Tracer.getTracer(CommonTools.class);
 
     private static boolean isWindows() {
@@ -88,7 +88,7 @@ public class CommonTools {
     }
 
     /**
-     * Gets the <code>SQLDialect</code> from a string.
+     * Gets the {@link SQLDialect} from a string.
      * @param type type string.
      * @return sql dialect.
      */

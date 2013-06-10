@@ -175,7 +175,7 @@ public class CleanExecutor {
     }
 
     /**
-     * Run both the detection and repair.
+     * Runs both the detection and repair.
      */
     public CleanExecutor run() {
         int changedCells = 0;

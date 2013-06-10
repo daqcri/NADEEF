@@ -9,7 +9,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 /**
- * Fix represents a candidate fix in the <code>Fix</code> table.
+ * Fix represents a suggestion of changing a cell to a value. This is the result from repairing
+ * violations.
  */
 public class Fix {
 
@@ -97,7 +98,7 @@ public class Fix {
      * @param right right operator.
      * @param operation operation value.
      */
-    public Fix(int vid, Cell left, Cell right, Operation operation) {
+    protected Fix(int vid, Cell left, Cell right, Operation operation) {
         this(vid, left, operation);
         this.right = Preconditions.checkNotNull(right);
     }
@@ -108,7 +109,7 @@ public class Fix {
      * @param right right constant value in string.
      * @param operation operation value.
      */
-    public Fix(int vid, Cell left, String right, Operation operation) {
+    protected Fix(int vid, Cell left, String right, Operation operation) {
         this(vid, left, operation);
         this.rightValue = Preconditions.checkNotNull(right);
     }

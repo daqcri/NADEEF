@@ -41,7 +41,8 @@ public class Bootstrap {
     }
 
     /**
-     * Initialize the NADEEF.
+     * Bootstrap NADEEF. It tries to load the NADEEF configuration file and install
+     * metadata tables in the NADEEF database.
      */
     public static synchronized boolean start() {
         if (isStarted) {

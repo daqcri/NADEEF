@@ -8,11 +8,11 @@ package qa.qcri.nadeef.tools;
 import java.sql.*;
 
 /**
- * Installation helper for Nadeef DB.
+ * NADEEF database installation utility class.
  */
-public class DBInstaller {
+public final class DBInstaller {
     /**
-     * Check whether Nadeef is installed in the targeted database connection.
+     * Checks whether NADEEF is installed in the targeted database connection.
      * @param conn JDBC connection.
      * @param tableName source tableName.
      * @return TRUE when Nadeef is already installed on the database.
@@ -26,7 +26,7 @@ public class DBInstaller {
     }
 
     /**
-     * Install Nadeef in the target database.
+     * Install NADEEF on the target database.
      */
     // TODO: move connection inside the method.
     public static void install(
@@ -86,7 +86,7 @@ public class DBInstaller {
     }
 
     /**
-     * Uninstall Nadeef from the target database.
+     * Uninstall NADEEF from the target database.
      * @param conn JDBC Connection.
      */
     public static void uninstall(Connection conn, String tableName)
