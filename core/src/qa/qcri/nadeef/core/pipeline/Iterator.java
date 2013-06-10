@@ -20,29 +20,35 @@ import java.util.concurrent.*;
  * Iterator.
  */
 class Iterator<E> extends Operator<Collection<Table>, Boolean> {
+    //<editor-fold desc="Private members">
     private static final int MAX_THREAD_NUM = 10;
     private Rule rule;
 
     private ExecutorService threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
     private CompletionService<Boolean> pool =
         new ExecutorCompletionService<Boolean>(threadExecutors);
+    //</editor-fold>
 
     public Iterator(Rule rule) {
         this.rule = rule;
     }
 
+    //<editor-fold desc="IteratorCallable Class">
+
+    /**
+     * IteratorCallable is a {@link Callable} class for iteration operation on each block.
+     */
     class IteratorCallable implements Callable<Boolean> {
         private IteratorStream<E> iteratorStream;
         private Collection<Table> tables;
 
-        IteratorCallable(Collection<Table> tables, IteratorStream<E> iteratorStream) {
-            this.iteratorStream = iteratorStream;
+        IteratorCallable(Collection<Table> tables) {
             this.tables = tables;
+            iteratorStream = new IteratorStream<E>();
         }
 
-        IteratorCallable(Table table, IteratorStream<E> iteratorStream) {
-            this.iteratorStream = iteratorStream;
-            this.tables = Lists.newArrayList(table);
+        IteratorCallable(Table table) {
+            this(Lists.newArrayList(table));
         }
 
         /**
@@ -59,6 +65,7 @@ class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             return true;
         }
     }
+    //</editor-fold>
 
     /**
      * Iterator operator execution.
@@ -71,18 +78,10 @@ class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         int blockSize = 0;
         int count = 0;
         Stopwatch stopwatch = new Stopwatch().start();
-        List<IteratorStream> iteratorStreams = Lists.newArrayList();
 
         if (rule.supportTwoTables()) {
             // Rule runs on two tables.
-            IteratorStream<E> iteratorStream = new IteratorStream<E>();
-            iteratorStreams.add(iteratorStream);
-
-            pool.submit(
-                new IteratorCallable(
-                    tables, new IteratorStream<E>()
-                )
-            );
+            pool.submit(new IteratorCallable(tables));
 
             pool.take().get();
             count ++;
@@ -91,14 +90,8 @@ class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             // Rule runs on each table.
             for (Table table : tables) {
                 blockSize += table.size();
-                IteratorStream<E> iteratorStream = new IteratorStream<E>();
-                iteratorStreams.add(iteratorStream);
 
-                pool.submit(
-                    new IteratorCallable(
-                        table, new IteratorStream<E>()
-                    )
-                );
+                pool.submit(new IteratorCallable(table));
             }
 
             for (Table table : tables) {

@@ -1,5 +1,5 @@
 #!/bin/bash
-export BuildVersion='1.0.950'
+export BuildVersion='1.0.967'
 
 type -P javac > /dev/null 2>&1 || { echo "JDK cannot be found, please check your PATH var."; exit 1; }
  
