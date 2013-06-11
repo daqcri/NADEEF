@@ -1,4 +1,4 @@
-                                 Apache License
+                                Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
 
@@ -173,7 +173,6 @@
       incurred by, or claims asserted against, such Contributor by reason
       of your accepting any such warranty or additional liability.
 
-
    END OF TERMS AND CONDITIONS
 
    APPENDIX: How to apply the Apache License to your work.
@@ -199,10 +198,4 @@
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
-   limitations under the License.      
-      
-THIRD-PARTY DEPENDENCIES
-========================
-Convenience copies of some third-party dependencies are distributed with
-Nadeef as Java jar files in vendors/. Licensing information for
-these files can be found in the vendors/licenses directory.
+   limitations under the License.

@@ -1,10 +1,27 @@
-Apache Nadeef
-Copyright 2013 The Apache Software Foundation
+NADEEF
+Copyright 2013 Qatar Computing Research Institude
+
 This product (Patents Pending) includes software developed at Qatar Foundation
 for Education, Science and Community Development (on behalf of Qatar Computing
 Research Institute (QCRI)) having its principle place of business in Doha,
 Qatar with the registered address P.O box 5825 Doha, Qatar.
 
-The Apache Software Foundation (http://www.apache.org/).
+Qatar Computing Research Institude (http://da.qcri.org).
+
+This software has serveral Open source library dependencies as following:
+
+* Some common datastructure / utilities are provided by guava-libraries (https://code.google.com/p/guava-libraries/) from Google.
+
+* JDBC driver is provided by PostgreSQL JDBC (http://jdbc.postgresql.org/) from PostgreSQL. 
+
+* Part of the terminal console parsing is provided by Jline (https://github.com/jline/jline2).
+
+* Testing facility is provided by JUnit (http://www.junit.org). JUnit also depends on Java Hamcrest (https://code.google.com/p/hamcrest/).
+
+* JSON operation utilities are provided by JSON-simple (https://code.google.com/p/json-simple/).
+
+* String template engine is provided by StringTemplate (http://www.stringtemplate.org/). 
+
+
 
 
