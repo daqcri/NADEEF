@@ -21,13 +21,13 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
@@ -45,8 +45,29 @@ public class Tracer {
     private static boolean infoFlag = true;
     private static boolean verboseFlag = false;
     private static PrintStream console = System.out;
+    private static FileWriter logWriter;
+    private static String logFileName;
     //</editor-fold>
 
+    static {
+        logFileName = "log" + System.currentTimeMillis() + ".txt";
+    }
+
+    private static synchronized FileWriter getLogWriter() {
+        if (logWriter == null) {
+            try {
+                logWriter = new FileWriter(logFileName);
+            } catch (IOException e) {
+                Tracer tracer = getTracer(Tracer.class);
+                tracer.info("Cannot open log file : " + logFileName);
+            }
+        }
+        return logWriter;
+    }
+
+    /**
+     * Statistic entry type.
+     */
     public enum StatType {
         // Detection time
         DetectTime,
@@ -64,19 +85,27 @@ public class Tracer {
         IterationCount,
         // DB load time
         DBLoadTime,
+        // Detect per call time
         DetectCallTime,
+        // Violation export count
         ViolationExport,
+        // Violation export time
         ViolationExportTime,
         // Detect tuple count
         DetectCount,
         // Detection thread count
         DetectThreadCount,
-        // repair
+        // repair time
         RepairTime,
+        // Repair per call time
         RepairCallTime,
+        // EQ time
         EQTime,
+        // Candidate fix export count
         FixExport,
+        // Candidate fix export time
         FixDeserialize,
+        // Update cell number
         UpdatedCellNumber,
     }
 
@@ -130,12 +159,18 @@ public class Tracer {
      */
     public void err(String message, Exception ex) {
         console.println(errHeader + message);
-        // TODO: write back the exception message into a log file.
-        if (isInfoOn() && ex != null) {
+        if (ex != null) {
             Writer writer = new StringWriter();
             PrintWriter printWriter = new PrintWriter(writer);
             ex.printStackTrace(printWriter);
-            console.println(writer.toString());
+            FileWriter logger = getLogWriter();
+            if (logger != null) {
+                try {
+                    logger.append(writer.toString());
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
     }
 
@@ -328,6 +363,15 @@ public class Tracer {
                 console.println(header + msg);
             } else {
                 console.println(msg);
+            }
+
+            FileWriter logger = getLogWriter();
+            if (logger != null) {
+                try {
+                    logger.append(header + msg);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
     }
