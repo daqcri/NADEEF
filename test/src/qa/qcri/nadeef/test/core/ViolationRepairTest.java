@@ -20,10 +20,12 @@
 package qa.qcri.nadeef.test.core;
 
 import com.google.common.collect.Lists;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 import qa.qcri.nadeef.test.TestDataRepository;
@@ -42,12 +44,18 @@ public class ViolationRepairTest {
     @Before
     public void setup() {
         try {
+            Bootstrap.start();
             violations = Violations.fromCSV(TestDataRepository.getViolationTestData1());
         } catch (IOException e) {
             Assert.fail("Setup failed.");
             e.printStackTrace();
         }
         ruleBuilder = new FDRuleBuilder();
+    }
+
+    @After
+    public void tearDown() {
+        Bootstrap.shutdown();
     }
 
     @Test

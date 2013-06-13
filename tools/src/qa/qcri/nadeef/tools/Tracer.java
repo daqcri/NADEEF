@@ -333,12 +333,16 @@ public class Tracer {
         Collection<Long> totalTimes = stats.get(StatType.DetectTime);
         Collection<Long> totalViolations = stats.get(StatType.ViolationExport);
 
-        for (Long tmp : totalTimes) {
-            totalTime += tmp;
+        if (totalTimes != null) {
+            for (Long tmp : totalTimes) {
+                totalTime += tmp;
+            }
         }
 
-        for (Long tmp : totalViolations) {
-            totalViolation += tmp;
+        if (totalViolations != null) {
+            for (Long tmp : totalViolations) {
+                totalViolation += tmp;
+            }
         }
 
         info("----------------------------------------------------------------", null);

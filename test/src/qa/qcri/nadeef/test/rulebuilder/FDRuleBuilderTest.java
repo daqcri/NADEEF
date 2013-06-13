@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
+import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 
 import java.io.File;
@@ -39,11 +40,13 @@ public class FDRuleBuilderTest {
 
     @BeforeClass
     public static void setup() {
+        Bootstrap.start();
         workingDirectory = Files.createTempDir();
     }
 
     @AfterClass
     public static void tearDown() {
+        Bootstrap.shutdown();
         // remove all the temp files.
         workingDirectory.delete();
     }

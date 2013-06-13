@@ -20,11 +20,14 @@
 package qa.qcri.nadeef.test.rulebuilder;
 
 import com.google.common.collect.Lists;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.CFDRuleBuilder;
 
 import java.util.Collection;
@@ -35,6 +38,16 @@ import java.util.List;
  */
 @RunWith(JUnit4.class)
 public class CFDRuleBuilderTest {
+    @Before
+    public void setup() {
+        Bootstrap.start();
+    }
+
+    @After
+    public void tearDown() {
+        Bootstrap.shutdown();
+    }
+
     @Test
     public void parseTest() {
         try {
