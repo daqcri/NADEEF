@@ -183,7 +183,6 @@ public class CleanExecutor {
 
         updateFlow.start();
         updateFlow.waitUntilFinish();
-
         Tracer.putStatsEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
         return this;
     }

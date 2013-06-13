@@ -20,6 +20,7 @@
 package qa.qcri.nadeef.console;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
@@ -37,6 +38,7 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -143,7 +145,10 @@ public class Console {
             // bootstrap Nadeef.
             Stopwatch stopwatch = new Stopwatch().start();
             Bootstrap.start();
-            String line;
+
+            // set the logging directory
+            Path outputPath = NadeefConfiguration.getOutputPath();
+            Tracer.setLoggingDir(outputPath.toString());
 
             console = new ConsoleReader();
             Tracer.setConsole(new ConsoleReaderAdaptor(console));
@@ -155,7 +160,6 @@ public class Console {
                 );
             console.addCompleter(new ArgumentCompleter(loadCompleter));
 
-            console.clearScreen();
             console.println(logo);
             console.println();
             console.println(helpInfo);
@@ -166,37 +170,48 @@ public class Console {
                 "Your NADEEF started in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
             );
 
+            String line;
             while ((line = console.readLine()) != null) {
                 line = line.trim();
+                String[] tokens = line.split(" ");
+
+                if (tokens.length == 0) {
+                    continue;
+                }
+
                 // clear the statistics for every run.
                 // TODO: move inside the executor.
                 Tracer.clearStats();
                 try {
-                    if (line.startsWith("exit")) {
+                    if (tokens[0].equalsIgnoreCase("exit")) {
                         break;
-                    } else if (line.startsWith("load")) {
+                    } else if (tokens[0].equalsIgnoreCase("load")) {
                         load(line);
-                    } else if (line.startsWith("list")) {
+                    } else if (tokens[0].equalsIgnoreCase("list")) {
                         list();
-                    } else if (line.startsWith("help")) {
+                    } else if (tokens[0].equalsIgnoreCase("help")) {
                         printHelp();
-                    } else if (line.startsWith("detect")) {
+                    } else if (tokens[0].equalsIgnoreCase("detect")) {
                         detect(line);
-                    } else if (line.startsWith("repair")) {
+                    } else if (tokens[0].equalsIgnoreCase("repair")) {
                         repair(line);
-                    } else if (line.startsWith("run")) {
+                    } else if (tokens[0].equalsIgnoreCase("run")) {
                         run(line);
-                    } else if (line.startsWith("set")) {
+                    } else if (tokens[0].equalsIgnoreCase("set")) {
                         set(line);
-                    } else if (line.startsWith("fd")) {
+                    } else if (tokens[0].equalsIgnoreCase("fd")) {
                         fd(line);
-                    } else if (line.startsWith("schema")) {
+                    } else if (tokens[0].equalsIgnoreCase("schema")) {
                         schema(line);
                     } else {
                         console.println("I don't know this command.");
                     }
                 } catch (Exception ex) {
-                    tracer.err("Oops, something is wrong: ", ex);
+                    console.println(
+                        "Oops, something is wrong. Please check the log in the output dir."
+                    );
+
+                    tracer.err(ex);
                 }
             }
         } catch (Exception ex) {
@@ -214,20 +229,23 @@ public class Console {
     private static void schema(String cmdLine) throws Exception {
         String[] splits = cmdLine.split("\\s");
         if (splits.length != 2) {
-            throw new IllegalArgumentException(
+            console.println(
                 "Invalid schema command. Please try to use schema [table name]."
             );
+            return;
         }
 
         if (cleanPlans == null) {
-            throw new NullPointerException(
+            console.println(
                 "There is no CleanPlan loaded."
             );
+            return;
         }
 
         String tableName = splits[1];
         if (!DBMetaDataTool.isTableExist(tableName)) {
-            throw new IllegalArgumentException("Unknown table names.");
+            console.println("Unknown table names.");
+            return;
         }
 
         Schema schema = DBMetaDataTool.getSchema(tableName);
@@ -272,9 +290,8 @@ public class Console {
         Stopwatch stopwatch = new Stopwatch().start();
         String[] splits = cmdLine.split("\\s");
         if (splits.length != 2) {
-            throw new IllegalArgumentException(
-                "Invalid load command. Run load <Nadeef config file>."
-            );
+            console.println("Invalid load command. Run load <Nadeef config file>.");
+            return;
         }
         String fileName = splits[1];
         File file = CommonTools.getFile(fileName);
@@ -313,10 +330,8 @@ public class Console {
     private static void detect(String cmd) throws IOException, InterruptedException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
-            throw
-                new IllegalArgumentException(
-                    "Wrong detect command. Run detect [id number] instead."
-                );
+            console.println("Wrong detect command. Run detect [id number] instead.");
+            return;
         }
 
         if (executors == null || executors.size() == 0) {
@@ -361,10 +376,7 @@ public class Console {
     private static void repair(String cmd) throws IOException, InterruptedException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
-            throw
-                new IllegalArgumentException(
-                    "Wrong detect command. Run detect [id number] instead."
-                );
+            console.println("Wrong repair command. Run repair [id number] instead.");
         }
 
         if (executors == null || executors.size() == 0) {
@@ -409,17 +421,16 @@ public class Console {
     private static void run(String cmd) throws IOException, InterruptedException {
         String[] tokens = cmd.split("\\s");
         if (tokens.length > 2) {
-            throw
-                new IllegalArgumentException(
-                    "Wrong detect command. Run detect [id number] instead."
-                );
+            console.println(
+                "Wrong command. Run run [id number] instead."
+            );
         }
 
         int index = -1;
         if (tokens.length == 2) {
             index = Integer.valueOf(tokens[1]);
-            if (index < 0 && index >= cleanPlans.size()) {
-                console.println("Out of index.");
+            if (index < 0 || index >= cleanPlans.size()) {
+                console.println("Out of rule index.");
                 return;
             }
         }

@@ -29,7 +29,9 @@ import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
 import java.io.Reader;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -45,6 +47,7 @@ public class NadeefConfiguration {
     private static boolean alwaysCompile = false;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
     private static Optional<Class> decisionMakerClass;
+    private static Path outputPath;
     //<editor-fold desc="Public methods">
 
     /**
@@ -59,7 +62,12 @@ public class NadeefConfiguration {
         String url = (String)database.get("url");
         String userName = (String)database.get("username");
         String password = (String)database.get("password");
-        String type = (String)database.get("type");
+        String type;
+        if (database.containsKey("type")) {
+            type = (String)database.get("type");
+        } else {
+            type = "postgres";
+        }
 
         DBConfig.Builder builder = new DBConfig.Builder();
         dbConfig =
@@ -92,6 +100,22 @@ public class NadeefConfiguration {
             decisionMakerClass = Optional.absent();
         }
 
+        if (general.containsKey("outputPath")) {
+            String outputPathString = (String)general.get("outputPath");
+            File tmpPath = new File(outputPathString);
+            if (tmpPath.exists() && tmpPath.isDirectory()) {
+                outputPath = tmpPath.toPath();
+            } else {
+                outputPathString = System.getProperty("user.dir");
+                tracer.info(
+                    "Cannot find directory " + outputPathString +
+                    ", we change to working directory " + outputPathString
+                );
+
+                outputPath = new File(outputPathString).toPath();
+            }
+        }
+
         JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
         Set<String> keySet = (Set<String>)ruleext.keySet();
         for (String key : keySet) {
@@ -104,7 +128,7 @@ public class NadeefConfiguration {
 
     /**
      * Sets the test mode.
-     * @param isTestMode
+     * @param isTestMode test mode.
      */
     public static void setTestMode(boolean isTestMode) {
         testMode = isTestMode;
@@ -116,6 +140,15 @@ public class NadeefConfiguration {
      */
     public static boolean isTestMode() {
         return testMode;
+    }
+
+    /**
+     * Gets the NADEEF output path. Output path is used for writing logs,
+     * temporary class files, etc.
+     * @return the NADEEF output path.
+     */
+    public static Path getOutputPath() {
+        return outputPath;
     }
 
     /**

@@ -61,7 +61,13 @@ public class ViolationRepair
             count ++;
             setPercentage(count / violations.size());
         }
-        long elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / violations.size();
+
+        long elapseTime = 0l;
+        if (violations.size() != 0) {
+            elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / violations.size();
+        } else {
+            elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        }
         Tracer.putStatsEntry(Tracer.StatType.RepairCallTime, elapseTime);
         stopwatch.stop();
         return result;

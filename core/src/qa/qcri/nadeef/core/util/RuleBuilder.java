@@ -24,6 +24,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -200,6 +201,7 @@ public abstract class RuleBuilder {
     // </editor-fold>
 
     // <editor-fold desc="Protected Fields">
+
     /**
      * Gets the compiled output file.
      * 
@@ -208,7 +210,7 @@ public abstract class RuleBuilder {
     protected File getOutputFile() {
         String currentPath;
         if (outputPath == null) {
-            currentPath = System.getProperty("user.dir");
+            currentPath = NadeefConfiguration.getOutputPath().toString();
         } else {
             currentPath = outputPath.getAbsolutePath();
         }
@@ -220,5 +222,6 @@ public abstract class RuleBuilder {
      */
     protected void parse() {
     }
+
     // </editor-fold>
 }

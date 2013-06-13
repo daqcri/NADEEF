@@ -25,6 +25,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -47,22 +50,14 @@ public class Tracer {
     private static PrintStream console = System.out;
     private static FileWriter logWriter;
     private static String logFileName;
+    private static Calendar calendar;
+    private static DateFormat dateFormat;
     //</editor-fold>
 
     static {
-        logFileName = "log" + System.currentTimeMillis() + ".txt";
-    }
-
-    private static synchronized FileWriter getLogWriter() {
-        if (logWriter == null) {
-            try {
-                logWriter = new FileWriter(logFileName);
-            } catch (IOException e) {
-                Tracer tracer = getTracer(Tracer.class);
-                tracer.info("Cannot open log file : " + logFileName);
-            }
-        }
-        return logWriter;
+        calendar = Calendar.getInstance();
+        dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        logFileName = "log" + dateFormat.format(calendar.getTime()) + ".txt";
     }
 
     /**
@@ -129,6 +124,27 @@ public class Tracer {
     //<editor-fold desc="Public methods">
 
     /**
+     * Initialize the logging directory.
+     * @param outputPathName
+     */
+    public static void setLoggingDir(String outputPathName) {
+        File outputPath = new File(outputPathName);
+
+        if (!outputPath.exists() || !outputPath.isDirectory()) {
+            console.println("Output path is not a valid directory.");
+            return;
+        }
+
+        String outputFile = outputPath + File.separator + logFileName;
+        try {
+            logWriter = new FileWriter(outputFile);
+        } catch (IOException e) {
+            Tracer tracer = getTracer(Tracer.class);
+            tracer.info("Cannot open log file : " + logFileName);
+        }
+    }
+
+    /**
      * Set the output stream.
      * @param console_
      */
@@ -159,21 +175,31 @@ public class Tracer {
      */
     public void err(String message, Exception ex) {
         console.println(errHeader + message);
+        err(ex);
+    }
+
+    /**
+     * Print out error message.
+     * @param ex exceptions.
+     */
+    public void err(Exception ex) {
         if (ex != null) {
             Writer writer = new StringWriter();
             PrintWriter printWriter = new PrintWriter(writer);
             ex.printStackTrace(printWriter);
-            FileWriter logger = getLogWriter();
-            if (logger != null) {
+            if (logWriter != null) {
                 try {
-                    logger.append(writer.toString());
+                    String header = "[" + dateFormat.format(calendar.getTime()) + "]\n";
+                    logWriter.append(header);
+                    logWriter.append(writer.toString());
+                    logWriter.append("\n");
+                    logWriter.flush();
                 } catch (IOException e) {
                     // ignore
                 }
             }
         }
     }
-
     //</editor-fold>
 
     //<editor-fold desc="Static methods">
@@ -365,10 +391,15 @@ public class Tracer {
                 console.println(msg);
             }
 
-            FileWriter logger = getLogWriter();
-            if (logger != null) {
+            if (logWriter != null) {
                 try {
-                    logger.append(header + msg);
+                    if (header != null) {
+                        logWriter.append(header + msg);
+                    } else {
+                        logWriter.append(msg);
+                    }
+                    logWriter.append("\n");
+                    logWriter.flush();
                 } catch (IOException e) {
                     // ignore
                 }
