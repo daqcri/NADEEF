@@ -80,7 +80,7 @@ public class IteratorStream<E> {
             try {
                 while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                tracer.err("put interrupted", e);
             }
             buffer = Lists.newArrayList();
         }
@@ -97,7 +97,7 @@ public class IteratorStream<E> {
                 while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
             buffer = null;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            tracer.err("flush interrupted", e);
         }
     }
 

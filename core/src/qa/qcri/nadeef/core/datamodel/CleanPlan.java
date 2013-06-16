@@ -260,7 +260,6 @@ public class CleanPlan {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
             if (ex instanceof InvalidRuleException) {
                 throw (InvalidRuleException) ex;
             }

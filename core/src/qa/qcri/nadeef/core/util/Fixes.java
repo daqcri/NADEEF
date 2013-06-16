@@ -104,7 +104,8 @@ public class Fixes {
                 result.add(newFix);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Tracer tracer = Tracer.getTracer(Fixes.class);
+            tracer.err("Exceptions happen during parsing Fixes.", e);
         }
         return result;
     }

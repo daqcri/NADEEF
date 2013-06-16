@@ -211,7 +211,7 @@ public class Console {
                         "Oops, something is wrong. Please check the log in the output dir."
                     );
 
-                    tracer.err(ex);
+                    tracer.err("", ex);
                 }
             }
         } catch (Exception ex) {

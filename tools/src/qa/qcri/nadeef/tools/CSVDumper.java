@@ -129,7 +129,6 @@ public class CSVDumper {
             stopwatch.stop();
         } catch (Exception ex) {
             tracer.err("Cannot load file " + file.getName(), ex);
-            ex.printStackTrace();
             if (conn != null) {
                 PreparedStatement stat =
                     conn.prepareStatement("DROP TABLE IF EXISTS " + tableName);

@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.log4j.*;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -35,28 +36,24 @@ import java.util.Map;
 /**
  * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
  */
-// TODO: adds support for log4j.
+// TODO: Make statistic summary generic
 public class Tracer {
 
     //<editor-fold desc="Private fields">
     private static Map<StatType, List<Long>> stats = Maps.newHashMap();
-
-    private String infoHeader;
-    private String errHeader;
-    private String verboseHeader;
-
     private static boolean infoFlag = true;
     private static boolean verboseFlag = false;
     private static PrintStream console = System.out;
-    private static FileWriter logWriter;
     private static String logFileName;
     private static Calendar calendar;
     private static DateFormat dateFormat;
+
+    private Logger logger;
     //</editor-fold>
 
     static {
         calendar = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        dateFormat = new SimpleDateFormat("MMddHHmmss");
         logFileName = "log" + dateFormat.format(calendar.getTime()) + ".txt";
     }
 
@@ -106,26 +103,26 @@ public class Tracer {
 
     //<editor-fold desc="Tracer creation">
     private Tracer(Class classType) {
-        infoHeader = ":INFO:" + classType.getSimpleName() + ":";
-        errHeader = ":ERROR:" + classType.getSimpleName() + ":";
-        verboseHeader = ":VERBOSE:" + classType.getSimpleName() + ":";
+        Preconditions.checkNotNull(classType);
+        logger = Logger.getLogger(classType);
     }
 
     /**
      * Creates a tracer class
-     * @param classType
+     * @param classType input class type.
      * @return Tracer instance.
      */
     public static Tracer getTracer(Class classType) {
         return new Tracer(classType);
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
 
     /**
      * Initialize the logging directory.
-     * @param outputPathName
+     * @param outputPathName output logging directory.
      */
     public static void setLoggingDir(String outputPathName) {
         File outputPath = new File(outputPathName);
@@ -137,7 +134,12 @@ public class Tracer {
 
         String outputFile = outputPath + File.separator + logFileName;
         try {
-            logWriter = new FileWriter(outputFile);
+            FileAppender logFile =
+                new FileAppender(
+                    new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN),
+                    outputFile
+                );
+            BasicConfigurator.configure(logFile);
         } catch (IOException e) {
             Tracer tracer = getTracer(Tracer.class);
             tracer.info("Cannot open log file : " + logFileName);
@@ -146,7 +148,7 @@ public class Tracer {
 
     /**
      * Set the output stream.
-     * @param console_
+     * @param console_ input console print stream.
      */
     public static void setConsole(PrintStream console_) {
         console = Preconditions.checkNotNull(console_);
@@ -157,7 +159,10 @@ public class Tracer {
      * @param msg info message.
      */
     public void info(String msg) {
-        info(msg, infoHeader);
+        if (isInfoOn()) {
+            console.println(msg);
+        }
+        logger.info(msg);
     }
 
     /**
@@ -165,7 +170,10 @@ public class Tracer {
      * @param msg message.
      */
     public void verbose(String msg) {
-        verbose(msg, verboseHeader);
+        if (isVerboseOn()) {
+            console.println(msg);
+            logger.debug(msg);
+        }
     }
 
     /**
@@ -174,32 +182,13 @@ public class Tracer {
      * @param ex exceptions.
      */
     public void err(String message, Exception ex) {
-        console.println(errHeader + message);
-        err(ex);
+        if (!Strings.isNullOrEmpty(message)) {
+            console.println("Error: " + message);
+            console.println("Exception: " + ex.getClass().getName() + ": " + ex.getMessage());
+        }
+        logger.error(message, ex);
     }
 
-    /**
-     * Print out error message.
-     * @param ex exceptions.
-     */
-    public void err(Exception ex) {
-        if (ex != null) {
-            Writer writer = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(writer);
-            ex.printStackTrace(printWriter);
-            if (logWriter != null) {
-                try {
-                    String header = "[" + dateFormat.format(calendar.getTime()) + "]\n";
-                    logWriter.append(header);
-                    logWriter.append(writer.toString());
-                    logWriter.append("\n");
-                    logWriter.flush();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-    }
     //</editor-fold>
 
     //<editor-fold desc="Static methods">
@@ -255,6 +244,12 @@ public class Tracer {
      */
     public static void setVerbose(boolean mode) {
         verboseFlag = mode;
+        Logger root = Logger.getRootLogger();
+        if (verboseFlag) {
+            root.setLevel(Level.DEBUG);
+        } else {
+            root.setLevel(Level.INFO);
+        }
     }
 
     /**
@@ -285,13 +280,14 @@ public class Tracer {
      * @param ruleName rule name.
      */
     public static void printRepairSummary(String ruleName) {
-        info("Repair summary:", null);
-        info("Rule: " + ruleName, null);
-        info("----------------------------------------------------------------", null);
-        info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"), null);
-        info(formatEntry(StatType.EQTime, "EQ time", "ms"), null);
-        info(formatEntry(StatType.UpdatedCellNumber, "Cell updated", ""), null);
-        info("----------------------------------------------------------------", null);
+        Tracer tracer = getTracer(Tracer.class);
+        tracer.info("Repair summary:");
+        tracer.info("Rule: " + ruleName);
+        tracer.info("----------------------------------------------------------------");
+        tracer.info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"));
+        tracer.info(formatEntry(StatType.EQTime, "EQ time", "ms"));
+        tracer.info(formatEntry(StatType.UpdatedCellNumber, "Cell updated", ""));
+        tracer.info("----------------------------------------------------------------");
 
         Collection<Long> totalTimes = stats.get(StatType.RepairTime);
         Collection<Long> totalChangedCells = stats.get(StatType.UpdatedCellNumber);
@@ -312,21 +308,22 @@ public class Tracer {
     }
 
     public static void printDetectSummary(String ruleName) {
-        info("Detection summary:", null);
-        info("Rule: " + ruleName, null);
-        info("----------------------------------------------------------------", null);
-        info(formatEntry(StatType.HScopeTime, "HScope time", "ms"), null);
-        info(formatEntry(StatType.VScopeTime, "VScope time", "ms"), null);
-        info(formatEntry(StatType.Blocks, "Blocks", ""), null);
-        info(formatEntry(StatType.IterationCount, "Original tuple count", ""), null);
-        info(formatEntry(StatType.IteratorTime, "Iterator time", "ms"), null);
-        info(formatEntry(StatType.DBLoadTime, "DB load time", "ms"), null);
-        info(formatEntry(StatType.DetectTime, "Detect time", "ms"), null);
-        info(formatEntry(StatType.DetectCallTime, "Detect call time", "ms"), null);
-        info(formatEntry(StatType.DetectThreadCount, "Detect thread count", ""), null);
-        info(formatEntry(StatType.DetectCount, "Detect tuple count", ""), null);
-        info(formatEntry(StatType.ViolationExport, "Violation", ""), null);
-        info(formatEntry(StatType.ViolationExportTime, "Violation export time", ""), null);
+        Tracer tracer = getTracer(Tracer.class);
+        tracer.info("Detection summary:");
+        tracer.info("Rule: " + ruleName);
+        tracer.info("----------------------------------------------------------------");
+        tracer.info(formatEntry(StatType.HScopeTime, "HScope time", "ms"));
+        tracer.info(formatEntry(StatType.VScopeTime, "VScope time", "ms"));
+        tracer.info(formatEntry(StatType.Blocks, "Blocks", ""));
+        tracer.info(formatEntry(StatType.IterationCount, "Original tuple count", ""));
+        tracer.info(formatEntry(StatType.IteratorTime, "Iterator time", "ms"));
+        tracer.info(formatEntry(StatType.DBLoadTime, "DB load time", "ms"));
+        tracer.info(formatEntry(StatType.DetectTime, "Detect time", "ms"));
+        tracer.info(formatEntry(StatType.DetectCallTime, "Detect call time", "ms"));
+        tracer.info(formatEntry(StatType.DetectThreadCount, "Detect thread count", ""));
+        tracer.info(formatEntry(StatType.DetectCount, "Detect tuple count", ""));
+        tracer.info(formatEntry(StatType.ViolationExport, "Violation", ""));
+        tracer.info(formatEntry(StatType.ViolationExportTime, "Violation export time", ""));
 
         long totalTime = 0l;
         long totalViolation = 0l;
@@ -345,7 +342,7 @@ public class Tracer {
             }
         }
 
-        info("----------------------------------------------------------------", null);
+        tracer.info("----------------------------------------------------------------");
         console.println(
             "Detection finished in " + totalTime + " ms " +
             "and found " + totalViolation + " violations.\n"
@@ -377,38 +374,5 @@ public class Tracer {
         return String.format("%-40s %s", prefix, value);
     }
 
-    private static void verbose(String msg, String header) {
-        if (verboseFlag) {
-            if (header != null) {
-                console.println(header + msg);
-            } else {
-                console.println(msg);
-            }
-        }
-    }
-
-    private static void info(String msg, String header) {
-        if (infoFlag) {
-            if (header != null) {
-                console.println(header + msg);
-            } else {
-                console.println(msg);
-            }
-
-            if (logWriter != null) {
-                try {
-                    if (header != null) {
-                        logWriter.append(header + msg);
-                    } else {
-                        logWriter.append(msg);
-                    }
-                    logWriter.append("\n");
-                    logWriter.flush();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-    }
     //</editor-fold>
 }
