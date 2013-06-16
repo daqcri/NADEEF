@@ -1,5 +1,756 @@
-<html>
-	<script>
-		window.location = "http://projects.qcri.org/projects/nadeef-wiki/wiki/User_Guide";
-	</script>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>User Guide</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style>
+        body { font:80% Verdana,Tahoma,Arial,sans-serif; }
+        h1, h2, h3, h4 {  font-family: "Trebuchet MS",Georgia,"Times New Roman",serif; }
+        ul.toc { padding: 4px; margin-left: 0; }
+        ul.toc li { list-style-type:none; }
+        ul.toc li.heading2 { margin-left: 1em; }
+        ul.toc li.heading3 { margin-left: 2em; }
+        a.wiki-anchor { display: none; margin-left: 6px; text-decoration: none; }
+        a.wiki-anchor:hover { color: #aaa !important; text-decoration: none; }
+        h1:hover a.wiki-anchor, h2:hover a.wiki-anchor, h3:hover a.wiki-anchor { display: inline; color: #ddd; }
+    </style>
+</head>
+<body>
+<a name="NADEEF-User-Guide"></a>
+<h1 >NADEEF User Guide<a href="#NADEEF-User-Guide" class="wiki-anchor">&para;</a></h1>
+
+
+<ul class="toc"><li><a href="#NADEEF-User-Guide">NADEEF User Guide</a><ul><li><a href="#1-Setup">1. Setup</a><ul><li><a href="#11-Where-to-get-the-latest-information-on-NADEEF">1.1 Where to get the latest code?</a></li><li><a href="#12-Code-structure">1.2 Code structure</a></li><li><a href="#13-Build-NADEEF-from-scratch">1.3 Build NADEEF from scratch</a><ul><li><a href="#Prerequisite">Prerequisite</a></li><li><a href="#Compile">Compile</a></li></ul>
+</li><li><a href="#14-Configuration">1.4 Configuration</a></li></ul>
+</li><li><a href="#2-Start-NADEEF">2 Start NADEEF</a><ul><li><a href="#21-Start-NADEEF-console">2.1 Start NADEEF console</a></li><li><a href="#22-What-is-CleanPlan">2.2 What is CleanPlan?</a></li><li><a href="#22-Load-Detect-Repair-and-Run">2.2 Load, Detect, Repair, and Run</a></li><li><a href="#23-Violation-and-Audit-table">2.3 Violation and Audit table</a></li></ul>
+</li><li><a href="#3-Write-User-Defined-Rule">3 Write User Defined Rule</a><ul><li><a href="#31-Detect-and-Repair">3.1 Detect and Repair</a></li><li><a href="#32-VerticalScope-HorizontalScope-Block-and-Iterator">3.2 VerticalScope, HorizontalScope, Block, and Iterator</a></li><li><a href="#33-How-to-load-UDF-rule">3.3 How to load UDF rule?</a></li><li><a href="#33-Pipelines-The-Whole-Picture">3.3 Pipelines, The Whole Picture</a></li></ul>
+</li><li><a href="#4-FAQ">4. FAQ</a><ul><li><a href="#41-How-to-write-a-CleanPlan-of-using-CSV-file">4.1 How to write a CleanPlan of using CSV file?</a></li><li><a href="#42-How-to-work-on-two-tables-within-one-rule">4.2 How to work on two tables within one rule?</a></li><li><a href="#43-Where-I-can-find-Javadoc-API-document">4.3 Where I can find Javadoc API document?</a></li><li><a href="#44-How-can-I-add-my-alternative-algorithm-FixDecisionMaker-than-the-EquivalentClass">4.4 How can I add my alternative algorithm (FixDecisionMaker) than the EquivalentClass?</a></li><li><a href="#45-How-can-I-add-more-abstract-rule-support-like-MD-or-DC">4.5 How can I add more abstract rule support like MD, or DC?</a></li><li><a href="#46-How-can-I-force-NADEEF-to-re-generate-and-compile-FDCFD-java-files-all-the-time">4.6 How can I force NADEEF to re-generate and compile FD/CFD java files all the time?</a></li></ul>
+</li></ul>
+
+
+<a name="1-Setup"></a>
+<h2 >1. Setup<a href="#1-Setup" class="wiki-anchor">&para;</a></h2>
+
+
+<a name="11-Where-to-get-the-latest-information-on-NADEEF"></a>
+<h3 >1.1 Where to get the latest information on NADEEF?<a href="#11-Where-to-get-the-latest-code" class="wiki-anchor">&para;</a></h3>
+
+
+<p>The latest NADEEF information can be found in <br /><pre>
+<a href="http://projects.qcri.org/projects/nadeef-wiki/">http://projects.qcri.org/projects/nadeef-wiki/</a>
+</pre></p>
+
+<a name="12-Code-structure"></a>
+<h3 >1.2 Code structure<a href="#12-Code-structure" class="wiki-anchor">&para;</a></h3>
+
+
+<p>The NADEEF release has the code structure described as below:<br /><pre>
+- .                     - NADEEF root directory
+|- console              - source code for the NADEEF console
+|- core                 - source code for the NADEEF core
+    |- datamodel        - datamodel in the core, it contains the entities used in NADEEF e.g. cell, tuple
+    |- exception        - exception defined in NADEEF
+    |- pipeline         - NADEEF pipeline/operator implementation
+    |- util             - utility code for NADEEF core
+|- ruleext              - extension for abstract rule, currently it has FD and CFD implementation
+|- test                 - NADEEF test code
+|- tools                - common utility code for NADEEF
+|- vendors              - 3rd party libraries (e.g. JUnit, postgres JDBC driver)
+|- out                  - output directory (also the default location of nadeef.jar)
+|- nadeef.bat           - start script for windows
+|- nadeef.sh            - start script for mac and *nix
+|- nadeef.conf          - NADEEF configuration file
+
+</pre></p>
+
+
+<a name="13-Build-NADEEF-from-scratch"></a>
+<h3 >1.3 Build NADEEF from scratch<a href="#13-Build-NADEEF-from-scratch" class="wiki-anchor">&para;</a></h3>
+
+
+<a name="Prerequisite"></a>
+<h4 >Prerequisite<a href="#Prerequisite" class="wiki-anchor">&para;</a></h4>
+
+
+To be able to run and compile NADEEF user needs to have the following software installed.
+<ul>
+    <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" class="external">JDK 1.7+</a></li>
+    <li><a href="http://ant.apache.org/" class="external">Apache Ant 1.8.2+</a></li>
+    <li><a href="http://www.postgresql.org/download/" class="external">Postgres SQL 9.2+</a></li>
+</ul>
+
+
+<a name="Compile"></a>
+<h4 >Compile<a href="#Compile" class="wiki-anchor">&para;</a></h4>
+
+
+<p>The build script is in the root folder named <ins>build.xml</ins>, to do a full compile user can use the command<br /><pre>
+ant all
+</pre></p>
+
+
+<p>There are also other commands available and user can find the details in the <ins>build.xml</ins> file.</p>
+
+
+<a name="14-Configuration"></a>
+<h3 >1.4 Configuration<a href="#14-Configuration" class="wiki-anchor">&para;</a></h3>
+
+
+<p>The configuration is NADEEF is based on the configuration file <ins>nadeef.conf</ins>. A sample of configuration file is shown below</p>
+
+
+<pre><code class="json syntaxhl"><span class="CodeRay"><span class="no"> 1</span> {
+<span class="no"> 2</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">database</span><span class="dl">&quot;</span></span> : {
+<span class="no"> 3</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">url</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">localhost/unittest</span><span class="dl">&quot;</span></span>,
+<span class="no"> 4</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">username</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">tester</span><span class="dl">&quot;</span></span>,
+<span class="no"> 5</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">password</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">tester</span><span class="dl">&quot;</span></span>,
+<span class="no"> 6</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">type</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">postgres</span><span class="dl">&quot;</span></span> 
+<span class="no"> 7</span>     },
+<span class="no"> 8</span> 
+<span class="no"> 9</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">general</span><span class="dl">&quot;</span></span> : {
+<span class="no"><strong>10</strong></span>         <span class="ke"><span class="dl">&quot;</span><span class="k">maxIterationNumber</span><span class="dl">&quot;</span></span> : <span class="i">5</span>
+<span class="no">11</span>     },
+<span class="no">12</span> 
+<span class="no">13</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">ruleext</span><span class="dl">&quot;</span></span> : {
+<span class="no">14</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">fd</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">qa.qcri.nadeef.ruleext.FDRuleBuilder</span><span class="dl">&quot;</span></span>,
+<span class="no">15</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">cfd</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">qa.qcri.nadeef.ruleext.CFDRuleBuilder</span><span class="dl">&quot;</span></span> 
+<span class="no">16</span>     }
+<span class="no">17</span> }
+</span></code></pre>
+
+The configuration file tells the following information of your NADEEF system.
+<ul>
+    <li>database: The place where NADEEF metadata is stored (e.g. violation).
+        <ul>
+            <li>url: dataabse url</li>
+            <li>username: user name</li>
+            <li>password: password</li>
+            <li>type: the type of the database, e.g. Postgres (currently only Postgres is supported).</li>
+        </ul></li>
+</ul>
+
+
+<ul>
+    <li>general
+        <ul>
+            <li>maxIterationNumber: set the maximum detection iteration number.</li>
+        </ul></li>
+</ul>
+
+
+<ul>
+    <li>ruleext
+        <ul>
+            <li>fd: plugin for FD rule implementation.</li>
+            <li>cfd: plugin for CFD rule implementation.</li>
+        </ul></li>
+</ul>
+
+
+<a name="2-Start-NADEEF"></a>
+<h2 >2 Start NADEEF<a href="#2-Start-NADEEF" class="wiki-anchor">&para;</a></h2>
+
+
+<a name="21-Start-NADEEF-console"></a>
+<h3 >2.1 Start NADEEF console<a href="#21-Start-NADEEF-console" class="wiki-anchor">&para;</a></h3>
+
+
+<p>Once NADEEF is compiled user can start NADEEF console via command <ins>nadeef.sh</ins> (on Windows it is <ins>nadeef.bat</ins>). A successful start of NADEEF console is shown as below</p>
+
+
+<pre>
+   _  __        __        _____
+  / |/ /__ ____/ /__ ___ /   _/
+ /    / _ `/ _  / -_) -_)   _/
+/_/|_/\_,_/\_,_/\__/\__/ __/
+Data Cleaning solution (Build null, using Java 1.7.0_07).
+Copyright (C) Qatar Computing Research Institute, 2013 (http://da.qcri.org).
+
+Type 'help' to see what commands we have.
+
+Your NADEEF started in 1004 ms.
+:&gt;
+</pre>
+
+<p>NADEEF console is the interactive console where user can start NADEEF data cleaning rules. Type 'help' in the console to list all the available commands as below:</p>
+
+
+<pre>
+:&gt; help
+ |Nadeef console usage:
+ |----------------------------------
+ |help : Print out this help information.
+ |
+ |load &lt;input CleanPlan file&gt; :
+ |    load a NADEEF clean plan.
+ |
+ |detect [rule id] :
+ |    start the violation detection with a given rule id number.
+ |
+ |list :
+ |    list available rules.
+ |
+ |repair [rule id] :
+ |    repair the data source with a given rule id number.
+ |
+ |run [rule id]:
+ |    run both detect and clean with a given rule id number.
+ |
+ |schema [table name]:
+ |    list the table schema from the data source.
+ |
+ |fd [table name] [fd rule value]:
+ |    create FD rule with specified table name on the source data.
+ |
+ |exit :
+ |    exit the console.
+
+:&gt;
+</pre>
+
+<a name="22-What-is-CleanPlan"></a>
+<h3 >2.2 What is CleanPlan?<a href="#22-What-is-CleanPlan" class="wiki-anchor">&para;</a></h3>
+
+
+<p>NADEEF is driven by CleanPlan. CleanPlan is a JSON file which contains information of which data to be cleaned and which rule to be used.</p>
+
+
+<p>A sample of CleanPlan is described as below</p>
+
+
+<pre><code class="json syntaxhl"><span class="CodeRay"><span class="no"> 1</span> {
+<span class="no"> 2</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">source</span><span class="dl">&quot;</span></span> : {
+<span class="no"> 3</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">url</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">localhost/unittest</span><span class="dl">&quot;</span></span>,
+<span class="no"> 4</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">username</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">tester</span><span class="dl">&quot;</span></span>,
+<span class="no"> 5</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">password</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">tester</span><span class="dl">&quot;</span></span>,
+<span class="no"> 6</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">type</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">postgres</span><span class="dl">&quot;</span></span> 
+<span class="no"> 7</span>     },
+<span class="no"> 8</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">rule</span><span class="dl">&quot;</span></span> : [
+<span class="no"> 9</span>         {
+<span class="no"><strong>10</strong></span>             <span class="ke"><span class="dl">&quot;</span><span class="k">type</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">fd</span><span class="dl">&quot;</span></span>,
+<span class="no">11</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">table</span><span class="dl">&quot;</span></span> : [<span class="s"><span class="dl">&quot;</span><span class="k">location</span><span class="dl">&quot;</span></span>],
+<span class="no">12</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">target</span><span class="dl">&quot;</span></span> : [<span class="s"><span class="dl">&quot;</span><span class="k">location_copy</span><span class="dl">&quot;</span></span>],
+<span class="no">13</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">value</span><span class="dl">&quot;</span></span> : [<span class="s"><span class="dl">&quot;</span><span class="k">zip|city, state</span><span class="dl">&quot;</span></span>]
+<span class="no">14</span>         }
+<span class="no">15</span>     ]
+<span class="no">16</span> }
+</span></code></pre><br />In this CleanPlan there are the following two attributes
+
+<ul>
+    <li>source: Where is the data to be cleaned.
+        <ul>
+            <li>type: the type of the source, it could be a database(Postgres SQL) or a CSV file(csv).</li>
+            <li>url: the url of the database</li>
+            <li>username: the user name of the database</li>
+            <li>password: the password of the user name</li>
+        </ul>
+    </li>
+    <li>rule: Which rule is going to be used.
+        <ul>
+            <li>type: the type of the rule. It can be an user defined rule (UDR) or abstract rule, e.g. (FD, CFD).</li>
+        </ul></li>
+</ul>
+
+
+<a name="22-Load-Detect-Repair-and-Run"></a>
+<h3 >2.2 Load, Detect, Repair, and Run<a href="#22-Load-Detect-Repair-and-Run" class="wiki-anchor">&para;</a></h3>
+
+
+<p>A typical user scenario of NADEEF is to first load the <ins>CleanPlan</ins> and then runn the rule. In the following text we will through this scenario to introduce some of the most frequent commands in NADEEF.</p>
+
+
+<p>First we load a CleanPlan called 'sample.json'.</p>
+
+
+<pre>
+:&gt; load sample.json
+:INFO:CSVDumper : Successfully created table csv_bank1
+:INFO:CSVDumper : Dumped 2 rows in 276 ms.
+:INFO:CSVDumper : Successfully created table csv_tran1
+:INFO:CSVDumper : Dumped 4 rows in 201 ms.
+1 rules loaded in 605 ms.
+:&gt;
+</pre><br />Once it is loaded user can start to use <ins>detect</ins>, <ins>repair</ins>, and <ins>run</ins> (which is the combination of <ins>detect</ins> and <ins>repair</ins>) commands. <br />For each command there will be a summary printed as below.
+
+<pre>
+:&gt; detect
+:&gt; [DETECT][==================================================]100 %
+Detection summary:
+Rule :Rule1563440042
+----------------------------------------------------------------
+HScope time                                       0 ms
+VScope time                                       0 ms
+Blocks                                            0
+Original tuple count                              0
+Iterator time                                     8 ms
+DB load time                                      1 ms
+Detect time                                      59 ms
+Detect call time                                  0 ms
+Detect thread count                               1
+Detect tuple count                                8
+Violation                                         1
+Violation export time                            37
+----------------------------------------------------------------
+Detection finished in 59 ms and found 1 violations.
+
+:&gt;
+:&gt; repair
+:&gt; [REPAIR][==================================================]100 %
+Repair summary:
+Repair time                                      10 ms
+Rule : Rule1563440042
+----------------------------------------------------------------
+Repair perCall time                               1 ms
+EQ time                                          44 ms
+Cell updated                                      1
+----------------------------------------------------------------
+Repair finished in 10 ms with 1 cells changed.
+
+</pre>
+
+<a name="23-Violation-and-Audit-table"></a>
+<h3 >2.3 Violation and Audit table<a href="#23-Violation-and-Audit-table" class="wiki-anchor">&para;</a></h3>
+
+
+<p>After each 'detect' iteration all the violation data are stored in the 'violation' table in the database which is specified in the <ins>nadeef.conf</ins>. After each 'repair' all the candidate fixes are stored in the 'repair' table and final update information is stored in the 'audit' table.</p>
+
+
+<p>An example of violations could be like<br /><pre>
+ vid |      rid       |    tablename     | tupleid | attribute |    value    
+-----+----------------+------------------+---------+-----------+-------------
+   0 | Rule1949358975 | csv_hospital_10k |    7663 | zipcode   | 90028
+   0 | Rule1949358975 | csv_hospital_10k |    7421 | zipcode   | 90028
+   0 | Rule1949358975 | csv_hospital_10k |    7421 | city      | LOS ANGELES
+   0 | Rule1949358975 | csv_hospital_10k |    7663 | city      | HOLLYWOOD
+   1 | Rule1949358975 | csv_hospital_10k |    7663 | zipcode   | 90028
+   1 | Rule1949358975 | csv_hospital_10k |    7422 | zipcode   | 90028
+   1 | Rule1949358975 | csv_hospital_10k |    7422 | city      | LOS ANGELES
+   1 | Rule1949358975 | csv_hospital_10k |    7663 | city      | HOLLYWOOD
+</pre></p>
+
+
+<p>Here the violations are clustered by 'vid' and each row represents a potential violated cell.</p>
+
+
+<p>The <ins>repair</ins> table lists the candidate fixes. It is stored as an equation statement, so (cell 1 = cell 2). An example can be as below:<br /><pre>
+ id  | vid | c1_tupleid | c1_tablename | c1_attribute |  c1_value   | op | c2_tupleid | c2_tablename | c2_attribute |  c2_value   
+-----+-----+------------+--------------+--------------+-------------+----+------------+--------------+--------------+-------------
+   0 |   0 |       7663 | csv_hospital | state        | CA          |  0 |       7421 | csv_hospital | state        | CA
+   0 |   0 |       7421 | csv_hospital | city         | LOS ANGELES |  0 |       7663 | csv_hospital | city         | HOLLYWOOD
+   1 |   1 |       7663 | csv_hospital | state        | CA          |  0 |       7422 | csv_hospital | state        | CA
+   1 |   1 |       7663 | csv_hospital | city         | HOLLYWOOD   |  0 |       7422 | csv_hospital | city         | LOS ANGELES
+   2 |   2 |       7423 | csv_hospital | state        | CA          |  0 |       7663 | csv_hospital | state        | CA
+   2 |   2 |       7423 | csv_hospital | city         | LOS ANGELES |  0 |       7663 | csv_hospital | city         | HOLLYWOOD
+   3 |   3 |       7663 | csv_hospital | city         | HOLLYWOOD   |  0 |       7424 | csv_hospital | city         | LOS ANGELES
+</pre></p>
+
+
+<p>The audit table shows which cell and what data has been changed. An example can be like<br /><pre>
+ id | vid | tupleid |  tablename   | attribute |   oldvalue    |  newvalue   |            time            
+----+-----+---------+--------------+-----------+---------------+-------------+----------------------------
+  1 | 603 |    7424 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+  2 | 618 |    7439 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+  3 | 600 |    7421 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+  4 | 612 |    7433 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+  5 | 611 |    7432 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+  6 | 619 |    7440 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+  7 | 609 |    7430 | csv_hospital | city      | 'LOS ANGELES' | 'HOLLYWOOD' | 2013-06-13 16:53:44.277998
+</pre></p>
+
+
+<a name="3-Write-User-Defined-Rule"></a>
+<h2 >3 Write User Defined Rule<a href="#3-Write-User-Defined-Rule" class="wiki-anchor">&para;</a></h2>
+
+
+<a name="31-Detect-and-Repair"></a>
+<h3 >3.1 Detect and Repair<a href="#31-Detect-and-Repair" class="wiki-anchor">&para;</a></h3>
+
+
+<p>The core of NADEEF is rule driven. Following the NADEEF rule interface user is able to write any User defined rule (UDF) in Java and give to NADEEF to run. The most important interfaces of NADEEF rule are <ins>detect</ins> and <ins>repair</ins>.</p>
+
+
+<p><ins>Detect</ins> is the place where user defines what is a violation in the context of the source data. The signature of the detect function is defined as<br /><pre><code class="java syntaxhl"><span class="CodeRay"><span class="no">1</span>     <span class="c">/**
+<span class="no">2</span>      * Detect interface.
+<span class="no">3</span>      * @param tuples input tuple.
+<span class="no">4</span>      * @return Violation set.
+<span class="no">5</span>      */</span>
+<span class="no">6</span>     <span class="di">public</span> <span class="di">abstract</span> <span class="pt">Collection</span>&lt;Violation&gt; detect(E tuples);
+</span></code></pre><br />The input of the detect is a generic type <ins>E</ins>, it could be one tuple, pair tuple, or many tuples (a table). The output of the <ins>detect</ins> is a collection of Violations. Given a simple rule of</p>
+
+
+<p><em>A tuple, which has Country code (CC) of 31, should have the country name of either Netherlands or Holland</em></p>
+
+
+<p>can be rewritten in the <ins>detect</ins> method as</p>
+
+
+<pre><code class="java syntaxhl"><span class="CodeRay"><span class="no"> 1</span>     <span class="at">@Override</span>
+<span class="no"> 2</span>     <span class="di">public</span> <span class="pt">Collection</span>&lt;Violation&gt; detect(Tuple tuple) {
+<span class="no"> 3</span>         <span class="pt">List</span>&lt;Violation&gt; result = Lists.newArrayList();
+<span class="no"> 4</span>         <span class="kw">if</span> (tuple.getCell(<span class="s"><span class="dl">&quot;</span><span class="k">CC</span><span class="dl">&quot;</span></span>).getValue().equals(<span class="s"><span class="dl">&quot;</span><span class="k">31</span><span class="dl">&quot;</span></span>) &#38;&#38;
+<span class="no"> 5</span>             (
+<span class="no"> 6</span>                 !tuple.getCell(<span class="s"><span class="dl">&quot;</span><span class="k">country</span><span class="dl">&quot;</span></span>).getValue().equals(<span class="s"><span class="dl">&quot;</span><span class="k">Netherlands</span><span class="dl">&quot;</span></span>) ||
+<span class="no"> 7</span>                 !tuple.getCell(<span class="s"><span class="dl">&quot;</span><span class="k">country</span><span class="dl">&quot;</span></span>).getValue().equals(<span class="s"><span class="dl">&quot;</span><span class="k">Holland</span><span class="dl">&quot;</span></span>))
+<span class="no"> 8</span>             )
+<span class="no"> 9</span>         {
+<span class="no"><strong>10</strong></span>             Violation violation = <span class="kw">new</span> Violation(ruleName);
+<span class="no">11</span>             violation.addCell(tuple.getCell(<span class="s"><span class="dl">&quot;</span><span class="k">cc</span><span class="dl">&quot;</span></span>));
+<span class="no">12</span>             violation.addCell(tuple.getCell(<span class="s"><span class="dl">&quot;</span><span class="k">country</span><span class="dl">&quot;</span></span>));
+<span class="no">13</span>             result.add(violation);
+<span class="no">14</span>         }
+<span class="no">15</span>         <span class="kw">return</span> result;
+<span class="no">16</span>     }
+</span></code></pre>
+
+<p>The <ins>repair</ins> function is to specify possible ways to resolve a given violation. Its interface is as follows:<br /><pre><code class="java syntaxhl"><span class="CodeRay"><span class="no">1</span>     <span class="c">/**
+<span class="no">2</span>      * Repair.
+<span class="no">3</span>      * @param violation violation input.
+<span class="no">4</span>      * @return a candidate fix.
+<span class="no">5</span>      */</span>
+<span class="no">6</span>     <span class="di">public</span> <span class="di">abstract</span> <span class="pt">Collection</span>&lt;Fix&gt; repair(Violation violation);
+</span></code></pre></p>
+
+
+<p>The input is a Violation and the output is a Collection of Fixes. For the same example above user can write the following <ins>repair</ins> method to fix tuples which has country code '31' but do not have country value 'Holland'.</p>
+
+
+<pre><code class="java syntaxhl"><span class="CodeRay"><span class="no">1</span>     <span class="at">@Override</span>
+<span class="no">2</span>     <span class="di">public</span> <span class="pt">Collection</span>&lt;Fix&gt; repair(Violation violation) {
+<span class="no">3</span>         Fix.Builder builder = <span class="kw">new</span> Fix.Builder();
+<span class="no">4</span>         Cell countryCell = violation.getCell(<span class="s"><span class="dl">&quot;</span><span class="k">myTable</span><span class="dl">&quot;</span></span>, <span class="s"><span class="dl">&quot;</span><span class="k">country</span><span class="dl">&quot;</span></span>);
+<span class="no">5</span>         Fix fix = builder.left(countryCell).right(<span class="s"><span class="dl">&quot;</span><span class="k">Netherlands</span><span class="dl">&quot;</span></span>).build();
+<span class="no">6</span>         <span class="kw">return</span> Lists.newArrayList(fix);
+<span class="no">7</span>     }
+</span></code></pre>
+
+<a name="32-VerticalScope-HorizontalScope-Block-and-Iterator"></a>
+<h3 >3.2 VerticalScope, HorizontalScope, Block, and Iterator<a href="#32-VerticalScope-HorizontalScope-Block-and-Iterator" class="wiki-anchor">&para;</a></h3>
+
+
+<p>In addition to <ins>detect</ins> and <ins>repair</ins> functions there are 4 extra optional interfaces user can override for optimization purpose. Why? Imaging that you have a file of 100k rows and you would like to do pairwise detection. Without any optimization the result pair number would be a simple N^2 which ends up 10 billions pairs to work on and it probably will take days to finish on the current commodity hardware.</p>
+
+
+<ul>
+    <li>VerticalScope : VerticalScope is to let user do scoping on columns. So choosing the columns which will be needed for the <ins>detect</ins> to reduce the memory footprint during execution. The signature of VerticalScope is like<br /><pre><code class="java syntaxhl"><span class="CodeRay"><span class="no">1</span>     <span class="c">/**
+<span class="no">2</span>      * Vertical scope.
+<span class="no">3</span>      * @param table input tables.
+<span class="no">4</span>      * @return scoped tables.
+<span class="no">5</span>      */</span>
+<span class="no">6</span>     <span class="di">public</span> <span class="di">abstract</span> <span class="pt">Collection</span>&lt;Table&gt; verticalScope(<span class="pt">Collection</span>&lt;Table&gt; table);
+</span></code></pre></li>
+</ul>
+
+
+<ul>
+    <li>HorizontalScope : HorizontalScope is to let user do scoping on rows. So choosing the rows which is relevant to the <ins>detect</ins> and reduce the total number of pairs generated. The signature of HorizontalScope is like<br /><pre><code class="java syntaxhl"><span class="CodeRay"><span class="no">1</span>     <span class="c">/**
+<span class="no">2</span>      * Horizontal scope operator.
+<span class="no">3</span>      * @param table input tables.
+<span class="no">4</span>      * @return scoped tables.
+<span class="no">5</span>      */</span>
+<span class="no">6</span>     <span class="di">public</span> <span class="di">abstract</span> <span class="pt">Collection</span>&lt;Table&gt; horizontalScope(<span class="pt">Collection</span>&lt;Table&gt; table);
+</span></code></pre></li>
+</ul>
+
+
+<ul>
+    <li>Block : Block is to let user group a table on columns. For example, given a table with country code information user may want to write <ins>Block</ins> function to return a collection of tables based on the same country code value. In that case the total tuple pair number is reduced. <br /><pre><code class="java syntaxhl"><span class="CodeRay"><span class="no">1</span>     <span class="c">/**
+<span class="no">2</span>      * Block operator.
+<span class="no">3</span>      * @param table input tuple.
+<span class="no">4</span>      * @return a generator of tuple collection.
+<span class="no">5</span>      */</span>
+<span class="no">6</span>     <span class="di">public</span> <span class="di">abstract</span> <span class="pt">Collection</span>&lt;Table&gt; block(<span class="pt">Collection</span>&lt;Table&gt; table);
+</span></code></pre></li>
+</ul>
+
+
+<ul>
+    <li>Iterator : Iterator is to let user write how to generate a tuple, a pair of tuples, or a collection of tuples to serve the detection. The output of the iterator will be sent to the <ins>detect</ins> function and the signature of Iterator is<br /><pre><code class="java syntaxhl"><span class="CodeRay"><span class="no"> 1</span>     <span class="c">/**
+<span class="no"> 2</span>      * Iterator.
+<span class="no"> 3</span>      * @param tables a collection of tables.
+<span class="no"> 4</span>      * @param iteratorOutputStream Iterator output object.
+<span class="no"> 5</span>      */</span>
+<span class="no"> 6</span>     <span class="di">public</span> <span class="di">abstract</span> <span class="ty">void</span> iterator(
+<span class="no"> 7</span>         <span class="pt">Collection</span>&lt;Table&gt; tables,
+<span class="no"> 8</span>         IteratorStream&lt;E&gt; iteratorOutputStream
+<span class="no"> 9</span>     );
+</span></code></pre><br />User needs to output the tuples via iteratorOutputStream instead of returning from the function. The reason is that the output of iterator could be huge and it may run out-of-memory if we generate the pairs first (thinking about the N^2 case above). To deal with this concern NADEEF has a streaming implementation which provides kind of producer-consumer pattern to let detect consume the tuple pairs while generating them.</li>
+</ul>
+
+
+<a name="33-How-to-load-UDF-rule"></a>
+<h3 >3.3 How to load UDF rule?<a href="#33-How-to-load-UDF-rule" class="wiki-anchor">&para;</a></h3>
+
+
+<p>Once user completes coding the rule the next step is to compile and put it in the CleanPlan. To compile the rule user needs to put <ins>NADEEF</ins> class files in the Java classpath as the following example:</p>
+
+
+<pre>
+javac MyRule.java -classpath out/nadeef.jar
+</pre>
+
+<p>Here the <ins>nadeef.jar</ins> file is the file which is generated after a full build.</p>
+
+
+<p>Afterwards user can put the full class name as the rule value in the CleanPlan so that NADEEF is able to load it. Make sure that the class can be found in the JAVA classpath. An example can be like this<br /><pre><code class="json syntaxhl"><span class="CodeRay"><span class="no"> 1</span> {
+<span class="no"> 2</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">source</span><span class="dl">&quot;</span></span> : {
+<span class="no"> 3</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">url</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">localhost/unittest</span><span class="dl">&quot;</span></span>,
+<span class="no"> 4</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">username</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">tester</span><span class="dl">&quot;</span></span>,
+<span class="no"> 5</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">password</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">tester</span><span class="dl">&quot;</span></span>,
+<span class="no"> 6</span>         <span class="ke"><span class="dl">&quot;</span><span class="k">type</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">postgres</span><span class="dl">&quot;</span></span> 
+<span class="no"> 7</span>     },
+<span class="no"> 8</span>     <span class="ke"><span class="dl">&quot;</span><span class="k">rule</span><span class="dl">&quot;</span></span> : [
+<span class="no"> 9</span>         {
+<span class="no"><strong>10</strong></span>             <span class="ke"><span class="dl">&quot;</span><span class="k">name</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">myRule</span><span class="dl">&quot;</span></span>,
+<span class="no">11</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">type</span><span class="dl">&quot;</span></span> : <span class="s"><span class="dl">&quot;</span><span class="k">udf</span><span class="dl">&quot;</span></span>,
+<span class="no">12</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">table</span><span class="dl">&quot;</span></span> : [<span class="s"><span class="dl">&quot;</span><span class="k">location</span><span class="dl">&quot;</span></span>],
+<span class="no">13</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">target</span><span class="dl">&quot;</span></span> : [<span class="s"><span class="dl">&quot;</span><span class="k">location_copy</span><span class="dl">&quot;</span></span>],
+<span class="no">14</span>             <span class="ke"><span class="dl">&quot;</span><span class="k">value</span><span class="dl">&quot;</span></span> : [<span class="s"><span class="dl">&quot;</span><span class="k">qa.qcri.nadeef.test.udf.MyRule1</span><span class="dl">&quot;</span></span>],
+<span class="no">15</span>         }
+<span class="no">16</span>     ]
+<span class="no">17</span> }
+</span></code></pre></p>
+
+
+<a name="33-Pipelines-The-Whole-Picture"></a>
+<h3 >3.3 Pipelines, The Whole Picture<a href="#33-Pipelines-The-Whole-Picture" class="wiki-anchor">&para;</a></h3>
+
+
+NADEEF has a very flexible pipeline framework. A pipeline is data workflow which consists of several operators and data is flowing from one operator to the other. User is able to add / remove / design new operator and pipeline based on existing ones. NADEEF has currently 3 pipelines implemented. They are
+<ul>
+    <li>Detect pipeline. Detect pipeline feeds the <ins>detect</ins> function with source data and exports the violations into the violation table. The detect pipeline is designed as<br /><pre>
+
+Source Deserializer -&gt; Scope -&gt; Block -&gt; Iterator -&gt; Detect -&gt; ViolationExport
+
+</pre></li>
+</ul>
+
+
+<ul>
+    <li>Repair pipeline. Repair pipeline repairs the source data using the <ins>repair</ins> function of the rule. The repair pipeline is designed as<br /><pre>
+
+Violation Import -&gt; Repair -&gt; FixExport
+
+</pre></li>
+</ul>
+
+
+<ul>
+    <li>Updater pipeline. Updater pipeline fetches all the candidate fixes from repair and choose which cell eventually will be updated. The update pipeline is designed as<br /><pre>
+
+FixImport -&gt; EquivalentClass -&gt; Updater
+
+</pre></li>
+</ul>
+
+
+<a name="4-FAQ"></a>
+<h2 >4. FAQ<a href="#4-FAQ" class="wiki-anchor">&para;</a></h2>
+
+
+<a name="41-How-to-write-a-CleanPlan-of-using-CSV-file"></a>
+<h3 >4.1 How to write a CleanPlan of using CSV file?<a href="#41-How-to-write-a-CleanPlan-of-using-CSV-file" class="wiki-anchor">&para;</a></h3>
+
+
+<p>A sample of CleanPlan using CSV file is like this<br /><pre>
+{
+    "source" : {
+        "type" : "csv",
+        "file" : ["test/src/qa/qcri/nadeef/test/input/dumptest.csv"]
+    },
+    "rule" : [
+        {
+            "name" : "myFd",
+            "type" : "fd",
+            "value" : ["B|A, C"]
+        }
+    ]
+}
+</pre></p>
+
+
+<a name="42-How-to-work-on-two-tables-within-one-rule"></a>
+<h3 >4.2 How to work on two tables within one rule?<a href="#42-How-to-work-on-two-tables-within-one-rule" class="wiki-anchor">&para;</a></h3>
+
+
+<p>Currently we only support working with two CSV files, instead of two database sources. An example of such CleanPlan is as following</p>
+
+
+<pre>
+{
+    "source" : {
+        "type" : "csv",
+        "file" : [
+            "test/src/qa/qcri/nadeef/test/input/notused1.csv",
+            "test/src/qa/qcri/nadeef/test/input/bank1.csv",
+            "test/src/qa/qcri/nadeef/test/input/tran1.csv",
+            "test/src/qa/qcri/nadeef/test/input/notused2.csv",
+        ]
+    },
+    "rule" : [
+        {
+            "type" : "udf",
+            "table" : ["bank1", "tran1"],
+            "value" : ["qa.qcri.nadeef.test.udf.MyRule5"]
+        }
+    ]
+}
+</pre><br />In the source file attributes, user can put a list of csv files which will be worked on. In the <ins>table</ins> attribute of the rule user needs to specify exactly which ones this rule is going to use. The names need to be <strong>exactly as the same as the filename (without extension name)</strong>.
+
+<a name="43-Where-I-can-find-Javadoc-API-document"></a>
+<h3 >4.3 Where I can find Javadoc API document?<a href="#43-Where-I-can-find-Javadoc-API-document" class="wiki-anchor">&para;</a></h3>
+
+
+<p>The NADEEF API documents are included inside the source code. User can generate and view the JavaDoc files via command<br /><pre>
+ant doc
+</pre></p>
+
+
+<p>The API documents will be generated in the <ins>out/doc</ins> directory.</p>
+
+
+<a name="44-How-can-I-add-my-alternative-algorithm-FixDecisionMaker-than-the-EquivalentClass"></a>
+<h3 >4.4 How can I add my alternative algorithm (FixDecisionMaker) than the EquivalentClass?<a href="#44-How-can-I-add-my-alternative-algorithm-FixDecisionMaker-than-the-EquivalentClass" class="wiki-anchor">&para;</a></h3>
+
+
+<p>In NADEEF there is a module called FixDeicisionMaker which provides algorithm to decide the right violation fixes given a group of candidate fixes. The default algorithm NADEEF provides is the Equivalence Classes algorithm. User is able to replace this default algorithm with his own algorithm. Steps are the following:<br />1. Inherits the class from FixDecisionMaker and implements the decide method. An example could be like this:</p>
+
+
+<pre><code class="java syntaxhl"><span class="CodeRay"><span class="no"> 1</span> <span class="di">public</span> <span class="ty">class</span> <span class="cl">MyDecisionMaker</span> <span class="di">extends</span> FixDecisionMaker {
+<span class="no"> 2</span>     <span class="c">/**
+<span class="no"> 3</span>      * Decides which fixes are right given a collection of candidate fixes.
+<span class="no"> 4</span>      *
+<span class="no"> 5</span>      * @param fixes candidate fixes.
+<span class="no"> 6</span>      * @return a collection of right @see Fix.
+<span class="no"> 7</span>      */</span>
+<span class="no"> 8</span>     <span class="at">@Override</span>
+<span class="no"> 9</span>     <span class="di">public</span> <span class="pt">Collection</span>&lt;Fix&gt; decide(<span class="pt">Collection</span>&lt;Fix&gt; fixes) {
+<span class="no"><strong>10</strong></span>         <span class="c">// My decision making logic here </span>
+<span class="no">11</span>     }
+<span class="no">12</span> }
+</span></code></pre>
+
+<p>2. Make sure your class is in the CLASSPATH and make your class in the <ins>general</ins> entry of your NADEEF conf file as below:</p>
+
+
+<pre>
+{
+    "database" : {
+        "url" : "localhost/unittest",
+        "username" : "tester",
+        "password" : "tester",
+        "type" : "postgres" 
+    },
+
+    "general" : {
+        "maxIterationNumber" : 1,
+        "fixdecisionmaker" : "MyDeicisonMakerClass" 
+    },
+
+    "ruleext" : {
+        "fd" : "qa.qcri.nadeef.ruleext.FDRuleBuilder",
+        "cfd" : "qa.qcri.nadeef.ruleext.CFDRuleBuilder" 
+    }
+}
+</pre>
+
+<a name="45-How-can-I-add-more-abstract-rule-support-like-MD-or-DC"></a>
+<h3 >4.5 How can I add more abstract rule support like MD, or DC?<a href="#45-How-can-I-add-more-abstract-rule-support-like-MD-or-DC" class="wiki-anchor">&para;</a></h3>
+
+
+<p>Like NADEEF supports FD and CFD by default, putting more abstract rule is easy. The implementation is about translating abstract rules' text to the NADEEF Rule class. The steps to support more abstract rule is as following<br />1. Creates a new Rule Builder based on the RuleBuilder class in NADEEF. An example could be as following:</p>
+
+
+<pre>
+public class MyRuleBuilder extends RuleBuilder {
+    /**
+     * Generates and compiles the rule .class file without loading it.
+     * 
+     * @return Output class file.
+     */
+    @Override
+    public Collection&lt;File&gt; compile() throws IOException {
+        // Here it tells how to compile the rule into a collection of .class files.
+    }
+
+    /**
+     * Parse the string value into a rule properties.
+     */
+    @Override
+    protected void parse() {
+        // Here it translates string values into rule properties. An example could be a FD rule
+        // where the parse function will translate the FD text into left hand side and right hand side strings.
+        // Based on both sides it generates code for the Rule interfaces.
+    }
+}
+</pre>
+
+<p>2. Make sure that the code is in the CLASSPATH and put the entry in the NADEEF <ins>conf</ins> file. An example could be<br /><pre>
+{
+    "database" : {
+        "url" : "localhost/unittest",
+        "username" : "tester",
+        "password" : "tester",
+        "type" : "postgres" 
+    },
+
+    "general" : {
+        "maxIterationNumber" : 1
+    },
+
+    "ruleext" : {
+        "fd" : "qa.qcri.nadeef.ruleext.FDRuleBuilder",
+        "cfd" : "qa.qcri.nadeef.ruleext.CFDRuleBuilder",
+        "myRule" : "MyRuleBuilder" 
+    }
+}
+</pre></p>
+
+
+<p>3. Finally user can starts to use new Rule and put it in the <ins>CleanPlan</ins>. For example,</p>
+
+
+<pre>
+{
+    "source" : {
+        "type" : "csv",
+        "file" : ["test/src/qa/qcri/nadeef/test/input/dumptest.csv"]
+    },
+    "rule" : [
+        {
+        "name" : "myFd",
+            "type" : "myRule",
+            "value" : ["My Rule text"]
+        }
+    ]
+}
+</pre>
+
+<a name="46-How-can-I-force-NADEEF-to-re-generate-and-compile-FDCFD-java-files-all-the-time"></a>
+<h3 >4.6 How can I force NADEEF to re-generate and compile FD/CFD java files all the time?<a href="#46-How-can-I-force-NADEEF-to-re-generate-and-compile-FDCFD-java-files-all-the-time" class="wiki-anchor">&para;</a></h3>
+
+
+<p>By default NADEEF will generate FD/CFD Rule java files and compile it in the first time. In the later run NADEEF will check whether the FD rule stays the same, if so NADEEF will reuse the same class file from last time (if it exists). This design is to prevent redundant compiling every time when user is running the same FD.</p>
+
+
+<p>However, under certain situations like keeping changing data source user wants to re-generate the file and do the compiling all the time. It can be done by setting the <ins>alwaysCompile</ins> flag in the NADEEF conf file. An example could be like<br /><pre>
+{
+    "database" : {
+        "url" : "localhost/unittest",
+        "username" : "tester",
+        "password" : "tester",
+        "type" : "postgres" 
+    },
+
+    "general" : {
+        "alwaysCompile" : true
+    },
+
+    "ruleext" : {
+        "fd" : "qa.qcri.nadeef.ruleext.FDRuleBuilder",
+        "cfd" : "qa.qcri.nadeef.ruleext.CFDRuleBuilder" 
+    }
+}
+</pre></p>
+
+</body>
 </html>

@@ -1,20 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * QCRI, NADEEF LICENSE
+ * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+ * NADEEF means “Clean” in Arabic
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+ * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+ * Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * NADEEF has patent pending nevertheless the following is granted.
+ * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
 package qa.qcri.nadeef.core.datamodel;
