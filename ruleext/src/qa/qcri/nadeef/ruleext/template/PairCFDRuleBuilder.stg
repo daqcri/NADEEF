@@ -128,11 +128,17 @@ public class $CFDName$ extends PairTupleRule {
         List<Violation> result = new ArrayList();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(ruleName);
-        violation.addTuple(left);
-        violation.addTuple(right);
-        result.add(violation);
-        return result;
+
+        // Comparing tuples is redundant, but needed for correctness of detect function,
+		// when used in incremental detection
+		if(!left.hasSameValue(right)){
+			Violation violation = new Violation(ruleName);
+	        violation.addTuple(left);
+	        violation.addTuple(right);
+	        result.add(violation);	
+		}
+		
+		return result;
     }
 
     /**

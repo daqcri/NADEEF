@@ -53,7 +53,7 @@ public class $FDName$ extends PairTupleRule {
      * @param tables input tables
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> output) {
+   	public void iterator(Collection<Table> tables, IteratorStream<TuplePair> output) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
         table.orderBy(rightHandSide);
@@ -75,7 +75,7 @@ public class $FDName$ extends PairTupleRule {
                 if (findViolation) {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < table.size(); j++) {
-                            TuplePair pair = new TuplePair(table.get(i), table.get(j));
+                           TuplePair pair = new TuplePair(table.get(i), table.get(j));
                             output.put(pair);
                         }
                     }
@@ -96,10 +96,16 @@ public class $FDName$ extends PairTupleRule {
         List<Violation> result = new ArrayList();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(ruleName);
-        violation.addTuple(left);
-        violation.addTuple(right);
-        result.add(violation);
+        
+        // Comparing tuples is redundant, but needed for correctness of detect function,
+		// when used in incremental detection
+		if(!left.hasSameValue(right)){
+	        Violation violation = new Violation(ruleName);
+	        violation.addTuple(left);
+	        violation.addTuple(right);
+	        result.add(violation);
+	    }
+	    
         return result;
     }
 

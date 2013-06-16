@@ -87,9 +87,7 @@ public class $CFDName$ extends SingleTupleRule {
         int pos = 0;
        	while (pos < table.size()) {
             Tuple t = table.get(pos++);
-            if (!t.getString(rhs.get(0)).equals(rightFilterExpressions.get(0).getValue())) {            
-                output.put(t);
-        	}
+            output.put(t);
     	}
     }
 
@@ -101,10 +99,16 @@ public class $CFDName$ extends SingleTupleRule {
      */
     @Override
     public Collection<Violation> detect(Tuple tuple) {
-        List<Violation> result = new ArrayList();
-        Violation violation = new Violation(ruleName);
-        violation.addTuple(tuple);
-        result.add(violation);
+    	List<Violation> result = new ArrayList();
+    	// Matching with lhs is redundant, but needed for correctness of detect function,
+		// when used in incremental detection
+    	if(tuple.matchExpressions(leftFilterExpressions)){
+    		if(!tuple.matchExpressions(rightFilterExpressions)){
+    			Violation violation = new Violation(ruleName);
+	        	violation.addTuple(tuple);
+    	    	result.add(violation);
+    		}
+    	}
         return result;
     }
 
