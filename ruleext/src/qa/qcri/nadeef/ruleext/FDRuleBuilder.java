@@ -107,7 +107,7 @@ public class FDRuleBuilder extends RuleBuilder {
         // use the first one as default table name.
         String defaultTable = tableNames.get(0);
         String newColumn = null;
-        Set<Column> columnSet = schemas.get(0).getColumns();
+        List<Column> columnSet = schemas.get(0).getColumns();
         for (int i = 0; i < lhsSplits.length; i ++) {
             token = lhsSplits[i].trim().toLowerCase();
             if (Strings.isNullOrEmpty(token)) {
