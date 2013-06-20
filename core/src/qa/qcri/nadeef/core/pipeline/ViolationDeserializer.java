@@ -25,7 +25,7 @@ import java.sql.Statement;
 import java.util.Collection;
 
 /**
- * Deserializing violations from violation table.
+ * Import violations from violation table.
  */
 public class ViolationDeserializer extends Operator<Rule, Collection<Violation>> {
 

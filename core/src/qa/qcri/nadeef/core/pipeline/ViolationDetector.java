@@ -27,7 +27,7 @@ import java.util.concurrent.*;
  */
 public class ViolationDetector<T>
     extends Operator<Rule, Collection<Violation>> {
-    private static final int MAX_THREAD_NUM = 20;
+    private static final int MAX_THREAD_NUM = 8;
 
     private Rule rule;
     private Collection<Violation> resultCollection;

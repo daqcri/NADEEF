@@ -39,6 +39,7 @@ public class NadeefConfiguration {
     private static DBConfig dbConfig;
     private static int maxIterationNumber = 1;
     private static boolean alwaysCompile = false;
+    private static boolean overwriteTable = true;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
     private static Optional<Class> decisionMakerClass;
     private static Path outputPath;
@@ -84,6 +85,10 @@ public class NadeefConfiguration {
 
         if (general.containsKey("alwaysCompile")) {
             alwaysCompile = (Boolean)(general.get("alwaysCompile"));
+        }
+
+        if (general.containsKey("alwaysOverwriteTable")) {
+            overwriteTable = (Boolean)(general.get("alwaysOverwriteTable"));
         }
 
         if (general.containsKey("fixdecisionmaker")) {
@@ -212,6 +217,14 @@ public class NadeefConfiguration {
      */
     public static boolean getAlwaysCompile() {
         return alwaysCompile;
+    }
+
+    /**
+     * Gets OverwriteTable option.
+     * @return OverwriteTable value.
+     */
+    public static boolean getOverwriteTable() {
+        return overwriteTable;
     }
 
     /**

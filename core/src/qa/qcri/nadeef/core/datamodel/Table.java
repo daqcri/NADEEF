@@ -33,6 +33,8 @@ public abstract class Table {
         this.schema = schema;
     }
 
+    public Table() {}
+
     /**
      * Gets the Tuple schema.
      * @return Tuple schema.
@@ -46,7 +48,7 @@ public abstract class Table {
      * @param tuples a collection of tuples.
      * @return <code>Table</code> instance.
      */
-    protected abstract Table newTable(Collection<Tuple> tuples);
+    public abstract Table of(Collection<Tuple> tuples);
 
     /**
      * Gets the size of the collection.
@@ -124,7 +126,7 @@ public abstract class Table {
             if (isSameGroup) {
                 curList.add(tuple);
             } else {
-                groups.add(newTable(curList));
+                groups.add(of(curList));
                 curList = Lists.newArrayList();
                 curList.add(tuple);
             }
@@ -132,7 +134,7 @@ public abstract class Table {
             lastTuple = tuple;
         }
 
-        groups.add(newTable(curList));
+        groups.add(of(curList));
         return groups;
     }
 
@@ -181,14 +183,14 @@ public abstract class Table {
             if (lvalue.equals(rvalue)) {
                 curList.add(tuple);
             } else {
-                groups.add(newTable(curList));
+                groups.add(of(curList));
                 curList = Lists.newArrayList();
                 curList.add(tuple);
             }
             lastTuple = tuple;
         }
 
-        groups.add(newTable(curList));
+        groups.add(of(curList));
         return groups;
     }
     //</editor-fold desc="Default Table behavior">

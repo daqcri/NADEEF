@@ -41,7 +41,7 @@ public class CSVDumper {
     public static String dump(Connection conn, File file)
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
-        String tableName = dump(conn, file, fileName);
+        String tableName = dump(conn, file, fileName, true);
         return tableName;
     }
 
@@ -51,13 +51,15 @@ public class CSVDumper {
      * @param conn JDBC connection.
      * @param file CSV file.
      * @param tableName new created table name.
+     * @param overwrite it overrites existing table if it exists.
      *
      * @return new created table name.
      */
     public static String dump(
             Connection conn,
             File file,
-            String tableName
+            String tableName,
+            boolean overwrite
     ) throws IllegalAccessException, SQLException, IOException {
         Tracer tracer = Tracer.getTracer(CSVDumper.class);
         Stopwatch stopwatch = new Stopwatch().start();
@@ -74,11 +76,25 @@ public class CSVDumper {
             // TODO: make it other DB compatible
             header.insert(0, "TID SERIAL PRIMARY KEY,");
             fullTableName = "csv_" + tableName;
+
+            // overwrite existing table?
+            if (!overwrite) {
+                DatabaseMetaData meta = conn.getMetaData();
+                ResultSet tables = meta.getTables(null, null, fullTableName, null);
+                if (tables.next()) {
+                    tracer.info(
+                        "Found table " + fullTableName + " exists and choose not to overwrite."
+                    );
+                    return fullTableName;
+                }
+            }
+
             Statement stat = conn.createStatement();
             stat.setFetchSize(1024);
             String sql = "DROP TABLE IF EXISTS " + fullTableName + " CASCADE";
             tracer.verbose(sql);
             stat.execute(sql);
+
 
             // create the table
             sql = "CREATE TABLE " + fullTableName + "( " + header + ")";

@@ -129,8 +129,18 @@ public class CleanPlan {
                             targetTableNames.size() <= 2,
                             "NADEEF only supports MAX 2 tables per rule."
                         );
+
+                        // check table whether it already exists.
                         for (String targetTableName : targetTableNames) {
-                            if (!fileNames.contains(targetTableName)) {
+                            boolean isFound = false;
+                            for (String fileName : fileNames) {
+                                if (fileName.equalsIgnoreCase(targetTableName)) {
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isFound) {
                                 throw new InvalidCleanPlanException("Unknown table name.");
                             }
                         }
@@ -153,7 +163,13 @@ public class CleanPlan {
                         File file = CommonTools.getFile(fullFileNames.get(j));
                         // target table name already exists in the hashset.
                         if (!copiedTables.contains(targetTableNames.get(j))) {
-                            String tableName = CSVDumper.dump(conn, file, targetTableNames.get(j));
+                            String tableName =
+                                CSVDumper.dump(
+                                    conn,
+                                    file,
+                                    targetTableNames.get(j),
+                                    NadeefConfiguration.getOverwriteTable()
+                                );
                             copiedTables.add(targetTableNames.get(j));
                             targetTableNames.set(j, tableName);
                             schemas.add(DBMetaDataTool.getSchema(tableName));

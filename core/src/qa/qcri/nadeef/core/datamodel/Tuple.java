@@ -120,7 +120,7 @@ public class Tuple {
      * @return value collections.
      */
     public ImmutableSet<Cell> getCells() {
-        List<Column> columns = schema.getColumns().asList();
+        List<Column> columns = schema.getColumns();
         List<Cell> cells = Lists.newArrayList();
         for (Column column : columns) {
             if (column.getColumnName().equals("tid")) {

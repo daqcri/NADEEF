@@ -15,10 +15,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +26,7 @@ import java.util.Map;
 public class Schema {
     private String tableName;
     private ImmutableMap<Column, Integer> map;
-    private ImmutableSet<Column> columnSet;
+    private List<Column> columnSet;
 
     //<editor-fold desc="Builder">
     /**
@@ -83,7 +80,7 @@ public class Schema {
         for (int i = 0; i < columns.size(); i ++) {
             mapping.put(columns.get(i), i);
         }
-        columnSet = ImmutableSet.copyOf(mapping.keySet());
+        columnSet = Lists.newArrayList(mapping.keySet());
         map = ImmutableMap.copyOf(mapping);
     }
 
@@ -116,7 +113,7 @@ public class Schema {
      * Gets the column collection.
      * @return column collection.
      */
-    public ImmutableSet<Column> getColumns() {
+    public List<Column> getColumns() {
         return columnSet;
     }
 

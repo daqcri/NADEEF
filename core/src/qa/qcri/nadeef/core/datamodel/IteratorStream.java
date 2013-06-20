@@ -27,11 +27,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class IteratorStream<E> {
     private static final long TIMEOUT = 1024;
-    private static final int BUFFER_BOUNDARY = 1024;
-
+    private static final int BUFFER_BOUNDARY = 20480;
+    private static final int MAX_QUEUE_BOUNDARY = 1024;
     private static Tracer tracer = Tracer.getTracer(IteratorStream.class);
 
-    private static LinkedBlockingQueue<List> queue = new LinkedBlockingQueue<List>();
+    private static LinkedBlockingQueue<List> queue =
+        new LinkedBlockingQueue<List>(MAX_QUEUE_BOUNDARY);
     private List<E> buffer;
 
     /**

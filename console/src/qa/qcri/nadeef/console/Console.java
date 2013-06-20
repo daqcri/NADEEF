@@ -239,7 +239,7 @@ public class Console {
         }
 
         Schema schema = DBMetaDataTool.getSchema(tableName);
-        Set<Column> columns = schema.getColumns();
+        List<Column> columns = schema.getColumns();
         for (Column column : columns) {
             if (column.getColumnName().equals("tid")) {
                 continue;

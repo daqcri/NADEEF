@@ -91,7 +91,7 @@ public class SQLTable extends Table {
      * @return <code>Table</code> instance.
      */
     @Override
-    protected Table newTable(Collection<Tuple> tuples) {
+    public Table of(Collection<Tuple> tuples) {
         return new SQLTable(tuples);
     }
 
@@ -252,10 +252,14 @@ public class SQLTable extends Table {
             result = Lists.newArrayList();
             Connection conn = null;
             try {
+                conn = DBConnectionFactory.getSourceConnection();
+                // create index ad-hoc.
+                Statement stat = conn.createStatement();
+                stat.execute("CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")");
+                conn.commit();
+
                 String sql =
                     "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
-                conn = DBConnectionFactory.getSourceConnection();
-                Statement stat = conn.createStatement();
                 ResultSet distinctResult = stat.executeQuery(sql);
 
                 while (distinctResult.next()) {

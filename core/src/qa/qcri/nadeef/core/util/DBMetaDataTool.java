@@ -94,10 +94,7 @@ public final class DBMetaDataTool {
             conn = DBConnectionFactory.getSourceConnection();
             DatabaseMetaData meta = conn.getMetaData();
             ResultSet tables = meta.getTables(null, null, tableName, null);
-            if (!tables.next()) {
-                return false;
-            }
-            return true;
+            return tables.next();
         } finally {
             if (conn != null) {
                 conn.close();
