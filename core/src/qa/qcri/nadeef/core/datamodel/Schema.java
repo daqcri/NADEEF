@@ -25,8 +25,7 @@ import java.util.Map;
  */
 public class Schema {
     private String tableName;
-    private ImmutableMap<Column, Integer> map;
-    private List<Column> columnSet;
+    private List<Column> columnList;
 
     //<editor-fold desc="Builder">
     /**
@@ -58,12 +57,6 @@ public class Schema {
         public Schema build() {
             return new Schema(tableName, columns);
         }
-
-        public Builder reset() {
-            columns.clear();
-            tableName = null;
-            return this;
-        }
     }
     //</editor-fold>
 
@@ -75,13 +68,13 @@ public class Schema {
     public Schema(String tableName, List<Column> columns) {
         this.tableName = Preconditions.checkNotNull(tableName);
         Preconditions.checkArgument(columns != null && columns.size() > 0);
-        Map<Column, Integer> mapping = Maps.newHashMap();
+        columnList = columns;
+    }
 
-        for (int i = 0; i < columns.size(); i ++) {
-            mapping.put(columns.get(i), i);
-        }
-        columnSet = Lists.newArrayList(mapping.keySet());
-        map = ImmutableMap.copyOf(mapping);
+    public Schema(Schema schema) {
+        Preconditions.checkNotNull(schema);
+        this.tableName = schema.tableName;
+        this.columnList = Lists.newArrayList(schema.columnList);
     }
 
     /**
@@ -89,7 +82,7 @@ public class Schema {
       * @return size.
      */
     public int size() {
-        return map.size();
+        return columnList.size();
     }
 
     /**
@@ -98,7 +91,12 @@ public class Schema {
      * @return <code>True</code> when the map contains the column.
      */
     public boolean hasColumn(Column column) {
-        return map.containsKey(column);
+        for (Column column_ : columnList) {
+            if (column_.equals(column)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -114,16 +112,21 @@ public class Schema {
      * @return column collection.
      */
     public List<Column> getColumns() {
-        return columnSet;
+        return columnList;
     }
 
     /**
      * Gets the index from the column.
-     * @param column
+     * @param column input column.
      * @return Get the index from column.
      */
-    public Integer get(Column column) {
-        return map.get(column);
+    public int get(Column column) {
+        for (int i = 0; i < columnList.size(); i ++) {
+            if (columnList.get(i).equals(column)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Cannot find the column.");
     }
 
     /**
@@ -132,9 +135,18 @@ public class Schema {
      */
     public Optional<Integer> getTidIndex() {
         Column tidColumn = new Column(tableName, "tid");
-        if (columnSet.contains(tidColumn)) {
+        if (columnList.contains(tidColumn)) {
             return Optional.of(get(tidColumn));
         }
         return Optional.absent();
+    }
+
+    /**
+     * Removes one column.
+     * @param column column to be removed.
+     */
+    void remove(Column column) {
+        int result = get(column);
+        columnList.remove(result);
     }
 }

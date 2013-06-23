@@ -24,16 +24,24 @@ import java.util.List;
  */
 public abstract class Table {
     protected Schema schema;
+    protected String tableName;
 
+    //<editor-fold desc="Public methods">
     /**
      * Constructor.
      * @param schema schema.
      */
     public Table(Schema schema) {
+        this(Preconditions.checkNotNull(schema).getTableName());
         this.schema = schema;
     }
 
-    public Table() {}
+    /**
+     * Constructor.
+     */
+    public Table(String tableName) {
+        this.tableName = tableName;
+    }
 
     /**
      * Gets the Tuple schema.
@@ -42,13 +50,6 @@ public abstract class Table {
     public Schema getSchema() {
         return schema;
     }
-
-    /**
-     * Creates a <code>Table</code> from a collection of tuples.
-     * @param tuples a collection of tuples.
-     * @return <code>Table</code> instance.
-     */
-    public abstract Table of(Collection<Tuple> tuples);
 
     /**
      * Gets the size of the collection.
@@ -63,80 +64,87 @@ public abstract class Table {
      */
     public abstract Tuple get(int i);
 
-    //<editor-fold desc="Default Table behavior">
-    // TODO: implements default behaviors
-    public abstract Table project(String columnName);
-    public abstract Table project(Column column);
-    public abstract Table project(Collection<Column> columns);
-    public abstract Table orderBy(String columnName);
-    public abstract Table orderBy(Column column);
-    public abstract Table orderBy(Collection<Column> columns);
-    public abstract Table filter(SimpleExpression expression);
-    public abstract Table filter(List<SimpleExpression> expressions);
-
     /**
      * Clean up the resources for this <code>Table</code>. After recycling the table instance
      * should not be used any more.
      */
     public void recycle() {};
+    //</editor-fold desc="Public methods">
+
+    //<editor-fold desc="Default Table behavior">
+
+    /**
+     * Project the table.
+     * @param columnName column name.
+     * @return projected table.
+     */
+    public Table project(String columnName) {
+        return project(new Column(tableName, columnName));
+    }
+
+    /**
+     * Project the table.
+     * @param column column.
+     * @return projected table.
+     */
+    public Table project(Column column) {
+        return project(Lists.newArrayList(column));
+    }
+
+    /**
+     * Project the table.
+     * @param columns a list of columns.
+     * @return projected table.
+     */
+    public abstract Table project(List<Column> columns);
+
+    /**
+     * Sort the table based on a column.
+     * @param columnName column name.
+     * @return sorted table.
+     */
+    public Table orderBy(String columnName) {
+        return orderBy(new Column(tableName, columnName));
+    }
+
+    /**
+     * Sort the table based on a column.
+     * @param column column.
+     * @return sorted table.
+     */
+    public Table orderBy(Column column) {
+        return orderBy(Lists.newArrayList(column));
+    }
+
+    /**
+     * Sort the table based on a list of columns.
+     * @param columns a list of columns.
+     * @return sorted table.
+     */
+    public abstract Table orderBy(List<Column> columns);
+
+    /**
+     * Filter the table based on a {@link SimpleExpression}.
+     * @param expression expression class.
+     * @return filtered table.
+     */
+    public Table filter(SimpleExpression expression) {
+        return filter(Lists.newArrayList(expression));
+    }
+
+    /**
+     * Filter the table based on a list of {@link SimpleExpression}.
+     * @param expressions a list of expressions.
+     * @return filtered table.
+     */
+    public abstract Table filter(List<SimpleExpression> expressions);
 
     /**
      * Partition the Table into multiple tuple Table based on a list of columns.
      * @param columns Partitions based on a list of column.
      * @return A collection of tuple collections.
      */
-    public Collection<Table> groupOn(Collection<Column> columns) {
-        Preconditions.checkNotNull(columns);
-        Schema schema = getSchema();
-
-        for (Column column : columns) {
-            if (!schema.hasColumn(column)) {
-                throw
-                    new IllegalArgumentException(
-                        "Column " + column + "does not exist."
-                    );
-            }
-        }
-
-        List<Table> groups = Lists.newArrayList();
-        orderBy(columns);
-        if (size() < 2) {
-            groups.add(this);
-            return groups;
-        }
-
-        Tuple lastTuple = get(0);
-        List<Tuple> curList = Lists.newArrayList();
-        curList.add(lastTuple);
-
-        boolean isSameGroup = true;
-        for (int i = 1; i < size(); i ++) {
-            isSameGroup = true;
-            Tuple tuple = get(i);
-            for (Column column : columns) {
-                Object lvalue = lastTuple.get(column);
-                Object rvalue = tuple.get(column);
-                if (!lvalue.equals(rvalue)) {
-                    isSameGroup = false;
-                    break;
-                }
-
-            }
-
-            if (isSameGroup) {
-                curList.add(tuple);
-            } else {
-                groups.add(of(curList));
-                curList = Lists.newArrayList();
-                curList.add(tuple);
-            }
-
-            lastTuple = tuple;
-        }
-
-        groups.add(of(curList));
-        return groups;
-    }
+    public abstract Collection<Table> groupOn(List<Column> columns);
 
     /**
      * Partition the table into multiple table based
@@ -151,47 +159,11 @@ public abstract class Table {
     /**
      * Partition the table into multiple table based
      * on the column.
-     * @param column Paritition based on column.
+     * @param column Partition based on column.
      * @return A collection of tuple collections.
      */
     public Collection<Table> groupOn(Column column) {
-        Schema schema = getSchema();
-
-        if (!schema.hasColumn(column)) {
-            throw
-                new IllegalArgumentException(
-                    "Column " + column + "does not exist."
-                );
-        }
-
-        List<Table> groups = Lists.newArrayList();
-        if (size() < 2) {
-            groups.add(this);
-            return groups;
-        }
-
-        orderBy(column);
-
-        Tuple lastTuple = get(0);
-        List<Tuple> curList = Lists.newArrayList();
-        curList.add(lastTuple);
-
-        for (int i = 1; i < size(); i ++) {
-            Tuple tuple = get(i);
-            Object lvalue = lastTuple.get(column);
-            Object rvalue = tuple.get(column);
-            if (lvalue.equals(rvalue)) {
-                curList.add(tuple);
-            } else {
-                groups.add(of(curList));
-                curList = Lists.newArrayList();
-                curList.add(tuple);
-            }
-            lastTuple = tuple;
-        }
-
-        groups.add(of(curList));
-        return groups;
+        return groupOn(Lists.newArrayList(column));
     }
     //</editor-fold desc="Default Table behavior">
 }

@@ -28,9 +28,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
 /**
- * Tuple collection class.
+ * SQLTable represents a {@link Table} which resides in a database.
  */
 public class SQLTable extends Table {
     private DBConfig dbconfig;
@@ -40,39 +39,16 @@ public class SQLTable extends Table {
     private long updateTimestamp = -1;
     private long changeTimestamp = System.currentTimeMillis();
 
-    // indicate whether this tuple collection is an internal collection which needs to be removed
-    // after finalize.
-    private boolean isInternal;
-
     private static Tracer tracer = Tracer.getTracer(SQLTable.class);
 
-
     //<editor-fold desc="Constructor">
-
-    /**
-     * Constructor.
-     * @param collection a collection of <code>Tuples</code>, by
-     *                   using this constructor the result <code>Table</code>
-     *                   will be an orphan collection (no database connection behind).
-     */
-    public SQLTable(Collection<Tuple> collection) {
-        super(null);
-        if (collection.size() <= 0) {
-            throw new IllegalArgumentException("Input collection cannot be empty.");
-        }
-
-        tuples = Lists.newArrayList(collection);
-        schema = tuples.get(0).getSchema();
-        dbconfig = null;
-    }
-
     /**
      * Constructor with database connection.
      * @param tableName tuple collection table name.
      * @param dbconfig used database connection.
      */
     public SQLTable(String tableName, DBConfig dbconfig) {
-        super(null);
+        super(tableName);
         this.dbconfig = Preconditions.checkNotNull(dbconfig);
         Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
         this.tableName = tableName;
@@ -83,18 +59,6 @@ public class SQLTable extends Table {
     //</editor-fold>
 
     //<editor-fold desc="Table Interface">
-
-    /**
-     * Creates a tuple collection from a collection of tuples.
-     *
-     * @param tuples a collection of tuples.
-     * @return <code>Table</code> instance.
-     */
-    @Override
-    public Table of(Collection<Tuple> tuples) {
-        return new SQLTable(tuples);
-    }
-
     /**
      * Gets the size of the collection.
      * It will call <code>syncData</code> if the collection is not yet existed.
@@ -118,14 +82,6 @@ public class SQLTable extends Table {
     }
 
     /**
-     * Sets whether it is an internal table / view.
-     * @param isInternal
-     */
-    public void setInternal(boolean isInternal) {
-        this.isInternal = isInternal;
-    }
-
-    /**
      * Gets the tuple from the collection.
      * @param i tuple index.
      * @return tuple instance.
@@ -137,37 +93,10 @@ public class SQLTable extends Table {
     }
 
     /**
-     * Projects the Table by column name.
-     * @param columnName column name.
-     * @return tuple collection itself.
+     * {@inheritDoc}
      */
     @Override
-    public Table project(String columnName) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(columnName));
-        sqlQuery.addSelect(columnName);
-        synchronized (this) {
-            changeTimestamp = System.currentTimeMillis();
-        }
-        return this;
-    }
-
-    /**
-     * Projects the <code>Table</code> by column.
-     * @param column Column.
-     * @return tuple collection itself.
-     */
-    @Override
-    public Table project(Column column) {
-        Preconditions.checkNotNull(column);
-        sqlQuery.addSelect(column.getColumnName());
-        synchronized (this) {
-            changeTimestamp = System.currentTimeMillis();
-        }
-        return this;
-    }
-
-    @Override
-    public Table project(Collection<Column> columns) {
+    public Table project(List<Column> columns) {
         Preconditions.checkNotNull(columns);
         for (Column column : columns) {
             sqlQuery.addSelect(column.getColumnName());
@@ -178,40 +107,14 @@ public class SQLTable extends Table {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Table orderBy(String columnName) {
-        sqlQuery.addOrder(columnName);
-        synchronized (this) {
-            changeTimestamp = System.currentTimeMillis();
-        }
-
-        return this;
-    }
-
-    @Override
-    public Table orderBy(Column column) {
-        sqlQuery.addOrder(column.getColumnName());
-        synchronized (this) {
-            changeTimestamp = System.currentTimeMillis();
-        }
-
-        return this;
-    }
-
-    @Override
-    public Table orderBy(Collection<Column> columns) {
+    public Table orderBy(List<Column> columns) {
         for (Column column : columns) {
             sqlQuery.addOrder(column.getColumnName());
         }
-        synchronized (this) {
-            changeTimestamp = System.currentTimeMillis();
-        }
-        return this;
-    }
-
-    @Override
-    public Table filter(SimpleExpression expression) {
-        sqlQuery.addWhere(expression.toString());
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
         }
@@ -231,7 +134,7 @@ public class SQLTable extends Table {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<Table> groupOn(Collection<Column> columns) {
+    public Collection<Table> groupOn(List<Column> columns) {
         List result = Lists.newArrayList(this);
         for (Column column : columns) {
             List<Table> tmp = Lists.newArrayList();
@@ -245,50 +148,45 @@ public class SQLTable extends Table {
 
     @Override
     public Collection<Table> groupOn(Column column) {
-        Collection<Table> result = null;
-        if (isOrphan()) {
-            result = super.groupOn(column);
-        } else {
-            result = Lists.newArrayList();
-            Connection conn = null;
-            try {
-                conn = DBConnectionFactory.getSourceConnection();
-                // create index ad-hoc.
-                Statement stat = conn.createStatement();
-                stat.execute("CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")");
-                conn.commit();
+        Collection<Table> result = Lists.newArrayList();
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.getSourceConnection();
+            // create index ad-hoc.
+            Statement stat = conn.createStatement();
+            stat.execute("CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")");
+            conn.commit();
 
-                String sql =
-                    "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
-                ResultSet distinctResult = stat.executeQuery(sql);
+            String sql =
+                "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
+            ResultSet distinctResult = stat.executeQuery(sql);
 
-                while (distinctResult.next()) {
-                    Object value = distinctResult.getObject(1);
-                    String stringValue = value.toString();
-                    if (value instanceof String) {
-                        stringValue = '\'' + value.toString() + '\'';
-                    }
-                    SimpleExpression columnFilter =
-                        SimpleExpression.newEqual(column, stringValue);
-
-                    SQLTable newTupleCollection =
-                        new SQLTable(tableName, dbconfig);
-                    newTupleCollection.sqlQuery = new SqlQueryBuilder(sqlQuery);
-                    newTupleCollection.sqlQuery.addWhere(columnFilter.toString());
-                    result.add(newTupleCollection);
+            while (distinctResult.next()) {
+                Object value = distinctResult.getObject(1);
+                String stringValue = value.toString();
+                if (value instanceof String) {
+                    stringValue = '\'' + value.toString() + '\'';
                 }
-                conn.commit();
-            } catch (Exception ex) {
-                tracer.err(ex.getMessage(), ex);
-                // as a backup plan we try to use in-memory solution.
-                result = super.groupOn(column);
-            } finally {
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        // ignore
-                    }
+                SimpleExpression columnFilter =
+                    SimpleExpression.newEqual(column, stringValue);
+
+                SQLTable newTupleCollection =
+                    new SQLTable(tableName, dbconfig);
+                newTupleCollection.sqlQuery = new SqlQueryBuilder(sqlQuery);
+                newTupleCollection.sqlQuery.addWhere(columnFilter.toString());
+                result.add(newTupleCollection);
+            }
+            conn.commit();
+        } catch (Exception ex) {
+            tracer.err(ex.getMessage(), ex);
+            // as a backup plan we try to use in-memory solution.
+            result = super.groupOn(column);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignore
                 }
             }
         }
@@ -333,25 +231,11 @@ public class SQLTable extends Table {
     //</editor-fold>
 
     //<editor-fold desc="Private members">
-    /**
-     * Return <code>True</code> when the tuple collection
-     *        has no Database underneath.
-     * @return <code>True</code> when the tuple collection
-     *          has no Database underneath.
-     */
-    private boolean isOrphan() {
-        return dbconfig == null;
-    }
 
     /**
      * Synchronize the data schema with underneath database.
      */
     private synchronized void syncSchema() {
-        if (isOrphan()) {
-            tracer.info("Orphan SQLTable cannot be synced.");
-            return;
-        }
-
         Connection conn = null;
         try {
             SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
@@ -387,11 +271,6 @@ public class SQLTable extends Table {
      * @return Returns <code>True</code> when the synchronization is successful.
      */
     private synchronized boolean syncData() {
-        if (isOrphan()) {
-            tracer.info("Table is an orphan, syncData failed.");
-            return false;
-        }
-
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         try {
@@ -417,13 +296,13 @@ public class SQLTable extends Table {
 
             // fill the tuples
             while (resultSet.next()) {
-                Object[] values = new Object[count];
+                List<Object> values = Lists.newArrayList();
                 for (int i = 1; i <= count; i ++) {
                     String attributeName = metaData.getColumnName(i);
                     if (attributeName.equalsIgnoreCase("tid")) {
                         tupleId = (int)resultSet.getObject(i);
                     }
-                    values[i - 1] = resultSet.getObject(i);
+                    values.add(resultSet.getObject(i));
                 }
 
                 tuples.add(new Tuple(tupleId, schema, values));
@@ -467,25 +346,6 @@ public class SQLTable extends Table {
 
     //<editor-fold desc="Finalization methods">
     public void recycle() {
-        if (isInternal) {
-            Connection conn = null;
-            try {
-                conn = DBConnectionFactory.getSourceConnection();
-                Statement stat = conn.createStatement();
-                stat.execute("DROP VIEW IF EXISTS " + tableName);
-                conn.commit();
-            } catch (Exception ex) {
-                tracer.err("Exception from the finalizer. ", ex);
-            } finally {
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        // ignore
-                    }
-                }
-            }
-        }
         tuples.clear();
         tuples = null;
         tableName = null;

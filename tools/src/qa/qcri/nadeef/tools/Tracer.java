@@ -35,20 +35,26 @@ public class Tracer {
 
     //<editor-fold desc="Private fields">
     private static Map<StatType, List<Long>> stats = Maps.newHashMap();
-    private static boolean infoFlag = true;
-    private static boolean verboseFlag = false;
-    private static PrintStream console = System.out;
+    private static boolean infoFlag;
+    private static boolean verboseFlag;
+    private static PrintStream console;
     private static String logFileName;
     private static Calendar calendar;
     private static DateFormat dateFormat;
+    private static ConsoleAppender consoleAppender;
 
     private Logger logger;
+
     //</editor-fold>
 
     static {
+        infoFlag = true;
+        verboseFlag = false;
+        console = System.out;
         calendar = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("MMddHHmmss");
         logFileName = "log" + dateFormat.format(calendar.getTime()) + ".txt";
+        consoleAppender = new ConsoleAppender(new SimpleLayout());
     }
 
     /**
@@ -134,6 +140,7 @@ public class Tracer {
                     outputFile
                 );
             BasicConfigurator.configure(logFile);
+
         } catch (IOException e) {
             Tracer tracer = getTracer(Tracer.class);
             tracer.info("Cannot open log file : " + logFileName);
@@ -241,8 +248,10 @@ public class Tracer {
         Logger root = Logger.getRootLogger();
         if (verboseFlag) {
             root.setLevel(Level.DEBUG);
+            root.addAppender(consoleAppender);
         } else {
             root.setLevel(Level.INFO);
+            root.removeAppender(consoleAppender);
         }
     }
 

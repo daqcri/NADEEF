@@ -164,11 +164,11 @@ public class CleanPlan {
                         // target table name already exists in the hashset.
                         if (!copiedTables.contains(targetTableNames.get(j))) {
                             String tableName =
-                                CSVDumper.dump(
-                                    conn,
-                                    file,
-                                    targetTableNames.get(j),
-                                    NadeefConfiguration.getOverwriteTable()
+                                CSVTools.dump(
+                                        conn,
+                                        file,
+                                        targetTableNames.get(j),
+                                        NadeefConfiguration.getAlwaysOverrideTable()
                                 );
                             copiedTables.add(targetTableNames.get(j));
                             targetTableNames.set(j, tableName);

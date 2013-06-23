@@ -25,6 +25,8 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.test.udf.MyTestRule1;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IteratorStreamTest {
@@ -44,13 +46,13 @@ public class IteratorStreamTest {
         NodeCacheManager cacheManager = NodeCacheManager.getInstance();
         Schema.Builder builder = new Schema.Builder();
         Schema schema = builder.table("test").column("A").column("B").build();
-        Object[] values = new Object[] {"a", "b"};
+        List values = Arrays.asList("a", "b");
 
         List<Tuple> tuples = Lists.newArrayList();
         for (int i = 1; i < 100; i ++) {
             tuples.add(new Tuple(i, schema, values));
         }
-        SQLTable table = new SQLTable(tuples);
+        MemoryTable table = MemoryTable.of(tuples);
         String key = cacheManager.put(Lists.newArrayList(table));
         String ruleKey = cacheManager.put(rule);
         iflow.setInputKey(key);

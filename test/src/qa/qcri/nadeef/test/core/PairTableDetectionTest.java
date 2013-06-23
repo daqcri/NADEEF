@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
@@ -34,6 +35,7 @@ public class PairTableDetectionTest {
     @Before
     public void setUp() {
         Bootstrap.start();
+        NadeefConfiguration.setAlwaysOverride(true);
         Tracer.setVerbose(true);
         Tracer.setInfo(true);
     }

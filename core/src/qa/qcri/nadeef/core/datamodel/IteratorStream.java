@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class IteratorStream<E> {
     private static final long TIMEOUT = 1024;
-    private static final int BUFFER_BOUNDARY = 1;
+    private static final int BUFFER_BOUNDARY = 10240;
     private static final int MAX_QUEUE_BOUNDARY = 1024;
     private static Tracer tracer = Tracer.getTracer(IteratorStream.class);
 

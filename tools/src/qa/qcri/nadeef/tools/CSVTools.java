@@ -13,6 +13,8 @@
 
 package qa.qcri.nadeef.tools;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.base.Stopwatch;
 import org.postgresql.PGConnection;
@@ -21,17 +23,47 @@ import org.postgresql.copy.CopyManager;
 import java.io.*;
 import java.lang.String;
 import java.sql.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * CSVDumper is a simple tool which dumps CSV data into database given a table name.
+ * CSVTools is a simple tool which dumps CSV data into database given a table name.
  */
-public class CSVDumper {
+public class CSVTools {
     private static final int BULKSIZE = 1024;
     private static PushbackReader pushbackReader =
         new PushbackReader(new StringReader(""), 1024 * 1024);
 
     // <editor-fold desc="Public methods">
+
+    /**
+     * Reads the content from CSV file.
+     * @param file CSV file.
+     * @param separator separator.
+     * @return a list of tokens (the header line is skipped).
+     */
+    public static List<String[]> read(File file, String separator) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        List<String[]> result = Lists.newArrayList();
+        String line;
+        int count = 0;
+        while ((line = reader.readLine()) != null) {
+            if (Strings.isNullOrEmpty(line)) {
+                continue;
+            }
+
+            count ++;
+            // skip the header
+            if (count == 1) {
+                continue;
+            }
+
+            String[] tokens = line.split(separator);
+            result.add(tokens);
+        }
+        return result;
+    }
+
     /**
      * Dumps CSV file content into a database with default schema name and generated table name.
      * @param conn JDBC connection.
@@ -61,7 +93,7 @@ public class CSVDumper {
             String tableName,
             boolean overwrite
     ) throws IllegalAccessException, SQLException, IOException {
-        Tracer tracer = Tracer.getTracer(CSVDumper.class);
+        Tracer tracer = Tracer.getTracer(CSVTools.class);
         Stopwatch stopwatch = new Stopwatch().start();
         String fullTableName = null;
 

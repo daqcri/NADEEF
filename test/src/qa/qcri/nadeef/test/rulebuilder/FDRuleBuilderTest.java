@@ -64,8 +64,7 @@ public class FDRuleBuilderTest {
             Assert.assertTrue(output.exists());
 
             schema =
-                schemaBuilder
-                    .reset()
+                new Schema.Builder()
                     .table("table")
                     .column("D")
                     .column("E")

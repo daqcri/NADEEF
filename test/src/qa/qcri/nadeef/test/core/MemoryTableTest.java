@@ -1,0 +1,119 @@
+/*
+ * QCRI, NADEEF LICENSE
+ * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+ * NADEEF means “Clean” in Arabic
+ *
+ * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+ * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+ * Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+ *
+ * NADEEF has patent pending nevertheless the following is granted.
+ * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+ */
+
+package qa.qcri.nadeef.test.core;
+
+import com.google.common.collect.Lists;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.tools.Tracer;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * MemoryTable test.
+ */
+public class MemoryTableTest {
+    private List<Tuple> testTuples;
+    @Before
+    public void setup() {
+        Bootstrap.start();
+        Tracer.setVerbose(true);
+
+        Schema schema =
+            new Schema.Builder().table("test").column("C").column("A").column("B").build();
+        File dumpFile = TestDataRepository.getDumpTestCSVFile();
+        try {
+            List<String[]> content = CSVTools.read(dumpFile, ",");
+            testTuples = Lists.newArrayList();
+            List<Object> values = Lists.newArrayList();
+            for (int i = 0; i < content.size(); i ++) {
+                String[] tokens = content.get(i);
+                for (String token : tokens) {
+                    values.add(token);
+                }
+
+                testTuples.add(new Tuple(i + 1, schema, new ArrayList(values)));
+                values.clear();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @After
+    public void teardown() {
+        Bootstrap.shutdown();
+    }
+
+    @Test
+    public void testProjection() {
+        MemoryTable table = MemoryTable.of(testTuples);
+        table.project("C");
+        Assert.assertEquals(12, table.size());
+        Tuple tuple = table.get(0);
+        Set cellSets = tuple.getCells();
+        Assert.assertEquals(1, cellSets.size());
+        Cell cell = (Cell)cellSets.iterator().next();
+        Assert.assertEquals("test.C", cell.getColumn().getFullColumnName());
+    }
+
+    @Test
+    public void testFilter() {
+        MemoryTable table = MemoryTable.of(testTuples);
+        table.filter(
+            SimpleExpression.newEqual(new Column("test", "C"), "c1")
+        ).project(new Column("test", "C"));
+        Assert.assertEquals(7, table.size());
+        Tuple tuple = table.get(0);
+        Set cellSets = tuple.getCells();
+        Assert.assertEquals(1, cellSets.size());
+        Cell cell = (Cell)cellSets.iterator().next();
+        Assert.assertEquals("test.C", cell.getColumn().getFullColumnName());
+    }
+
+    @Test
+    public void testGroup() {
+        MemoryTable table = MemoryTable.of(testTuples);
+        Collection<Table> result = table.groupOn("C");
+        Assert.assertEquals(3, result.size());
+        for (Table t : result) {
+            Tuple tuple = t.get(0);
+            String value =(String) tuple.get("c");
+            switch (value) {
+                case "c1":
+                    Assert.assertEquals(7, t.size());
+                    break;
+                case "c3":
+                    Assert.assertEquals(1, t.size());
+                    break;
+                case "c2":
+                    Assert.assertEquals(4, t.size());
+                    break;
+            }
+
+        }
+    }
+}

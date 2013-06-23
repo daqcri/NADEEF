@@ -20,7 +20,7 @@ import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SQLDialect;
 
@@ -33,7 +33,7 @@ import java.util.Set;
  * SourceDeserializer Test.
  */
 @RunWith(JUnit4.class)
-public class TupleCollectionTest {
+public class SQLTableTest {
     private String tableName;
     private DBConfig dbconfig;
 
@@ -52,7 +52,7 @@ public class TupleCollectionTest {
                        .build();
             DBConnectionFactory.initializeSource(dbconfig);
             conn = DBConnectionFactory.createConnection(dbconfig);
-            tableName = CSVDumper.dump(conn, TestDataRepository.getDumpTestCSVFile());
+            tableName = CSVTools.dump(conn, TestDataRepository.getDumpTestCSVFile());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

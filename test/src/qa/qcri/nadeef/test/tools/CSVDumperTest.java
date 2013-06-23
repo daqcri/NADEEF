@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.io.BufferedReader;
@@ -69,7 +69,7 @@ public class CSVDumperTest {
     @Test
     public void goodDumpTest() {
         try {
-            tableName = CSVDumper.dump(conn, TestDataRepository.getDumpTestCSVFile());
+            tableName = CSVTools.dump(conn, TestDataRepository.getDumpTestCSVFile());
             Assert.assertNotNull("tableName cannot be null", tableName);
 
             BufferedReader reader =

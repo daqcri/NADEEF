@@ -22,7 +22,7 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -42,7 +42,7 @@ public class DetectionTest {
         Connection conn = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
-            CSVDumper.dump(conn, TestDataRepository.getLocationData1(), "location", true);
+            CSVTools.dump(conn, TestDataRepository.getLocationData1(), "location", true);
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());

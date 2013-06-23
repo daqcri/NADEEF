@@ -18,19 +18,17 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.tools.CSVDumper;
+import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
@@ -51,7 +49,7 @@ public class CleanPlanTest {
         Connection conn = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
-            CSVDumper.dump(conn, TestDataRepository.getLocationData1(), "location", true);
+            CSVTools.dump(conn, TestDataRepository.getLocationData1(), "location", true);
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
