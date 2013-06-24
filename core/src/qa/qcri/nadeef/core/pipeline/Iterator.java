@@ -15,6 +15,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import qa.qcri.nadeef.core.datamodel.IteratorStream;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
@@ -30,7 +31,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
     private static final int MAX_THREAD_NUM = 4;
     private Rule rule;
-
     private ExecutorService threadExecutors;
     private CompletionService<Boolean> pool;
 
@@ -38,7 +38,9 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
 
     public Iterator(Rule rule) {
         this.rule = rule;
-        threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
+        ThreadFactory factory =
+            new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
+        threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
         pool = new ExecutorCompletionService<>(threadExecutors);
     }
 

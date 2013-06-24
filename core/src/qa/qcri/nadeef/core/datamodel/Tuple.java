@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class Tuple {
     //<editor-fold desc="Private Fields">
-    private Object[] values;
+    private List<Object> values;
     private Schema schema;
     private int tid;
     //</editor-fold>
@@ -37,16 +37,16 @@ public class Tuple {
      * @param schema tuple schema.
      * @param values tuple values.
      */
-    public Tuple(int tupleId, Schema schema, Object[] values) {
+    public Tuple(int tupleId, Schema schema, List<Object> values) {
         if (schema == null || values == null) {
             throw new IllegalArgumentException("Input Schema/Values cannot be null.");
         }
 
-        if (schema.size() != values.length) {
+        if (schema.size() != values.size()) {
             throw new IllegalArgumentException(
                 "Tuple values does not match the schema. " +
                 "Schema has size of " + schema.size() +
-                " but values has size of " + values.length
+                " but values has size of " + values.size()
             );
         }
 
@@ -66,7 +66,7 @@ public class Tuple {
      */
     public Object get(Column key) {
         int index = schema.get(key);
-        return values[index];
+        return values.get(index);
     }
 
     /**
@@ -85,7 +85,7 @@ public class Tuple {
     public Object get(String columnAttribute) {
         Column column = new Column(schema.getTableName(), columnAttribute);
         int index = schema.get(column);
-        return values[index];
+        return values.get(index);
     }
 
     /**
@@ -176,7 +176,7 @@ public class Tuple {
             return true;
         }
 
-        if (values.length != tuple.values.length) {
+        if (values.size() != tuple.values.size()) {
             return false;
         }
 
@@ -189,16 +189,16 @@ public class Tuple {
         }
 
         Optional<Integer> tidIndex = schema.getTidIndex();
-        for (int i = 0; i < values.length; i ++) {
+        for (int i = 0; i < values.size(); i ++) {
             // skip the TID compare because we know that they are different.
             if (tidIndex.isPresent() && i == tidIndex.get()) {
                 continue;
             }
 
-            if (values[i] == tuple.values[i]) {
+            if (values.get(i) == tuple.values.get(i)) {
                 continue;
             }
-            if (!values[i].equals(tuple.values[i])) {
+            if (!values.get(i).equals(tuple.values.get(i))) {
                 return false;
             }
         }
@@ -214,9 +214,9 @@ public class Tuple {
         List<Object> nvalues = Lists.newArrayList();
         for (Column column : columns) {
             int index = schema.get(column);
-            nvalues.add(values[index]);
+            nvalues.add(values.get(index));
         }
-        values = nvalues.toArray();
+        values = nvalues;
         schema = newSchema;
     }
     //</editor-fold>

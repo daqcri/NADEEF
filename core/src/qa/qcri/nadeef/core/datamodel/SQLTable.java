@@ -23,7 +23,6 @@ import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -121,6 +120,9 @@ public class SQLTable extends Table {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Table filter(List<SimpleExpression> expressions) {
         for (SimpleExpression expression : expressions) {
@@ -132,6 +134,9 @@ public class SQLTable extends Table {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public Collection<Table> groupOn(List<Column> columns) {
@@ -146,20 +151,26 @@ public class SQLTable extends Table {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Table> groupOn(Column column) {
         Collection<Table> result = Lists.newArrayList();
         Connection conn = null;
+        Statement stat = null;
+        ResultSet distinctResult = null;
         try {
             conn = DBConnectionFactory.getSourceConnection();
             // create index ad-hoc.
-            Statement stat = conn.createStatement();
+            stat = conn.createStatement();
+            stat.setFetchSize(1024);
             stat.execute("CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")");
             conn.commit();
 
             String sql =
                 "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
-            ResultSet distinctResult = stat.executeQuery(sql);
+            distinctResult = stat.executeQuery(sql);
 
             while (distinctResult.next()) {
                 Object value = distinctResult.getObject(1);
@@ -170,18 +181,29 @@ public class SQLTable extends Table {
                 SimpleExpression columnFilter =
                     SimpleExpression.newEqual(column, stringValue);
 
-                SQLTable newTupleCollection =
+                SQLTable newTable =
                     new SQLTable(tableName, dbconfig);
-                newTupleCollection.sqlQuery = new SqlQueryBuilder(sqlQuery);
-                newTupleCollection.sqlQuery.addWhere(columnFilter.toString());
-                result.add(newTupleCollection);
+                newTable.sqlQuery = new SqlQueryBuilder(sqlQuery);
+                newTable.sqlQuery.addWhere(columnFilter.toString());
+                result.add(newTable);
             }
-            conn.commit();
         } catch (Exception ex) {
             tracer.err(ex.getMessage(), ex);
             // as a backup plan we try to use in-memory solution.
             result = super.groupOn(column);
         } finally {
+            if (distinctResult != null) {
+                try {
+                    distinctResult.close();
+                } catch (Exception ex) {}
+            }
+
+            if (stat != null) {
+                try {
+                    stat.close();
+                } catch (Exception ex) {};
+            }
+
             if (conn != null) {
                 try {
                     conn.close();
@@ -237,13 +259,18 @@ public class SQLTable extends Table {
      */
     private synchronized void syncSchema() {
         Connection conn = null;
+        Statement stat = null;
+        ResultSet resultSet = null;
         try {
             SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
             builder.setLimit(1);
-            conn = DBConnectionFactory.getSourceConnection();
             String sql = builder.build();
             tracer.verbose(sql);
-            ResultSet resultSet = conn.createStatement().executeQuery(sql);
+
+            conn = DBConnectionFactory.getSourceConnection();
+            stat = conn.createStatement();
+
+            resultSet = stat.executeQuery(sql);
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
             Column[] columns = new Column[count];
@@ -256,6 +283,18 @@ public class SQLTable extends Table {
         } catch (Exception ex) {
             tracer.err("Cannot get valid schema.", ex);
         } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (Exception ex) {}
+            }
+
+            if (stat != null) {
+                try {
+                    stat.close();
+                } catch (Exception ex) {};
+            }
+
             if (conn != null) {
                 try {
                     conn.close();
@@ -274,6 +313,7 @@ public class SQLTable extends Table {
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         Statement stat = null;
+        ResultSet resultSet = null;
         try {
             // prepare for the SQL
             String sql = sqlQuery.build();
@@ -283,7 +323,7 @@ public class SQLTable extends Table {
             conn = DBConnectionFactory.getSourceConnection();
             stat = conn.createStatement();
             stat.setFetchSize(2048);
-            ResultSet resultSet = stat.executeQuery(sql);
+            resultSet = stat.executeQuery(sql);
 
             // fill the schema
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -300,10 +340,10 @@ public class SQLTable extends Table {
             schema  = new Schema(tableName, columns);
 
             // fill the tuples
-            tuples = new ArrayList<>(10240);
+            tuples = Lists.newArrayList();
             int tupleId = -1;
             while (resultSet.next()) {
-                Object[] values = new Object[count];
+                List<Object> values = Lists.newArrayList();
                 if (tidIndex != 0) {
                     tupleId = resultSet.getInt(tidIndex);
                 } else {
@@ -311,7 +351,7 @@ public class SQLTable extends Table {
                     tupleId = -1;
                 }
                 for (int i = 1; i <= count; i ++) {
-                    values[i - 1] = resultSet.getObject(i);
+                    values.add(resultSet.getObject(i));
                 }
 
                 tuples.add(new Tuple(tupleId, schema, values));
@@ -319,15 +359,24 @@ public class SQLTable extends Table {
         } catch (Exception ex) {
             tracer.err("Synchronization failed.", ex);
         } finally {
-            try {
-                if (stat != null) {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (Exception ex) {}
+            }
+
+            if (stat != null) {
+                try {
                     stat.close();
-                }
-                if (conn != null) {
+                } catch (Exception ex) {};
+            }
+
+            if (conn != null) {
+                try {
                     conn.close();
+                } catch (SQLException e) {
+                    // ignore
                 }
-            } catch (SQLException ex) {
-                // ignore
             }
         }
 

@@ -14,7 +14,10 @@
 package qa.qcri.nadeef.test.core;
 
 import com.google.common.collect.Lists;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
@@ -26,7 +29,10 @@ import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -37,13 +43,14 @@ public class StressDetectionTest {
     @Before
     public void setUp() {
         Bootstrap.start();
-        Tracer.setVerbose(true);
+        Tracer.setVerbose(false);
         Tracer.setInfo(true);
     }
 
     @After
     public void teardown() {
         Tracer.printDetectSummary("");
+        Bootstrap.shutdown();
     }
 
     @Test

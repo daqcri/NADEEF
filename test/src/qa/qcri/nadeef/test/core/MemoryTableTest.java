@@ -26,7 +26,6 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +53,7 @@ public class MemoryTableTest {
                     values.add(token);
                 }
 
-                testTuples.add(new Tuple(i + 1, schema, values.toArray()));
+                testTuples.add(new Tuple(i + 1, schema, values));
                 values.clear();
             }
         } catch (IOException e) {

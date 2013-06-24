@@ -15,6 +15,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -31,10 +32,8 @@ public class ViolationDetector<T>
 
     private Rule rule;
     private Collection<Violation> resultCollection;
-
-    private ExecutorService threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
-    private CompletionService<Integer> pool =
-        new ExecutorCompletionService<Integer>(threadExecutors);
+    private ExecutorService threadExecutors;
+    private CompletionService<Integer> pool;
 
     /**
      * Violation detector constructor.
@@ -43,15 +42,18 @@ public class ViolationDetector<T>
     public ViolationDetector(Rule rule) {
         Preconditions.checkNotNull(rule);
         resultCollection = Lists.newArrayList();
+        ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
+        threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
+        pool = new ExecutorCompletionService<>(threadExecutors);
     }
 
     /**
      * Detector callable class.
      */
     class Detector implements Callable<Integer> {
-        private Object[] tupleList;
+        private List<Object> tupleList;
 
-        public Detector(Object[] tupleList) {
+        public Detector(List<Object> tupleList) {
             this.tupleList = tupleList;
         }
 
@@ -66,8 +68,8 @@ public class ViolationDetector<T>
         public Integer call() throws Exception {
             int count = 0;
             Collection<Violation> result = Lists.newArrayList();
-            for (int i = 0; i < tupleList.length; i ++) {
-                Object item = tupleList[i];
+            for (int i = 0; i < tupleList.size(); i ++) {
+                Object item = tupleList.get(i);
 
                 // breakage in the buffer
                 if (item == null) {
@@ -114,14 +116,14 @@ public class ViolationDetector<T>
         this.rule = rule;
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
-        Object[] tupleList;
+        List<Object> tupleList;
         int detectCount = 0;
         int detectThread = 0;
         long elapsedTime = 0l;
 
         while (true) {
             tupleList = iteratorStream.poll();
-            if (tupleList.length == 0) {
+            if (tupleList.size() == 0) {
                 break;
             }
 

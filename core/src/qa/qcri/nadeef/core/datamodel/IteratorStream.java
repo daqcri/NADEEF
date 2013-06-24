@@ -13,8 +13,11 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -23,22 +26,27 @@ import java.util.concurrent.TimeUnit;
  */
 // TODO: make it a generic data structure.
 public class IteratorStream<E> {
-    private static final long TIMEOUT = 1024;
-    private static final int BUFFER_BOUNDARY = 10240;
-    private static final int MAX_QUEUE_BOUNDARY = 1024;
-    private static Tracer tracer = Tracer.getTracer(IteratorStream.class);
-    private static LinkedBlockingQueue<Object[]> queue =
-        new LinkedBlockingQueue<>(MAX_QUEUE_BOUNDARY);
-    private Object[] buffer;
+    private static final long TIMEOUT;
+    private static final int BUFFER_BOUNDARY;
+    private static final int MAX_QUEUE_BOUNDARY;
+    private static Tracer tracer;
+    private static LinkedBlockingQueue<List<Object>> queue;
 
-    private int size;
+    static {
+        TIMEOUT = 1024;
+        BUFFER_BOUNDARY = 10240;
+        MAX_QUEUE_BOUNDARY = 1024;
+        queue = new LinkedBlockingQueue<>(MAX_QUEUE_BOUNDARY);
+        tracer = Tracer.getTracer(IteratorStream.class);
+    }
+
+    private List<Object> buffer;
 
     /**
      * Constructor.
      */
     public IteratorStream() {
-        this.buffer = new Object[BUFFER_BOUNDARY];
-        this.size = 0;
+        this.buffer = Lists.newArrayList();
     }
 
     /**
@@ -46,8 +54,8 @@ public class IteratorStream<E> {
      * @return a list of objects from the queue.
      */
     @SuppressWarnings("unchecked")
-    public Object[] poll() {
-        Object[] item = null;
+    public List<Object> poll() {
+        List<Object> item = null;
         try {
             while ((item = queue.poll(TIMEOUT, TimeUnit.MILLISECONDS)) == null);
         } catch (InterruptedException ex) {
@@ -61,7 +69,7 @@ public class IteratorStream<E> {
      */
     public static void markEnd() {
         try {
-            Object[] end = new Object[0];
+            List<Object> end = new ArrayList<>(0);
             while (!queue.offer(end, TIMEOUT, TimeUnit.MILLISECONDS));
         } catch (InterruptedException ex) {
             tracer.err("Exception during marking the end of the queue.", ex);
@@ -74,17 +82,16 @@ public class IteratorStream<E> {
      */
     @SuppressWarnings("unchecked")
     public void put(Object item) {
-        if (size == BUFFER_BOUNDARY) {
+        if (buffer.size() == BUFFER_BOUNDARY) {
             try {
-                while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
+                while (!queue.offer(new ArrayList<>(buffer), TIMEOUT, TimeUnit.MILLISECONDS));
             } catch (InterruptedException e) {
                 tracer.err("put interrupted", e);
             }
-            buffer = new Object[BUFFER_BOUNDARY];
-            size = 0;
+            buffer = Lists.newArrayList();
         }
 
-        buffer[size ++] = item;
+        buffer.add(item);
     }
 
     /**
@@ -92,11 +99,10 @@ public class IteratorStream<E> {
      */
     public void flush() {
         try {
-            if (size != 0) {
-                while (!queue.offer(buffer, TIMEOUT, TimeUnit.MILLISECONDS));
+            if (buffer.size() != 0) {
+                while (!queue.offer(new ArrayList<>(buffer), TIMEOUT, TimeUnit.MILLISECONDS));
             }
             buffer = null;
-            size = 0;
         } catch (InterruptedException e) {
             tracer.err("flush interrupted", e);
         }

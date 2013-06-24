@@ -16,16 +16,17 @@ package qa.qcri.nadeef.test.core;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.MemoryTable;
+import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.Schema;
+import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Iterator;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.core.pipeline.ViolationDetector;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.test.udf.MyTestRule1;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class IteratorStreamTest {
 
         List<Tuple> tuples = Lists.newArrayList();
         for (int i = 1; i < 100; i ++) {
-            tuples.add(new Tuple(i, schema, values.toArray()));
+            tuples.add(new Tuple(i, schema, values));
         }
         MemoryTable table = MemoryTable.of(tuples);
         String key = cacheManager.put(Lists.newArrayList(table));
