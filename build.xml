@@ -47,20 +47,24 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
     </target>
 
     <target name="jar" depends="compile">
-        <manifestclasspath property="jar.classpath" jarfile="${build.root}/${project.name}.jar">
+        <mkdir dir="${build.root}/bin" />
+        <manifestclasspath property="jar.classpath" jarfile="${build.root}/bin/${project.name}.jar">
             <classpath>
                 <fileset dir="${vendor.dir}" includes="*.jar" />
             </classpath>
         </manifestclasspath>
 
-        <jar destfile="${build.root}/${project.name}.jar">
-        <fileset dir="${build.dir}" includes="**/*" />
-        <fileset dir="${vendor.dir}" />
-        <manifest>
-            <attribute name="Main-Class" value="${console.class}" />
-            <attribute name="Class-Path" value="${jar.classpath}" />
-        </manifest>
-    </jar>
+        <jar destfile="${build.root}/bin/${project.name}.jar">
+            <fileset dir="${build.dir}" includes="**/*" />
+            <manifest>
+                <attribute name="Main-Class" value="${console.class}" />
+                <attribute name="Class-Path" value="${jar.classpath}" />
+            </manifest>
+        </jar>
+        <copy todir="${build.root}/bin">
+            <fileset dir="${vendor.dir}" />
+        </copy>
+        <copy file="LICENSE" todir="${build.root}/bin" />
     </target>
 
     <!-- Targets per component -->

@@ -106,8 +106,8 @@ public class FDRuleBuilder extends RuleBuilder {
         String[] lhsSplits = tokens[0].split(",");
         // use the first one as default table name.
         String defaultTable = tableNames.get(0);
-        String newColumn = null;
-        List<Column> columnSet = schemas.get(0).getColumns();
+        String newColumnName = null;
+        Column[] columnSet = schemas.get(0).getColumns();
         for (int i = 0; i < lhsSplits.length; i ++) {
             token = lhsSplits[i].trim().toLowerCase();
             if (Strings.isNullOrEmpty(token)) {
@@ -115,24 +115,33 @@ public class FDRuleBuilder extends RuleBuilder {
             }
 
             if (!CommonTools.isValidColumnName(token)) {
-                newColumn = defaultTable + "." + token;
+                newColumnName = defaultTable + "." + token;
             } else {
-                newColumn = token;
+                newColumnName = token;
             }
 
-            if (lhsSet.contains(newColumn)) {
+            if (lhsSet.contains(newColumnName)) {
                 throw new IllegalArgumentException(
-                    "FD cannot have duplicated column " + newColumn
+                    "FD cannot have duplicated column " + newColumnName
                 );
             }
 
             // Here we assume FD only works with one table.
-            if (!columnSet.contains(new Column(newColumn))) {
+            boolean isColumnExist = false;
+            for (int j = 0; j < columnSet.length; j ++) {
+                if (columnSet[j].getFullColumnName().equalsIgnoreCase(newColumnName)) {
+                    isColumnExist = true;
+                    break;
+                }
+            }
+
+            if (!isColumnExist) {
                 throw new IllegalArgumentException(
-                    "Unknown column names " + newColumn
+                    "Unknown column names " + newColumnName
                 );
             }
-            lhsSet.add(newColumn);
+
+            lhsSet.add(newColumnName);
         }
 
         // parse the RHS
@@ -144,24 +153,32 @@ public class FDRuleBuilder extends RuleBuilder {
             }
 
             if (!CommonTools.isValidColumnName(token)) {
-                newColumn = defaultTable + "." + token;
+                newColumnName = defaultTable + "." + token;
             } else {
-                newColumn = token;
+                newColumnName = token;
             }
 
-            if (rhsSet.contains(newColumn)) {
+            if (rhsSet.contains(newColumnName)) {
                 throw new IllegalArgumentException(
-                    "FD cannot have duplicated column " + newColumn
+                    "FD cannot have duplicated column " + newColumnName
                 );
             }
 
             // Here we assume FD only works with one table.
-            if (!columnSet.contains(new Column(newColumn))) {
+            boolean isColumnExist = false;
+            for (int j = 0; j < columnSet.length; j ++) {
+                if (columnSet[j].getFullColumnName().equalsIgnoreCase(newColumnName)) {
+                    isColumnExist = true;
+                    break;
+                }
+            }
+
+            if (!isColumnExist) {
                 throw new IllegalArgumentException(
-                    "Unknown column names " + newColumn
+                        "Unknown column names " + newColumnName
                 );
             }
-            rhsSet.add(newColumn);
+            rhsSet.add(newColumnName);
         }
 
         lhs = Lists.newArrayList(lhsSet);
