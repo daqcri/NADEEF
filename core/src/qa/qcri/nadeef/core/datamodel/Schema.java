@@ -17,6 +17,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public class Schema {
     private String tableName;
-    private List<Column> columnList;
+    private Column[] columns;
 
     //<editor-fold desc="Builder">
     /**
@@ -55,7 +56,7 @@ public class Schema {
         }
 
         public Schema build() {
-            return new Schema(tableName, columns);
+            return new Schema(tableName, (Column[])columns.toArray());
         }
     }
     //</editor-fold>
@@ -65,16 +66,23 @@ public class Schema {
      * @param tableName table name.
      * @param columns column array.
      */
-    public Schema(String tableName, List<Column> columns) {
+    public Schema(String tableName, Column[] columns) {
         this.tableName = Preconditions.checkNotNull(tableName);
-        Preconditions.checkArgument(columns != null && columns.size() > 0);
-        columnList = columns;
+        Preconditions.checkArgument(columns != null && columns.length > 0);
+        this.columns = columns;
     }
 
+    /**
+     * Copy consturctor.
+     * @param schema input schema.
+     */
     public Schema(Schema schema) {
         Preconditions.checkNotNull(schema);
         this.tableName = schema.tableName;
-        this.columnList = Lists.newArrayList(schema.columnList);
+        this.columns = new Column[schema.columns.length];
+        for (int i = 0; i < schema.columns.length; i++) {
+            this.columns[i] = schema.columns[i];
+        }
     }
 
     /**
@@ -82,7 +90,7 @@ public class Schema {
       * @return size.
      */
     public int size() {
-        return columnList.size();
+        return columns.length;
     }
 
     /**
@@ -91,7 +99,7 @@ public class Schema {
      * @return <code>True</code> when the map contains the column.
      */
     public boolean hasColumn(Column column) {
-        for (Column column_ : columnList) {
+        for (Column column_ : columns) {
             if (column_.equals(column)) {
                 return true;
             }
@@ -111,8 +119,8 @@ public class Schema {
      * Gets the column collection.
      * @return column collection.
      */
-    public List<Column> getColumns() {
-        return columnList;
+    public Column[] getColumns() {
+        return columns;
     }
 
     /**
@@ -121,8 +129,8 @@ public class Schema {
      * @return Get the index from column.
      */
     public int get(Column column) {
-        for (int i = 0; i < columnList.size(); i ++) {
-            if (columnList.get(i).equals(column)) {
+        for (int i = 0; i < columns.length; i ++) {
+            if (columns[i].equals(column)) {
                 return i;
             }
         }
@@ -134,9 +142,10 @@ public class Schema {
      * @return Returns the TID index of the schema. It returns absent when there is no TID column.
      */
     public Optional<Integer> getTidIndex() {
-        Column tidColumn = new Column(tableName, "tid");
-        if (columnList.contains(tidColumn)) {
-            return Optional.of(get(tidColumn));
+        for (int i = 0; i < columns.length; i ++) {
+            if (columns[i].getColumnName().equalsIgnoreCase("tid")) {
+                return Optional.of(i);
+            }
         }
         return Optional.absent();
     }
@@ -147,6 +156,12 @@ public class Schema {
      */
     void remove(Column column) {
         int result = get(column);
-        columnList.remove(result);
+        Column[] ncolumns = new Column[columns.length - 1];
+        for (int i = 0; i < columns.length; i ++) {
+            if (i != result) {
+                ncolumns[i] = columns[i];
+            }
+        }
+        columns = ncolumns;
     }
 }

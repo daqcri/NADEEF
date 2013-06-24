@@ -27,7 +27,7 @@ import java.util.concurrent.*;
  */
 public class ViolationDetector<T>
     extends Operator<Rule, Collection<Violation>> {
-    private static final int MAX_THREAD_NUM = 8;
+    private static final int MAX_THREAD_NUM = 4;
 
     private Rule rule;
     private Collection<Violation> resultCollection;
@@ -48,10 +48,10 @@ public class ViolationDetector<T>
     /**
      * Detector callable class.
      */
-    class Detector<T> implements Callable<Integer> {
-        private List<T> tupleList;
+    class Detector implements Callable<Integer> {
+        private Object[] tupleList;
 
-        public Detector(List<T> tupleList) {
+        public Detector(Object[] tupleList) {
             this.tupleList = tupleList;
         }
 
@@ -66,8 +66,14 @@ public class ViolationDetector<T>
         public Integer call() throws Exception {
             int count = 0;
             Collection<Violation> result = Lists.newArrayList();
-            for (int i = 0; i < tupleList.size(); i ++) {
-                T item = tupleList.get(i);
+            for (int i = 0; i < tupleList.length; i ++) {
+                Object item = tupleList[i];
+
+                // breakage in the buffer
+                if (item == null) {
+                    continue;
+                }
+
                 count ++;
                 Collection<Violation> violations = null;
                 if (rule.supportOneInput()) {
@@ -89,6 +95,9 @@ public class ViolationDetector<T>
             synchronized (ViolationDetector.class) {
                 resultCollection.addAll(result);
             }
+
+            // This is to reclaim the memory back.
+            tupleList = null;
             return count;
         }
     }
@@ -105,19 +114,19 @@ public class ViolationDetector<T>
         this.rule = rule;
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
-        List<T> tupleList;
+        Object[] tupleList;
         int detectCount = 0;
         int detectThread = 0;
         long elapsedTime = 0l;
 
         while (true) {
-            tupleList = (List<T>)iteratorStream.poll();
-            if (tupleList.size() == 0) {
+            tupleList = iteratorStream.poll();
+            if (tupleList.length == 0) {
                 break;
             }
 
             detectThread ++;
-            pool.submit(new Detector<T>(tupleList));
+            pool.submit(new Detector(tupleList));
         }
 
         for (int i = 0; i < detectThread; i ++) {

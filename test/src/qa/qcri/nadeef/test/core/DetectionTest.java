@@ -17,6 +17,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
@@ -62,6 +63,7 @@ public class DetectionTest {
     public void setup() {
         Bootstrap.start();
         Tracer.setVerbose(true);
+        NadeefConfiguration.setAlwaysOverride(true);
     }
 
     @After

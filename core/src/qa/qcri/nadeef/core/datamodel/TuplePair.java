@@ -36,9 +36,25 @@ public class TuplePair {
     }
 
     /**
-     * Private constructor.
+     * Factory method.
+     * @param values values.
+     * @return new TuplePair.
      */
-    TuplePair() {}
+    public static TuplePair of(Tuple[] values) {
+        Preconditions.checkArgument(values != null && values.length == 2);
+        return new TuplePair(values[0], values[1]);
+    }
+
+    /**
+     * Make TuplePair an array.
+     * @return tuple array.
+     */
+    public Tuple[] toArray() {
+        Tuple[] result = new Tuple[2];
+        result[0] = this.left;
+        result[1] = this.right;
+        return result;
+    }
 
     //<editor-fold desc="Getters">
 

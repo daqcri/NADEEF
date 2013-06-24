@@ -65,7 +65,7 @@ public class MemoryTable extends Table {
      */
     @Override
     public Table project(List<Column> columns) {
-        List<Column> allColumns = schema.getColumns();
+        Column[] allColumns = schema.getColumns();
         List<Column> toRemove = Lists.newArrayList();
 
         for (Column column : allColumns) {
@@ -83,7 +83,7 @@ public class MemoryTable extends Table {
         }
 
         for (Tuple tuple : tuples) {
-            tuple.select(newSchema);
+            tuple.project(newSchema);
         }
         return this;
     }

@@ -35,7 +35,7 @@ public class SQLTable extends Table {
     private DBConfig dbconfig;
     private String tableName;
     private SqlQueryBuilder sqlQuery;
-    private ArrayList<Tuple> tuples;
+    private List<Tuple> tuples;
     private long updateTimestamp = -1;
     private long changeTimestamp = System.currentTimeMillis();
 
@@ -246,10 +246,10 @@ public class SQLTable extends Table {
             ResultSet resultSet = conn.createStatement().executeQuery(sql);
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
-            List<Column> columns = new ArrayList<Column>();
+            Column[] columns = new Column[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
-                columns.add(new Column(tableName, attributeName));
+                columns[i - 1] = new Column(tableName, attributeName);
             }
 
             schema = new Schema(tableName, columns);
@@ -273,51 +273,61 @@ public class SQLTable extends Table {
     private synchronized boolean syncData() {
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
+        Statement stat = null;
         try {
-            tuples = Lists.newArrayList();
-            conn = DBConnectionFactory.getSourceConnection();
-            Statement stat = conn.createStatement();
+            // prepare for the SQL
             String sql = sqlQuery.build();
             tracer.verbose(sql);
+
+            // get the connection and run the SQL
+            conn = DBConnectionFactory.getSourceConnection();
+            stat = conn.createStatement();
+            stat.setFetchSize(2048);
             ResultSet resultSet = stat.executeQuery(sql);
-            conn.commit();
-            int tupleId = -1;
 
             // fill the schema
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
-            List<Column> columns = new ArrayList<Column>(count);
+            int tidIndex = 0;
+            Column[] columns = new Column[count];
             for (int i = 1; i <= count; i ++) {
-                String attributeName = metaData.getColumnName(i);
-                columns.add(new Column(tableName, attributeName));
+                String columnName = metaData.getColumnName(i);
+                columns[i - 1] = new Column(tableName, columnName);
+                if (tidIndex == 0 && columnName.equalsIgnoreCase("tid")) {
+                    tidIndex = i;
+                }
             }
-
             schema  = new Schema(tableName, columns);
 
             // fill the tuples
+            tuples = new ArrayList<>(10240);
+            int tupleId = -1;
             while (resultSet.next()) {
-                List<Object> values = Lists.newArrayList();
+                Object[] values = new Object[count];
+                if (tidIndex != 0) {
+                    tupleId = resultSet.getInt(tidIndex);
+                } else {
+                    tracer.info("Table does not have an TID column, use -1 as default.");
+                    tupleId = -1;
+                }
                 for (int i = 1; i <= count; i ++) {
-                    String attributeName = metaData.getColumnName(i);
-                    if (attributeName.equalsIgnoreCase("tid")) {
-                        tupleId = (int)resultSet.getObject(i);
-                    }
-                    values.add(resultSet.getObject(i));
+                    values[i - 1] = resultSet.getObject(i);
                 }
 
                 tuples.add(new Tuple(tupleId, schema, values));
             }
-            stat.close();
-            conn.close();
         } catch (Exception ex) {
             tracer.err("Synchronization failed.", ex);
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
+            try {
+                if (stat != null) {
+                    stat.close();
                 }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                // ignore
             }
         }
 

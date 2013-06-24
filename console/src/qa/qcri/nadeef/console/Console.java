@@ -239,7 +239,7 @@ public class Console {
         }
 
         Schema schema = DBMetaDataTool.getSchema(tableName);
-        List<Column> columns = schema.getColumns();
+        Column[] columns = schema.getColumns();
         for (Column column : columns) {
             if (column.getColumnName().equals("tid")) {
                 continue;
@@ -295,6 +295,7 @@ public class Console {
             return;
         }
 
+        executors.clear();
         for (CleanPlan cleanPlan : cleanPlans) {
             executors.add(new CleanExecutor(cleanPlan));
         }
@@ -348,7 +349,7 @@ public class Console {
             thread.start();
 
             do {
-                Thread.sleep(500);
+                Thread.sleep(1000);
                 double percentage = executor.getDetectPercentage();
                 printProgress(percentage, "DETECT");
             } while (thread.isAlive());
@@ -393,7 +394,7 @@ public class Console {
             thread.start();
 
             do {
-                Thread.sleep(500);
+                Thread.sleep(1000);
                 double percentage = executor.getRepairPercentage();
                 printProgress(percentage, "REPAIR");
             } while (thread.isAlive());

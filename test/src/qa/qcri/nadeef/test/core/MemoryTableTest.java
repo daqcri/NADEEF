@@ -54,7 +54,7 @@ public class MemoryTableTest {
                     values.add(token);
                 }
 
-                testTuples.add(new Tuple(i + 1, schema, new ArrayList(values)));
+                testTuples.add(new Tuple(i + 1, schema, values.toArray()));
                 values.clear();
             }
         } catch (IOException e) {

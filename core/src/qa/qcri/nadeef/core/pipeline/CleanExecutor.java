@@ -152,6 +152,7 @@ public class CleanExecutor {
             queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
         );
 
+        System.gc();
         return this;
     }
 
@@ -177,7 +178,10 @@ public class CleanExecutor {
 
         updateFlow.start();
         updateFlow.waitUntilFinish();
+
         Tracer.putStatsEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
+        System.gc();
+
         return this;
     }
 

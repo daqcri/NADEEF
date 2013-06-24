@@ -50,7 +50,7 @@ public class IteratorStreamTest {
 
         List<Tuple> tuples = Lists.newArrayList();
         for (int i = 1; i < 100; i ++) {
-            tuples.add(new Tuple(i, schema, values));
+            tuples.add(new Tuple(i, schema, values.toArray()));
         }
         MemoryTable table = MemoryTable.of(tuples);
         String key = cacheManager.put(Lists.newArrayList(table));

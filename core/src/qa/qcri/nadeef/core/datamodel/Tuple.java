@@ -24,10 +24,9 @@ import java.util.List;
  */
 public class Tuple {
     //<editor-fold desc="Private Fields">
-    private List<Object> values;
+    private Object[] values;
     private Schema schema;
-    private String tableName;
-    private int tupleId;
+    private int tid;
     //</editor-fold>
 
     //<editor-fold desc="Public Members">
@@ -38,16 +37,16 @@ public class Tuple {
      * @param schema tuple schema.
      * @param values tuple values.
      */
-    public Tuple(int tupleId, Schema schema, List<Object> values) {
+    public Tuple(int tupleId, Schema schema, Object[] values) {
         if (schema == null || values == null) {
             throw new IllegalArgumentException("Input Schema/Values cannot be null.");
         }
 
-        if (schema.size() != values.size()) {
+        if (schema.size() != values.length) {
             throw new IllegalArgumentException(
                 "Tuple values does not match the schema. " +
                 "Schema has size of " + schema.size() +
-                " but values has size of " + values.size()
+                " but values has size of " + values.length
             );
         }
 
@@ -55,8 +54,7 @@ public class Tuple {
             throw new IllegalArgumentException("Tuple ID cannot be less than 1.");
         }
 
-        this.tableName = schema.getTableName();
-        this.tupleId = tupleId;
+        this.tid = tupleId;
         this.schema = schema;
         this.values = values;
     }
@@ -68,7 +66,15 @@ public class Tuple {
      */
     public Object get(Column key) {
         int index = schema.get(key);
-        return values.get(index);
+        return values[index];
+    }
+
+    /**
+     * Gets the Tuple id.
+     * @return tuple id.
+     */
+    public int getTid() {
+        return tid;
     }
 
     /**
@@ -77,19 +83,9 @@ public class Tuple {
      * @return Output Value
      */
     public Object get(String columnAttribute) {
-        Column column = new Column(tableName, columnAttribute);
+        Column column = new Column(schema.getTableName(), columnAttribute);
         int index = schema.get(column);
-        return values.get(index);
-    }
-
-    /**
-     * Gets the value from the tuple.
-     * @param key The attribute key
-     * @return Output Value
-     */
-    public String getString(Column key) {
-        Object value = get(key);
-        return (String)value;
+        return values[index];
     }
 
     /**
@@ -103,20 +99,12 @@ public class Tuple {
     }
 
     /**
-     * Gets Tuple Id.
-     * @return tuple id.
-     */
-    public int getTupleId() {
-        return this.tupleId;
-    }
-
-    /**
      * Gets the Cell given a column key.
      * @param key key.
      * @return Cell.
      */
     public Cell getCell(Column key) {
-        return new Cell(key, tupleId, get(key));
+        return new Cell(key, tid, get(key));
     }
 
     /**
@@ -125,7 +113,7 @@ public class Tuple {
      * @return Cell.
      */
     public Cell getCell(String key) {
-        return new Cell(new Column(tableName, key), tupleId, get(key));
+        return new Cell(new Column(schema.getTableName(), key), tid, get(key));
     }
 
     /**
@@ -133,13 +121,13 @@ public class Tuple {
      * @return value collections.
      */
     public ImmutableSet<Cell> getCells() {
-        List<Column> columns = schema.getColumns();
+        Column[] columns = schema.getColumns();
         List<Cell> cells = Lists.newArrayList();
         for (Column column : columns) {
             if (column.getColumnName().equals("tid")) {
                 continue;
             }
-            Cell cell = new Cell(column, tupleId, get(column));
+            Cell cell = new Cell(column, tid, get(column));
             cells.add(cell);
         }
         return ImmutableSet.copyOf(cells);
@@ -154,25 +142,18 @@ public class Tuple {
     }
 
     /**
-     * Sets the schema.
-     * @param schema schema.
-     */
-    public void setSchema(Schema schema) {
-        this.schema = schema;
-    }
-
-    /**
      * Returns <code>True</code> when the tuple is from the given table name.
      * @param tableName table name.
      * @return <code>True</code> when the tuple is from the given table name.
      */
     public boolean isFromTable(String tableName) {
-        if (this.tableName.equalsIgnoreCase(tableName)) {
+        String tableName_ = schema.getTableName();
+        if (tableName_.equalsIgnoreCase(tableName)) {
             return true;
         }
 
-        if (this.tableName.startsWith("csv_")) {
-            String originalTableName = this.tableName.substring(4);
+        if (tableName_.startsWith("csv_")) {
+            String originalTableName = tableName_.substring(4);
             return originalTableName.equalsIgnoreCase(tableName);
         }
         return false;
@@ -195,44 +176,47 @@ public class Tuple {
             return true;
         }
 
-        if (values.size() != tuple.values.size()) {
+        if (values.length != tuple.values.length) {
             return false;
         }
 
-        Optional<Integer> tidIndex = schema.getTidIndex();
-        if (tidIndex.isPresent()) {
-            // it returns true when the tid is the same.
-            int tid = tidIndex.get();
-            if (values.get(tid).equals(tuple.values.get(tid))) {
-                return true;
-            }
+        // Tuples are the same when TID is the same within the same table.
+        if (
+            tid == tuple.tid &&
+            schema.getTableName().equalsIgnoreCase(tuple.schema.getTableName())
+        ) {
+            return true;
         }
 
-        for (int i = 0; i < values.size(); i ++) {
-            // skip the TID compare
+        Optional<Integer> tidIndex = schema.getTidIndex();
+        for (int i = 0; i < values.length; i ++) {
+            // skip the TID compare because we know that they are different.
             if (tidIndex.isPresent() && i == tidIndex.get()) {
                 continue;
             }
 
-            if (values.get(i) == tuple.values.get(i)) {
+            if (values[i] == tuple.values[i]) {
                 continue;
             }
-            if (!values.get(i).equals(tuple.values.get(i))) {
+            if (!values[i].equals(tuple.values[i])) {
                 return false;
             }
         }
         return true;
     }
 
-    void select(Schema newSchema) {
+    /**
+     * Project the Tuple on a new schema.
+     * @param newSchema new schema.
+     */
+    void project(Schema newSchema) {
+        Column[] columns = newSchema.getColumns();
         List<Object> nvalues = Lists.newArrayList();
-        List<Column> columns = newSchema.getColumns();
-
         for (Column column : columns) {
             int index = schema.get(column);
-            nvalues.add(values.get(index));
+            nvalues.add(values[index]);
         }
-        values = nvalues;
+        values = nvalues.toArray();
         schema = newSchema;
     }
     //</editor-fold>

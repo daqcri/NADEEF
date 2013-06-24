@@ -28,16 +28,18 @@ import java.util.concurrent.*;
  */
 public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
-    private static final int MAX_THREAD_NUM = 10;
+    private static final int MAX_THREAD_NUM = 4;
     private Rule rule;
 
-    private ExecutorService threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
-    private CompletionService<Boolean> pool =
-        new ExecutorCompletionService<Boolean>(threadExecutors);
+    private ExecutorService threadExecutors;
+    private CompletionService<Boolean> pool;
+
     //</editor-fold>
 
     public Iterator(Rule rule) {
         this.rule = rule;
+        threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM);
+        pool = new ExecutorCompletionService<>(threadExecutors);
     }
 
     //<editor-fold desc="IteratorCallable Class">
@@ -51,7 +53,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
 
         IteratorCallable(Collection<Table> tables) {
             this.tables = tables;
-            iteratorStream = new IteratorStream<E>();
+            iteratorStream = new IteratorStream<>();
         }
 
         IteratorCallable(Table table) {
@@ -69,6 +71,8 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         public Boolean call() throws Exception {
             rule.iterator(tables, iteratorStream);
             iteratorStream.flush();
+
+            tables = null;
             return true;
         }
     }
@@ -85,7 +89,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         int blockSize = 0;
         int count = 0;
         Stopwatch stopwatch = new Stopwatch().start();
-
         if (rule.supportTwoTables()) {
             // Rule runs on two tables.
             pool.submit(new IteratorCallable(tables));

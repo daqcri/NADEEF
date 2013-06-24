@@ -97,7 +97,7 @@ public class DBConnectionFactory {
      * Creates a new JDBC connection on the Nadeef database.
      * @return new JDBC connection.
      */
-    public static synchronized Connection getNadeefConnection() throws SQLException {
+    public static Connection getNadeefConnection() throws SQLException {
         Connection conn = nadeefPool.getConnection();
         conn.setAutoCommit(false);
         return conn;
