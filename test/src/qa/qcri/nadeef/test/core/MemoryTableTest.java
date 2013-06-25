@@ -26,6 +26,7 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -46,11 +47,11 @@ public class MemoryTableTest {
         try {
             List<String[]> content = CSVTools.read(dumpFile, ",");
             testTuples = Lists.newArrayList();
-            List<Object> values = Lists.newArrayList();
+            List<byte[]> values = Lists.newArrayList();
             for (int i = 0; i < content.size(); i ++) {
                 String[] tokens = content.get(i);
                 for (String token : tokens) {
-                    values.add(token);
+                    values.add(token.getBytes(Charset.forName("UTF-8")));
                 }
 
                 testTuples.add(new Tuple(i + 1, schema, values));

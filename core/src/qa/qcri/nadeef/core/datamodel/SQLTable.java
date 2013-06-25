@@ -164,9 +164,8 @@ public class SQLTable extends Table {
             conn = DBConnectionFactory.getSourceConnection();
             // create index ad-hoc.
             stat = conn.createStatement();
-            stat.setFetchSize(1024);
+            stat.setFetchSize(4096);
             stat.execute("CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")");
-            conn.commit();
 
             String sql =
                 "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
@@ -238,7 +237,7 @@ public class SQLTable extends Table {
             return true;
         }
 
-        return this.tuples.equals(obj.tuples);
+        return false;
     }
 
     /**
@@ -257,7 +256,7 @@ public class SQLTable extends Table {
     /**
      * Synchronize the data schema with underneath database.
      */
-    private synchronized void syncSchema() {
+    private void syncSchema() {
         Connection conn = null;
         Statement stat = null;
         ResultSet resultSet = null;
@@ -309,7 +308,7 @@ public class SQLTable extends Table {
      * Synchronize the collection data with the underlying database.
      * @return Returns <code>True</code> when the synchronization is successful.
      */
-    private synchronized boolean syncData() {
+    private boolean syncData() {
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         Statement stat = null;
@@ -322,7 +321,7 @@ public class SQLTable extends Table {
             // get the connection and run the SQL
             conn = DBConnectionFactory.getSourceConnection();
             stat = conn.createStatement();
-            stat.setFetchSize(2048);
+            stat.setFetchSize(4096);
             resultSet = stat.executeQuery(sql);
 
             // fill the schema
@@ -343,7 +342,7 @@ public class SQLTable extends Table {
             tuples = Lists.newArrayList();
             int tupleId = -1;
             while (resultSet.next()) {
-                List<Object> values = Lists.newArrayList();
+                List<byte[]> values = Lists.newArrayList();
                 if (tidIndex != 0) {
                     tupleId = resultSet.getInt(tidIndex);
                 } else {
@@ -351,7 +350,7 @@ public class SQLTable extends Table {
                     tupleId = -1;
                 }
                 for (int i = 1; i <= count; i ++) {
-                    values.add(resultSet.getObject(i));
+                    values.add(resultSet.getBytes(i));
                 }
 
                 tuples.add(new Tuple(tupleId, schema, values));

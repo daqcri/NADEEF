@@ -51,11 +51,11 @@ public class SqlQueryBuilder implements Cloneable {
      * Copy Constructor.
      */
     public SqlQueryBuilder(SqlQueryBuilder obj) {
-        selects = new HashSet<String>(obj.selects);
-        wheres = new HashSet<String>(obj.wheres);
-        froms = new HashSet<String>(obj.froms);
-        orders = new HashSet<String>(obj.orders);
-        distincts = new HashSet<String>(obj.distincts);
+        selects = new HashSet<>(obj.selects);
+        wheres = new HashSet<>(obj.wheres);
+        froms = new HashSet<>(obj.froms);
+        orders = new HashSet<>(obj.orders);
+        distincts = new HashSet<>(obj.distincts);
         limit = obj.limit;
     }
     //</editor-fold>

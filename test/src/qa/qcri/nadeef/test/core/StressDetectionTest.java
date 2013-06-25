@@ -55,6 +55,7 @@ public class StressDetectionTest {
 
     @Test
     public void cleanExecutorTest10k() {
+        Tracer.setVerbose(true);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan10k();
             CleanExecutor executor = new CleanExecutor(cleanPlan);

@@ -32,7 +32,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     private static final int MAX_THREAD_NUM = 4;
     private Rule rule;
     private ExecutorService threadExecutors;
-    private CompletionService<Boolean> pool;
+    private CompletionService<Integer> pool;
 
     //</editor-fold>
 
@@ -49,7 +49,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     /**
      * IteratorCallable is a {@link Callable} class for iteration operation on each block.
      */
-    class IteratorCallable implements Callable<Boolean> {
+    class IteratorCallable implements Callable<Integer> {
         private IteratorStream<E> iteratorStream;
         private Collection<Table> tables;
 
@@ -70,12 +70,17 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
          */
         @Override
         @SuppressWarnings("unchecked")
-        public Boolean call() throws Exception {
+        public Integer call() throws Exception {
             rule.iterator(tables, iteratorStream);
             iteratorStream.flush();
 
+            // return the tuple total count
+            int size = 0;
+            for (Table table : tables) {
+                size += table.size();
+            }
             tables = null;
-            return true;
+            return size;
         }
     }
     //</editor-fold>
@@ -95,25 +100,23 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             // Rule runs on two tables.
             pool.submit(new IteratorCallable(tables));
 
-            pool.take().get();
+            blockSize = pool.take().get();
             count ++;
             setPercentage(1.0f);
         } else {
             // Rule runs on each table.
             for (Table table : tables) {
-                blockSize += table.size();
-
                 pool.submit(new IteratorCallable(table));
             }
 
             for (Table table : tables) {
-                pool.take().get();
+                blockSize += pool.take().get();
                 count ++;
                 setPercentage(count / tables.size());
             }
         }
 
-        // recycle the collection when dealing with pairs. This is mainly used to remove views.
+        // recycle the collection when dealing with pairs. This is mainly used to remove refs.
         if (rule.supportTwoInputs()) {
             for (Table table : tables) {
                 table.recycle();

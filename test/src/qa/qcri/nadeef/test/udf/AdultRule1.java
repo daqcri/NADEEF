@@ -33,8 +33,8 @@ public class AdultRule1 extends SingleTupleRule {
     public Collection<Violation> detect(Tuple tuple) {
         List<Violation> result = Lists.newArrayList();
 
-        String martialStatus = tuple.getString("martialstatus");
-        String relationship = tuple.getString("relationship");
+        String martialStatus = tuple.get("martialstatus");
+        String relationship = tuple.get("relationship");
         if (
             martialStatus.equalsIgnoreCase("Divorced") ||
             martialStatus.equalsIgnoreCase("Never-married")

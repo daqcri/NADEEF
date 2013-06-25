@@ -37,6 +37,7 @@ public final class DBMetaDataTool {
         IllegalAccessException {
         Connection conn = null;
         Statement stat = null;
+        ResultSet resultSet = null;
         try {
             conn = DBConnectionFactory.getSourceConnection();
             stat = conn.createStatement();
@@ -44,7 +45,7 @@ public final class DBMetaDataTool {
             stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
 
             conn.commit();
-            ResultSet resultSet =
+            resultSet =
                 stat.executeQuery(
                 "select * from information_schema.columns where table_name = " +
                 '\'' + targetTableName +
@@ -57,6 +58,10 @@ public final class DBMetaDataTool {
             }
             conn.commit();
         } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+
             if (stat != null) {
                 stat.close();
             }
@@ -90,12 +95,16 @@ public final class DBMetaDataTool {
     public static boolean isTableExist(String tableName)
         throws Exception {
         Connection conn = null;
+        ResultSet resultSet = null;
         try {
             conn = DBConnectionFactory.getSourceConnection();
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet tables = meta.getTables(null, null, tableName, null);
-            return tables.next();
+            resultSet = meta.getTables(null, null, tableName, null);
+            return resultSet.next();
         } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
             if (conn != null) {
                 conn.close();
             }

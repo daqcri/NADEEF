@@ -17,6 +17,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class Tuple {
     //<editor-fold desc="Private Fields">
-    private List<Object> values;
+    private List<byte[]> values;
     private Schema schema;
     private int tid;
     //</editor-fold>
@@ -37,7 +38,7 @@ public class Tuple {
      * @param schema tuple schema.
      * @param values tuple values.
      */
-    public Tuple(int tupleId, Schema schema, List<Object> values) {
+    public Tuple(int tupleId, Schema schema, List<byte[]> values) {
         if (schema == null || values == null) {
             throw new IllegalArgumentException("Input Schema/Values cannot be null.");
         }
@@ -64,9 +65,19 @@ public class Tuple {
      * @param key The attribute key
      * @return Output Value
      */
-    public Object get(Column key) {
+    public String get(Column key) {
         int index = schema.get(key);
-        return values.get(index);
+        return new String(values.get(index), Charset.forName("UTF-8"));
+    }
+
+    /**
+     * Gets the value from the tuple.
+     * @param columnName The attribute key
+     * @return Output Value
+     */
+    public String get(String columnName) {
+        Column column = new Column(schema.getTableName(), columnName);
+        return get(column);
     }
 
     /**
@@ -75,27 +86,6 @@ public class Tuple {
      */
     public int getTid() {
         return tid;
-    }
-
-    /**
-     * Gets the value from the tuple.
-     * @param columnAttribute The attribute key
-     * @return Output Value
-     */
-    public Object get(String columnAttribute) {
-        Column column = new Column(schema.getTableName(), columnAttribute);
-        int index = schema.get(column);
-        return values.get(index);
-    }
-
-    /**
-     * Gets the value from the tuple.
-     * @param columnAttribute The attribute key
-     * @return Output Value
-     */
-    public String getString(String columnAttribute) {
-        Object value = get(columnAttribute);
-        return (String)value;
     }
 
     /**
@@ -113,7 +103,7 @@ public class Tuple {
      * @return Cell.
      */
     public Cell getCell(String key) {
-        return new Cell(new Column(schema.getTableName(), key), tid, get(key));
+        return getCell(new Column(schema.getTableName(), key));
     }
 
     /**
@@ -198,8 +188,15 @@ public class Tuple {
             if (values.get(i) == tuple.values.get(i)) {
                 continue;
             }
-            if (!values.get(i).equals(tuple.values.get(i))) {
+
+            if (values.get(i).length != tuple.values.get(i).length) {
                 return false;
+            }
+
+            for (int j = 0; j < values.get(i).length; j ++) {
+                if (values.get(i)[j] != tuple.values.get(i)[j]) {
+                    return false;
+                }
             }
         }
         return true;
@@ -211,7 +208,7 @@ public class Tuple {
      */
     void project(Schema newSchema) {
         Column[] columns = newSchema.getColumns();
-        List<Object> nvalues = Lists.newArrayList();
+        List<byte[]> nvalues = Lists.newArrayList();
         for (Column column : columns) {
             int index = schema.get(column);
             nvalues.add(values.get(index));

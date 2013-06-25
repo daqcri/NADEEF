@@ -13,7 +13,11 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.*;
+import com.google.common.base.Stopwatch;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.*;
@@ -28,6 +32,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * SourceDeserializer Test.
@@ -136,5 +141,33 @@ public class SQLTableTest {
             }
 
         }
+    }
+
+    @Test
+    public void testSize() throws InterruptedException {
+        Stopwatch stopwatch = new Stopwatch().start();
+        SQLTable table = new SQLTable("csv_test60m", dbconfig);
+        table.get(0);
+
+        long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println("##### Heap utilization statistics [MB] #####");
+
+        long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+        System.out.println("Used Memory:" + usedMemory);
+        System.out.println("Free Memory:" + runtime.freeMemory() / mb);
+        System.out.println("Total Memory:" + runtime.totalMemory() / mb);
+        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
+        System.out.println("Load time: " + elapsedTime + " ms.");
+
+        // memory usage should be less than 700 mb.
+        Assert.assertTrue(usedMemory < 700);
+
+        // load time should be less than 18000 ms
+        Assert.assertTrue(elapsedTime < 18000);
     }
 }
