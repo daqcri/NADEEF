@@ -37,6 +37,7 @@ public class SQLTable extends Table {
     private List<Tuple> tuples;
     private long updateTimestamp = -1;
     private long changeTimestamp = System.currentTimeMillis();
+    private String indexName = null;
 
     private static Tracer tracer = Tracer.getTracer(SQLTable.class);
 
@@ -165,7 +166,16 @@ public class SQLTable extends Table {
             // create index ad-hoc.
             stat = conn.createStatement();
             stat.setFetchSize(4096);
-            stat.execute("CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")");
+
+            // create the index.
+            if (indexName == null) {
+                indexName = tableName + "_" + column.getColumnName();
+                String indexSQL =
+                    "CREATE INDEX " + indexName + " ON " + tableName +
+                    "(" + column.getColumnName() + ")";
+                stat.executeUpdate(indexSQL);
+                conn.commit();
+            }
 
             String sql =
                 "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
