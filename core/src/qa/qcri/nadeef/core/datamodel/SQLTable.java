@@ -169,10 +169,8 @@ public class SQLTable extends Table {
 
             // create the index.
             if (indexName == null) {
-                indexName = tableName + "_" + column.getColumnName();
                 String indexSQL =
-                    "CREATE INDEX " + indexName + " ON " + tableName +
-                    "(" + column.getColumnName() + ")";
+                    "CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")";
                 stat.executeUpdate(indexSQL);
                 conn.commit();
             }
