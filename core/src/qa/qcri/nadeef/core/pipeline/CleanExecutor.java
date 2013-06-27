@@ -180,8 +180,8 @@ public class CleanExecutor {
         updateFlow.waitUntilFinish();
 
         Tracer.putStatsEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
-        System.gc();
 
+        System.gc();
         return this;
     }
 

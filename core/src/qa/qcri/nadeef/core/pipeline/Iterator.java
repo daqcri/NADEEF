@@ -31,17 +31,11 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
     private static final int MAX_THREAD_NUM = 4;
     private Rule rule;
-    private ExecutorService threadExecutors;
-    private CompletionService<Integer> pool;
 
     //</editor-fold>
 
     public Iterator(Rule rule) {
         this.rule = rule;
-        ThreadFactory factory =
-            new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
-        threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
-        pool = new ExecutorCompletionService<>(threadExecutors);
     }
 
     //<editor-fold desc="IteratorCallable Class">
@@ -92,39 +86,59 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
      * @return iteration output.
      */
     @Override
-    public Boolean execute(Collection<Table> tables) throws Exception {
+    @SuppressWarnings("unchecked")
+    public Boolean execute(Collection<Table> tables) {
         int blockSize = 0;
         int count = 0;
+        Tracer tracer = Tracer.getTracer(Iterator.class);
+        ThreadFactory factory =
+                new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
+        ExecutorCompletionService pool = new ExecutorCompletionService<Integer>(executor);
+
         Stopwatch stopwatch = new Stopwatch().start();
-        if (rule.supportTwoTables()) {
-            // Rule runs on two tables.
-            pool.submit(new IteratorCallable(tables));
+        try {
+            if (rule.supportTwoTables()) {
+                // Rule runs on two tables.
+                pool.submit(new IteratorCallable(tables));
 
-            blockSize = pool.take().get();
-            count ++;
-            setPercentage(1.0f);
-        } else {
-            // Rule runs on each table.
-            for (Table table : tables) {
-                pool.submit(new IteratorCallable(table));
-            }
-
-            for (Table table : tables) {
-                blockSize += pool.take().get();
+                Future<Integer> future = pool.take();
+                blockSize = future.get();
                 count ++;
-                setPercentage(count / tables.size());
-            }
-        }
+                setPercentage(1.0f);
+            } else {
+                // Rule runs on each table.
+                for (Table table : tables) {
+                    pool.submit(new IteratorCallable(table));
+                }
 
-        // recycle the collection when dealing with pairs. This is mainly used to remove refs.
-        if (rule.supportTwoInputs()) {
-            for (Table table : tables) {
-                table.recycle();
-            }
-        }
+                for (Table table : tables) {
+                    Future<Integer> future = pool.take();
+                    blockSize += future.get();
+                    count ++;
+                    setPercentage(count / tables.size());
 
-        // mark the end of the iteration output
-        IteratorStream.markEnd();
+                    // purge the Callable to reclaim the memory.
+                    ((ThreadPoolExecutor)executor).purge();
+                }
+            }
+
+            // recycle the collection when dealing with pairs. This is mainly used to remove refs.
+            if (rule.supportTwoInputs()) {
+                for (Table table : tables) {
+                    table.recycle();
+                }
+            }
+
+            // mark the end of the iteration output
+            IteratorStream.markEnd();
+        } catch (InterruptedException ex) {
+            tracer.err("Iterator is interrupted.", ex);
+        } catch (ExecutionException ex) {
+            tracer.err("Iterator execution failed.", ex);
+        } finally {
+            executor.shutdown();
+        }
 
         Tracer.putStatsEntry(
             Tracer.StatType.IteratorTime,
@@ -134,16 +148,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         Tracer.putStatsEntry(Tracer.StatType.IterationCount, blockSize);
         stopwatch.stop();
         return true;
-    }
-
-    /**
-     * Finalize the Iterator.
-     */
-    @Override
-    public void finalize() {
-        if (!threadExecutors.isShutdown()) {
-            threadExecutors.shutdownNow();
-        }
     }
 
     /**
