@@ -54,7 +54,7 @@ public class MemoryTableTest {
                     values.add(token.getBytes(Charset.forName("UTF-8")));
                 }
 
-                testTuples.add(new Tuple(i + 1, schema, values));
+                testTuples.add(new Tuple(i + 1, schema, Lists.newArrayList(values)));
                 values.clear();
             }
         } catch (IOException e) {

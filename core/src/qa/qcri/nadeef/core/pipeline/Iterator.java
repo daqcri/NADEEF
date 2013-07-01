@@ -21,6 +21,7 @@ import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.concurrent.*;
 
@@ -43,17 +44,13 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     /**
      * IteratorCallable is a {@link Callable} class for iteration operation on each block.
      */
-    class IteratorCallable implements Callable<Integer> {
+    class IteratorCallable<T> implements Callable<Integer> {
         private IteratorStream<E> iteratorStream;
-        private Collection<Table> tables;
+        private WeakReference<T> ref;
 
-        IteratorCallable(Collection<Table> tables) {
-            this.tables = tables;
+        IteratorCallable(T tables) {
+            ref = new WeakReference<>(tables);
             iteratorStream = new IteratorStream<>();
-        }
-
-        IteratorCallable(Table table) {
-            this(Lists.newArrayList(table));
         }
 
         /**
@@ -65,15 +62,25 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         @Override
         @SuppressWarnings("unchecked")
         public Integer call() throws Exception {
-            rule.iterator(tables, iteratorStream);
+            T instance = ref.get();
+            if (instance == null) {
+                throw new RuntimeException("Tables have been freed.");
+            }
+
+            Collection<Table> value;
+            if (Table.class.isAssignableFrom(instance.getClass())) {
+                value = Lists.newArrayList((Table)instance);
+            } else {
+                value = (Collection<Table>)instance;
+            }
+            rule.iterator(value, iteratorStream);
             iteratorStream.flush();
 
             // return the tuple total count
             int size = 0;
-            for (Table table : tables) {
+            for (Table table : value) {
                 size += table.size();
             }
-            tables = null;
             return size;
         }
     }
@@ -92,7 +99,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         int count = 0;
         Tracer tracer = Tracer.getTracer(Iterator.class);
         ThreadFactory factory =
-                new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
+            new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
         ExecutorCompletionService pool = new ExecutorCompletionService<Integer>(executor);
 

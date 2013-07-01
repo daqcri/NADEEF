@@ -56,7 +56,9 @@ public class Schema {
         }
 
         public Schema build() {
-            return new Schema(tableName, (Column[])columns.toArray());
+            Column[] result = new Column[columns.size()];
+            columns.toArray(result);
+            return new Schema(tableName, result);
         }
     }
     //</editor-fold>
@@ -156,12 +158,13 @@ public class Schema {
      */
     void remove(Column column) {
         int result = get(column);
-        Column[] ncolumns = new Column[columns.length - 1];
+        List<Column> tmp = Lists.newArrayList();
         for (int i = 0; i < columns.length; i ++) {
             if (i != result) {
-                ncolumns[i] = columns[i];
+                tmp.add(columns[i]);
             }
         }
-        columns = ncolumns;
+        columns = new Column[tmp.size()];
+        tmp.toArray(columns);
     }
 }
