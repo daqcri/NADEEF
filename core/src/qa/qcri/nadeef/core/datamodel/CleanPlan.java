@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means “Clean” in Arabic
+ * NADEEF means â€œCleanâ€� in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -13,21 +13,6 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.tools.*;
-
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
@@ -35,6 +20,31 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import qa.qcri.nadeef.core.exception.DBNotSupportedException;
+import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
+import qa.qcri.nadeef.core.exception.InvalidRuleException;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.DBMetaDataTool;
+import qa.qcri.nadeef.core.util.IDialect;
+import qa.qcri.nadeef.core.util.MySQLDialect;
+import qa.qcri.nadeef.core.util.PostgresDialect;
+import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SQLDialect;
+import qa.qcri.nadeef.tools.Tracer;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 
 /**
  * Nadeef cleaning plan.
@@ -74,6 +84,7 @@ public class CleanPlan {
         List<Schema> schemas = Lists.newArrayList();
 
         Connection conn = null;
+        Connection sourceConnection = null;
         try {
             // ----------------------------------------
             // parsing the source config
@@ -89,7 +100,8 @@ public class CleanPlan {
                 break;
             default:
                 // TODO: support different type of DB.
-                SQLDialect sqlDialect = SQLDialect.POSTGRES;
+            	
+                SQLDialect sqlDialect = CommonTools.getSQLDialect(type);
                 DBConfig.Builder builder = new DBConfig.Builder();
                 dbConfig =
                     builder.username((String) src.get("username"))
@@ -100,7 +112,7 @@ public class CleanPlan {
 
             // Initialize the connection pool
             DBConnectionFactory.initializeSource(dbConfig);
-
+            sourceConnection = DBConnectionFactory.getSourceConnection();
             // ----------------------------------------
             // parsing the rules
             // ----------------------------------------
@@ -172,14 +184,15 @@ public class CleanPlan {
                                 );
                             copiedTables.add(targetTableNames.get(j));
                             targetTableNames.set(j, tableName);
-                            schemas.add(DBMetaDataTool.getSchema(tableName));
+                            schemas.add(DBMetaDataTool.getSchema(sourceConnection,tableName));
                         }
                     }
                 } else {
+
                     // working with database
                     List<String> sourceTableNames = (List<String>) ruleObj.get("table");
                     for (String tableName : sourceTableNames) {
-                        if (!DBMetaDataTool.isTableExist(tableName)) {
+                        if (!DBMetaDataTool.isTableExist(sourceConnection,tableName)) {
                             throw new InvalidCleanPlanException(
                                 "The specified table " +
                                 tableName +
@@ -204,16 +217,26 @@ public class CleanPlan {
                         sourceTableNames.size() <= 2 &&
                         sourceTableNames.size() >= 1,
                         "Invalid Rule property, rule needs to have one or two tables.");
+                    
 
                     for (int j = 0; j < sourceTableNames.size(); j++) {
                         if (!copiedTables.contains(targetTableNames.get(j))) {
+                        	IDialect dialect = null;
+                            if (dbConfig.getDialect() == SQLDialect.MYSQL)
+                            	dialect = new MySQLDialect();
+                            else if (dbConfig.getDialect() == SQLDialect.POSTGRES)
+                            	dialect = new PostgresDialect();
+                            else
+                            	throw new DBNotSupportedException(dialect+"is not supported for now");
                             DBMetaDataTool.copy(
+                            	sourceConnection,
+                            	dialect,
                                 sourceTableNames.get(j),
                                 targetTableNames.get(j)
                             );
 
                             schemas.add(
-                                DBMetaDataTool.getSchema(
+                                DBMetaDataTool.getSchema(sourceConnection,
                                     targetTableNames.get(j)
                                 )
                             );
@@ -278,6 +301,12 @@ public class CleanPlan {
             if (conn != null) {
                 try {
                     conn.close();
+                } catch (SQLException ex) {
+                }
+            }
+            if (sourceConnection != null) {
+                try {
+                	sourceConnection.close();
                 } catch (SQLException ex) {
                 }
             }

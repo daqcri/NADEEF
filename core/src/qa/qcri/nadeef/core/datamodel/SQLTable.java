@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means “Clean” in Arabic
+ * NADEEF means â€œCleanâ€� in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -167,10 +167,11 @@ public class SQLTable extends Table {
             stat = conn.createStatement();
             stat.setFetchSize(4096);
 
+            
+            String indexTemplate = "CREATE INDEX IDX_{TABLENAME}_{COLUMNNAME} ON {TABLENAME} ({COLUMNNAME})";
             // create the index.
             if (indexName == null) {
-                String indexSQL =
-                    "CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")";
+                String indexSQL = indexTemplate.replaceAll("\\{TABLENAME\\}", tableName).replaceAll("\\{COLUMNNAME\\}", column.getColumnName());
                 stat.executeUpdate(indexSQL);
                 conn.commit();
             }
@@ -199,6 +200,15 @@ public class SQLTable extends Table {
             // as a backup plan we try to use in-memory solution.
             result = super.groupOn(column);
         } finally {
+        	
+        	String dropIndexTemplate = "DROP INDEX IDX_{TABLENAME}_{COLUMNNAME}";
+        	String dropIndex = dropIndexTemplate.replaceAll("\\{TABLENAME\\}", tableName).replaceAll("\\{COLUMNNAME\\}", column.getColumnName());
+        	try{
+        		stat.executeUpdate(dropIndex);
+        		conn.commit();
+        	}catch (SQLException exc){
+        		
+        	}
             if (distinctResult != null) {
                 try {
                     distinctResult.close();
