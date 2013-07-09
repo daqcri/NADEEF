@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means “Clean” in Arabic
+ * NADEEF means â€œCleanâ€� in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -231,12 +231,12 @@ public class Console {
         }
 
         String tableName = splits[1];
-        if (!DBMetaDataTool.isTableExist(tableName)) {
+        if (!DBMetaDataTool.isTableExist(DBConnectionFactory.getSourceConnection(),tableName)) {
             console.println("Unknown table names.");
             return;
         }
 
-        Schema schema = DBMetaDataTool.getSchema(tableName);
+        Schema schema = DBMetaDataTool.getSchema(DBConnectionFactory.getSourceConnection(),tableName);
         Column[] columns = schema.getColumns();
         for (Column column : columns) {
             if (column.getColumnName().equals("tid")) {
@@ -258,7 +258,7 @@ public class Console {
         String value = cmdLine.substring(index);
         RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
         String tableName = (String) cleanPlans.get(0).getRule().getTableNames().get(0);
-        Schema schema = DBMetaDataTool.getSchema(tableName);
+        Schema schema = DBMetaDataTool.getSchema(DBConnectionFactory.getSourceConnection(),tableName);
         Collection<Rule> rules =
             ruleBuilder
                 .name("UserRule" + CommonTools.toHashCode(value))

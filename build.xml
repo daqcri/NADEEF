@@ -75,7 +75,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="console/src"
                destdir="${build.dir}"
                classpath="${vendor.dir};"
-               classpathref="vendors.jars"/>
+               classpathref="vendors.jars"
+			   encoding="UTF8"/>
     </target>
 
     <target name="core" depends="tools">
@@ -86,7 +87,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                debug="on"
                srcdir="core/src"
                destdir="${build.dir}"
-               classpathref="vendors.jars">
+               classpathref="vendors.jars"
+			   encoding="UTF8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
     </target>
@@ -98,7 +100,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                fork="true"
                srcdir="ruleext/src"
                destdir="${build.dir}"
-               classpathref="vendors.jars">
+               classpathref="vendors.jars"
+			   encoding="UTF8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
         <copy todir="${build.dir}/qa/qcri/nadeef/ruleext/template">
@@ -114,7 +117,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="tools/src"
                destdir="${build.dir}"
                classpath="${vendor.dir}"
-               classpathref="vendors.jars">
+               classpathref="vendors.jars"
+			   encoding="UTF8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
     </target>
@@ -126,7 +130,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="test/src"
                destdir="${test.dir}"
                classpath="${build.dir}"
-               classpathref="vendors.jars"/>
+               classpathref="vendors.jars"
+			   encoding="UTF8"/>
     </target>
 
     <!-- Doc -->

@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means “Clean” in Arabic
+ * NADEEF means â€œCleanâ€� in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -81,10 +81,10 @@ public class CleanPlanTest {
             CleanPlan cleanPlan = cleanPlans.get(0);
 
             DBConfig source = cleanPlan.getSourceDBConfig();
-            Assert.assertEquals("jdbc:postgresql://localhost/unittest", source.getUrl());
+            Assert.assertEquals("jdbc:mysql://localhost/unittest", source.getUrl());
             Assert.assertEquals("tester", source.getUserName());
             Assert.assertEquals("tester", source.getPassword());
-            Assert.assertEquals(SQLDialect.POSTGRES, source.getDialect());
+            Assert.assertEquals(SQLDialect.MYSQL, source.getDialect());
             Rule rule = cleanPlan.getRule();
             List<String> tableNames = rule.getTableNames();
             Assert.assertEquals(1, tableNames.size());
