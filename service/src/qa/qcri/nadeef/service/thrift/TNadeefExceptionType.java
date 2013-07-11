@@ -11,14 +11,14 @@ import java.util.Map;
 import java.util.HashMap;
 import org.apache.thrift.TEnum;
 
-public enum TResultType implements org.apache.thrift.TEnum {
-  OK(0),
+public enum TNadeefExceptionType implements org.apache.thrift.TEnum {
+  UNKNOWN(0),
   COMPILE_ERROR(1),
   INVALID_RULE(2);
 
   private final int value;
 
-  private TResultType(int value) {
+  private TNadeefExceptionType(int value) {
     this.value = value;
   }
 
@@ -33,10 +33,10 @@ public enum TResultType implements org.apache.thrift.TEnum {
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
    * @return null if the value is not found.
    */
-  public static TResultType findByValue(int value) { 
+  public static TNadeefExceptionType findByValue(int value) { 
     switch (value) {
       case 0:
-        return OK;
+        return UNKNOWN;
       case 1:
         return COMPILE_ERROR;
       case 2:
