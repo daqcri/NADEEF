@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means "Clean" in Arabic
+ * NADEEF means “Clean” in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -13,6 +13,11 @@
 
 package qa.qcri.nadeef.tools;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.hash.Hashing;
+
+import javax.tools.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,17 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.hash.Hashing;
 
 /**
  * Common helper tools
@@ -91,13 +85,9 @@ public final class CommonTools {
     public static String buildJdbcUrl(String url, SQLDialect dialect) {
         StringBuilder jdbcUrl = new StringBuilder("jdbc:");
         switch (dialect) {
-            case MYSQL:
-            	jdbcUrl.append("mysql");
-            	break;
             default:
             case POSTGRES:
                 jdbcUrl.append("postgresql");
-                break;
         }
 
         jdbcUrl.append("://");
@@ -112,28 +102,12 @@ public final class CommonTools {
      */
     public static SQLDialect getSQLDialect(String type) {
         switch (type) {
+            default:
             case "postgres":
                 return SQLDialect.POSTGRES;
-            case "mysql":
-            	return SQLDialect.MYSQL;
         }
-        return SQLDialect.POSTGRES;
     }
 
-    /**
-     * Gets the mapped drive class from SQLDialect.
-     * @param sqlDialect type SQLDialect.
-     * @return driver class string.
-     */
-    public static String getDriveClass(SQLDialect sqlDialect) {
-        if (SQLDialect.POSTGRES == sqlDialect){
-            return "org.postgresql.Driver";
-        }else if (SQLDialect.MYSQL == sqlDialect){
-            return "com.mysql.jdbc.Driver";
-        }
-        return "org.postgresql.Driver";
-    }
-    
     /**
      * Loads a class in runtime using default classpath.
      * @param className class name.

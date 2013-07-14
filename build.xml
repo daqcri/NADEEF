@@ -1,0 +1,181 @@
+<!--
+QCRI, NADEEF LICENSE
+NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+NADEEF means “Clean” in Arabic
+
+Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+
+NADEEF has patent pending nevertheless the following is granted.
+NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+-->
+<project name="Nadeef Build" default="all" basedir=".">
+
+    <!-- Common property values -->
+    <property name="project.name" value="nadeef" />
+    <property name="build.root" value="out" />
+    <property name="build.dir" value="${build.root}/production" />
+    <property name="test.dir" value="${build.root}/test" />
+    <property name="testresult.dir" value="${build.root}/testresult" />
+    <property name="vendor.dir" value="vendors" />
+    <property name="console.class" value="qa.qcri.console.Console" />
+
+    <!-- Common used paths -->
+    <path id="vendors.jars">
+        <fileset dir="${vendor.dir}" includes="*.jar" />
+    </path>
+
+    <!-- JDK 1.7 check -->
+    <condition property="version1.7">
+        <equals arg1="${ant.java.version}" arg2="1.7" />
+    </condition>
+
+    <!-- Targets -->
+    <target name="clean">
+        <delete dir="${build.root}" includeemptydirs="true" />
+    </target>
+
+    <target name="all"
+            description="Clean build on all the NADEEF files and creates the JAR file."
+            depends="clean, test, service, jar">
+     </target>
+
+    <target name="compile" 
+            description="Compile all the NADEEF components"
+            depends="test">
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${build.root}/bin" />
+        <manifestclasspath property="jar.classpath" jarfile="${build.root}/bin/${project.name}.jar">
+            <classpath>
+                <fileset dir="${vendor.dir}" includes="*.jar" />
+            </classpath>
+        </manifestclasspath>
+
+        <jar destfile="${build.root}/bin/${project.name}.jar">
+            <fileset dir="${build.dir}" includes="**/*" />
+            <manifest>
+                <attribute name="Main-Class" value="${console.class}" />
+                <attribute name="Class-Path" value="${jar.classpath}" />
+            </manifest>
+        </jar>
+        <copy todir="${build.root}/bin">
+            <fileset dir="${vendor.dir}" />
+        </copy>
+        <copy file="LICENSE" todir="${build.root}/bin" />
+    </target>
+
+    <!-- Targets per component -->
+    <target name="console" depends="core">
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               srcdir="console/src"
+               destdir="${build.dir}"
+               classpath="${vendor.dir};"
+               classpathref="vendors.jars"/>
+    </target>
+
+    <target name="core" depends="tools">
+        <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               debug="on"
+               srcdir="core/src"
+               destdir="${build.dir}"
+               classpathref="vendors.jars">
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+    </target>
+
+    <target name="ruleext" depends="core">
+        <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               srcdir="ruleext/src"
+               destdir="${build.dir}"
+               classpathref="vendors.jars">
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+        <copy todir="${build.dir}/qa/qcri/nadeef/ruleext/template">
+            <fileset dir="ruleext/src/qa/qcri/nadeef/ruleext/template" />
+        </copy>
+    </target>
+
+    <target name="tools">
+        <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               srcdir="tools/src"
+               destdir="${build.dir}"
+               classpath="${vendor.dir}"
+               classpathref="vendors.jars">
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+    </target>
+
+    <target name="service">
+        <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               srcdir="service/src"
+               destdir="${build.dir}"
+               classpath="${vendor.dir}"
+               classpathref="vendors.jars">
+        </javac>
+    </target>
+
+    <target name="test" depends="core, console, tools, ruleext, service">
+        <mkdir dir="${test.dir}" />
+        <javac includeantruntime="false"
+               debug="on"
+               srcdir="test/src"
+               destdir="${test.dir}"
+               classpath="${build.dir}"
+               classpathref="vendors.jars"/>
+    </target>
+
+    <!-- Doc -->
+    <target name="doc">
+        <mkdir dir="${build.root}/doc" />
+        <javadoc
+            sourcepath="core/src;tools/src"
+            classpathref="vendors.jars"
+            destdir="${build.root}/doc"
+            header="NADEEF Core"
+            packagenames=
+                    "qa.qcri.nadeef.core.datamodel,
+                     qa.qcri.nadeef.core.exception,
+                     qa.qcri.nadeef.core.pipeline,
+                     qa.qcri.nadeef.core.util,
+                     qa.qcri.nadeef.tools,
+                     qa.qcri.nadeef.service"
+            doctitle="NADEEF Core">
+        </javadoc>
+    </target>
+
+    <!-- JUnit -->
+    <target name="unittest" depends="compile">
+        <mkdir dir="${build.root}/testresult" />
+        <junit printsummary="yes">
+            <classpath>
+                <fileset dir="${build.root}" includes="nadeef*.jar" />
+                <fileset dir="${vendor.dir}" includes="junit-4.11.jar"/>
+            </classpath>
+            <formatter type="plain" />
+            <formatter type="xml" />
+
+            <batchtest fork="no" todir="${build.root}/testresult">
+                <fileset dir="${build.dir}">
+                    <include name="**/*Test*.class" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+</project>

@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means "Clean" in Arabic
+ * NADEEF means “Clean” in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -13,34 +13,27 @@
 
 package qa.qcri.nadeef.core.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import org.apache.commons.dbcp.BasicDataSource;
+import com.google.common.base.Preconditions;
 import org.postgresql.ds.PGPoolingDataSource;
-
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
-import com.google.common.base.Preconditions;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Database JDBC Connection Factory class.
  */
 public class DBConnectionFactory {
     private static final int MAX_CONNECTION = Runtime.getRuntime().availableProcessors() * 2;
-	private static final int INITIAL_CONNECTION = Runtime.getRuntime().availableProcessors;
     private static PGPoolingDataSource nadeefPool;
-    private static BasicDataSource sourcePool;
+    private static PGPoolingDataSource sourcePool;
     private static DBConfig dbConfig;
     private static Tracer tracer = Tracer.getTracer(DBConnectionFactory.class);
 
-    
-    
     // <editor-fold desc="Public methods">
 
     /**
@@ -66,11 +59,7 @@ public class DBConnectionFactory {
      */
     public synchronized static void shutdown() {
         if (sourcePool != null) {
-            try {
-				sourcePool.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+            sourcePool.close();
         }
 
         if (nadeefPool != null) {
@@ -80,7 +69,6 @@ public class DBConnectionFactory {
         nadeefPool = null;
     }
 
-    
     /**
      * Initialize the source database connection pool.
      * @param sourceConfig source config.
@@ -92,22 +80,17 @@ public class DBConnectionFactory {
         }
 
         if (sourcePool != null) {
-            try {
-				sourcePool.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+            sourcePool.close();
         }
 
         dbConfig = sourceConfig;
-        sourcePool = new BasicDataSource();
-        sourcePool.setUrl(sourceConfig.getUrl());
-        sourcePool.setDriverClassName(CommonTools.getDriveClass(sourceConfig.getDialect()));
-        sourcePool.setUsername(sourceConfig.getUserName());
+        sourcePool = new PGPoolingDataSource();
+        sourcePool.setDataSourceName("source pool");
+        sourcePool.setDatabaseName(sourceConfig.getDatabaseName());
+        sourcePool.setServerName(sourceConfig.getServerName());
+        sourcePool.setUser(sourceConfig.getUserName());
         sourcePool.setPassword(sourceConfig.getPassword());
-        sourcePool.setInitialSize(INITIAL_CONNECTION);
-        sourcePool.setMaxActive(MAX_CONNECTION);
-        sourcePool.setMaxIdle(MAX_CONNECTION);
+        sourcePool.setMaxConnections(MAX_CONNECTION);
     }
 
     /**
@@ -145,8 +128,6 @@ public class DBConnectionFactory {
         switch (dialect) {
             case POSTGRES:
                 return "org.postgresql.Driver";
-            case MYSQL:
-            	return "com.mysql.jdbc.Driver";
             default:
                 throw new UnsupportedOperationException();
         }
@@ -158,7 +139,6 @@ public class DBConnectionFactory {
      * @param url Database URL.
      * @param userName login user name.
      * @param password Login user password.
-     * @depreciated
      * @return JDBC connection.
      */
     public static Connection createConnection(
@@ -177,7 +157,6 @@ public class DBConnectionFactory {
     /**
      * Get the JDBC connection based on the dialect.
      * @param dbConfig dbconfig.
-     * @depreciated
      * @return JDBC connection.
      */
     public static Connection createConnection(DBConfig dbConfig)

@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means "Clean" in Arabic
+ * NADEEF means “Clean” in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -13,20 +13,11 @@
 
 package qa.qcri.nadeef.core.util;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.core.exception.DBNotSupportedException;
-import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.sql.*;
-
 
 /**
  * An utility class for getting meta data from database.
@@ -40,16 +31,14 @@ public final class DBMetaDataTool {
      */
     public static void copy(
         DBConfig dbConfig,
-    	Connection conn,
-    	IDialect dialect,
         String sourceTableName,
         String targetTableName
     ) throws
         ClassNotFoundException,
         SQLException,
         InstantiationException,
-        IllegalAccessException,
-        DBNotSupportedException{
+        IllegalAccessException {
+        Connection conn = null;
         Statement stat = null;
         ResultSet resultSet = null;
         try {
@@ -71,9 +60,6 @@ public final class DBMetaDataTool {
                 stat.execute("alter table " + targetTableName + " add column tid serial primary key");
             }
             conn.commit();
-            dialect.dropTable(conn, targetTableName);
-        	dialect.copy(conn, sourceTableName, targetTableName);
-            dialect.addColumnAsSerialPrimaryKeyIfNotExists(conn, targetTableName, "tid");
         } finally {
             if (resultSet != null) {
                 resultSet.close();
@@ -82,18 +68,21 @@ public final class DBMetaDataTool {
             if (stat != null) {
                 stat.close();
             }
+
+            if (conn != null) {
+                conn.close();
+            }
         }
     }
 
     /**
-     * Gets the table schema given a database configuration.
-     * @param conn database connection.
+     * Gets the table schema from source database.
      * @param tableName table name.
      * @return the table schema given a database configuration.
      */
-    public static Schema getSchema(Connection conn,String tableName)
+    public static Schema getSchema(DBConfig config, String tableName)
         throws Exception {
-        if (!isTableExist(conn,tableName)) {
+        if (!isTableExist(config, tableName)) {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
         SQLTable sqlTupleCollection =
@@ -108,6 +97,7 @@ public final class DBMetaDataTool {
      */
     public static boolean isTableExist(DBConfig dbConfig, String tableName)
         throws Exception {
+        Connection conn = null;
         ResultSet resultSet = null;
         try {
             conn = DBConnectionFactory.createConnection(dbConfig);
@@ -117,6 +107,9 @@ public final class DBMetaDataTool {
         } finally {
             if (resultSet != null) {
                 resultSet.close();
+            }
+            if (conn != null) {
+                conn.close();
             }
         }
     }
