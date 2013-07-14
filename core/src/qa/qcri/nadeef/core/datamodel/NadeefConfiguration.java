@@ -171,8 +171,9 @@ public class NadeefConfiguration {
      * @return RuleBuilder instance.
      */
     public static RuleBuilder tryGetRuleBuilder(String typeName) {
-        if (ruleExtension.containsKey(typeName)) {
-            return ruleExtension.get(typeName);
+        String typeName_ = typeName.toLowerCase();
+        if (ruleExtension.containsKey(typeName_)) {
+            return ruleExtension.get(typeName_);
         }
         return null;
     }

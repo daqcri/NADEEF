@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if ! [ -n "$NADEEF_HOME" ]; then 
-    echo "NADEEF_ROOT is not set."
+    echo "NADEEF_HOME is not set."
     exit 1
 fi
     

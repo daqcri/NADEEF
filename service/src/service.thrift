@@ -59,7 +59,12 @@ service TNadeefService {
     string repair(1: TRule rule, 2: string tableName) throws (1:TNadeefRemoteException re),
 
     /**
-     * Gets the job status.
+     * Gets status of a specific job.
      */
-    TJobStatus getJobStatus(1: string key)
+    TJobStatus getJobStatus(1: string key),
+
+    /**
+     * Gets all job status.
+     */
+    list<TJobStatus> getAllJobStatus()
 }

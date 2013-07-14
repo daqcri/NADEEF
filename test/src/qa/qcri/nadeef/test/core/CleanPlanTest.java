@@ -90,6 +90,7 @@ public class CleanPlanTest {
             Assert.assertEquals(1, tableNames.size());
             Assert.assertEquals("location_copy", tableNames.get(0));
         } catch (Exception ex) {
+            ex.printStackTrace();
             Assert.fail(ex.getMessage());
         }
     }

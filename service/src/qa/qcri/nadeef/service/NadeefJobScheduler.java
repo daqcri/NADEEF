@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.service;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
@@ -25,6 +26,9 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -35,6 +39,7 @@ public class NadeefJobScheduler {
     private static NadeefJobScheduler instance;
     private static ListeningExecutorService service;
     private static ConcurrentMap<String, NadeefJob> runningCleaner;
+    private static ConcurrentMap<String, String> runningRules;
     private static String hostname;
     private static Tracer tracer = Tracer.getTracer(NadeefServiceHandler.class);
 
@@ -48,6 +53,7 @@ public class NadeefJobScheduler {
 
         service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(2));
         runningCleaner = Maps.newConcurrentMap();
+        runningRules = Maps.newConcurrentMap();
     }
 
     private enum JobType {
@@ -55,6 +61,9 @@ public class NadeefJobScheduler {
         Repair
     }
 
+    /**
+     * NadeefJob class represents a runnable job.
+     */
     private static class NadeefJob {
         NadeefJob(String key, CleanExecutor executor, JobType type) {
             this.key = key;
@@ -104,6 +113,7 @@ public class NadeefJobScheduler {
 
         public void onSuccess(String key) {
             runningCleaner.remove(key);
+            runningRules.remove(key);
         }
 
         @Override
@@ -137,12 +147,28 @@ public class NadeefJobScheduler {
     }
 
     /**
+     * Submits a list of jobs.
+     * @param cleanPlans clean plans.
+     * @return job key. Currently it only returns one key for all the plans.
+     */
+    // TODO: fix returning one key for all the plans.
+    public String submitDetectJob(Collection<CleanPlan> cleanPlans) {
+        String key = null;
+        for (CleanPlan cleanPlan : cleanPlans) {
+            key = submitDetectJob(cleanPlan);
+        }
+        return key;
+    }
+
+
+    /**
      * Submits a repair job.
      * @param cleanPlan clean plan.
      * @return job key.
      */
     public String submitRepairJob(CleanPlan cleanPlan) {
         NadeefJob job = createNewJob(cleanPlan, JobType.Repair);
+
         ListenableFuture<String> future =
             service.submit(new CleanExecutorCaller(new WeakReference<>(job)));
         Futures.addCallback(future, new CleanCallback());
@@ -164,12 +190,6 @@ public class NadeefJobScheduler {
 
         NadeefJob job = runningCleaner.get(key);
         CleanExecutor executor = job.executor;
-        // a hack to determine whether the job is executing or not.
-        if (!executor.isRunning()) {
-            result.setStatus(TJobStatusType.WAITING);
-            return result;
-        }
-
         double progressd = 0f;
         switch(job.type) {
             case Detect:
@@ -180,12 +200,39 @@ public class NadeefJobScheduler {
                 break;
         }
         result.setProgress((int)(progressd * 100));
+        // a hack to determine whether the job is executing or not.
+        if (executor.isRunning()) {
+            result.setStatus(TJobStatusType.RUNNING);
+        } else {
+            result.setStatus(TJobStatusType.WAITING);
+        }
+
+        return result;
+    }
+
+    /**
+     * Gets the job status of all running jobs.
+     * @return the job status of all running jobs.
+     */
+    public List<TJobStatus> getJobStatus() {
+        Set<String> keys = runningCleaner.keySet();
+        List<TJobStatus> result = Lists.newArrayList();
+        for (String key : keys) {
+            result.add(getJobStatus(key));
+        }
         return result;
     }
 
     private static synchronized NadeefJob createNewJob(CleanPlan cleanPlan, JobType type) {
         Preconditions.checkNotNull(cleanPlan);
+
+        String ruleName = cleanPlan.getRule().getRuleName();
+        if (runningRules.containsValue(ruleName)) {
+            tracer.info("Submitting duplicate rules.");
+        }
+
         String key;
+
         while (true) {
             key = hostname + "_" + UUID.randomUUID().toString();
             if (!runningCleaner.containsKey(key)) {
@@ -194,6 +241,7 @@ public class NadeefJobScheduler {
         }
         NadeefJob job = new NadeefJob(key, new CleanExecutor(cleanPlan), type);
         runningCleaner.put(key, job);
+        runningRules.put(key, ruleName);
         return job;
     }
 }

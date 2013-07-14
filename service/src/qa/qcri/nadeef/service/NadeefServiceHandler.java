@@ -18,13 +18,18 @@ import org.apache.thrift.TException;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
+import qa.qcri.nadeef.core.util.DBMetaDataTool;
+import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.service.thrift.*;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.nio.file.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * NadeefServiceHandler handles request for NADEEF service.
@@ -49,6 +54,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         TRuleType type = rule.getType();
         String code = rule.getCode();
         String name = rule.getName();
+        boolean result = true;
         try {
             switch (type) {
                 case UDF:
@@ -65,19 +71,17 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                         StandardOpenOption.TRUNCATE_EXISTING
                     );
 
-                    if (CommonTools.compileFile(outputPath.toFile())) {
-                        return true;
-                    };
+                    if (!CommonTools.compileFile(outputPath.toFile())) {
+                        result = false;
+                    }
                     break;
-                case FD:
-                    break;
-                case CFD:
+                default:
                     break;
             }
         } catch (Exception ex) {
             tracer.err("Exception happens in verify.", ex);
         }
-        return false;
+        return result;
     }
 
     /**
@@ -92,19 +96,37 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         }
 
         try {
+            NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
+            DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
+            TRuleType type = rule.getType();
             String name = rule.getName();
-            Class udfClass = CommonTools.loadClass(name);
-            if (!Rule.class.isAssignableFrom(udfClass)) {
-                throw new InvalidRuleException("The specified class is not a Rule class.");
+            String key = null;
+            Rule ruleInstance;
+            CleanPlan cleanPlan;
+            switch (type) {
+                case UDF:
+                    Class udfClass = CommonTools.loadClass(name);
+                    if (!Rule.class.isAssignableFrom(udfClass)) {
+                        throw new InvalidRuleException("The specified class is not a Rule class.");
+                    }
+
+                    ruleInstance = (Rule) udfClass.newInstance();
+                    ruleInstance.initialize(rule.getName(), Lists.newArrayList(tableName));
+                    cleanPlan = new CleanPlan(config, ruleInstance);
+                    key = scheduler.submitDetectJob(cleanPlan);
+                    break;
+                default:
+                    Collection<Rule> rules = buildAbstractRule(rule, tableName);
+                    for (Rule rule_ : rules) {
+                        rule_.initialize(rule.getName(), Lists.newArrayList(tableName));
+                        cleanPlan = new CleanPlan(config, rule_);
+                        key = scheduler.submitDetectJob(cleanPlan);
+                    }
+                    break;
             }
 
-            Rule ruleInstance = (Rule) udfClass.newInstance();
-            ruleInstance.initialize(rule.getName(), Lists.newArrayList(tableName));
-            DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
-
-            NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
-            String key = scheduler.submitDetectJob(new CleanPlan(config, ruleInstance));
             return key;
+
         } catch (InvalidRuleException ex) {
             tracer.err("Exception in detect", ex);
             TNadeefRemoteException re = new TNadeefRemoteException();
@@ -167,5 +189,37 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
     public TJobStatus getJobStatus(String key) throws TException {
         NadeefJobScheduler jobScheduler = NadeefJobScheduler.getInstance();
         return jobScheduler.getJobStatus(key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<TJobStatus> getAllJobStatus() throws TException {
+        NadeefJobScheduler jobScheduler = NadeefJobScheduler.getInstance();
+        return jobScheduler.getJobStatus();
+    }
+
+    private Collection<Rule> buildAbstractRule(TRule tRule, String tableName) throws Exception{
+        TRuleType type = tRule.getType();
+        String code = tRule.getCode();
+        String name = tRule.getName();
+
+        RuleBuilder ruleBuilder = null;
+        Collection<Rule> result = null;
+        ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type.toString());
+        Schema schema = DBMetaDataTool.getSchema(NadeefConfiguration.getDbConfig(), tableName);
+        if (ruleBuilder != null) {
+            result = ruleBuilder
+                .name(name)
+                .schema(schema)
+                .table(tableName)
+                .value(code)
+                .build();
+        } else {
+            tracer.err("Unknown Rule type: " + type, null);
+            throw new IllegalArgumentException("Unknown rule type");
+        }
+        return result;
     }
 }

@@ -98,9 +98,6 @@ public class CleanPlan {
                         .build();
             }
 
-            // Initialize the connection pool
-            DBConnectionFactory.initializeSource(dbConfig);
-
             // ----------------------------------------
             // parsing the rules
             // ----------------------------------------
@@ -172,14 +169,14 @@ public class CleanPlan {
                                 );
                             copiedTables.add(targetTableNames.get(j));
                             targetTableNames.set(j, tableName);
-                            schemas.add(DBMetaDataTool.getSchema(tableName));
+                            schemas.add(DBMetaDataTool.getSchema(dbConfig,tableName));
                         }
                     }
                 } else {
                     // working with database
                     List<String> sourceTableNames = (List<String>) ruleObj.get("table");
                     for (String tableName : sourceTableNames) {
-                        if (!DBMetaDataTool.isTableExist(tableName)) {
+                        if (!DBMetaDataTool.isTableExist(dbConfig, tableName)) {
                             throw new InvalidCleanPlanException(
                                 "The specified table " +
                                 tableName +
@@ -208,14 +205,13 @@ public class CleanPlan {
                     for (int j = 0; j < sourceTableNames.size(); j++) {
                         if (!copiedTables.contains(targetTableNames.get(j))) {
                             DBMetaDataTool.copy(
+                                dbConfig,
                                 sourceTableNames.get(j),
                                 targetTableNames.get(j)
                             );
 
                             schemas.add(
-                                DBMetaDataTool.getSchema(
-                                    targetTableNames.get(j)
-                                )
+                                DBMetaDataTool.getSchema(dbConfig, targetTableNames.get(j))
                             );
                             copiedTables.add(targetTableNames.get(j));
                         }

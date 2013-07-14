@@ -28,7 +28,7 @@ import java.sql.SQLException;
  * Database JDBC Connection Factory class.
  */
 public class DBConnectionFactory {
-    private static final int MAX_CONNECTION = 20;
+    private static final int MAX_CONNECTION = Runtime.getRuntime().availableProcessors() * 2;
     private static PGPoolingDataSource nadeefPool;
     private static PGPoolingDataSource sourcePool;
     private static DBConfig dbConfig;

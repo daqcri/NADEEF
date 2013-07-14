@@ -32,6 +32,7 @@ public class NadeefService extends AbstractIdleService {
 
     @Override
     protected void startUp() throws Exception {
+        Bootstrap.start();
         NadeefServiceHandler handler = new NadeefServiceHandler();
         TNadeefService.Processor processor = new TNadeefService.Processor(handler);
         TServerTransport serverTransport = new TServerSocket(PORT);
@@ -45,6 +46,7 @@ public class NadeefService extends AbstractIdleService {
         if (server != null && server.isServing()) {
             server.stop();
         }
+        Bootstrap.shutdown();
     }
 
     /**
@@ -54,7 +56,6 @@ public class NadeefService extends AbstractIdleService {
     public static void main(String[] args) {
         NadeefService service = null;
         try {
-            Bootstrap.start();
             service = new NadeefService();
             service.start();
         } finally {

@@ -43,21 +43,45 @@ public class NadeefJobSchedulerTest {
 
     @Test
     public void test1() {
+        final int taskNum = 10;
+
         try {
             String hostname = InetAddress.getLocalHost().getHostName();
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
 
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
-            String key = scheduler.submitDetectJob(cleanPlan);
-            Assert.assertTrue(key.startsWith(hostname));
-            System.out.println("key: " + key);
-            Thread.sleep(100);
-            TJobStatus jobStatus = scheduler.getJobStatus(key);
-            Assert.assertEquals(TJobStatusType.RUNNING, jobStatus.getStatus());
-            System.out.println("progress: " + jobStatus.getProgress());
-            Thread.sleep(2000);
-            jobStatus = scheduler.getJobStatus(key);
-            Assert.assertEquals(TJobStatusType.NOTAVAILABLE, jobStatus.getStatus());
+            String[] keys = new String[taskNum];
+            TJobStatus[] jobStatuss = new TJobStatus[taskNum];
+            for (int i = 0; i < taskNum; i ++) {
+                String key = scheduler.submitDetectJob(cleanPlan);
+                keys[i] = key;
+                Assert.assertTrue(key.startsWith(hostname));
+            }
+
+            int nNotAvailable, nRunning, nWaiting;
+            Thread.sleep(3000);
+            while (true) {
+                nNotAvailable = nRunning = nWaiting = 0;
+                for (int i = 0; i < taskNum; i ++) {
+                    TJobStatus jobStatus = scheduler.getJobStatus(keys[i]);
+                    jobStatuss[i] = jobStatus;
+                    TJobStatusType type = jobStatus.getStatus();
+                    if (type == TJobStatusType.NOTAVAILABLE) {
+                        nNotAvailable ++;
+                    } else if (type == TJobStatusType.WAITING) {
+                        nWaiting ++;
+                    } else if (type == TJobStatusType.RUNNING) {
+                        nRunning ++;
+                    }
+                }
+                System.out.println(
+                    "NotAvailable: " + nNotAvailable + " Running: " + nRunning + " Waiting: " + nWaiting
+                );
+                Thread.sleep(1000);
+                if (nNotAvailable == taskNum) {
+                    break;
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail();

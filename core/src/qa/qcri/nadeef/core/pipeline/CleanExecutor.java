@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.Tracer;
 
 /**
@@ -50,6 +51,9 @@ public class CleanExecutor {
     public void initialize(CleanPlan cleanPlan) {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
+
+        // Initialize the connection pool
+        DBConnectionFactory.initializeSource(cleanPlan.getSourceDBConfig());
         assembleFlow();
     }
 

@@ -27,6 +27,7 @@ import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
@@ -231,12 +232,14 @@ public class Console {
         }
 
         String tableName = splits[1];
-        if (!DBMetaDataTool.isTableExist(tableName)) {
+
+        DBConfig dbconfig = cleanPlans.get(0).getSourceDBConfig();
+        if (!DBMetaDataTool.isTableExist(dbconfig, tableName)) {
             console.println("Unknown table names.");
             return;
         }
 
-        Schema schema = DBMetaDataTool.getSchema(tableName);
+        Schema schema = DBMetaDataTool.getSchema(dbconfig, tableName);
         Column[] columns = schema.getColumns();
         for (Column column : columns) {
             if (column.getColumnName().equals("tid")) {
@@ -257,8 +260,9 @@ public class Console {
         int index = cmdLine.indexOf("fd") + 2;
         String value = cmdLine.substring(index);
         RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
+        // TODO: only the first table is chosen.
         String tableName = (String) cleanPlans.get(0).getRule().getTableNames().get(0);
-        Schema schema = DBMetaDataTool.getSchema(tableName);
+        Schema schema = DBMetaDataTool.getSchema(cleanPlans.get(0).getSourceDBConfig(),tableName);
         Collection<Rule> rules =
             ruleBuilder
                 .name("UserRule" + CommonTools.toHashCode(value))

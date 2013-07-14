@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * SQLTable represents a {@link Table} which resides in a database.
  */
-public class    SQLTable extends Table {
+public class SQLTable extends Table {
     private DBConfig dbconfig;
     private String tableName;
     private SqlQueryBuilder sqlQuery;
@@ -40,6 +40,7 @@ public class    SQLTable extends Table {
     private String indexName = null;
 
     private static Tracer tracer = Tracer.getTracer(SQLTable.class);
+    private static Object indexLock = new Object();
 
     //<editor-fold desc="Constructor">
     /**
@@ -51,6 +52,8 @@ public class    SQLTable extends Table {
         super(tableName);
         this.dbconfig = Preconditions.checkNotNull(dbconfig);
         Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
+        // TODO: make it generic
+        DBConnectionFactory.initializeSource(dbconfig);
         this.tableName = tableName;
         this.sqlQuery = new SqlQueryBuilder();
         this.sqlQuery.addFrom(tableName);
@@ -161,18 +164,27 @@ public class    SQLTable extends Table {
         Connection conn = null;
         Statement stat = null;
         ResultSet distinctResult = null;
+        String indexName = null;
+
         try {
             conn = DBConnectionFactory.getSourceConnection();
             // create index ad-hoc.
             stat = conn.createStatement();
             stat.setFetchSize(4096);
 
-            // create the index.
-            if (indexName == null) {
-                String indexSQL =
-                    "CREATE INDEX ON " + tableName + "(" + column.getColumnName() + ")";
-                stat.executeUpdate(indexSQL);
-                conn.commit();
+            synchronized (indexLock) {
+                indexName =
+                    "IDX_" + tableName + "_" + column.getColumnName() + "_"
+                    + System.currentTimeMillis();
+
+                // create the index.
+                if (indexName == null) {
+                    String indexSQL =
+                        "CREATE INDEX " + indexName + " ON " +
+                        tableName + " (" + column.getColumnName() + ")";
+                    stat.executeUpdate(indexSQL);
+                    conn.commit();
+                }
             }
 
             String sql =
@@ -203,6 +215,14 @@ public class    SQLTable extends Table {
                 try {
                     distinctResult.close();
                 } catch (Exception ex) {}
+            }
+
+            if (indexName != null) {
+                try {
+                    stat.executeUpdate("DROP INDEX " + indexName);
+                } catch (Exception ex) {
+                    // ignore;
+                }
             }
 
             if (stat != null) {

@@ -27,7 +27,8 @@ import java.util.concurrent.TimeUnit;
 enum FlowState {
     Ready,
     Running,
-    Stopped
+    Stopped,
+    StoppedWithException
 }
 
 /**
@@ -188,14 +189,17 @@ public class Flow {
                             state = FlowState.Stopped;
                             throw
                                 new IllegalStateException(
-                                    "Flow stops at node: " + currentFlowPosition
+                                    "Flow stops at node: " +
+                                    nodeList.get(currentFlowPosition).getName()
                                 );
                         }
                     }
-                } catch (Exception ex) {
-                    tracer.err("Flow stops at node" + currentFlowPosition, ex);
-                } finally {
                     state = FlowState.Stopped;
+                } catch (Exception ex) {
+                    Node curNode = nodeList.get(currentFlowPosition);
+                    tracer.err("Flow stops at node " + curNode.getName(), ex);
+                    state = FlowState.StoppedWithException;
+                } finally {
                     elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
                     for (int i = 0; i < nodeList.size(); i ++) {
                         nodeList.get(i).interrupt();
@@ -242,7 +246,7 @@ public class Flow {
      * Returns <code>True</code> when the flow is still running.
      * @return <code>True</code> when the flow is still running.
      */
-    public boolean isRunning() {
+    public synchronized boolean isRunning() {
         return state == FlowState.Running;
     }
 
@@ -257,7 +261,7 @@ public class Flow {
     /**
      * Gets the current progress percentage.
      */
-    public double getPercentage() {
+    public synchronized double getPercentage() {
         int percentage = 0;
         double weightSum = 0;
         int weight;

@@ -15,6 +15,7 @@ package qa.qcri.nadeef.core.util;
 
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Schema;
+import qa.qcri.nadeef.tools.DBConfig;
 
 import java.sql.*;
 
@@ -23,11 +24,13 @@ import java.sql.*;
  */
 public final class DBMetaDataTool {
     /**
-     * Copies the table within the source database.
+     * Copies the table within the database.
+     * @param dbConfig working database config.
      * @param sourceTableName source table name.
      * @param targetTableName target table name.
      */
     public static void copy(
+        DBConfig dbConfig,
         String sourceTableName,
         String targetTableName
     ) throws
@@ -39,7 +42,7 @@ public final class DBMetaDataTool {
         Statement stat = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.getSourceConnection();
+            conn = DBConnectionFactory.createConnection(dbConfig);
             stat = conn.createStatement();
             stat.execute("DROP TABLE IF EXISTS " + targetTableName + " CASCADE");
             stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
@@ -73,17 +76,17 @@ public final class DBMetaDataTool {
     }
 
     /**
-     * Gets the table schema given a database configuration.
+     * Gets the table schema from source database.
      * @param tableName table name.
      * @return the table schema given a database configuration.
      */
-    public static Schema getSchema(String tableName)
+    public static Schema getSchema(DBConfig config, String tableName)
         throws Exception {
-        if (!isTableExist(tableName)) {
+        if (!isTableExist(config, tableName)) {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
         SQLTable sqlTupleCollection =
-            new SQLTable(tableName, DBConnectionFactory.getSourceDBConfig());
+            new SQLTable(tableName, config);
         return sqlTupleCollection.getSchema();
     }
 
@@ -92,12 +95,12 @@ public final class DBMetaDataTool {
      * @param tableName table name.
      * @return <code>True</code> when the given table exists in the connection.
      */
-    public static boolean isTableExist(String tableName)
+    public static boolean isTableExist(DBConfig dbConfig, String tableName)
         throws Exception {
         Connection conn = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.getSourceConnection();
+            conn = DBConnectionFactory.createConnection(dbConfig);
             DatabaseMetaData meta = conn.getMetaData();
             resultSet = meta.getTables(null, null, tableName, null);
             return resultSet.next();
