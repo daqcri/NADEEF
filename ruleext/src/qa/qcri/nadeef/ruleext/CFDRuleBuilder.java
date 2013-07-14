@@ -30,9 +30,6 @@ import com.google.common.collect.Lists;
 
 /**
  * Template engine for CFD rule.
- * 
- * @author Amr Ebaid (aebaid@qf.org.qa)
- * @author Si Yin (siyin@qf.org.qa)
  */
 public class CFDRuleBuilder extends RuleBuilder {
     protected List<String>                 lhs;
@@ -50,11 +47,14 @@ public class CFDRuleBuilder extends RuleBuilder {
     public Collection<File> compile() throws Exception {
         List<File> result = Lists.newArrayList();
         singleSTGroup = new STGroupFile(
-                "qa/qcri/nadeef/ruleext/template/SingleCFDRuleBuilder.stg",
-                '$', '$');
+            "qa/qcri/nadeef/ruleext/template/SingleCFDRuleBuilder.stg",
+            '$', '$'
+        );
+
         pairSTGroup = new STGroupFile(
-                "qa/qcri/nadeef/ruleext/template/PairCFDRuleBuilder.stg", '$',
-                '$');
+            "qa/qcri/nadeef/ruleext/template/PairCFDRuleBuilder.stg",
+            '$', '$'
+        );
 
         ST sst = singleSTGroup.getInstanceOf("cfdTemplate");
         ST pst = pairSTGroup.getInstanceOf("cfdTemplate");
@@ -65,8 +65,7 @@ public class CFDRuleBuilder extends RuleBuilder {
 
         for (int i = 0; i < filterExpressions.size(); i++) {
             List<SimpleExpression> filters = filterExpressions.get(i);
-            ST leftExpressionST = singleSTGroup
-                    .getInstanceOf("lExpressionItem");
+            ST leftExpressionST = singleSTGroup.getInstanceOf("lExpressionItem");
             List<String> leftExpressions = Lists.newArrayList();
 
             // Pass over items of lhs
@@ -90,10 +89,8 @@ public class CFDRuleBuilder extends RuleBuilder {
                 SimpleExpression expression = filters.get(j + lhs.size());
                 String eValue = expression.getValue();
                 if (!eValue.equals("_")) {
-                    ST rightExpressionST = singleSTGroup
-                            .getInstanceOf("rExpressionItem");
-                    rightExpressionST.add("columnName", expression.getLeft()
-                            .getFullColumnName());
+                    ST rightExpressionST = singleSTGroup.getInstanceOf("rExpressionItem");
+                    rightExpressionST.add("columnName", expression.getLeft().getFullColumnName());
                     rightExpressionST.add("value", eValue);
                     List<String> rightExpressions = Lists.newArrayList();
                     rightExpressions.add(rightExpressionST.render());
@@ -112,15 +109,15 @@ public class CFDRuleBuilder extends RuleBuilder {
 
                 if (Strings.isNullOrEmpty(originalRuleName)) {
                     ruleName = "DefaultCFD"
-                            + CommonTools.toHashCode(value.get(i + 1)) + "_"
-                            + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
-                            + "_" + i;
+                        + CommonTools.toHashCode(value.get(i + 1)) + "_"
+                        + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
+                        + "_" + i;
                 } else {
                     // remove all the empty spaces to make it a valid class
                     // name.
                     ruleName = originalRuleName.replace(" ", "") + "_"
-                            + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
-                            + "_" + i;
+                        + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
+                        + "_" + i;
                 }
 
                 targetST.add("CFDName", ruleName);

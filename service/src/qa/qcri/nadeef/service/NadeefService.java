@@ -20,6 +20,7 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.service.thrift.TNadeefService;
+import qa.qcri.nadeef.tools.Tracer;
 
 /**
  * Service container which starts / stops the NADEEF thrift service.
@@ -27,6 +28,7 @@ import qa.qcri.nadeef.service.thrift.TNadeefService;
 public class NadeefService extends AbstractIdleService {
     private TServer server;
     private final int PORT = 9091;
+    private static Tracer tracer = Tracer.getTracer(NadeefService.class);
 
     @Override
     protected void startUp() throws Exception {
@@ -34,7 +36,7 @@ public class NadeefService extends AbstractIdleService {
         TNadeefService.Processor processor = new TNadeefService.Processor(handler);
         TServerTransport serverTransport = new TServerSocket(PORT);
         server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor));
-        System.out.println("Starting NADEEF server @ " + PORT);
+        tracer.info("Starting NADEEF server @ " + PORT);
         server.serve();
     }
 

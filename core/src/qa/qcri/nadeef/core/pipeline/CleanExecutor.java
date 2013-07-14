@@ -54,6 +54,17 @@ public class CleanExecutor {
     }
 
     /**
+     * Returns <code>True</code> when the clean executor is running.
+     * @return <code>True</code> when the clean executor is running.
+     */
+    public synchronized boolean isRunning() {
+        return detectFlow.isRunning() ||
+               queryFlow.isRunning() ||
+               repairFlow.isRunning() ||
+               updateFlow.isRunning();
+    }
+
+    /**
      * CleanExecutor finalizer.
      */
     @Override

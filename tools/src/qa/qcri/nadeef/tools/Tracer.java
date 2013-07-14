@@ -190,6 +190,17 @@ public class Tracer {
         logger.error(message, ex);
     }
 
+    /**
+     * Print out error message.
+     * @param message error message.
+     */
+    public void err(String message) {
+        if (!Strings.isNullOrEmpty(message)) {
+            console.println("Error: " + message);
+        }
+        logger.error(message);
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Static methods">

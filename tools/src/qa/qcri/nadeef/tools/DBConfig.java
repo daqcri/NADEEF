@@ -62,14 +62,17 @@ public class DBConfig {
     //</editor-fold>
 
     //<editor-fold desc="Constructor">
+
     /**
-     * Constructor.
-     * @param userName DB user name.
-     * @param password DB password.
-     * @param url DB connection URL.
+     * DBConfig copy constructor.
+     * @param config config.
      */
-    public DBConfig(String userName, String password, String url) {
-        this(userName, password, url, SQLDialect.POSTGRES);
+    public DBConfig(DBConfig config) {
+        Preconditions.checkNotNull(config);
+        this.userName = config.userName;
+        this.password = config.password;
+        this.url = config.url;
+        this.dialect = config.dialect;
     }
 
     /**
@@ -81,9 +84,9 @@ public class DBConfig {
      */
     public DBConfig(String userName, String password, String url, SQLDialect dialect) {
         Preconditions.checkArgument(
-                !Strings.isNullOrEmpty(userName) &&
-                !Strings.isNullOrEmpty(password) &&
-                !Strings.isNullOrEmpty(url)
+            !Strings.isNullOrEmpty(userName) &&
+            !Strings.isNullOrEmpty(password) &&
+            !Strings.isNullOrEmpty(url)
         );
 
         this.userName = userName;

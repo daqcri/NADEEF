@@ -1,5 +1,10 @@
 #!/bin/bash
 
-mkdir -p ../../out/gen/py
-thrift -gen py -out ../../out/gen/py service.thrift
-thrift -gen java:private-members -out . service.thrift
+if ! [ -n "$NADEEF_HOME" ]; then 
+    echo "NADEEF_ROOT is not set."
+    exit 1
+fi
+    
+mkdir -p $NADEEF_HOME/out/gen/py
+thrift -gen py -out $NADEEF_HOME/out/gen/py $NADEEF_HOME/service/src/service.thrift
+thrift -gen java:private-members -out $NADEEF_HOME/service/src $NADEEF_HOME/service/src/service.thrift

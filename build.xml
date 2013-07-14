@@ -38,7 +38,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="all"
             description="Clean build on all the NADEEF files and creates the JAR file."
-            depends="clean, test, jar">
+            depends="clean, test, service, jar">
      </target>
 
     <target name="compile" 
@@ -119,7 +119,19 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
         </javac>
     </target>
 
-    <target name="test" depends="core, console, tools, ruleext">
+    <target name="service">
+        <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               srcdir="service/src"
+               destdir="${build.dir}"
+               classpath="${vendor.dir}"
+               classpathref="vendors.jars">
+        </javac>
+    </target>
+
+    <target name="test" depends="core, console, tools, ruleext, service">
         <mkdir dir="${test.dir}" />
         <javac includeantruntime="false"
                debug="on"
@@ -142,7 +154,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                      qa.qcri.nadeef.core.exception,
                      qa.qcri.nadeef.core.pipeline,
                      qa.qcri.nadeef.core.util,
-                     qa.qcri.nadeef.tools"
+                     qa.qcri.nadeef.tools,
+                     qa.qcri.nadeef.service"
             doctitle="NADEEF Core">
         </javadoc>
     </target>

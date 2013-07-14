@@ -40,6 +40,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="ruleext" />
+    <orderEntry type="module" module-name="service" />
   </component>
 </module>
 

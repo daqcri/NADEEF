@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * SQLTable represents a {@link Table} which resides in a database.
  */
-public class SQLTable extends Table {
+public class    SQLTable extends Table {
     private DBConfig dbconfig;
     private String tableName;
     private SqlQueryBuilder sqlQuery;
