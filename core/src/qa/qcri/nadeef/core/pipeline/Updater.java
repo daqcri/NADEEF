@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
@@ -20,6 +21,7 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -36,11 +38,13 @@ import java.util.HashMap;
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
     private static HashMap<Cell, String> updateHistory = Maps.newHashMap();
+    private DBConfig dbConfig;
 
     /**
      * Constructor.
      */
-    public Updater() {
+    public Updater(DBConfig dbConfig) {
+        this.dbConfig = Preconditions.checkNotNull(dbConfig);
         updateHistory.clear();
     }
 
@@ -61,7 +65,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         String oldValue;
 
         try {
-            conn = DBConnectionFactory.getSourceConnection();
+            conn = DBConnectionFactory.createConnection(dbConfig);
             stat = conn.createStatement();
             auditInsertStat =
                 conn.prepareStatement(

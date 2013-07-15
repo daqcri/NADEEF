@@ -7,10 +7,6 @@
 package qa.qcri.nadeef.service.thrift;
 
 
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.thrift.TEnum;
-
 public enum TResultType implements org.apache.thrift.TEnum {
   OK(0),
   COMPILE_ERROR(1),

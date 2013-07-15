@@ -33,6 +33,7 @@ public class NadeefService extends AbstractIdleService {
     @Override
     protected void startUp() throws Exception {
         Bootstrap.start();
+
         NadeefServiceHandler handler = new NadeefServiceHandler();
         TNadeefService.Processor processor = new TNadeefService.Processor(handler);
         TServerTransport serverTransport = new TServerSocket(PORT);
@@ -57,7 +58,11 @@ public class NadeefService extends AbstractIdleService {
         NadeefService service = null;
         try {
             service = new NadeefService();
-            service.start();
+            service.startAndWait();
+            Thread.sleep(100);
+        } catch (Exception ex) {
+            tracer.err("Nadeef service has exception underneath.", ex);
+            ex.printStackTrace();
         } finally {
             if (service != null) {
                 try {

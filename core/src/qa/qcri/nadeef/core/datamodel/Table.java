@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
@@ -40,6 +41,7 @@ public abstract class Table {
      * Constructor.
      */
     public Table(String tableName) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
         this.tableName = tableName;
     }
 

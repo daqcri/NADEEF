@@ -28,13 +28,28 @@ import java.sql.SQLException;
  * Database JDBC Connection Factory class.
  */
 public class DBConnectionFactory {
+    private static Tracer tracer = Tracer.getTracer(DBConnectionFactory.class);
     private static final int MAX_CONNECTION = Runtime.getRuntime().availableProcessors() * 2;
     private static PGPoolingDataSource nadeefPool;
-    private static PGPoolingDataSource sourcePool;
-    private static DBConfig dbConfig;
-    private static Tracer tracer = Tracer.getTracer(DBConnectionFactory.class);
+
+    private PGPoolingDataSource sourcePool;
+    private DBConfig sourceConfig;
+
+    private DBConnectionFactory(DBConfig dbConfig) {
+        tracer.info("Creating connection pool for " + dbConfig.getUrl());
+        initializeSource(dbConfig);
+    }
 
     // <editor-fold desc="Public methods">
+
+    /**
+     * Creates a connection pool factory.
+     * @param dbConfig dbConfig.
+     * @return connection factory instance.
+     */
+    public static DBConnectionFactory createDBConnectionFactory(DBConfig dbConfig) {
+        return new DBConnectionFactory(dbConfig);
+    }
 
     /**
      * Initialize NADEEF database connection pool.
@@ -58,39 +73,11 @@ public class DBConnectionFactory {
      * Shutdown the connection pool.
      */
     public synchronized static void shutdown() {
-        if (sourcePool != null) {
-            sourcePool.close();
-        }
-
         if (nadeefPool != null) {
             nadeefPool.close();
         }
-        sourcePool = null;
+
         nadeefPool = null;
-    }
-
-    /**
-     * Initialize the source database connection pool.
-     * @param sourceConfig source config.
-     */
-    public synchronized static void initializeSource(DBConfig sourceConfig) {
-        Preconditions.checkNotNull(sourceConfig);
-        if (dbConfig == sourceConfig || (dbConfig != null && dbConfig.equals(sourceConfig))) {
-            return;
-        }
-
-        if (sourcePool != null) {
-            sourcePool.close();
-        }
-
-        dbConfig = sourceConfig;
-        sourcePool = new PGPoolingDataSource();
-        sourcePool.setDataSourceName("source pool");
-        sourcePool.setDatabaseName(sourceConfig.getDatabaseName());
-        sourcePool.setServerName(sourceConfig.getServerName());
-        sourcePool.setUser(sourceConfig.getUserName());
-        sourcePool.setPassword(sourceConfig.getPassword());
-        sourcePool.setMaxConnections(MAX_CONNECTION);
     }
 
     /**
@@ -107,7 +94,7 @@ public class DBConnectionFactory {
      * Creates a new JDBC connection on the source DB from a clean plan.
      * @return new JDBC connection.
      */
-    public static Connection getSourceConnection() throws SQLException {
+    public Connection getSourceConnection() throws SQLException {
         Connection conn = sourcePool.getConnection();
         conn.setAutoCommit(false);
         return conn;
@@ -117,8 +104,45 @@ public class DBConnectionFactory {
      * Gets the source <code>DBConfig</code>.
      * @return <code>DBConfig</code>.
      */
-    public static DBConfig getSourceDBConfig() {
-        return dbConfig;
+    public DBConfig getSourceDBConfig() {
+        return sourceConfig;
+    }
+
+    /**
+     * Gets the JDBC connection based on the dialect.
+     * @param dialect Database type.
+     * @param url Database URL.
+     * @param userName login user name.
+     * @param password Login user password.
+     * @return JDBC connection.
+     */
+    public static Connection createConnection(
+            SQLDialect dialect,
+            String url,
+            String userName,
+            String password
+    ) throws
+        ClassNotFoundException,
+        SQLException,
+        IllegalAccessException,
+        InstantiationException {
+        String driverName = getDriverName(dialect);
+        Class.forName(driverName).newInstance();
+        Connection conn = DriverManager.getConnection(url, userName, password);
+        conn.setAutoCommit(false);
+        return conn;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void finalize() {
+        tracer.info("Closing a connection pool @" + sourcePool.getDataSourceName());
+        if (sourcePool != null) {
+            sourcePool.close();
+        }
+        sourcePool = null;
     }
 
     // </editor-fold>
@@ -131,27 +155,6 @@ public class DBConnectionFactory {
             default:
                 throw new UnsupportedOperationException();
         }
-    }
-
-    /**
-     * Get the JDBC connection based on the dialect.
-     * @param dialect Database type.
-     * @param url Database URL.
-     * @param userName login user name.
-     * @param password Login user password.
-     * @return JDBC connection.
-     */
-    public static Connection createConnection(
-        SQLDialect dialect,
-        String url,
-        String userName,
-        String password
-    ) throws ClassNotFoundException, SQLException, IllegalAccessException, InstantiationException {
-        String driverName = getDriverName(dialect);
-        Class.forName(driverName).newInstance();
-        Connection conn = DriverManager.getConnection(url, userName, password);
-        conn.setAutoCommit(false);
-        return conn;
     }
 
     /**
@@ -175,6 +178,29 @@ public class DBConnectionFactory {
             );
         conn.setAutoCommit(false);
         return conn;
+    }
+
+    /**
+     * Initialize the source database connection pool.
+     * @param dbConfig db source config.
+     */
+    private void initializeSource(DBConfig dbConfig) {
+        if (dbConfig == sourceConfig || (dbConfig != null && dbConfig.equals(sourceConfig))) {
+            return;
+        }
+
+        if (sourcePool != null) {
+            sourcePool.close();
+        }
+
+        sourceConfig = dbConfig;
+        sourcePool = new PGPoolingDataSource();
+        sourcePool.setDataSourceName(Long.toString(System.currentTimeMillis()));
+        sourcePool.setDatabaseName(sourceConfig.getDatabaseName());
+        sourcePool.setServerName(sourceConfig.getServerName());
+        sourcePool.setUser(sourceConfig.getUserName());
+        sourcePool.setPassword(sourceConfig.getPassword());
+        sourcePool.setMaxConnections(MAX_CONNECTION);
     }
 
     //</editor-fold>

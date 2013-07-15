@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
 public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatus._Fields>, java.io.Serializable, Cloneable {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("TJobStatus");
 
-  private static final org.apache.thrift.protocol.TField STATUS_FIELD_DESC = new org.apache.thrift.protocol.TField("status", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("progress", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField KEY_FIELD_DESC = new org.apache.thrift.protocol.TField("key", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField STATUS_FIELD_DESC = new org.apache.thrift.protocol.TField("status", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("progress", org.apache.thrift.protocol.TType.I32, (short)3);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -39,17 +40,19 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     schemes.put(TupleScheme.class, new TJobStatusTupleSchemeFactory());
   }
 
+  private String key; // required
   private TJobStatusType status; // required
   private int progress; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+    KEY((short)1, "key"),
     /**
      * 
      * @see TJobStatusType
      */
-    STATUS((short)1, "status"),
-    PROGRESS((short)2, "progress");
+    STATUS((short)2, "status"),
+    PROGRESS((short)3, "progress");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -64,9 +67,11 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // STATUS
+        case 1: // KEY
+          return KEY;
+        case 2: // STATUS
           return STATUS;
-        case 2: // PROGRESS
+        case 3: // PROGRESS
           return PROGRESS;
         default:
           return null;
@@ -113,6 +118,8 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+    tmpMap.put(_Fields.KEY, new org.apache.thrift.meta_data.FieldMetaData("key", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.STATUS, new org.apache.thrift.meta_data.FieldMetaData("status", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, TJobStatusType.class)));
     tmpMap.put(_Fields.PROGRESS, new org.apache.thrift.meta_data.FieldMetaData("progress", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -125,10 +132,12 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   }
 
   public TJobStatus(
+    String key,
     TJobStatusType status,
     int progress)
   {
     this();
+    this.key = key;
     this.status = status;
     this.progress = progress;
     setProgressIsSet(true);
@@ -140,6 +149,9 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   public TJobStatus(TJobStatus other) {
     __isset_bit_vector.clear();
     __isset_bit_vector.or(other.__isset_bit_vector);
+    if (other.isSetKey()) {
+      this.key = other.key;
+    }
     if (other.isSetStatus()) {
       this.status = other.status;
     }
@@ -152,9 +164,34 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
 
   @Override
   public void clear() {
+    this.key = null;
     this.status = null;
     setProgressIsSet(false);
     this.progress = 0;
+  }
+
+  public String getKey() {
+    return this.key;
+  }
+
+  public TJobStatus setKey(String key) {
+    this.key = key;
+    return this;
+  }
+
+  public void unsetKey() {
+    this.key = null;
+  }
+
+  /** Returns true if field key is set (has been assigned a value) and false otherwise */
+  public boolean isSetKey() {
+    return this.key != null;
+  }
+
+  public void setKeyIsSet(boolean value) {
+    if (!value) {
+      this.key = null;
+    }
   }
 
   /**
@@ -214,6 +251,14 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
+    case KEY:
+      if (value == null) {
+        unsetKey();
+      } else {
+        setKey((String)value);
+      }
+      break;
+
     case STATUS:
       if (value == null) {
         unsetStatus();
@@ -235,6 +280,9 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
+    case KEY:
+      return getKey();
+
     case STATUS:
       return getStatus();
 
@@ -252,6 +300,8 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     }
 
     switch (field) {
+    case KEY:
+      return isSetKey();
     case STATUS:
       return isSetStatus();
     case PROGRESS:
@@ -272,6 +322,15 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   public boolean equals(TJobStatus that) {
     if (that == null)
       return false;
+
+    boolean this_present_key = true && this.isSetKey();
+    boolean that_present_key = true && that.isSetKey();
+    if (this_present_key || that_present_key) {
+      if (!(this_present_key && that_present_key))
+        return false;
+      if (!this.key.equals(that.key))
+        return false;
+    }
 
     boolean this_present_status = true && this.isSetStatus();
     boolean that_present_status = true && that.isSetStatus();
@@ -307,6 +366,16 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     int lastComparison = 0;
     TJobStatus typedOther = (TJobStatus)other;
 
+    lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetKey()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.key, typedOther.key);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     lastComparison = Boolean.valueOf(isSetStatus()).compareTo(typedOther.isSetStatus());
     if (lastComparison != 0) {
       return lastComparison;
@@ -347,6 +416,14 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     StringBuilder sb = new StringBuilder("TJobStatus(");
     boolean first = true;
 
+    sb.append("key:");
+    if (this.key == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.key);
+    }
+    first = false;
+    if (!first) sb.append(", ");
     sb.append("status:");
     if (this.status == null) {
       sb.append("null");
@@ -402,7 +479,15 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
           break;
         }
         switch (schemeField.id) {
-          case 1: // STATUS
+          case 1: // KEY
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.key = iprot.readString();
+              struct.setKeyIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 2: // STATUS
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.status = TJobStatusType.findByValue(iprot.readI32());
               struct.setStatusIsSet(true);
@@ -410,7 +495,7 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // PROGRESS
+          case 3: // PROGRESS
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.progress = iprot.readI32();
               struct.setProgressIsSet(true);
@@ -433,6 +518,11 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
+      if (struct.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(struct.key);
+        oprot.writeFieldEnd();
+      }
       if (struct.status != null) {
         oprot.writeFieldBegin(STATUS_FIELD_DESC);
         oprot.writeI32(struct.status.getValue());
@@ -459,13 +549,19 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     public void write(org.apache.thrift.protocol.TProtocol prot, TJobStatus struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetStatus()) {
+      if (struct.isSetKey()) {
         optionals.set(0);
       }
-      if (struct.isSetProgress()) {
+      if (struct.isSetStatus()) {
         optionals.set(1);
       }
-      oprot.writeBitSet(optionals, 2);
+      if (struct.isSetProgress()) {
+        optionals.set(2);
+      }
+      oprot.writeBitSet(optionals, 3);
+      if (struct.isSetKey()) {
+        oprot.writeString(struct.key);
+      }
       if (struct.isSetStatus()) {
         oprot.writeI32(struct.status.getValue());
       }
@@ -477,12 +573,16 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, TJobStatus struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(2);
+      BitSet incoming = iprot.readBitSet(3);
       if (incoming.get(0)) {
+        struct.key = iprot.readString();
+        struct.setKeyIsSet(true);
+      }
+      if (incoming.get(1)) {
         struct.status = TJobStatusType.findByValue(iprot.readI32());
         struct.setStatusIsSet(true);
       }
-      if (incoming.get(1)) {
+      if (incoming.get(2)) {
         struct.progress = iprot.readI32();
         struct.setProgressIsSet(true);
       }

@@ -262,6 +262,7 @@ public class Console {
         RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
         // TODO: only the first table is chosen.
         String tableName = (String) cleanPlans.get(0).getRule().getTableNames().get(0);
+        DBConfig dbConfig = cleanPlans.get(0).getSourceDBConfig();
         Schema schema = DBMetaDataTool.getSchema(cleanPlans.get(0).getSourceDBConfig(),tableName);
         Collection<Rule> rules =
             ruleBuilder
@@ -270,9 +271,9 @@ public class Console {
                 .schema(schema)
                 .value(value)
                 .build();
+
         for (Rule rule : rules) {
-            CleanPlan cleanPlan =
-                new CleanPlan(DBConnectionFactory.getSourceDBConfig(), rule);
+            CleanPlan cleanPlan = new CleanPlan(dbConfig, rule);
             cleanPlans.add(cleanPlan);
             executors.add(new CleanExecutor(cleanPlan));
         }

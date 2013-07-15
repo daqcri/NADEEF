@@ -26,11 +26,12 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 
 /**
  * NADEEF job scheduler.
@@ -51,7 +52,9 @@ public class NadeefJobScheduler {
             hostname = "localhost";
         }
 
-        service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(2));
+        // TODO: move to per process approach or multithreading, currently it is
+        // limited to 1 because of synchronization of DBConnection factory.
+        service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         runningCleaner = Maps.newConcurrentMap();
         runningRules = Maps.newConcurrentMap();
     }
@@ -147,21 +150,6 @@ public class NadeefJobScheduler {
     }
 
     /**
-     * Submits a list of jobs.
-     * @param cleanPlans clean plans.
-     * @return job key. Currently it only returns one key for all the plans.
-     */
-    // TODO: fix returning one key for all the plans.
-    public String submitDetectJob(Collection<CleanPlan> cleanPlans) {
-        String key = null;
-        for (CleanPlan cleanPlan : cleanPlans) {
-            key = submitDetectJob(cleanPlan);
-        }
-        return key;
-    }
-
-
-    /**
      * Submits a repair job.
      * @param cleanPlan clean plan.
      * @return job key.
@@ -207,6 +195,7 @@ public class NadeefJobScheduler {
             result.setStatus(TJobStatusType.WAITING);
         }
 
+        result.setKey(key);
         return result;
     }
 

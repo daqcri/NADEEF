@@ -31,13 +31,12 @@ import java.util.concurrent.TimeUnit;
  * SQLTable represents a {@link Table} which resides in a database.
  */
 public class SQLTable extends Table {
-    private DBConfig dbconfig;
+    private DBConnectionFactory connectionFactory;
     private String tableName;
     private SqlQueryBuilder sqlQuery;
     private List<Tuple> tuples;
     private long updateTimestamp = -1;
     private long changeTimestamp = System.currentTimeMillis();
-    private String indexName = null;
 
     private static Tracer tracer = Tracer.getTracer(SQLTable.class);
     private static Object indexLock = new Object();
@@ -46,14 +45,11 @@ public class SQLTable extends Table {
     /**
      * Constructor with database connection.
      * @param tableName tuple collection table name.
-     * @param dbconfig used database connection.
+     * @param connectionFactory database connection pool.
      */
-    public SQLTable(String tableName, DBConfig dbconfig) {
+    public SQLTable(String tableName, DBConnectionFactory connectionFactory) {
         super(tableName);
-        this.dbconfig = Preconditions.checkNotNull(dbconfig);
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(tableName));
-        // TODO: make it generic
-        DBConnectionFactory.initializeSource(dbconfig);
+        this.connectionFactory = connectionFactory;
         this.tableName = tableName;
         this.sqlQuery = new SqlQueryBuilder();
         this.sqlQuery.addFrom(tableName);
@@ -167,7 +163,7 @@ public class SQLTable extends Table {
         String indexName = null;
 
         try {
-            conn = DBConnectionFactory.getSourceConnection();
+            conn = connectionFactory.getSourceConnection();
             // create index ad-hoc.
             stat = conn.createStatement();
             stat.setFetchSize(4096);
@@ -201,7 +197,7 @@ public class SQLTable extends Table {
                     SimpleExpression.newEqual(column, stringValue);
 
                 SQLTable newTable =
-                    new SQLTable(tableName, dbconfig);
+                    new SQLTable(tableName, connectionFactory);
                 newTable.sqlQuery = new SqlQueryBuilder(sqlQuery);
                 newTable.sqlQuery.addWhere(columnFilter.toString());
                 result.add(newTable);
@@ -261,7 +257,9 @@ public class SQLTable extends Table {
         }
 
         SQLTable obj = (SQLTable)collection;
-        if (dbconfig.equals(obj.dbconfig) && tableName.equals(obj.tableName)) {
+        DBConfig dbConfig1 = connectionFactory.getSourceDBConfig();
+        DBConfig dbConfig2 = obj.connectionFactory.getSourceDBConfig();
+        if (dbConfig1.equals(dbConfig2) && tableName.equals(obj.tableName)) {
             return true;
         }
 
@@ -274,6 +272,7 @@ public class SQLTable extends Table {
      */
     @Override
     public int hashCode() {
+        DBConfig dbconfig = connectionFactory.getSourceDBConfig();
         return dbconfig.hashCode() * tableName.hashCode();
     }
 
@@ -294,7 +293,7 @@ public class SQLTable extends Table {
             String sql = builder.build();
             tracer.verbose(sql);
 
-            conn = DBConnectionFactory.getSourceConnection();
+            conn = connectionFactory.getSourceConnection();
             stat = conn.createStatement();
 
             resultSet = stat.executeQuery(sql);
@@ -347,7 +346,7 @@ public class SQLTable extends Table {
             tracer.verbose(sql);
 
             // get the connection and run the SQL
-            conn = DBConnectionFactory.getSourceConnection();
+            conn = connectionFactory.getSourceConnection();
             stat = conn.createStatement();
             stat.setFetchSize(4096);
             resultSet = stat.executeQuery(sql);
@@ -435,8 +434,8 @@ public class SQLTable extends Table {
         tuples.clear();
         tuples = null;
         tableName = null;
-        dbconfig = null;
         updateTimestamp = Long.MAX_VALUE;
+        connectionFactory = null;
     }
 
     //</editor-fold>

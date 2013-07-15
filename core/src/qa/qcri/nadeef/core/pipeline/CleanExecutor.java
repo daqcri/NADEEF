@@ -52,8 +52,6 @@ public class CleanExecutor {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
 
-        // Initialize the connection pool
-        DBConnectionFactory.initializeSource(cleanPlan.getSourceDBConfig());
         assembleFlow();
     }
 
@@ -291,7 +289,7 @@ public class CleanExecutor {
             updateFlow.setInputKey(inputKey)
                 .addNode(new FixImport())
                 .addNode(fixDecisionMaker, 6)
-                .addNode(new Updater());
+                .addNode(new Updater(cleanPlan.getSourceDBConfig()));
 
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline ", ex);

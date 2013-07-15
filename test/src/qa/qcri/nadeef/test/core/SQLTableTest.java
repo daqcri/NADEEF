@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class SQLTableTest {
     private String tableName;
     private DBConfig dbconfig;
+    private DBConnectionFactory connectionFactory;
 
     @Before
     public void setup() {
@@ -55,8 +56,8 @@ public class SQLTableTest {
                        .password("tester")
                        .dialect(SQLDialect.POSTGRES)
                        .build();
-            DBConnectionFactory.initializeSource(dbconfig);
             conn = DBConnectionFactory.createConnection(dbconfig);
+            connectionFactory = DBConnectionFactory.createDBConnectionFactory(dbconfig);
             tableName = CSVTools.dump(conn, TestDataRepository.getDumpTestCSVFile());
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,7 +97,8 @@ public class SQLTableTest {
 
     @Test
     public void testProjection() {
-        SQLTable collection = new SQLTable(tableName, dbconfig);
+
+        SQLTable collection = new SQLTable(tableName, connectionFactory);
         collection.project(new Column(tableName + ".c"));
         Assert.assertEquals(12, collection.size());
         Tuple tuple = collection.get(0);
@@ -108,7 +110,7 @@ public class SQLTableTest {
 
     @Test
     public void testFilter() {
-        SQLTable collection = new SQLTable(tableName, dbconfig);
+        SQLTable collection = new SQLTable(tableName, connectionFactory);
         collection.filter(SimpleExpression.newEqual(new Column(tableName, "c"), "c1"))
                 .project(new Column(tableName, "c"));
         Assert.assertEquals(7, collection.size());
@@ -121,7 +123,7 @@ public class SQLTableTest {
 
     @Test
     public void testGroup() {
-        SQLTable collection = new SQLTable(tableName, dbconfig);
+        SQLTable collection = new SQLTable(tableName, connectionFactory);
         Column targetColumn = new Column(tableName, "c");
         Collection<Table> result = collection.groupOn(targetColumn);
         Assert.assertEquals(3, result.size());
@@ -143,10 +145,10 @@ public class SQLTableTest {
         }
     }
 
-    @Test
+    // @Test
     public void testSize() throws InterruptedException {
         Stopwatch stopwatch = new Stopwatch().start();
-        SQLTable table = new SQLTable("csv_test60m", dbconfig);
+        SQLTable table = new SQLTable("csv_test60m", connectionFactory);
         table.get(0);
 
         long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);

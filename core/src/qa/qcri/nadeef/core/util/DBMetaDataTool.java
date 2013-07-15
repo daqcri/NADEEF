@@ -13,9 +13,12 @@
 
 package qa.qcri.nadeef.core.util;
 
+import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SqlQueryBuilder;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
 
@@ -85,9 +88,56 @@ public final class DBMetaDataTool {
         if (!isTableExist(config, tableName)) {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
-        SQLTable sqlTupleCollection =
-            new SQLTable(tableName, config);
-        return sqlTupleCollection.getSchema();
+
+        Tracer tracer = Tracer.getTracer(DBMetaDataTool.class);
+        Connection conn = null;
+        Statement stat = null;
+        ResultSet resultSet = null;
+        Schema result = null;
+
+        try {
+            SqlQueryBuilder builder = new SqlQueryBuilder();
+            builder.addFrom(tableName);
+            builder.setLimit(1);
+            String sql = builder.build();
+
+            conn = DBConnectionFactory.createConnection(config);
+            stat = conn.createStatement();
+
+            resultSet = stat.executeQuery(sql);
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int count = metaData.getColumnCount();
+            Column[] columns = new Column[count];
+            for (int i = 1; i <= count; i ++) {
+                String attributeName = metaData.getColumnName(i);
+                columns[i - 1] = new Column(tableName, attributeName);
+            }
+
+            result = new Schema(tableName, columns);
+        } catch (Exception ex) {
+            tracer.err("Cannot get valid schema.", ex);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (Exception ex) {}
+            }
+
+            if (stat != null) {
+                try {
+                    stat.close();
+                } catch (Exception ex) {};
+            }
+
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
+        return result;
     }
 
     /**

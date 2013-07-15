@@ -18,6 +18,7 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Table;
+import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.DBConfig;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.List;
  * based on the input rule hints.
  */
 public class SourceDeserializer extends Operator<Rule, Collection<Table>> {
-    private DBConfig dbConfig;
+    private DBConnectionFactory connectionFactory;
 
     /**
      * Constructor.
@@ -37,7 +38,8 @@ public class SourceDeserializer extends Operator<Rule, Collection<Table>> {
      */
     public SourceDeserializer(CleanPlan plan) {
         super(plan);
-        dbConfig = plan.getSourceDBConfig();
+        DBConfig dbConfig = plan.getSourceDBConfig();
+        connectionFactory = DBConnectionFactory.createDBConnectionFactory(dbConfig);
     }
 
     /**
@@ -54,10 +56,10 @@ public class SourceDeserializer extends Operator<Rule, Collection<Table>> {
         List<String> tableNames = (List<String>)rule.getTableNames();
         List<Table> collections = new ArrayList<Table>();
         if (tableNames.size() == 2) {
-            collections.add(new SQLTable(tableNames.get(0), dbConfig));
-            collections.add(new SQLTable(tableNames.get(1), dbConfig));
+            collections.add(new SQLTable(tableNames.get(0), connectionFactory));
+            collections.add(new SQLTable(tableNames.get(1), connectionFactory));
         } else {
-            collections.add(new SQLTable(tableNames.get(0), dbConfig));
+            collections.add(new SQLTable(tableNames.get(0), connectionFactory));
         }
 
         return collections;

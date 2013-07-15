@@ -22,15 +22,6 @@
     <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="org.slf4j:slf4j-log4j12:1.6.5" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../out" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>
 

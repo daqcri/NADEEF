@@ -15,11 +15,9 @@ package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Schema class provides a mapping between column and value for a table.
