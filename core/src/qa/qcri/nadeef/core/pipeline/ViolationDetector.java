@@ -15,7 +15,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -32,8 +32,11 @@ public class ViolationDetector<T>
 
     private Rule rule;
     private Collection<Violation> resultCollection;
-    private ExecutorService threadExecutors;
-    private CompletionService<Integer> pool;
+    private ListeningExecutorService service;
+
+    private int totalThreadCount;
+    private int finishedThreadCount;
+    private int detectCount;
 
     /**
      * Violation detector constructor.
@@ -43,8 +46,25 @@ public class ViolationDetector<T>
         Preconditions.checkNotNull(rule);
         resultCollection = Lists.newArrayList();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
-        threadExecutors = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
-        pool = new ExecutorCompletionService<>(threadExecutors);
+        service =
+            MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(MAX_THREAD_NUM, factory));
+    }
+
+    /**
+     * Callback class for progress report.
+     */
+    class DetectorCallback implements FutureCallback<Integer> {
+        @Override
+        public void onSuccess(Integer integer) {
+            synchronized (ViolationDetector.class) {
+                finishedThreadCount ++;
+                detectCount += integer;
+                setPercentage(finishedThreadCount / totalThreadCount);
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {}
     }
 
     /**
@@ -117,28 +137,22 @@ public class ViolationDetector<T>
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
         List<Object> tupleList;
-        int detectCount = 0;
-        int detectThread = 0;
         long elapsedTime = 0l;
-
+        detectCount = 0;
         while (true) {
             tupleList = iteratorStream.poll();
             if (tupleList.size() == 0) {
                 break;
             }
 
-            detectThread ++;
-            pool.submit(new Detector(tupleList));
-        }
-
-        for (int i = 0; i < detectThread; i ++) {
-            setPercentage(i / detectThread);
-            detectCount += pool.take().get();
+            totalThreadCount ++;
+            ListenableFuture<Integer> future = service.submit(new Detector(tupleList));
+            Futures.addCallback(future, new DetectorCallback());
         }
 
         Tracer.putStatsEntry(Tracer.StatType.DetectCallTime, elapsedTime);
         Tracer.putStatsEntry(Tracer.StatType.DetectCount, detectCount);
-        Tracer.putStatsEntry(Tracer.StatType.DetectThreadCount, detectThread);
+        Tracer.putStatsEntry(Tracer.StatType.DetectThreadCount, totalThreadCount);
 
         return resultCollection;
     }
@@ -146,8 +160,8 @@ public class ViolationDetector<T>
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        if (!threadExecutors.isShutdown()) {
-            threadExecutors.shutdownNow();
+        if (!service.isShutdown()) {
+            service.shutdownNow();
         }
     }
 }

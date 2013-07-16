@@ -13,7 +13,6 @@
 
 package qa.qcri.nadeef.core.util;
 
-import com.google.common.base.Preconditions;
 import org.postgresql.ds.PGPoolingDataSource;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -36,7 +35,7 @@ public class DBConnectionFactory {
     private DBConfig sourceConfig;
 
     private DBConnectionFactory(DBConfig dbConfig) {
-        tracer.info("Creating connection pool for " + dbConfig.getUrl());
+        tracer.verbose("Creating connection pool for " + dbConfig.getUrl());
         initializeSource(dbConfig);
     }
 
@@ -138,7 +137,7 @@ public class DBConnectionFactory {
      */
     @Override
     public void finalize() {
-        tracer.info("Closing a connection pool @" + sourcePool.getDataSourceName());
+        tracer.verbose("Closing a connection pool @" + sourcePool.getDataSourceName());
         if (sourcePool != null) {
             sourcePool.close();
         }

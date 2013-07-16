@@ -15,7 +15,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.IteratorStream;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
@@ -30,8 +30,10 @@ import java.util.concurrent.*;
  */
 public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
-    private static final int MAX_THREAD_NUM = 4;
+    private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors() * 2;
     private Rule rule;
+    private int totalBlockSize;
+    private int blockCount;
 
     //</editor-fold>
 
@@ -39,7 +41,29 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         this.rule = rule;
     }
 
-    //<editor-fold desc="IteratorCallable Class">
+    //<editor-fold desc="IteratorCallable and Callback Class">
+
+    /**
+     * Callback class for progress report.
+     */
+    class IteratorCallback implements FutureCallback<Integer> {
+        private int tableSize;
+
+        public IteratorCallback(int tableSize) {
+            this.tableSize = tableSize;
+        }
+        @Override
+        public void onSuccess(Integer integer) {
+            synchronized (Iterator.class) {
+                totalBlockSize += integer;
+                blockCount ++;
+                setPercentage(blockCount / tableSize);
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {}
+    }
 
     /**
      * IteratorCallable is a {@link Callable} class for iteration operation on each block.
@@ -95,40 +119,35 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     @Override
     @SuppressWarnings("unchecked")
     public Boolean execute(Collection<Table> tables) {
-        int blockSize = 0;
-        int count = 0;
         Tracer tracer = Tracer.getTracer(Iterator.class);
         ThreadFactory factory =
             new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
-        ExecutorCompletionService pool = new ExecutorCompletionService<Integer>(executor);
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(executor);
 
         Stopwatch stopwatch = new Stopwatch().start();
+        totalBlockSize = 0;
+        blockCount = 0;
+
         try {
             if (rule.supportTwoTables()) {
                 // Rule runs on two tables.
-                pool.submit(new IteratorCallable(tables));
-
-                Future<Integer> future = pool.take();
-                blockSize = future.get();
-                count ++;
+                ListenableFuture<Integer> future = service.submit(new IteratorCallable(tables));
+                totalBlockSize = future.get();
+                blockCount ++;
                 setPercentage(1.0f);
             } else {
                 // Rule runs on each table.
                 for (Table table : tables) {
-                    pool.submit(new IteratorCallable(table));
-                }
-
-                for (Table table : tables) {
-                    Future<Integer> future = pool.take();
-                    blockSize += future.get();
-                    count ++;
-                    setPercentage(count / tables.size());
-
-                    // purge the Callable to reclaim the memory.
-                    ((ThreadPoolExecutor)executor).purge();
+                    ListenableFuture<Integer> future =
+                        service.submit(new IteratorCallable(table));
+                    Futures.addCallback(future, new IteratorCallback(tables.size()));
                 }
             }
+
+            // wait until all the tasks are finished
+            service.shutdown();
+            while (!service.awaitTermination(10l, TimeUnit.MINUTES));
 
             // recycle the collection when dealing with pairs. This is mainly used to remove refs.
             if (rule.supportTwoInputs()) {
@@ -152,7 +171,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.putStatsEntry(Tracer.StatType.IterationCount, blockSize);
+        Tracer.putStatsEntry(Tracer.StatType.IterationCount, totalBlockSize);
         stopwatch.stop();
         return true;
     }
