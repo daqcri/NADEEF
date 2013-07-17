@@ -25,9 +25,6 @@ import java.util.List;
 
 /**
  * Pair Tuple CFD rule.
- *
- * @author Amr Ebaid (aebaid@qf.org.qa)
- * @author Si Yin (siyin@qf.org.qa)
  */
 public class $CFDName$ extends PairTupleRule {
     protected List<Column> lhs;

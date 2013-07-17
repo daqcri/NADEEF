@@ -34,7 +34,6 @@ import java.util.List;
 /**
  * Single Tuple CFD rule.
  *
- * @author Amr Ebaid (aebaid@qf.org.qa)
  */
 public class $CFDName$ extends SingleTupleRule {
     protected List<Column> lhs;
