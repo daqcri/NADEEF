@@ -24,7 +24,9 @@ enum TJobStatusType {
 struct TJobStatus {
     1: string key,
     2: TJobStatusType status,
-    3: i32 progress
+    3: i32 overallProgress,
+    4: list<string> names,
+    5: list<i32> progress
 }
 
 struct TRule {

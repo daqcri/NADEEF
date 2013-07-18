@@ -32,7 +32,9 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
 
   private static final org.apache.thrift.protocol.TField KEY_FIELD_DESC = new org.apache.thrift.protocol.TField("key", org.apache.thrift.protocol.TType.STRING, (short)1);
   private static final org.apache.thrift.protocol.TField STATUS_FIELD_DESC = new org.apache.thrift.protocol.TField("status", org.apache.thrift.protocol.TType.I32, (short)2);
-  private static final org.apache.thrift.protocol.TField PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("progress", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField OVERALL_PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("overallProgress", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField NAMES_FIELD_DESC = new org.apache.thrift.protocol.TField("names", org.apache.thrift.protocol.TType.LIST, (short)4);
+  private static final org.apache.thrift.protocol.TField PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("progress", org.apache.thrift.protocol.TType.LIST, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -42,7 +44,9 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
 
   private String key; // required
   private TJobStatusType status; // required
-  private int progress; // required
+  private int overallProgress; // required
+  private List<String> names; // required
+  private List<Integer> progress; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -52,7 +56,9 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
      * @see TJobStatusType
      */
     STATUS((short)2, "status"),
-    PROGRESS((short)3, "progress");
+    OVERALL_PROGRESS((short)3, "overallProgress"),
+    NAMES((short)4, "names"),
+    PROGRESS((short)5, "progress");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -71,7 +77,11 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
           return KEY;
         case 2: // STATUS
           return STATUS;
-        case 3: // PROGRESS
+        case 3: // OVERALL_PROGRESS
+          return OVERALL_PROGRESS;
+        case 4: // NAMES
+          return NAMES;
+        case 5: // PROGRESS
           return PROGRESS;
         default:
           return null;
@@ -113,7 +123,7 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   }
 
   // isset id assignments
-  private static final int __PROGRESS_ISSET_ID = 0;
+  private static final int __OVERALLPROGRESS_ISSET_ID = 0;
   private BitSet __isset_bit_vector = new BitSet(1);
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
@@ -122,8 +132,14 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.STATUS, new org.apache.thrift.meta_data.FieldMetaData("status", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, TJobStatusType.class)));
-    tmpMap.put(_Fields.PROGRESS, new org.apache.thrift.meta_data.FieldMetaData("progress", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.OVERALL_PROGRESS, new org.apache.thrift.meta_data.FieldMetaData("overallProgress", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.NAMES, new org.apache.thrift.meta_data.FieldMetaData("names", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
+    tmpMap.put(_Fields.PROGRESS, new org.apache.thrift.meta_data.FieldMetaData("progress", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32))));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(TJobStatus.class, metaDataMap);
   }
@@ -134,13 +150,17 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   public TJobStatus(
     String key,
     TJobStatusType status,
-    int progress)
+    int overallProgress,
+    List<String> names,
+    List<Integer> progress)
   {
     this();
     this.key = key;
     this.status = status;
+    this.overallProgress = overallProgress;
+    setOverallProgressIsSet(true);
+    this.names = names;
     this.progress = progress;
-    setProgressIsSet(true);
   }
 
   /**
@@ -155,7 +175,21 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     if (other.isSetStatus()) {
       this.status = other.status;
     }
-    this.progress = other.progress;
+    this.overallProgress = other.overallProgress;
+    if (other.isSetNames()) {
+      List<String> __this__names = new ArrayList<String>();
+      for (String other_element : other.names) {
+        __this__names.add(other_element);
+      }
+      this.names = __this__names;
+    }
+    if (other.isSetProgress()) {
+      List<Integer> __this__progress = new ArrayList<Integer>();
+      for (Integer other_element : other.progress) {
+        __this__progress.add(other_element);
+      }
+      this.progress = __this__progress;
+    }
   }
 
   public TJobStatus deepCopy() {
@@ -166,8 +200,10 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
   public void clear() {
     this.key = null;
     this.status = null;
-    setProgressIsSet(false);
-    this.progress = 0;
+    setOverallProgressIsSet(false);
+    this.overallProgress = 0;
+    this.names = null;
+    this.progress = null;
   }
 
   public String getKey() {
@@ -226,27 +262,105 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     }
   }
 
-  public int getProgress() {
+  public int getOverallProgress() {
+    return this.overallProgress;
+  }
+
+  public TJobStatus setOverallProgress(int overallProgress) {
+    this.overallProgress = overallProgress;
+    setOverallProgressIsSet(true);
+    return this;
+  }
+
+  public void unsetOverallProgress() {
+    __isset_bit_vector.clear(__OVERALLPROGRESS_ISSET_ID);
+  }
+
+  /** Returns true if field overallProgress is set (has been assigned a value) and false otherwise */
+  public boolean isSetOverallProgress() {
+    return __isset_bit_vector.get(__OVERALLPROGRESS_ISSET_ID);
+  }
+
+  public void setOverallProgressIsSet(boolean value) {
+    __isset_bit_vector.set(__OVERALLPROGRESS_ISSET_ID, value);
+  }
+
+  public int getNamesSize() {
+    return (this.names == null) ? 0 : this.names.size();
+  }
+
+  public java.util.Iterator<String> getNamesIterator() {
+    return (this.names == null) ? null : this.names.iterator();
+  }
+
+  public void addToNames(String elem) {
+    if (this.names == null) {
+      this.names = new ArrayList<String>();
+    }
+    this.names.add(elem);
+  }
+
+  public List<String> getNames() {
+    return this.names;
+  }
+
+  public TJobStatus setNames(List<String> names) {
+    this.names = names;
+    return this;
+  }
+
+  public void unsetNames() {
+    this.names = null;
+  }
+
+  /** Returns true if field names is set (has been assigned a value) and false otherwise */
+  public boolean isSetNames() {
+    return this.names != null;
+  }
+
+  public void setNamesIsSet(boolean value) {
+    if (!value) {
+      this.names = null;
+    }
+  }
+
+  public int getProgressSize() {
+    return (this.progress == null) ? 0 : this.progress.size();
+  }
+
+  public java.util.Iterator<Integer> getProgressIterator() {
+    return (this.progress == null) ? null : this.progress.iterator();
+  }
+
+  public void addToProgress(int elem) {
+    if (this.progress == null) {
+      this.progress = new ArrayList<Integer>();
+    }
+    this.progress.add(elem);
+  }
+
+  public List<Integer> getProgress() {
     return this.progress;
   }
 
-  public TJobStatus setProgress(int progress) {
+  public TJobStatus setProgress(List<Integer> progress) {
     this.progress = progress;
-    setProgressIsSet(true);
     return this;
   }
 
   public void unsetProgress() {
-    __isset_bit_vector.clear(__PROGRESS_ISSET_ID);
+    this.progress = null;
   }
 
   /** Returns true if field progress is set (has been assigned a value) and false otherwise */
   public boolean isSetProgress() {
-    return __isset_bit_vector.get(__PROGRESS_ISSET_ID);
+    return this.progress != null;
   }
 
   public void setProgressIsSet(boolean value) {
-    __isset_bit_vector.set(__PROGRESS_ISSET_ID, value);
+    if (!value) {
+      this.progress = null;
+    }
   }
 
   public void setFieldValue(_Fields field, Object value) {
@@ -267,11 +381,27 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
       }
       break;
 
+    case OVERALL_PROGRESS:
+      if (value == null) {
+        unsetOverallProgress();
+      } else {
+        setOverallProgress((Integer)value);
+      }
+      break;
+
+    case NAMES:
+      if (value == null) {
+        unsetNames();
+      } else {
+        setNames((List<String>)value);
+      }
+      break;
+
     case PROGRESS:
       if (value == null) {
         unsetProgress();
       } else {
-        setProgress((Integer)value);
+        setProgress((List<Integer>)value);
       }
       break;
 
@@ -286,8 +416,14 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     case STATUS:
       return getStatus();
 
+    case OVERALL_PROGRESS:
+      return Integer.valueOf(getOverallProgress());
+
+    case NAMES:
+      return getNames();
+
     case PROGRESS:
-      return Integer.valueOf(getProgress());
+      return getProgress();
 
     }
     throw new IllegalStateException();
@@ -304,6 +440,10 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
       return isSetKey();
     case STATUS:
       return isSetStatus();
+    case OVERALL_PROGRESS:
+      return isSetOverallProgress();
+    case NAMES:
+      return isSetNames();
     case PROGRESS:
       return isSetProgress();
     }
@@ -341,12 +481,30 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
         return false;
     }
 
-    boolean this_present_progress = true;
-    boolean that_present_progress = true;
+    boolean this_present_overallProgress = true;
+    boolean that_present_overallProgress = true;
+    if (this_present_overallProgress || that_present_overallProgress) {
+      if (!(this_present_overallProgress && that_present_overallProgress))
+        return false;
+      if (this.overallProgress != that.overallProgress)
+        return false;
+    }
+
+    boolean this_present_names = true && this.isSetNames();
+    boolean that_present_names = true && that.isSetNames();
+    if (this_present_names || that_present_names) {
+      if (!(this_present_names && that_present_names))
+        return false;
+      if (!this.names.equals(that.names))
+        return false;
+    }
+
+    boolean this_present_progress = true && this.isSetProgress();
+    boolean that_present_progress = true && that.isSetProgress();
     if (this_present_progress || that_present_progress) {
       if (!(this_present_progress && that_present_progress))
         return false;
-      if (this.progress != that.progress)
+      if (!this.progress.equals(that.progress))
         return false;
     }
 
@@ -382,6 +540,26 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     }
     if (isSetStatus()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.status, typedOther.status);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetOverallProgress()).compareTo(typedOther.isSetOverallProgress());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetOverallProgress()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.overallProgress, typedOther.overallProgress);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetNames()).compareTo(typedOther.isSetNames());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetNames()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.names, typedOther.names);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -432,8 +610,24 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
     }
     first = false;
     if (!first) sb.append(", ");
+    sb.append("overallProgress:");
+    sb.append(this.overallProgress);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("names:");
+    if (this.names == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.names);
+    }
+    first = false;
+    if (!first) sb.append(", ");
     sb.append("progress:");
-    sb.append(this.progress);
+    if (this.progress == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.progress);
+    }
     first = false;
     sb.append(")");
     return sb.toString();
@@ -495,9 +689,45 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 3: // PROGRESS
+          case 3: // OVERALL_PROGRESS
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.progress = iprot.readI32();
+              struct.overallProgress = iprot.readI32();
+              struct.setOverallProgressIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 4: // NAMES
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+              {
+                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                struct.names = new ArrayList<String>(_list0.size);
+                for (int _i1 = 0; _i1 < _list0.size; ++_i1)
+                {
+                  String _elem2; // required
+                  _elem2 = iprot.readString();
+                  struct.names.add(_elem2);
+                }
+                iprot.readListEnd();
+              }
+              struct.setNamesIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 5: // PROGRESS
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+              {
+                org.apache.thrift.protocol.TList _list3 = iprot.readListBegin();
+                struct.progress = new ArrayList<Integer>(_list3.size);
+                for (int _i4 = 0; _i4 < _list3.size; ++_i4)
+                {
+                  int _elem5; // required
+                  _elem5 = iprot.readI32();
+                  struct.progress.add(_elem5);
+                }
+                iprot.readListEnd();
+              }
               struct.setProgressIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -528,9 +758,33 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
         oprot.writeI32(struct.status.getValue());
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(PROGRESS_FIELD_DESC);
-      oprot.writeI32(struct.progress);
+      oprot.writeFieldBegin(OVERALL_PROGRESS_FIELD_DESC);
+      oprot.writeI32(struct.overallProgress);
       oprot.writeFieldEnd();
+      if (struct.names != null) {
+        oprot.writeFieldBegin(NAMES_FIELD_DESC);
+        {
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.names.size()));
+          for (String _iter6 : struct.names)
+          {
+            oprot.writeString(_iter6);
+          }
+          oprot.writeListEnd();
+        }
+        oprot.writeFieldEnd();
+      }
+      if (struct.progress != null) {
+        oprot.writeFieldBegin(PROGRESS_FIELD_DESC);
+        {
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, struct.progress.size()));
+          for (int _iter7 : struct.progress)
+          {
+            oprot.writeI32(_iter7);
+          }
+          oprot.writeListEnd();
+        }
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -555,25 +809,49 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
       if (struct.isSetStatus()) {
         optionals.set(1);
       }
-      if (struct.isSetProgress()) {
+      if (struct.isSetOverallProgress()) {
         optionals.set(2);
       }
-      oprot.writeBitSet(optionals, 3);
+      if (struct.isSetNames()) {
+        optionals.set(3);
+      }
+      if (struct.isSetProgress()) {
+        optionals.set(4);
+      }
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetKey()) {
         oprot.writeString(struct.key);
       }
       if (struct.isSetStatus()) {
         oprot.writeI32(struct.status.getValue());
       }
+      if (struct.isSetOverallProgress()) {
+        oprot.writeI32(struct.overallProgress);
+      }
+      if (struct.isSetNames()) {
+        {
+          oprot.writeI32(struct.names.size());
+          for (String _iter8 : struct.names)
+          {
+            oprot.writeString(_iter8);
+          }
+        }
+      }
       if (struct.isSetProgress()) {
-        oprot.writeI32(struct.progress);
+        {
+          oprot.writeI32(struct.progress.size());
+          for (int _iter9 : struct.progress)
+          {
+            oprot.writeI32(_iter9);
+          }
+        }
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, TJobStatus struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(3);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
         struct.key = iprot.readString();
         struct.setKeyIsSet(true);
@@ -583,7 +861,33 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
         struct.setStatusIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.progress = iprot.readI32();
+        struct.overallProgress = iprot.readI32();
+        struct.setOverallProgressIsSet(true);
+      }
+      if (incoming.get(3)) {
+        {
+          org.apache.thrift.protocol.TList _list10 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.names = new ArrayList<String>(_list10.size);
+          for (int _i11 = 0; _i11 < _list10.size; ++_i11)
+          {
+            String _elem12; // required
+            _elem12 = iprot.readString();
+            struct.names.add(_elem12);
+          }
+        }
+        struct.setNamesIsSet(true);
+      }
+      if (incoming.get(4)) {
+        {
+          org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
+          struct.progress = new ArrayList<Integer>(_list13.size);
+          for (int _i14 = 0; _i14 < _list13.size; ++_i14)
+          {
+            int _elem15; // required
+            _elem15 = iprot.readI32();
+            struct.progress.add(_elem15);
+          }
+        }
         struct.setProgressIsSet(true);
       }
     }

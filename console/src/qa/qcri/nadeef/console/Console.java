@@ -23,7 +23,6 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -353,13 +352,13 @@ public class Console {
 
             do {
                 Thread.sleep(1000);
-                double percentage = executor.getDetectPercentage();
+                double percentage = executor.getDetectProgress();
                 printProgress(percentage, "DETECT");
             } while (thread.isAlive());
 
             // print out the final result.
             String ruleName = executor.getCleanPlan().getRule().getRuleName();
-            double percentage = executor.getDetectPercentage();
+            double percentage = executor.getDetectProgress();
             printProgress(percentage, "DETECT");
             console.println();
             console.flush();
@@ -398,13 +397,13 @@ public class Console {
 
             do {
                 Thread.sleep(1000);
-                double percentage = executor.getRepairPercentage();
+                double percentage = executor.getRepairProgress();
                 printProgress(percentage, "REPAIR");
             } while (thread.isAlive());
 
             // print out the final result.
             String ruleName = executor.getCleanPlan().getRule().getRuleName();
-            double percentage = executor.getRepairPercentage();
+            double percentage = executor.getRepairProgress();
             printProgress(percentage, "REPAIR");
             console.println();
             console.flush();

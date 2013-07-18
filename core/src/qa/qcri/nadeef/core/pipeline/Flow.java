@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.List;
@@ -246,7 +247,7 @@ public class Flow {
      * Returns <code>True</code> when the flow is still running.
      * @return <code>True</code> when the flow is still running.
      */
-    public synchronized boolean isRunning() {
+    public boolean isRunning() {
         return state == FlowState.Running;
     }
 
@@ -261,7 +262,7 @@ public class Flow {
     /**
      * Gets the current progress percentage.
      */
-    public synchronized double getPercentage() {
+    public double getProgress() {
         int percentage = 0;
         double weightSum = 0;
         int weight;
@@ -269,9 +270,22 @@ public class Flow {
             weight = weights.get(i);
             weightSum += weight;
             Node node = nodeList.get(i);
-            percentage += node.getPercentage() * weight;
+            percentage += node.getProgress() * weight;
         }
         return (double)percentage / weightSum;
     }
+
+    /**
+     * Gets the detail progress information for each operator.
+     * @return detail progress information for each operator.
+     */
+    public List<ProgressReport> getDetailProgress() {
+        List<ProgressReport> list = Lists.newArrayList();
+        for (Node node : nodeList) {
+            list.add(node.getDetailProgress());
+        }
+        return list;
+    }
+
     //</editor-fold>
 }

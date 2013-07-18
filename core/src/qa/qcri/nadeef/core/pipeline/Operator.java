@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.ProgressReport;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -76,15 +77,15 @@ public abstract class Operator<TInput, TOutput> {
     protected abstract TOutput execute(TInput input) throws Exception;
 
     /**
-     * Gets the current progress percentage of this operator [0 - 100].
+     * Gets the current progress percentage of this operator [0 - 1].
      * @return percentage in integer.
      */
-    double getPercentage() { return percentage; }
+    synchronized double getPercentage() { return percentage; }
 
     /**
      * Reset is called before operator starts to function.
      */
-    void reset() {
+    synchronized void reset() {
         this.percentage = 0.0f;
     }
 
@@ -96,7 +97,7 @@ public abstract class Operator<TInput, TOutput> {
     /**
      * Sets the percentage.
      */
-    void setPercentage(double percentage) {
+    synchronized void setPercentage(double percentage) {
         Preconditions.checkArgument(percentage >= 0.0f && percentage <= 1.0f);
         this.percentage = percentage;
     }

@@ -16,8 +16,9 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
 import qa.qcri.nadeef.tools.Tracer;
+
+import java.util.List;
 
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
@@ -33,6 +34,8 @@ public class CleanExecutor {
     private Flow detectFlow;
     private Flow repairFlow;
     private Flow updateFlow;
+    private int currentIterationNumber;
+
     //</editor-fold>
 
     //<editor-fold desc="Constructor / Deconstructor">
@@ -124,19 +127,48 @@ public class CleanExecutor {
     }
 
     /**
-     * Gets the current percentage of Detect.
-     * @return current percentage of Detect.
+     * Gets the current progress percentage of Detect.
+     * @return current progress percentage of Detect.
      */
-    public double getDetectPercentage() {
-        return queryFlow.getPercentage() * 0.5 + detectFlow.getPercentage() * 0.5;
+    public double getDetectProgress() {
+        return queryFlow.getProgress() * 0.5 + detectFlow.getProgress() * 0.5;
+    }
+
+    /**
+     * Gets the detail progress information of Detection.
+     * @return the detail progress information of Detection.
+     */
+    public List<ProgressReport> getDetailDetectProgress() {
+        List<ProgressReport> queryProgress = queryFlow.getDetailProgress();
+        List<ProgressReport> detectProgress = detectFlow.getDetailProgress();
+        queryProgress.addAll(detectProgress);
+        return queryProgress;
     }
 
     /**
      * Gets the current percentage of Repair.
      * @return current percentage of Repair.
      */
-    public double getRepairPercentage() {
-        return repairFlow.getPercentage();
+    public double getRepairProgress() {
+        return repairFlow.getProgress();
+    }
+
+    /**
+     * Gets the detail progress information of Detection.
+     * @return the detail progress information of Detection.
+     */
+    public List<ProgressReport> getDetailRepairProgress() {
+        return repairFlow.getDetailProgress();
+    }
+
+    /**
+     * Gets the current iteration number.
+     * @return the current iteration number.
+     */
+    public int getCurrentIterationNumber() {
+        synchronized (this) {
+            return currentIterationNumber;
+        }
     }
 
     /**
@@ -144,7 +176,7 @@ public class CleanExecutor {
      * @return current percentage of Run.
      */
     public double getRunPercentage() {
-        return getDetectPercentage() * 0.5 + getRepairPercentage() * 0.5;
+        return getDetectProgress() * 0.5 + getRepairProgress() * 0.5;
     }
 
     /**
@@ -203,17 +235,21 @@ public class CleanExecutor {
      */
     public CleanExecutor run() {
         int changedCells = 0;
-        int count = 0;
+        currentIterationNumber = 0;
+
         do {
-            tracer.verbose("Running iteration " + count + 1);
+            synchronized (this) {
+                tracer.verbose("Running iteration " + currentIterationNumber);
+                if (currentIterationNumber == NadeefConfiguration.getMaxIterationNumber()) {
+                    break;
+                }
+                currentIterationNumber ++;
+            }
+
             detect();
             repair();
 
             changedCells = ((Integer)getUpdateOutput()).intValue();
-            count ++;
-            if (count == NadeefConfiguration.getMaxIterationNumber()) {
-                break;
-            }
         } while (changedCells != 0);
         return this;
     }

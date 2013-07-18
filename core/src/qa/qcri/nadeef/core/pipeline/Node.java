@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.UUID;
@@ -81,8 +82,17 @@ public class Node {
      * Gets the current progress percentage.
      * @return progress percentage.
      */
-    public double getPercentage() {
+    public double getProgress() {
         return operator.getPercentage();
+    }
+
+    /**
+     * Gets detail progress information of the operator.
+     * @return detail progress information of the operator.
+     */
+    public ProgressReport getDetailProgress() {
+        double percentage = operator.getPercentage();
+        return new ProgressReport(name, percentage);
     }
 
     /**

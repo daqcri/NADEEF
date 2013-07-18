@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TJobStatusType;
@@ -178,16 +179,29 @@ public class NadeefJobScheduler {
 
         NadeefJob job = runningCleaner.get(key);
         CleanExecutor executor = job.executor;
-        double progressd = 0f;
+        double progress = 0f;
+        List<ProgressReport> detailProgress = null;
         switch(job.type) {
             case Detect:
-                progressd = executor.getDetectPercentage();
+                progress = executor.getDetectProgress();
+                detailProgress = executor.getDetailDetectProgress();
                 break;
             case Repair:
-                progressd = executor.getRepairPercentage();
+                progress = executor.getRepairProgress();
+                detailProgress = executor.getDetailRepairProgress();
                 break;
         }
-        result.setProgress((int)(progressd * 100));
+
+        result.setOverallProgress((int)(progress * 100));
+        List<String> names = Lists.newArrayList();
+        List<Integer> progresses = Lists.newArrayList();
+        for (int i = 0; i < detailProgress.size(); i ++) {
+            names.add(detailProgress.get(i).getOperatorName());
+            progresses.add((int)detailProgress.get(i).getProgress() * 100);
+        }
+
+        result.setNames(names);
+        result.setProgress(progresses);
         // a hack to determine whether the job is executing or not.
         if (executor.isRunning()) {
             result.setStatus(TJobStatusType.RUNNING);

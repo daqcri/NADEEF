@@ -5201,14 +5201,14 @@ public class TNadeefService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                  struct.success = new ArrayList<TJobStatus>(_list0.size);
-                  for (int _i1 = 0; _i1 < _list0.size; ++_i1)
+                  org.apache.thrift.protocol.TList _list16 = iprot.readListBegin();
+                  struct.success = new ArrayList<TJobStatus>(_list16.size);
+                  for (int _i17 = 0; _i17 < _list16.size; ++_i17)
                   {
-                    TJobStatus _elem2; // required
-                    _elem2 = new TJobStatus();
-                    _elem2.read(iprot);
-                    struct.success.add(_elem2);
+                    TJobStatus _elem18; // required
+                    _elem18 = new TJobStatus();
+                    _elem18.read(iprot);
+                    struct.success.add(_elem18);
                   }
                   iprot.readListEnd();
                 }
@@ -5236,9 +5236,9 @@ public class TNadeefService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (TJobStatus _iter3 : struct.success)
+            for (TJobStatus _iter19 : struct.success)
             {
-              _iter3.write(oprot);
+              _iter19.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -5269,9 +5269,9 @@ public class TNadeefService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (TJobStatus _iter4 : struct.success)
+            for (TJobStatus _iter20 : struct.success)
             {
-              _iter4.write(oprot);
+              _iter20.write(oprot);
             }
           }
         }
@@ -5283,14 +5283,14 @@ public class TNadeefService {
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<TJobStatus>(_list5.size);
-            for (int _i6 = 0; _i6 < _list5.size; ++_i6)
+            org.apache.thrift.protocol.TList _list21 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<TJobStatus>(_list21.size);
+            for (int _i22 = 0; _i22 < _list21.size; ++_i22)
             {
-              TJobStatus _elem7; // required
-              _elem7 = new TJobStatus();
-              _elem7.read(iprot);
-              struct.success.add(_elem7);
+              TJobStatus _elem23; // required
+              _elem23 = new TJobStatus();
+              _elem23.read(iprot);
+              struct.success.add(_elem23);
             }
           }
           struct.setSuccessIsSet(true);

@@ -74,7 +74,7 @@ public class CleanExecutorTest {
             Thread thread = new Thread(new DetectThread(executor));
             thread.start();
             while (thread.isAlive()) {
-                result.add(executor.getDetectPercentage());
+                result.add(executor.getDetectProgress());
                 Thread.sleep(30);
             }
 
@@ -83,13 +83,13 @@ public class CleanExecutorTest {
                 System.out.println(v);
             }
 
-            Assert.assertEquals(1.0f, executor.getDetectPercentage(), 0.0);
+            Assert.assertEquals(1.0f, executor.getDetectProgress(), 0.0);
 
             result.clear();
             thread = new Thread(new RepairThread(executor));
             thread.start();
             while (thread.isAlive()) {
-                result.add(executor.getRepairPercentage());
+                result.add(executor.getRepairProgress());
                 Thread.sleep(30);
             }
 
@@ -97,7 +97,7 @@ public class CleanExecutorTest {
             for (Double v : result) {
                 System.out.println(v);
             }
-            Assert.assertEquals(1.0f, executor.getRepairPercentage(), 0.0);
+            Assert.assertEquals(1.0f, executor.getRepairProgress(), 0.0);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

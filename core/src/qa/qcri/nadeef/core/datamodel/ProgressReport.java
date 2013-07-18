@@ -13,7 +13,22 @@
 package qa.qcri.nadeef.core.datamodel;
 
 /**
- * Percentage report represents progress
+ * Progress report represents progress information used in progress bar.
  */
 public class ProgressReport {
+    private String operatorName;
+    private double progress;
+
+    public ProgressReport(String operatorName, double progress) {
+        this.operatorName = operatorName;
+        this.progress = progress;
+    }
+
+    public String getOperatorName() {
+        return operatorName;
+    }
+
+    public double getProgress() {
+        return progress;
+    }
 }
