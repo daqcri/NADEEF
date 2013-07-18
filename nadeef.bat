@@ -7,7 +7,7 @@ if not exist "%JAVA_HOME%\bin\javac.exe" goto noJDK
 )
 
 :COMPILE_CHECK
-if not exist "out\nadeef.jar" goto noCompile
+if not exist "out\bin\nadeef.jar" goto noCompile
 
 :START
 set BuildVersion=1.0.1019
