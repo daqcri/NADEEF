@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means “Clean” in Arabic
+ * NADEEF means "Clean" in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -192,7 +192,7 @@ public class NadeefJobScheduler {
                 break;
         }
 
-        result.setOverallProgress((int)(progress * 100));
+        result.setOverallProgress((int) (progress * 100));
         List<String> names = Lists.newArrayList();
         List<Integer> progresses = Lists.newArrayList();
         for (int i = 0; i < detailProgress.size(); i ++) {
