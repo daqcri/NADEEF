@@ -1,4 +1,5 @@
-NADEEF
+
+NADEEF <img src="https://travis-ci.org/zyzyis/NADEEF.png" />
 ==================
 
 NADEEF (or ''clean'' in Arabic, نظيف) is a pioneering commodity data cleaning system developed by the data
