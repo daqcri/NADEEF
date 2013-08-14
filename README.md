@@ -1,4 +1,3 @@
-
 NADEEF <img src="https://travis-ci.org/zyzyis/NADEEF.png" />
 ==================
 
@@ -22,3 +21,7 @@ Publications
 ===================
 
 http://da.qcri.org/publications
+
+License
+===================
+NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
