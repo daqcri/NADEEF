@@ -1,4 +1,4 @@
-NADEEF
+NADEEF <img src="https://travis-ci.org/zyzyis/NADEEF.png" />
 ==================
 
 NADEEF (or ''clean'' in Arabic, نظيف) is a pioneering commodity data cleaning system developed by the data
@@ -21,3 +21,7 @@ Publications
 ===================
 
 http://da.qcri.org/publications
+
+License
+===================
+NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
