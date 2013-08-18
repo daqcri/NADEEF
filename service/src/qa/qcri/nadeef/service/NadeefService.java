@@ -35,9 +35,13 @@ public class NadeefService extends AbstractIdleService {
         Bootstrap.start();
 
         NadeefServiceHandler handler = new NadeefServiceHandler();
-        TNadeefService.Processor processor = new TNadeefService.Processor(handler);
+        TNadeefService.Processor processor =
+            new TNadeefService.Processor(handler);
         TServerTransport serverTransport = new TServerSocket(PORT);
-        server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor));
+        server =
+            new TSimpleServer(
+                new TServer.Args(serverTransport).processor(processor)
+            );
         tracer.info("Starting NADEEF server @ " + PORT);
         server.serve();
     }

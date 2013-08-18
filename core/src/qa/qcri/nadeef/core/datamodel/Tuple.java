@@ -153,7 +153,7 @@ public class Tuple {
      * Returns <code>True</code> when given a tuple from the same schema, the values are
      * also the same. There is no check on the schema but only do a check on the values.
      * This is mainly used for optimization on tuple compare from the same schema.
-     * @param tuple
+     * @param tuple tuple to compare.
      * @return <code>True</code> when the given tuple from the same schema also has the same
      * values.
      */

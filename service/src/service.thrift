@@ -44,7 +44,7 @@ service TNadeefService {
     /**
      * Generates UDF code for the rule.
      */
-    string generate(1:TRule rule) throws (1:TNadeefRemoteException re),
+    string generate(1:TRule rule, 2: string tableName) throws (1:TNadeefRemoteException re),
 
     /**
      * Verify the given rule.

@@ -104,8 +104,7 @@ public abstract class RuleBuilder {
      *            table name.
      */
     public RuleBuilder table(List<String> tableNames) {
-        Preconditions
-                .checkArgument(tableNames != null && tableNames.size() > 0);
+        Preconditions.checkArgument(tableNames != null && tableNames.size() > 0);
         this.tableNames = tableNames;
         return this;
     }
@@ -129,8 +128,7 @@ public abstract class RuleBuilder {
      *            output path.
      */
     public RuleBuilder out(File outputPath) {
-        Preconditions.checkArgument(outputPath != null
-                && outputPath.isDirectory());
+        Preconditions.checkArgument(outputPath != null && outputPath.isDirectory());
         this.outputPath = outputPath;
         return this;
     }
@@ -191,6 +189,13 @@ public abstract class RuleBuilder {
      * @return Output class file.
      */
     public abstract Collection<File> compile() throws Exception;
+
+    /**
+     * Generates the .java file.
+     *
+     * @return Output class file.
+     */
+    public abstract Collection<File> generate() throws Exception;
 
     // </editor-fold>
 

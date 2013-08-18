@@ -103,10 +103,10 @@ public class SimpleExpression {
     /**
      * Returns the expression in SQL String.
      * @return SQL String.
-     * TODO: currently for numerical value we do a simple regex to check,
-     * but it is not 100% correct since numerical value can also be used
-     * as string in SQL.
      */
+    // TODO: currently for numerical value we do a simple regex to check,
+    // but it is not 100% correct since numerical value can also be used
+    // as string in SQL.
     public String toString() {
         StringBuilder builder = new StringBuilder(left.getFullColumnName());
         builder.append(operationMap.get(operation));
@@ -120,6 +120,23 @@ public class SimpleExpression {
         return builder.toString();
     }
 
+    /**
+     * Returns <code>True</code> when the tuple matches the given expression.
+     * @param tuple tuple.
+     * @return <code>True</code> when the tuple matches the given expression.
+     */
+    public boolean match(Tuple tuple) {
+        String value = tuple.get(left);
+        if (value.equalsIgnoreCase(this.value)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets the {@link Operation}.
+     * @return operation.
+     */
     public Operation getOperation() {
         return operation;
     }

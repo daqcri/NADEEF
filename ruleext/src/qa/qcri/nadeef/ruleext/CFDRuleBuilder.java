@@ -13,20 +13,18 @@
 
 package qa.qcri.nadeef.ruleext;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.SimpleExpression;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Template engine for CFD rule.
@@ -38,13 +36,8 @@ public class CFDRuleBuilder extends RuleBuilder {
     protected STGroupFile                  singleSTGroup;
     protected STGroupFile                  pairSTGroup;
 
-    /**
-     * Generates and compiles the rule .class file without loading it.
-     * 
-     * @return Output class file.
-     */
     @Override
-    public Collection<File> compile() throws Exception {
+    public Collection<File> generate() throws Exception {
         List<File> result = Lists.newArrayList();
         singleSTGroup = new STGroupFile(
             "qa/qcri/nadeef/ruleext/template/SingleCFDRuleBuilder.stg",
@@ -109,28 +102,22 @@ public class CFDRuleBuilder extends RuleBuilder {
 
                 if (Strings.isNullOrEmpty(originalRuleName)) {
                     ruleName = "DefaultCFD"
-                        + CommonTools.toHashCode(value.get(i + 1)) + "_"
-                        + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
-                        + "_" + i;
+                            + CommonTools.toHashCode(value.get(i + 1)) + "_"
+                            + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
+                            + "_" + i;
                 } else {
                     // remove all the empty spaces to make it a valid class
                     // name.
                     ruleName = originalRuleName.replace(" ", "") + "_"
-                        + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
-                        + "_" + i;
+                            + rhsCol.substring(rhsCol.lastIndexOf('.') + 1)
+                            + "_" + i;
                 }
 
                 targetST.add("CFDName", ruleName);
 
                 File outputFile = getOutputFile();
                 targetST.write(outputFile, null);
-
-                String fullPath = outputFile.getAbsolutePath();
-                // skip compiling if the .class file already exists.
-                File classFile = new File(fullPath.replace(".java", ".class"));
-                if (classFile.exists() || CommonTools.compileFile(outputFile)) {
-                    result.add(classFile);
-                }
+                result.add(outputFile);
 
                 targetST.remove("CFDName");
                 targetST.remove("lExpression");
@@ -138,6 +125,26 @@ public class CFDRuleBuilder extends RuleBuilder {
                     targetST.remove("rExpression");
                 }
                 targetST.remove("rightHandSide");
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Generates and compiles the rule .class file without loading it.
+     * 
+     * @return Output class file.
+     */
+    @Override
+    public Collection<File> compile() throws Exception {
+        Collection<File> result = Lists.newArrayList();
+        Collection<File> javaFiles = generate();
+        for (File outputFile : javaFiles) {
+            String fullPath = outputFile.getAbsolutePath();
+            // skip compiling if the .class file already exists.
+            File classFile = new File(fullPath.replace(".java", ".class"));
+            if (classFile.exists() || CommonTools.compileFile(outputFile)) {
+                result.add(classFile);
             }
         }
 

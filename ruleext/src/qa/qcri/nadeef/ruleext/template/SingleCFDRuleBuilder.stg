@@ -15,7 +15,7 @@ cfdTemplate(CFDName, leftHandSide, rightHandSide, lExpression, rExpression) ::= 
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means “Clean” in Arabic
+ * NADEEF means "Clean" in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -108,9 +108,10 @@ public class $CFDName$ extends SingleTupleRule {
     public Collection<Violation> detect(Tuple tuple) {
     	List<Violation> result = new ArrayList();
     	// Matching with lhs is redundant, but needed for correctness of detect function,
-		// when used in incremental detection
-    	if(tuple.matchExpressions(leftFilterExpressions)){
-    		if(!tuple.matchExpressions(rightFilterExpressions)){
+		// when used in incremental detection.
+
+    	if(matches(leftFilterExpressions, tuple)) {
+    		if(!matches(rightFilterExpressions, tuple)) {
     			Violation violation = new Violation(ruleName);
 	        	violation.addTuple(tuple);
     	    	result.add(violation);
@@ -129,6 +130,15 @@ public class $CFDName$ extends SingleTupleRule {
     public Collection<Fix> repair(Violation violation) {
         List<Fix> result = new ArrayList();
         return result;
+    }
+
+    private static boolean matches(List<SimpleExpression> expressions, Tuple tuple) {
+        for (SimpleExpression exp : expressions) {
+            if (!exp.match(tuple)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 >>

@@ -139,6 +139,7 @@ public class ViolationDetector<T>
         List<Object> tupleList;
         long elapsedTime = 0l;
         detectCount = 0;
+        List<ListenableFuture<Integer>> futures = Lists.newArrayList();
         while (true) {
             tupleList = iteratorStream.poll();
             if (tupleList.size() == 0) {
@@ -147,7 +148,13 @@ public class ViolationDetector<T>
 
             totalThreadCount ++;
             ListenableFuture<Integer> future = service.submit(new Detector(tupleList));
+            futures.add(future);
             Futures.addCallback(future, new DetectorCallback());
+        }
+
+        // wait until all the futures finished
+        for (ListenableFuture<Integer> future : futures) {
+            future.get();
         }
 
         Tracer.putStatsEntry(Tracer.StatType.DetectCallTime, elapsedTime);

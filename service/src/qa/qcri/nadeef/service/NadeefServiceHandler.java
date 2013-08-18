@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import org.apache.thrift.TException;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
@@ -27,10 +28,11 @@ import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.List;
 
@@ -45,8 +47,46 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String generate(TRule rule) throws TException {
-        return "";
+    public String generate(TRule tRule, String tableName) throws TNadeefRemoteException {
+        String result = "";
+        TRuleType type = tRule.getType();
+        String code = tRule.getCode();
+        String name = tRule.getName();
+
+        switch (type) {
+            case UDF:
+                result = code;
+                break;
+            default:
+                try {
+                    Schema schema =
+                        DBMetaDataTool.getSchema(
+                            NadeefConfiguration.getDbConfig(), tableName
+                        );
+                    RuleBuilder ruleBuilder =
+                        NadeefConfiguration.tryGetRuleBuilder(type.toString());
+                    if (ruleBuilder != null) {
+                        Collection<File> javaFiles =
+                            ruleBuilder
+                                .name(name)
+                                .schema(schema)
+                                .table(tableName)
+                                .value(code)
+                                .generate();
+                        // TODO: currently only picks the first generated file
+                        File codeFile = javaFiles.iterator().next();
+                        result = Files.toString(codeFile, Charset.defaultCharset());
+                    }
+                } catch (Exception ex) {
+                    tracer.err("Code generation failed.", ex);
+                    TNadeefRemoteException re = new TNadeefRemoteException();
+                    re.setType(TNadeefExceptionType.UNKNOWN);
+                    re.setMessage(ex.getMessage());
+                    throw re;
+                }
+                break;
+        }
+        return result;
     }
 
     /**
@@ -68,10 +108,8 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                         );
 
                     Files.write(
-                        outputPath,
-                        code.getBytes(),
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.TRUNCATE_EXISTING
+                        code.getBytes(StandardCharsets.UTF_8),
+                        outputPath.toFile()
                     );
 
                     if (!CommonTools.compileFile(outputPath.toFile())) {
@@ -203,10 +241,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         return jobScheduler.getJobStatus();
     }
 
-    private Collection<Rule> buildAbstractRule(TRule tRule, String tableName) throws Exception{
+    private Collection<Rule> buildAbstractRule(TRule tRule, String tableName) throws Exception {
         TRuleType type = tRule.getType();
-        String code = tRule.getCode();
         String name = tRule.getName();
+        String code = tRule.getCode();
+
+        List<String> lines = Lists.newArrayList(code.split("\n"));
 
         RuleBuilder ruleBuilder = null;
         Collection<Rule> result = null;
@@ -217,7 +257,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 .name(name)
                 .schema(schema)
                 .table(tableName)
-                .value(code)
+                .value(lines)
                 .build();
         } else {
             tracer.err("Unknown Rule type: " + type, null);

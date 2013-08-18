@@ -42,15 +42,17 @@ public class FDRuleBuilder extends RuleBuilder {
     private static Tracer tracer = Tracer.getTracer(FDRuleBuilder.class);
     //</editor-fold>
 
+
+
     //<editor-fold desc="Public methods">
     /**
      * Compiles the given FD rule. If the .class file already exists in the file the
      * compilation is skipped.
-     * @return returns Class name.
+     * @return compiled file.
      */
     @Override
     public Collection<File> compile() throws IOException {
-        File inputFile = generate();
+        File inputFile = generate().iterator().next();
         // check whether the class file is already there, if so we skip the compiling phrase.
         String fullPath = inputFile.getAbsolutePath();
         File classFile = new File(fullPath.replace(".java", ".class"));
@@ -62,15 +64,14 @@ public class FDRuleBuilder extends RuleBuilder {
         return Lists.newArrayList(classFile);
     }
 
-    //</editor-fold>
-
     /**
      * Generates the code.
-     * @return generated file in full path.
+     * @return generated files in full path.
      */
-    protected File generate() throws IOException {
+    @Override
+    public Collection<File> generate() throws IOException {
         STGroupFile stFile =
-            new STGroupFile("qa/qcri/nadeef/ruleext/template/FDRuleBuilder.stg", '$', '$');
+                new STGroupFile("qa/qcri/nadeef/ruleext/template/FDRuleBuilder.stg", '$', '$');
         ST st = stFile.getInstanceOf("fdTemplate");
         st.add("leftHandSideInitialize", lhs);
         st.add("rightHandSideInitialize", rhs);
@@ -85,8 +86,9 @@ public class FDRuleBuilder extends RuleBuilder {
 
         File outputFile = getOutputFile();
         st.write(outputFile, null);
-        return outputFile;
+        return Lists.newArrayList(outputFile);
     }
+    //</editor-fold>
 
     @Override
     protected void parse() {
