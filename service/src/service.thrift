@@ -3,12 +3,6 @@
  */
 namespace java qa.qcri.nadeef.service.thrift
 
-enum TRuleType {
-    UDF = 0,
-    FD = 1,
-    CFD = 2
-}
-
 enum TNadeefExceptionType{
     UNKNOWN = 0,
     COMPILE_ERROR = 1,
@@ -31,7 +25,7 @@ struct TJobStatus {
 
 struct TRule {
     1: string name,
-    2: TRuleType type,
+    2: string type,
     3: string code
 }
 
@@ -44,7 +38,8 @@ service TNadeefService {
     /**
      * Generates UDF code for the rule.
      */
-    string generate(1:TRule rule, 2: string tableName) throws (1:TNadeefRemoteException re),
+    string generate(1:TRule rule, 2: string tableName)
+        throws (1:TNadeefRemoteException re),
 
     /**
      * Verify the given rule.
@@ -54,12 +49,14 @@ service TNadeefService {
     /**
      * Detect with the given rule.
      */
-    string detect(1: TRule rule, 2: string tableName) throws (1:TNadeefRemoteException re),
+    string detect(1: TRule rule, 2: string table1, 3: string table2)
+        throws (1:TNadeefRemoteException re),
 
     /**
      * Repair with the given rule.
      */
-    string repair(1: TRule rule, 2: string tableName) throws (1:TNadeefRemoteException re),
+    string repair(1: TRule rule, 2: string table1, 3: string table2)
+        throws (1:TNadeefRemoteException re),
 
     /**
      * Gets status of a specific job.

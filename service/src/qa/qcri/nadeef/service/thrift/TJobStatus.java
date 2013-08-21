@@ -707,7 +707,7 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
                 struct.names = new ArrayList<String>(_list0.size);
                 for (int _i1 = 0; _i1 < _list0.size; ++_i1)
                 {
-                  String _elem2; // optional
+                  String _elem2; // required
                   _elem2 = iprot.readString();
                   struct.names.add(_elem2);
                 }
@@ -725,7 +725,7 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
                 struct.progress = new ArrayList<Integer>(_list3.size);
                 for (int _i4 = 0; _i4 < _list3.size; ++_i4)
                 {
-                  int _elem5; // optional
+                  int _elem5; // required
                   _elem5 = iprot.readI32();
                   struct.progress.add(_elem5);
                 }
@@ -873,7 +873,7 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
           struct.names = new ArrayList<String>(_list10.size);
           for (int _i11 = 0; _i11 < _list10.size; ++_i11)
           {
-            String _elem12; // optional
+            String _elem12; // required
             _elem12 = iprot.readString();
             struct.names.add(_elem12);
           }
@@ -886,7 +886,7 @@ public class TJobStatus implements org.apache.thrift.TBase<TJobStatus, TJobStatu
           struct.progress = new ArrayList<Integer>(_list13.size);
           for (int _i14 = 0; _i14 < _list13.size; ++_i14)
           {
-            int _elem15; // optional
+            int _elem15; // required
             _elem15 = iprot.readI32();
             struct.progress.add(_elem15);
           }

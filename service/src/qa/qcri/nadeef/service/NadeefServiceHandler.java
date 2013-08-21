@@ -49,42 +49,39 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
     @Override
     public String generate(TRule tRule, String tableName) throws TNadeefRemoteException {
         String result = "";
-        TRuleType type = tRule.getType();
+        String type = tRule.getType();
         String code = tRule.getCode();
         String name = tRule.getName();
 
-        switch (type) {
-            case UDF:
-                result = code;
-                break;
-            default:
-                try {
-                    Schema schema =
-                        DBMetaDataTool.getSchema(
-                            NadeefConfiguration.getDbConfig(), tableName
-                        );
-                    RuleBuilder ruleBuilder =
-                        NadeefConfiguration.tryGetRuleBuilder(type.toString());
-                    if (ruleBuilder != null) {
-                        Collection<File> javaFiles =
-                            ruleBuilder
-                                .name(name)
-                                .schema(schema)
-                                .table(tableName)
-                                .value(code)
-                                .generate();
-                        // TODO: currently only picks the first generated file
-                        File codeFile = javaFiles.iterator().next();
-                        result = Files.toString(codeFile, Charset.defaultCharset());
-                    }
-                } catch (Exception ex) {
-                    tracer.err("Code generation failed.", ex);
-                    TNadeefRemoteException re = new TNadeefRemoteException();
-                    re.setType(TNadeefExceptionType.UNKNOWN);
-                    re.setMessage(ex.getMessage());
-                    throw re;
+        if (type.equalsIgnoreCase("udf")) {
+            result = code;
+        } else {
+            try {
+                Schema schema =
+                    DBMetaDataTool.getSchema(
+                        NadeefConfiguration.getDbConfig(), tableName
+                    );
+                RuleBuilder ruleBuilder =
+                    NadeefConfiguration.tryGetRuleBuilder(type.toString());
+                if (ruleBuilder != null) {
+                    Collection<File> javaFiles =
+                        ruleBuilder
+                            .name(name)
+                            .schema(schema)
+                            .table(tableName)
+                            .value(code)
+                            .generate();
+                    // TODO: currently only picks the first generated file
+                    File codeFile = javaFiles.iterator().next();
+                    result = Files.toString(codeFile, Charset.defaultCharset());
                 }
-                break;
+            } catch (Exception ex) {
+                tracer.err("Code generation failed.", ex);
+                TNadeefRemoteException re = new TNadeefRemoteException();
+                re.setType(TNadeefExceptionType.UNKNOWN);
+                re.setMessage(ex.getMessage());
+                throw re;
+            }
         }
         return result;
     }
@@ -94,30 +91,26 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      */
     @Override
     public boolean verify(TRule rule) {
-        TRuleType type = rule.getType();
+        String type = rule.getType();
         String code = rule.getCode();
         String name = rule.getName();
         boolean result = true;
         try {
-            switch (type) {
-                case UDF:
-                    Path outputPath =
-                        FileSystems.getDefault().getPath(
-                            NadeefConfiguration.getOutputPath().toString(),
-                            name + ".java"
-                        );
-
-                    Files.write(
-                        code.getBytes(StandardCharsets.UTF_8),
-                        outputPath.toFile()
+            if (type.equalsIgnoreCase("udf")) {
+                Path outputPath =
+                    FileSystems.getDefault().getPath(
+                        NadeefConfiguration.getOutputPath().toString(),
+                        name + ".java"
                     );
 
-                    if (!CommonTools.compileFile(outputPath.toFile())) {
-                        result = false;
-                    }
-                    break;
-                default:
-                    break;
+                Files.write(
+                    code.getBytes(StandardCharsets.UTF_8),
+                    outputPath.toFile()
+                );
+
+                if (!CommonTools.compileFile(outputPath.toFile())) {
+                    result = false;
+                }
             }
         } catch (Exception ex) {
             tracer.err("Exception happens in verify.", ex);
@@ -129,7 +122,8 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String detect(TRule rule, String tableName) throws TNadeefRemoteException {
+    public String detect(TRule rule, String table1, String table2) throws TNadeefRemoteException {
+        tracer.info("Detect rule " + rule.getName() + "[" + rule.getType() + "]");
         if (!verify(rule)) {
             TNadeefRemoteException ex = new TNadeefRemoteException();
             ex.setType(TNadeefExceptionType.COMPILE_ERROR);
@@ -139,31 +133,30 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         try {
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
             DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
-            TRuleType type = rule.getType();
+            String type = rule.getType();
             String name = rule.getName();
             String key = null;
             Rule ruleInstance;
             CleanPlan cleanPlan;
-            switch (type) {
-                case UDF:
-                    Class udfClass = CommonTools.loadClass(name);
-                    if (!Rule.class.isAssignableFrom(udfClass)) {
-                        throw new InvalidRuleException("The specified class is not a Rule class.");
-                    }
+            if (type.equalsIgnoreCase("udf")) {
+                Class udfClass = CommonTools.loadClass(name);
+                if (!Rule.class.isAssignableFrom(udfClass)) {
+                    throw new InvalidRuleException("The specified class is not a Rule class.");
+                }
 
-                    ruleInstance = (Rule) udfClass.newInstance();
-                    ruleInstance.initialize(rule.getName(), Lists.newArrayList(tableName));
-                    cleanPlan = new CleanPlan(config, ruleInstance);
+                ruleInstance = (Rule) udfClass.newInstance();
+                ruleInstance.initialize(rule.getName(), Lists.newArrayList(table1, table2));
+                cleanPlan = new CleanPlan(config, ruleInstance);
+                key = scheduler.submitDetectJob(cleanPlan);
+            } else {
+                // TODO: declarative rule only supports 1 table
+                Collection<Rule> rules =
+                    buildAbstractRule(rule, table1);
+                for (Rule rule_ : rules) {
+                    rule_.initialize(rule.getName(), Lists.newArrayList(table1, table2));
+                    cleanPlan = new CleanPlan(config, rule_);
                     key = scheduler.submitDetectJob(cleanPlan);
-                    break;
-                default:
-                    Collection<Rule> rules = buildAbstractRule(rule, tableName);
-                    for (Rule rule_ : rules) {
-                        rule_.initialize(rule.getName(), Lists.newArrayList(tableName));
-                        cleanPlan = new CleanPlan(config, rule_);
-                        key = scheduler.submitDetectJob(cleanPlan);
-                    }
-                    break;
+                }
             }
 
             return key;
@@ -187,7 +180,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String repair(TRule rule, String tableName) throws TNadeefRemoteException {
+    public String repair(TRule rule, String table1, String table2) throws TNadeefRemoteException {
         if (!verify(rule)) {
             TNadeefRemoteException ex = new TNadeefRemoteException();
             ex.setType(TNadeefExceptionType.COMPILE_ERROR);
@@ -202,7 +195,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             }
 
             Rule ruleInstance = (Rule) udfClass.newInstance();
-            ruleInstance.initialize(rule.getName(), Lists.newArrayList(tableName));
+            ruleInstance.initialize(rule.getName(), Lists.newArrayList(table1, table2));
             DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
 
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
@@ -242,15 +235,15 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
     }
 
     private Collection<Rule> buildAbstractRule(TRule tRule, String tableName) throws Exception {
-        TRuleType type = tRule.getType();
+        String type = tRule.getType();
         String name = tRule.getName();
         String code = tRule.getCode();
 
         List<String> lines = Lists.newArrayList(code.split("\n"));
 
-        RuleBuilder ruleBuilder = null;
-        Collection<Rule> result = null;
-        ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type.toString());
+        RuleBuilder ruleBuilder;
+        Collection<Rule> result;
+        ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
         Schema schema = DBMetaDataTool.getSchema(NadeefConfiguration.getDbConfig(), tableName);
         if (ruleBuilder != null) {
             result = ruleBuilder

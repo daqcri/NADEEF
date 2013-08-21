@@ -34,7 +34,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("TRule");
 
   private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)1);
-  private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.STRING, (short)2);
   private static final org.apache.thrift.protocol.TField CODE_FIELD_DESC = new org.apache.thrift.protocol.TField("code", org.apache.thrift.protocol.TType.STRING, (short)3);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -44,16 +44,12 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
   }
 
   private String name; // required
-  private TRuleType type; // required
+  private String type; // required
   private String code; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     NAME((short)1, "name"),
-    /**
-     * 
-     * @see TRuleType
-     */
     TYPE((short)2, "type"),
     CODE((short)3, "code");
 
@@ -122,7 +118,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
     tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, TRuleType.class)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.CODE, new org.apache.thrift.meta_data.FieldMetaData("code", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -134,7 +130,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
 
   public TRule(
     String name,
-    TRuleType type,
+    String type,
     String code)
   {
     this();
@@ -193,19 +189,11 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
     }
   }
 
-  /**
-   * 
-   * @see TRuleType
-   */
-  public TRuleType getType() {
+  public String getType() {
     return this.type;
   }
 
-  /**
-   * 
-   * @see TRuleType
-   */
-  public TRule setType(TRuleType type) {
+  public TRule setType(String type) {
     this.type = type;
     return this;
   }
@@ -263,7 +251,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
       if (value == null) {
         unsetType();
       } else {
-        setType((TRuleType)value);
+        setType((String)value);
       }
       break;
 
@@ -491,8 +479,8 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
             }
             break;
           case 2: // TYPE
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.type = TRuleType.findByValue(iprot.readI32());
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.type = iprot.readString();
               struct.setTypeIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -528,7 +516,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
       }
       if (struct.type != null) {
         oprot.writeFieldBegin(TYPE_FIELD_DESC);
-        oprot.writeI32(struct.type.getValue());
+        oprot.writeString(struct.type);
         oprot.writeFieldEnd();
       }
       if (struct.code != null) {
@@ -568,7 +556,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
         oprot.writeString(struct.name);
       }
       if (struct.isSetType()) {
-        oprot.writeI32(struct.type.getValue());
+        oprot.writeString(struct.type);
       }
       if (struct.isSetCode()) {
         oprot.writeString(struct.code);
@@ -584,7 +572,7 @@ public class TRule implements org.apache.thrift.TBase<TRule, TRule._Fields>, jav
         struct.setNameIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.type = TRuleType.findByValue(iprot.readI32());
+        struct.type = iprot.readString();
         struct.setTypeIsSet(true);
       }
       if (incoming.get(2)) {
