@@ -27,9 +27,7 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -40,6 +38,7 @@ import java.util.concurrent.Executors;
 public class NadeefJobScheduler {
     private static NadeefJobScheduler instance;
     private static ListeningExecutorService service;
+    private static List<String> keys;
     private static ConcurrentMap<String, NadeefJob> runningCleaner;
     private static ConcurrentMap<String, String> runningRules;
     private static String hostname;
@@ -58,6 +57,7 @@ public class NadeefJobScheduler {
         service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         runningCleaner = Maps.newConcurrentMap();
         runningRules = Maps.newConcurrentMap();
+        keys = Collections.synchronizedList(new ArrayList<String>());
     }
 
     private enum JobType {
@@ -116,6 +116,7 @@ public class NadeefJobScheduler {
         private Tracer tracer = Tracer.getTracer(CleanCallback.class);
 
         public void onSuccess(String key) {
+            keys.remove(key);
             runningCleaner.remove(key);
             runningRules.remove(key);
         }
@@ -218,7 +219,6 @@ public class NadeefJobScheduler {
      * @return the job status of all running jobs.
      */
     public List<TJobStatus> getJobStatus() {
-        Set<String> keys = runningCleaner.keySet();
         List<TJobStatus> result = Lists.newArrayList();
         for (String key : keys) {
             result.add(getJobStatus(key));
@@ -243,6 +243,7 @@ public class NadeefJobScheduler {
             }
         }
         NadeefJob job = new NadeefJob(key, new CleanExecutor(cleanPlan), type);
+        keys.add(key);
         runningCleaner.put(key, job);
         runningRules.put(key, ruleName);
         return job;
