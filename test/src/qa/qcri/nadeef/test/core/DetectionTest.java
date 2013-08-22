@@ -141,7 +141,7 @@ public class DetectionTest {
     @Test
     public void cleanExecutorTest6() {
         try {
-            CleanPlan cleanPlan = TestDataRepository.getAdultPlan1();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan6();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(4);
@@ -154,10 +154,36 @@ public class DetectionTest {
     @Test
     public void cleanExecutorTest7() {
         try {
-            CleanPlan cleanPlan = TestDataRepository.getAdultPlan2();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan7();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(974);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest8() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan8();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cleanExecutorTest9() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan9();
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(4);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

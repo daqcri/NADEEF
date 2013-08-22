@@ -87,13 +87,23 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
-    public static File getAdult1kPlan() {
+    public static File getCleanPlan6File() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan6.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
-    public static File getAdult30kPlan() {
+    public static File getCleanPlan7File() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan7.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getCleanPlan8File() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan8.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getCleanPlan9File() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan9.json";
         return new File(filePath.replace('*', File.separatorChar));
     }
 
@@ -167,20 +177,36 @@ public class TestDataRepository {
         return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
     }
 
-    public static CleanPlan getAdultPlan1()
+    public static CleanPlan getCleanPlan6()
         throws
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-            return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult1kPlan())).get(0);
+            return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan6File())).get(0);
     }
 
-    public static CleanPlan getAdultPlan2()
+    public static CleanPlan getCleanPlan7()
         throws
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getAdult30kPlan())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan7File())).get(0);
+    }
+
+    public static CleanPlan getCleanPlan8()
+            throws
+            InvalidRuleException,
+            FileNotFoundException,
+            InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan8File())).get(0);
+    }
+
+    public static CleanPlan getCleanPlan9()
+            throws
+            InvalidRuleException,
+            FileNotFoundException,
+            InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan9File())).get(0);
     }
 
     public static CleanPlan getStressPlan10k()

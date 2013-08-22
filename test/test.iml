@@ -41,6 +41,17 @@
     </orderEntry>
     <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module" module-name="service" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../out/test" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../out/test" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 

@@ -56,6 +56,9 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         if (type.equalsIgnoreCase("udf")) {
             result = code;
         } else {
+            String[] codeLines = code.split("\n");
+            List<String> codes = Lists.newArrayList(codeLines);
+
             try {
                 Schema schema =
                     DBMetaDataTool.getSchema(
@@ -69,7 +72,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                             .name(name)
                             .schema(schema)
                             .table(tableName)
-                            .value(code)
+                            .value(codes)
                             .generate();
                     // TODO: currently only picks the first generated file
                     File codeFile = javaFiles.iterator().next();
@@ -130,6 +133,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             throw ex;
         }
 
+        List<String> tables = Lists.newArrayList();
+        tables.add(table1);
+        if (table2 != null && !table2.isEmpty()) {
+            tables.add(table2);
+        }
+
         try {
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
             DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
@@ -145,7 +154,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 }
 
                 ruleInstance = (Rule) udfClass.newInstance();
-                ruleInstance.initialize(rule.getName(), Lists.newArrayList(table1, table2));
+                ruleInstance.initialize(rule.getName(), tables);
                 cleanPlan = new CleanPlan(config, ruleInstance);
                 key = scheduler.submitDetectJob(cleanPlan);
             } else {
@@ -153,7 +162,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 Collection<Rule> rules =
                     buildAbstractRule(rule, table1);
                 for (Rule rule_ : rules) {
-                    rule_.initialize(rule.getName(), Lists.newArrayList(table1, table2));
+                    rule_.initialize(rule.getName(), tables);
                     cleanPlan = new CleanPlan(config, rule_);
                     key = scheduler.submitDetectJob(cleanPlan);
                 }
@@ -187,6 +196,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             throw ex;
         }
 
+        List<String> tables = Lists.newArrayList();
+        tables.add(table1);
+        if (table2 != null && !table2.isEmpty()) {
+            tables.add(table2);
+        }
+
         try {
             String name = rule.getName();
             Class udfClass = CommonTools.loadClass(name);
@@ -195,7 +210,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             }
 
             Rule ruleInstance = (Rule) udfClass.newInstance();
-            ruleInstance.initialize(rule.getName(), Lists.newArrayList(table1, table2));
+            ruleInstance.initialize(rule.getName(), tables);
             DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
 
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
