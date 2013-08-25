@@ -173,13 +173,11 @@ public class SQLTable extends Table {
                     + System.currentTimeMillis();
 
                 // create the index.
-                if (indexName == null) {
-                    String indexSQL =
-                        "CREATE INDEX " + indexName + " ON " +
-                        tableName + " (" + column.getColumnName() + ")";
-                    stat.executeUpdate(indexSQL);
-                    conn.commit();
-                }
+                String indexSQL =
+                    "CREATE INDEX " + indexName + " ON " +
+                    tableName + " (" + column.getColumnName() + ")";
+                stat.executeUpdate(indexSQL);
+                conn.commit();
             }
 
             String sql =
