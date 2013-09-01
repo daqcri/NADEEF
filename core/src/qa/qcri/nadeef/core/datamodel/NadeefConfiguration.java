@@ -61,12 +61,11 @@ public class NadeefConfiguration {
         if (database.containsKey("type")) {
             type = (String)database.get("type");
         } else {
-            type = "postgres";
+            type = "derby";
         }
 
-        DBConfig.Builder builder = new DBConfig.Builder();
         dbConfig =
-            builder
+            new DBConfig.Builder()
                 .url(url)
                 .username(userName)
                 .password(password)
@@ -166,6 +165,14 @@ public class NadeefConfiguration {
     }
 
     /**
+     * Sets the <code>DBConfig</code> of Nadeef metadata database.
+     * @return meta data <code>DBConfig</code>.
+     */
+    public static void setDbConfig(DBConfig dbConfig_) {
+        dbConfig = Preconditions.checkNotNull(dbConfig_);
+    }
+
+    /**
      * Try gets the rule builder from the extensions.
      * @param typeName type name.
      * @return RuleBuilder instance.
@@ -233,15 +240,6 @@ public class NadeefConfiguration {
      */
     public static boolean getAlwaysOverrideTable() {
         return alwaysOverrideTable;
-    }
-
-    /**
-     * Gets the Nadeef version.
-     * @return Nadeef version.
-     */
-    public static String getVersion() {
-        String version = "Alpha";
-        return version;
     }
 
     /**

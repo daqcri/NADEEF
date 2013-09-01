@@ -35,6 +35,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="derby" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../vendors/ST-4.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="commons-dbcp:commons-dbcp:1.4" level="project" />
   </component>
 </module>
 

@@ -101,11 +101,17 @@ public final class CommonTools {
      * @return sql dialect.
      */
     public static SQLDialect getSQLDialect(String type) {
+        SQLDialect result;
         switch (type) {
             default:
+            case "derby":
+                result = SQLDialect.DERBY;
+                break;
             case "postgres":
-                return SQLDialect.POSTGRES;
+                result = SQLDialect.POSTGRES;
+                break;
         }
+        return result;
     }
 
     /**

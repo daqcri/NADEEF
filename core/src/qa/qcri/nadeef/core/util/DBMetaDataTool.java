@@ -14,9 +14,11 @@
 package qa.qcri.nadeef.core.util;
 
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -162,5 +164,31 @@ public final class DBMetaDataTool {
                 conn.close();
             }
         }
+    }
+
+    /**
+     * Returns instance of dialect manager based on input dialect.
+     * @param dialect input dialect.
+     * @return dialect manager instance.
+     */
+    public static ISQLDialectManager getDialectManagerInstance(SQLDialect dialect) {
+        ISQLDialectManager result = null;
+        switch (dialect) {
+            case DERBY:
+                result = new DerbyManager();
+                break;
+            case POSTGRES:
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * Returns NADEEF dialect manager instance.
+     * @return dialect manager instance.
+     */
+    public static ISQLDialectManager getNadeefDialectManagerInstance() {
+        SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
+        return getDialectManagerInstance(dialect);
     }
 }

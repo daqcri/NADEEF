@@ -17,5 +17,8 @@ package qa.qcri.nadeef.tools;
  * Common dialect enum.
  */
 public enum SQLDialect {
-    POSTGRES
+    POSTGRES,
+    MYSQL,
+    DERBY
 }
+

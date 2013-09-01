@@ -13,9 +13,11 @@
 
 package qa.qcri.nadeef.core.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.tools.DBInstaller;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileNotFoundException;
@@ -54,12 +56,21 @@ public class Bootstrap {
      * metadata tables in the NADEEF database.
      */
     public static synchronized boolean start() {
+        return start(configurationFile);
+    }
+
+    /**
+     * Bootstrap NADEEF. It tries to load the NADEEF configuration file and install
+     * metadata tables in the NADEEF database.
+     * @param configFile NADEEF config file.
+     */
+    public static synchronized boolean start(String configFile) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(configFile));
         if (isStarted) {
             tracer.info("Nadeef is already started.");
             return true;
         }
 
-        Connection conn = null;
         try {
             NadeefConfiguration.initialize(new FileReader(configurationFile));
             // set the logging directory
@@ -68,25 +79,23 @@ public class Bootstrap {
 
             DBConnectionFactory.initializeNadeefConnectionPool();
 
-            conn = DBConnectionFactory.getNadeefConnection();
             String violationTableName = NadeefConfiguration.getViolationTableName();
             String repairTableName = NadeefConfiguration.getRepairTableName();
             String auditTableName = NadeefConfiguration.getAuditTableName();
 
-            if (DBInstaller.isInstalled(conn, violationTableName)) {
-                DBInstaller.uninstall(conn, violationTableName);
+            if (DBInstaller.isInstalled(violationTableName)) {
+                DBInstaller.uninstall(violationTableName);
             }
 
-            if (DBInstaller.isInstalled(conn, repairTableName)) {
-                DBInstaller.uninstall(conn, repairTableName);
+            if (DBInstaller.isInstalled(repairTableName)) {
+                DBInstaller.uninstall(repairTableName);
             }
 
-            if (DBInstaller.isInstalled(conn, auditTableName)) {
-                DBInstaller.uninstall(conn, auditTableName);
+            if (DBInstaller.isInstalled(auditTableName)) {
+                DBInstaller.uninstall(auditTableName);
             }
 
-            DBInstaller.install(conn, violationTableName, repairTableName, auditTableName);
-            conn.commit();
+            DBInstaller.install(violationTableName, repairTableName, auditTableName);
         } catch (FileNotFoundException ex) {
             tracer.err("Nadeef configuration is not found.", ex);
         } catch (Exception ex) {
@@ -96,15 +105,8 @@ public class Bootstrap {
                 ex
             );
             System.exit(1);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
         }
+
         isStarted = true;
         return true;
     }

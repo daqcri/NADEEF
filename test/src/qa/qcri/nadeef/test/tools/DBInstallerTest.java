@@ -19,32 +19,26 @@ import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.tools.DBInstaller;
+import qa.qcri.nadeef.core.util.DBInstaller;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SQLDialect;
 
+import java.io.File;
 import java.sql.Connection;
 
 /**
  * DBInstaller Test.
  */
 public class DBInstallerTest {
-    private static Connection conn;
-    private static NadeefConfiguration configuration;
-
-    private static final String url = "jdbc:postgresql://localhost/unittest";
-    private static final String userName = "tester";
-    private static final String password = "tester";
+    private static String testConfig1 =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+            '*',
+            File.separatorChar
+        );
 
     @BeforeClass
     public static void setUp() {
-        Bootstrap.start();
-        try {
-            conn =
-                DBConnectionFactory.createConnection(SQLDialect.POSTGRES, url, userName, password);
-            conn.setAutoCommit(false);
-        } catch (Exception ex) {
-            Assert.fail(ex.getMessage());
-        }
+        Bootstrap.start(testConfig1);
         NadeefConfiguration.setTestMode(true);
     }
 
@@ -54,25 +48,25 @@ public class DBInstallerTest {
         String repairTableName = NadeefConfiguration.getRepairTableName();
         String auditTableName = NadeefConfiguration.getAuditTableName();
         try {
-            if (DBInstaller.isInstalled(conn, violationTableName)) {
-                DBInstaller.uninstall(conn, violationTableName);
+            if (DBInstaller.isInstalled(violationTableName)) {
+                DBInstaller.uninstall(violationTableName);
             }
 
-            if (DBInstaller.isInstalled(conn, repairTableName)) {
-                DBInstaller.uninstall(conn, repairTableName);
+            if (DBInstaller.isInstalled(repairTableName)) {
+                DBInstaller.uninstall(repairTableName);
             }
 
-            if (DBInstaller.isInstalled(conn, auditTableName)) {
-                DBInstaller.uninstall(conn, auditTableName);
+            if (DBInstaller.isInstalled(auditTableName)) {
+                DBInstaller.uninstall(auditTableName);
             }
 
-            DBInstaller.install(conn, violationTableName, repairTableName, auditTableName);
-            Assert.assertTrue(DBInstaller.isInstalled(conn, violationTableName));
-            DBInstaller.uninstall(conn, violationTableName);
-            DBInstaller.uninstall(conn, repairTableName);
+            DBInstaller.install(violationTableName, repairTableName, auditTableName);
+            Assert.assertTrue(DBInstaller.isInstalled(violationTableName));
+            DBInstaller.uninstall(violationTableName);
+            DBInstaller.uninstall(repairTableName);
 
-            Assert.assertFalse(DBInstaller.isInstalled(conn, violationTableName));
-            Assert.assertFalse(DBInstaller.isInstalled(conn, repairTableName));
+            Assert.assertFalse(DBInstaller.isInstalled(violationTableName));
+            Assert.assertFalse(DBInstaller.isInstalled(repairTableName));
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
             ex.printStackTrace();
