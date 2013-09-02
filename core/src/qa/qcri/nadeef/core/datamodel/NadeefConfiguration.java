@@ -55,8 +55,16 @@ public class NadeefConfiguration {
         JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
         JSONObject database = (JSONObject)jsonObject.get("database");
         String url = (String)database.get("url");
-        String userName = (String)database.get("username");
-        String password = (String)database.get("password");
+        String username = "";
+        if (database.containsKey("username")) {
+            username = (String)database.get("username");
+        }
+
+        String password = "";
+        if (database.containsKey("password")) {
+            password = (String)database.get("password");
+        }
+
         String type;
         if (database.containsKey("type")) {
             type = (String)database.get("type");
@@ -67,7 +75,7 @@ public class NadeefConfiguration {
         dbConfig =
             new DBConfig.Builder()
                 .url(url)
-                .username(userName)
+                .username(username)
                 .password(password)
                 .dialect(CommonTools.getSQLDialect(type))
                 .build();

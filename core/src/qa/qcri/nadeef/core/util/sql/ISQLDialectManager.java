@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.core.util.sql;
 
 /**
  * Interface for cross vendor Database methods.

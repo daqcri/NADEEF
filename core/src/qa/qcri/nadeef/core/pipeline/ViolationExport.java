@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.tools.Tracer;
 

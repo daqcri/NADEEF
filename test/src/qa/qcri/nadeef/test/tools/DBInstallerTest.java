@@ -18,13 +18,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.DBInstaller;
-import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SQLDialect;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
 
 import java.io.File;
-import java.sql.Connection;
 
 /**
  * DBInstaller Test.

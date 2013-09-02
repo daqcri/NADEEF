@@ -5,7 +5,7 @@ InstallViolationTable(violationTableName) ::= <<
       tablename varchar(63),
       tupleid int,
       attribute varchar(63),
-      value varchar(32768)
+      value varchar(512)
   )
 >>
 
@@ -16,24 +16,24 @@ InstallRepairTable(repairTableName) ::= <<
         c1_tupleid int,
         c1_tablename varchar(63),
         c1_attribute varchar(63),
-        c1_value varchar(32768),
+        c1_value varchar(512),
         op int,
         c2_tupleid int,
         c2_tablename varchar(63),
         c2_attribute varchar(63),
-        c2_value varchar(32768)
+        c2_value varchar(512)
     )
 >>
 
 InstallAuditTable(auditTableName) ::= <<
     CREATE TABLE $auditTableName$ (
-        id serial primary key,
+        id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
         vid int,
         tupleid int,
         tablename varchar(63),
         attribute varchar(63),
-        oldvalue varchar(32768),
-        newvalue varchar(32768),
+        oldvalue varchar(512),
+        newvalue varchar(512),
         time timestamp
     )
 >>

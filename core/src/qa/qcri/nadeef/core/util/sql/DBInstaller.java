@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.core.util.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.SQLDialect;
@@ -31,11 +31,17 @@ public final class DBInstaller {
      * @return TRUE when Nadeef is already installed on the database.
      */
     public static boolean isInstalled(String tableName) throws SQLException {
-        Connection conn = DBConnectionFactory.getNadeefConnection();
-        DatabaseMetaData metaData = conn.getMetaData();
-        ResultSet resultSet = metaData.getTables(null, null, tableName, null);
-
-        return resultSet.next();
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet resultSet = metaData.getTables(null, null, tableName.toUpperCase(), null);
+            return resultSet.next();
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     /**
@@ -46,6 +52,7 @@ public final class DBInstaller {
         String repairTableName,
         String auditTableName) throws SQLException {
         Connection conn = null;
+        Statement stat = null;
 
         try {
             if (isInstalled(violationTableName)) {
@@ -58,7 +65,7 @@ public final class DBInstaller {
                 DBMetaDataTool.getDialectManagerInstance(dialect);
 
             conn = DBConnectionFactory.getNadeefConnection();
-            Statement stat = conn.createStatement();
+            stat = conn.createStatement();
             // TODO: make tables BNCF
             stat.execute(dialectManager.createViolationTable(violationTableName));
             stat.execute(dialectManager.createRepairTable(repairTableName));
@@ -70,6 +77,10 @@ public final class DBInstaller {
             tracer.err("SQLException during installing tables.", ex);
             throw ex;
         } finally {
+            if (stat != null) {
+                stat.close();
+            }
+
             if (conn != null) {
                 conn.close();
             }
@@ -83,17 +94,21 @@ public final class DBInstaller {
     public static void uninstall(String tableName) throws SQLException {
         Connection conn = null;
         ISQLDialectManager dialectManager = DBMetaDataTool.getNadeefDialectManagerInstance();
-
+        Statement stat = null;
         if (isInstalled(tableName)) {
             try {
                 conn = DBConnectionFactory.getNadeefConnection();
-                Statement stat = conn.createStatement();
+                stat = conn.createStatement();
                 stat.execute(dialectManager.dropTable(tableName));
                 stat.close();
                 conn.commit();
             } catch (Exception ex) {
                 tracer.err("Exception during uninstall table " + tableName, ex);
             } finally {
+                if (stat != null) {
+                    stat.close();
+                }
+
                 if (conn != null) {
                     conn.close();
                 }

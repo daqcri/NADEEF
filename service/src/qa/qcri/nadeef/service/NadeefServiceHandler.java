@@ -21,7 +21,7 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
-import qa.qcri.nadeef.core.util.DBMetaDataTool;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.service.thrift.*;
 import qa.qcri.nadeef.tools.CommonTools;

@@ -17,14 +17,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Bootstrapping prepares runtime environment for NADEEF. It is invoked before NADEEF starts
@@ -72,7 +71,7 @@ public class Bootstrap {
         }
 
         try {
-            NadeefConfiguration.initialize(new FileReader(configurationFile));
+            NadeefConfiguration.initialize(new FileReader(configFile));
             // set the logging directory
             Path outputPath = NadeefConfiguration.getOutputPath();
             Tracer.setLoggingDir(outputPath.toString());

@@ -86,12 +86,14 @@ public final class CommonTools {
         StringBuilder jdbcUrl = new StringBuilder("jdbc:");
         switch (dialect) {
             default:
+            case DERBY:
+                jdbcUrl.append("derby:").append(url);
+                break;
             case POSTGRES:
-                jdbcUrl.append("postgresql");
+                jdbcUrl.append("postgresql").append("://").append(url);
+                break;
         }
 
-        jdbcUrl.append("://");
-        jdbcUrl.append(url);
         return jdbcUrl.toString();
     }
 

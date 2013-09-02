@@ -19,12 +19,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SQLDialect;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,6 +39,11 @@ import java.sql.Statement;
  */
 @RunWith(JUnit4.class)
 public class CSVDumperTest {
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+            '*',
+            File.separatorChar
+        );
     private static final String url = "jdbc:postgresql://localhost/unittest";
     private static final String userName = "tester";
     private static final String password = "tester";
@@ -45,9 +53,12 @@ public class CSVDumperTest {
 
     @BeforeClass
     public static void setUp() {
+        Bootstrap.start(testConfig);
         try {
+           DBConfig dbConfig =
+               new DBConfig.Builder().dialect(SQLDialect.DERBY).url("memory:test;create=true").build();
            conn =
-               DBConnectionFactory.createConnection(SQLDialect.POSTGRES, url, userName, password);
+               DBConnectionFactory.createConnection(dbConfig);
            conn.setAutoCommit(false);
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());

@@ -24,15 +24,22 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * CleanExecutor test.
  */
 public class CleanExecutorTest {
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+            '*',
+            File.separatorChar
+        );
+
     @Before
     public void setup() {
-        Bootstrap.start();
+        Bootstrap.start(testConfig);
         Tracer.setVerbose(true);
     }
 

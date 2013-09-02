@@ -30,8 +30,8 @@ public class DBConfig {
      * Builder pattern to build a <code>DBConfig</code> class.
      */
     public static class Builder {
-        private String userName = "tester";
-        private String password = "tester";
+        private String userName;
+        private String password;
         private String url = "localhost/unittest";
         private SQLDialect dialect = SQLDialect.POSTGRES;
 
@@ -84,8 +84,6 @@ public class DBConfig {
      */
     public DBConfig(String userName, String password, String url, SQLDialect dialect) {
         Preconditions.checkArgument(
-            !Strings.isNullOrEmpty(userName) &&
-            !Strings.isNullOrEmpty(password) &&
             !Strings.isNullOrEmpty(url)
         );
 
@@ -97,14 +95,27 @@ public class DBConfig {
     //</editor-fold>
 
     //<editor-fold desc="Getters">
+
+    /**
+     * Gets the user name.
+     * @return user name.
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     * Gets the password.
+     * @return password.
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Gets the connection URL.
+     * @return url.
+     */
     public String getUrl() {
         if (!url.contains("jdbc:")) {
             return CommonTools.buildJdbcUrl(url, dialect);
@@ -112,6 +123,10 @@ public class DBConfig {
         return url;
     }
 
+    /**
+     * Gets the Database name.
+     * @return database name.
+     */
     public String getDatabaseName() {
         if (url != null) {
             String[] tokens = url.split("/");
@@ -122,6 +137,10 @@ public class DBConfig {
         return null;
     }
 
+    /**
+     * Gets the server name.
+     * @return server name.
+     */
     public String getServerName() {
         if (url != null) {
             String[] tokens = url.split("/");
@@ -132,6 +151,10 @@ public class DBConfig {
         return null;
     }
 
+    /**
+     * Gets the SQL dialect.
+     * @return sql dialect.
+     */
     public SQLDialect getDialect() {
         return dialect;
     }

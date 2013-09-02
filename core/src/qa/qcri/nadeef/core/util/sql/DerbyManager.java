@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.core.util.sql;
 
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
@@ -22,7 +22,7 @@ import org.stringtemplate.v4.STGroupFile;
 public class DerbyManager implements ISQLDialectManager {
 
     public static STGroupFile groupFile =
-        new STGroupFile("qa/qcri/nadeef/core/util/template/DerbyTemplate.sql", '$', '$');
+        new STGroupFile("qa/qcri/nadeef/core/util/sql/template/DerbyTemplate.stg", '$', '$');
 
     /**
      * {@inheritDoc}
@@ -30,7 +30,7 @@ public class DerbyManager implements ISQLDialectManager {
     @Override
     public String createViolationTable(String violationTableName) {
         ST st = groupFile.getInstanceOf("InstallViolationTable");
-        st.add("violationTableName", violationTableName);
+        st.add("violationTableName", violationTableName.toUpperCase());
         return st.render();
     }
 
@@ -40,7 +40,7 @@ public class DerbyManager implements ISQLDialectManager {
     @Override
     public String createRepairTable(String repairTableName) {
         ST st = groupFile.getInstanceOf("InstallRepairTable");
-        st.add("repairTableName", repairTableName);
+        st.add("repairTableName", repairTableName.toUpperCase());
         return st.render();
     }
 
@@ -50,7 +50,7 @@ public class DerbyManager implements ISQLDialectManager {
     @Override
     public String createAuditTable(String auditTableName) {
         ST st = groupFile.getInstanceOf("InstallAuditTable");
-        st.add("auditTableName", auditTableName);
+        st.add("auditTableName", auditTableName.toUpperCase());
         return st.render();
     }
 
@@ -59,6 +59,6 @@ public class DerbyManager implements ISQLDialectManager {
      */
     @Override
     public String dropTable(String tableName) {
-        return "DROP TABLE " + tableName + " CASCADE";
+        return "DROP TABLE " + tableName.toUpperCase();
     }
 }

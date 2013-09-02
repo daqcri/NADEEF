@@ -21,7 +21,7 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.Rule;
@@ -29,6 +29,7 @@ import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
@@ -39,11 +40,16 @@ import java.util.List;
  */
 @RunWith(JUnit4.class)
 public class CleanPlanTest {
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+            '*',
+            File.separatorChar
+        );
     private ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() {
-        Bootstrap.start();
+        Bootstrap.start(testConfig);
         Tracer.setVerbose(true);
 
         Connection conn = null;
