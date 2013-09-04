@@ -126,8 +126,8 @@ public class SimpleExpression {
      * @return <code>True</code> when the tuple matches the given expression.
      */
     public boolean match(Tuple tuple) {
-        String value = tuple.get(left);
-        if (value.equalsIgnoreCase(this.value)) {
+        Object value = tuple.get(left);
+        if (value.equals(this.value)) {
             return true;
         }
         return false;

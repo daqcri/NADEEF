@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.core.util.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.tools.SQLDialectManagerBase;
 import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -61,8 +62,8 @@ public final class DBInstaller {
             }
 
             SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
-            ISQLDialectManager dialectManager =
-                DBMetaDataTool.getDialectManagerInstance(dialect);
+            NadeefSQLDialectManagerBase dialectManager =
+                SQLDialectManagerFactory.getDialectManagerInstance(dialect);
 
             conn = DBConnectionFactory.getNadeefConnection();
             stat = conn.createStatement();
@@ -71,7 +72,6 @@ public final class DBInstaller {
             stat.execute(dialectManager.createRepairTable(repairTableName));
             stat.execute(dialectManager.createAuditTable(auditTableName));
 
-            stat.close();
             conn.commit();
         } catch (SQLException ex) {
             tracer.err("SQLException during installing tables.", ex);
@@ -93,7 +93,8 @@ public final class DBInstaller {
      */
     public static void uninstall(String tableName) throws SQLException {
         Connection conn = null;
-        ISQLDialectManager dialectManager = DBMetaDataTool.getNadeefDialectManagerInstance();
+        SQLDialectManagerBase dialectManager =
+            SQLDialectManagerFactory.getNadeefDialectManagerInstance();
         Statement stat = null;
         if (isInstalled(tableName)) {
             try {

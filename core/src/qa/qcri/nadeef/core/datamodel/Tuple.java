@@ -16,14 +16,21 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.charset.Charset;
+import java.sql.Types;
 import java.util.List;
 
 /**
  * Tuple class represents a tuple (row) in a table.
  */
 public class Tuple {
+    private Tracer tracer = Tracer.getTracer(Tuple.class);
+
     //<editor-fold desc="Private Fields">
     private List<byte[]> values;
     private Schema schema;
@@ -65,9 +72,29 @@ public class Tuple {
      * @param key The attribute key
      * @return Output Value
      */
-    public String get(Column key) {
+    // TODO: why use string instead of byte array or object?
+    public Object get(Column key) {
         int index = schema.get(key);
-        return new String(values.get(index), Charset.forName("UTF-8"));
+        byte[] bytes = values.get(index);
+        int type = schema.getTypes()[index];
+        Object result = null;
+
+        switch (type) {
+            case Types.VARCHAR:
+            case Types.CHAR:
+                result = new String(bytes, Charset.forName("UTF-8"));
+                break;
+            default:
+                try {
+                    ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+                    ObjectInputStream obj = new ObjectInputStream(bin);
+                    result = obj.readObject();
+                } catch (Exception ex) {
+                    tracer.err("Tuple deserailization failed.", ex);
+                }
+                break;
+        }
+        return result;
     }
 
     /**
@@ -75,7 +102,7 @@ public class Tuple {
      * @param columnName The attribute key
      * @return Output Value
      */
-    public String get(String columnName) {
+    public Object get(String columnName) {
         Column column = new Column(schema.getTableName(), columnName);
         return get(column);
     }
@@ -114,7 +141,7 @@ public class Tuple {
         Column[] columns = schema.getColumns();
         List<Cell> cells = Lists.newArrayList();
         for (Column column : columns) {
-            if (column.getColumnName().equals("tid")) {
+            if (column.getColumnName().equalsIgnoreCase("tid")) {
                 continue;
             }
             Cell cell = new Cell(column, tid, get(column));

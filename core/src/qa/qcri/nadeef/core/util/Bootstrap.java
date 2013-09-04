@@ -44,7 +44,7 @@ public class Bootstrap {
             DBConnectionFactory.shutdown();
             NodeCacheManager cacheManager = NodeCacheManager.getInstance();
             cacheManager.clear();
-            // try to collect the resources (removing views)
+            // try to collect the resources if possible
             System.gc();
             isStarted = false;
         }

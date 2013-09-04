@@ -30,7 +30,7 @@ import java.util.Collection;
  * Export fix into the repair database.
  */
 class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
-
+    private static Tracer tracer = Tracer.getTracer(FixExport.class);
     /**
      * Constructor.
      * @param plan clean plan.
@@ -44,8 +44,8 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
      *
      * @param fixCollection a collection of fixes.
      * @return whether the exporting is successful or not.
-     * TODO: this is not out-of-process safe.
      */
+    // TODO: this is not out-of-process safe.
     @Override
     public synchronized Integer execute(Collection<Collection<Fix>> fixCollection)
         throws SQLException {
@@ -68,8 +68,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             stat.executeBatch();
             conn.commit();
         } catch (Exception ex) {
-            stat.close();
-            conn.close();
+            tracer.err("Exporting Fixes failed", ex);
         } finally {
             Tracer.putStatsEntry(Tracer.StatType.FixExport, count);
             if (stat != null) {
@@ -89,10 +88,8 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
      */
     private String getSQLInsert(int id, Fix fix) {
         int vid = fix.getVid();
-        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO");
-        sqlBuilder.append(' ')
-            .append(NadeefConfiguration.getSchemaName())
-            .append(".")
+        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
+        sqlBuilder
             .append(NadeefConfiguration.getRepairTableName())
             .append(" VALUES (")
             .append(id)

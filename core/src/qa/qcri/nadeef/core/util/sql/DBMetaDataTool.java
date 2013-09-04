@@ -16,10 +16,7 @@ package qa.qcri.nadeef.core.util.sql;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Schema;
-import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SQLDialect;
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.*;
 
 import java.sql.*;
 
@@ -30,11 +27,13 @@ public final class DBMetaDataTool {
     /**
      * Copies the table within the database.
      * @param dbConfig working database config.
+     * @param dialectManager Dialect manager.
      * @param sourceTableName source table name.
      * @param targetTableName target table name.
      */
     public static void copy(
         DBConfig dbConfig,
+        NadeefSQLDialectManagerBase dialectManager,
         String sourceTableName,
         String targetTableName
     ) throws
@@ -46,24 +45,28 @@ public final class DBMetaDataTool {
         Statement stat = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig);
+            conn = DBConnectionFactory.createConnection(dbConfig, true);
             stat = conn.createStatement();
-            stat.execute("DROP TABLE IF EXISTS " + targetTableName + " CASCADE");
-            stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
+            if (isTableExist(dbConfig, targetTableName)) {
+                stat.execute(dialectManager.dropTable(targetTableName));
+            }
+            dialectManager.copyTable(stat, sourceTableName, targetTableName);
+            // stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
 
-            conn.commit();
+            // TODO: adds tid column when the source table doesn't have it.
+            /*
             resultSet =
                 stat.executeQuery(
                 "select * from information_schema.columns where table_name = " +
                 '\'' + targetTableName +
                 "\' and column_name = \'tid\'"
             );
-            conn.commit();
 
             if (!resultSet.next()) {
                 stat.execute("alter table " + targetTableName + " add column tid serial primary key");
             }
             conn.commit();
+            */
         } finally {
             if (resultSet != null) {
                 resultSet.close();
@@ -90,6 +93,8 @@ public final class DBMetaDataTool {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
 
+        NadeefSQLDialectManagerBase dialectManager =
+            SQLDialectManagerFactory.getDialectManagerInstance(config.getDialect());
         Tracer tracer = Tracer.getTracer(DBMetaDataTool.class);
         Connection conn = null;
         Statement stat = null;
@@ -100,7 +105,7 @@ public final class DBMetaDataTool {
             SqlQueryBuilder builder = new SqlQueryBuilder();
             builder.addFrom(tableName);
             builder.setLimit(1);
-            String sql = builder.build();
+            String sql = builder.build(dialectManager);
 
             conn = DBConnectionFactory.createConnection(config);
             stat = conn.createStatement();
@@ -109,12 +114,14 @@ public final class DBMetaDataTool {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
             Column[] columns = new Column[count];
+            int[] types = new int[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
+                types[i - 1] = metaData.getColumnType(i);
                 columns[i - 1] = new Column(tableName, attributeName);
             }
 
-            result = new Schema(tableName, columns);
+            result = new Schema(tableName, columns, types);
         } catch (Exception ex) {
             tracer.err("Cannot get valid schema.", ex);
         } finally {
@@ -147,13 +154,17 @@ public final class DBMetaDataTool {
      * @return <code>True</code> when the given table exists in the connection.
      */
     public static boolean isTableExist(DBConfig dbConfig, String tableName)
-        throws Exception {
+            throws
+                SQLException,
+                IllegalAccessException,
+                InstantiationException,
+                ClassNotFoundException {
         Connection conn = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig);
+            conn = DBConnectionFactory.createConnection(dbConfig, true);
             DatabaseMetaData meta = conn.getMetaData();
-            resultSet = meta.getTables(null, null, tableName, null);
+            resultSet = meta.getTables(null, null, tableName.toUpperCase(), null);
             return resultSet.next();
         } finally {
             if (resultSet != null) {
@@ -163,31 +174,5 @@ public final class DBMetaDataTool {
                 conn.close();
             }
         }
-    }
-
-    /**
-     * Returns instance of dialect manager based on input dialect.
-     * @param dialect input dialect.
-     * @return dialect manager instance.
-     */
-    public static ISQLDialectManager getDialectManagerInstance(SQLDialect dialect) {
-        ISQLDialectManager result = null;
-        switch (dialect) {
-            case DERBY:
-                result = new DerbyManager();
-                break;
-            case POSTGRES:
-                break;
-        }
-        return result;
-    }
-
-    /**
-     * Returns NADEEF dialect manager instance.
-     * @return dialect manager instance.
-     */
-    public static ISQLDialectManager getNadeefDialectManagerInstance() {
-        SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
-        return getDialectManagerInstance(dialect);
     }
 }

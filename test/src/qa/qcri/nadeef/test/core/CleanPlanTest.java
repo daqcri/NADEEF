@@ -18,10 +18,12 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.core.datamodel.Rule;
@@ -55,7 +57,13 @@ public class CleanPlanTest {
         Connection conn = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
-            CSVTools.dump(conn, TestDataRepository.getLocationData1(), "location", true);
+            CSVTools.dump(
+                conn,
+                SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
+                TestDataRepository.getLocationData1(),
+                "location",
+                true
+            );
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
@@ -87,10 +95,8 @@ public class CleanPlanTest {
             CleanPlan cleanPlan = cleanPlans.get(0);
 
             DBConfig source = cleanPlan.getSourceDBConfig();
-            Assert.assertEquals("jdbc:postgresql://localhost/unittest", source.getUrl());
-            Assert.assertEquals("tester", source.getUserName());
-            Assert.assertEquals("tester", source.getPassword());
-            Assert.assertEquals(SQLDialect.POSTGRES, source.getDialect());
+            Assert.assertEquals("jdbc:derby:memory:nadeefdb;create=true", source.getUrl());
+            Assert.assertEquals(SQLDialect.DERBY, source.getDialect());
             Rule rule = cleanPlan.getRule();
             List<String> tableNames = rule.getTableNames();
             Assert.assertEquals(1, tableNames.size());

@@ -122,9 +122,11 @@ public class Column {
         }
 
         Column column = (Column)obj;
+
         if (getFullColumnName().equalsIgnoreCase(column.getFullColumnName())) {
             return true;
         }
+
         return false;
     }
 

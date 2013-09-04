@@ -113,7 +113,7 @@ public class SqlQueryBuilder implements Cloneable {
         this.limit = limit;
     }
 
-    public String build() {
+    public String build(SQLDialectManagerBase dialectManager) {
         StringBuilder builder = new StringBuilder("SELECT ");
         if (distincts.size() > 0) {
             builder.append(" DISTINCT ON (");
@@ -146,8 +146,7 @@ public class SqlQueryBuilder implements Cloneable {
         }
 
         if (limit > 0) {
-            builder.append(" LIMIT ");
-            builder.append(limit);
+            builder.append(dialectManager.limitRow(limit));
         }
         return builder.toString();
     }

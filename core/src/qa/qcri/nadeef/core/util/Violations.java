@@ -20,6 +20,9 @@ import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.*;
 import java.sql.Connection;
@@ -33,29 +36,47 @@ import java.util.List;
  * Violation Extension helper.
  */
 public class Violations {
+    private static Tracer tracer = Tracer.getTracer(Violations.class);
+
     /**
      * Generates violation row number from the database.
      * @return new unique violation id.
      */
-    public static int getViolationRowCount()
-        throws
-            ClassNotFoundException,
-            SQLException,
-            InstantiationException,
-            IllegalAccessException {
-        Connection conn = DBConnectionFactory.getNadeefConnection();
-        String tableName = NadeefConfiguration.getViolationTableName();
-        Statement stat = conn.createStatement();
-        ResultSet resultSet =
-            stat.executeQuery("SELECT COUNT(*) as count from " + tableName);
+    public static int getViolationRowCount() throws Exception {
+        Connection conn = null;
+        Statement stat = null;
+        ResultSet rs = null;
         int result = -1;
-        if (resultSet.next()) {
-            result = resultSet.getInt("count");
-        } else {
-            result = 0;
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            NadeefSQLDialectManagerBase dialectManager =
+                    SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+            String tableName = NadeefConfiguration.getViolationTableName();
+
+            stat = conn.createStatement();
+            String sql = dialectManager.countTable(tableName);
+            rs = stat.executeQuery(sql);
+            tracer.verbose(sql);
+            if (rs.next()) {
+                result = rs.getInt(1);
+            } else {
+                result = 0;
+            }
+        } catch (SQLException ex) {
+            tracer.err("Violation counts failed.", ex);
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
         }
-        stat.close();
-        conn.close();
         return result;
     }
 
@@ -63,23 +84,34 @@ public class Violations {
      * Generates violation id from the database.
      * @return new unique violation id.
      */
-    public static int generateViolationId()
-        throws
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException {
-        Connection conn = DBConnectionFactory.getNadeefConnection();
-        Statement stat = conn.createStatement();
-        String tableName = NadeefConfiguration.getViolationTableName();
-        ResultSet resultSet =
-            stat.executeQuery("SELECT MAX(vid) + 1 as vid from " + tableName);
+    public static int generateViolationId() throws Exception {
+        Connection conn = null;
+        Statement stat = null;
+        ResultSet rs = null;
         int result = -1;
-        if (resultSet.next()) {
-            result = resultSet.getInt("vid");
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            stat = conn.createStatement();
+            String tableName = NadeefConfiguration.getViolationTableName();
+            NadeefSQLDialectManagerBase dialectManager =
+                    SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+            rs = stat.executeQuery(dialectManager.nextVid(tableName));
+            if (rs.next()) {
+                result = rs.getInt("vid");
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
         }
-        stat.close();
-        conn.close();
         return result;
     }
 

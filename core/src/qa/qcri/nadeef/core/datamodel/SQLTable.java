@@ -17,10 +17,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SQLTable extends Table {
     private DBConnectionFactory connectionFactory;
+    private NadeefSQLDialectManagerBase dialectManager;
     private String tableName;
     private SqlQueryBuilder sqlQuery;
     private List<Tuple> tuples;
@@ -49,6 +56,10 @@ public class SQLTable extends Table {
     public SQLTable(String tableName, DBConnectionFactory connectionFactory) {
         super(tableName);
         this.connectionFactory = connectionFactory;
+        this.dialectManager =
+            SQLDialectManagerFactory.getDialectManagerInstance(
+                    connectionFactory.getSourceDBConfig().getDialect()
+            );
         this.tableName = tableName;
         this.sqlQuery = new SqlQueryBuilder();
         this.sqlQuery.addFrom(tableName);
@@ -287,7 +298,7 @@ public class SQLTable extends Table {
         try {
             SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
             builder.setLimit(1);
-            String sql = builder.build();
+            String sql = builder.build(dialectManager);
             tracer.verbose(sql);
 
             conn = connectionFactory.getSourceConnection();
@@ -297,12 +308,14 @@ public class SQLTable extends Table {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
             Column[] columns = new Column[count];
+            int[] types = new int[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
                 columns[i - 1] = new Column(tableName, attributeName);
+                types[i - 1] = metaData.getColumnType(i);
             }
 
-            schema = new Schema(tableName, columns);
+            schema = new Schema(tableName, columns, types);
         } catch (Exception ex) {
             tracer.err("Cannot get valid schema.", ex);
         } finally {
@@ -339,7 +352,7 @@ public class SQLTable extends Table {
         ResultSet resultSet = null;
         try {
             // prepare for the SQL
-            String sql = sqlQuery.build();
+            String sql = sqlQuery.build(dialectManager);
             tracer.verbose(sql);
 
             // get the connection and run the SQL
@@ -353,14 +366,16 @@ public class SQLTable extends Table {
             int count = metaData.getColumnCount();
             int tidIndex = 0;
             Column[] columns = new Column[count];
+            int[] types = new int[count];
             for (int i = 1; i <= count; i ++) {
                 String columnName = metaData.getColumnName(i);
                 columns[i - 1] = new Column(tableName, columnName);
+                types[i - 1] = metaData.getColumnType(i);
                 if (tidIndex == 0 && columnName.equalsIgnoreCase("tid")) {
                     tidIndex = i;
                 }
             }
-            schema  = new Schema(tableName, columns);
+            schema  = new Schema(tableName, columns, types);
 
             // fill the tuples
             tuples = Lists.newArrayList();
@@ -373,8 +388,10 @@ public class SQLTable extends Table {
                     tracer.info("Table does not have an TID column, use -1 as default.");
                     tupleId = -1;
                 }
+
                 for (int i = 1; i <= count; i ++) {
-                    values.add(resultSet.getBytes(i));
+                    Object object = resultSet.getObject(i);
+                    values.add(serialize(object));
                 }
 
                 tuples.add(new Tuple(tupleId, schema, values));
@@ -424,6 +441,25 @@ public class SQLTable extends Table {
             updateTimestamp = changeTimestamp;
         }
     }
+
+    /**
+     * Serialize object to a bytes array.
+     */
+    // TODO: check for UTF-16 for i18 cases.
+    private static byte[] serialize(Object obj) throws IOException {
+        byte[] result = null;
+        if (obj instanceof String) {
+            result = ((String)obj).getBytes(Charset.forName("UTF-8"));
+        } else {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ObjectOutputStream os = new ObjectOutputStream(out);
+            os.writeObject(obj);
+            result = out.toByteArray();
+        }
+
+        return result;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Finalization methods">

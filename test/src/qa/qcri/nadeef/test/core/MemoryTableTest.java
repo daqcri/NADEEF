@@ -27,6 +27,7 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -35,14 +36,22 @@ import java.util.Set;
  * MemoryTable test.
  */
 public class MemoryTableTest {
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+                '*', File.separatorChar);
     private List<Tuple> testTuples;
     @Before
     public void setup() {
-        Bootstrap.start();
+        Bootstrap.start(testConfig);
         Tracer.setVerbose(true);
 
         Schema schema =
-            new Schema.Builder().table("test").column("C").column("A").column("B").build();
+            new Schema.Builder()
+                .table("test")
+                .column("C", Types.VARCHAR)
+                .column("A", Types.VARCHAR)
+                .column("B", Types.VARCHAR)
+                .build();
         File dumpFile = TestDataRepository.getDumpTestCSVFile();
         try {
             List<String[]> content = CSVTools.read(dumpFile, ",");

@@ -23,11 +23,14 @@ import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SQLDialect;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Collection;
@@ -42,23 +45,26 @@ public class SQLTableTest {
     private String tableName;
     private DBConfig dbconfig;
     private DBConnectionFactory connectionFactory;
-
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+                '*', File.separatorChar);
     @Before
     public void setup() {
-        Bootstrap.start();
+        Bootstrap.start(testConfig);
         Connection conn = null;
         try {
             Bootstrap.start();
-            DBConfig.Builder builder = new DBConfig.Builder();
             dbconfig =
-                builder.url("localhost/unittest")
-                       .username("tester")
-                       .password("tester")
-                       .dialect(SQLDialect.POSTGRES)
-                       .build();
+                new DBConfig.Builder()
+                    .dialect(SQLDialect.DERBY)
+                    .url("memory:test;create=true")
+                    .build();
+            NadeefSQLDialectManagerBase dialectManager =
+                    SQLDialectManagerFactory.getDialectManagerInstance(dbconfig.getDialect());
             conn = DBConnectionFactory.createConnection(dbconfig);
+            tableName =
+                CSVTools.dump(conn, dialectManager, TestDataRepository.getDumpTestCSVFile());
             connectionFactory = DBConnectionFactory.createDBConnectionFactory(dbconfig);
-            tableName = CSVTools.dump(conn, TestDataRepository.getDumpTestCSVFile());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -77,9 +83,11 @@ public class SQLTableTest {
     public void teardown() {
         Connection conn = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = connectionFactory.getSourceConnection();
+            NadeefSQLDialectManagerBase dialectManager =
+                SQLDialectManagerFactory.getNadeefDialectManagerInstance();
             Statement stat = conn.createStatement();
-            stat.execute("DROP TABLE " + tableName + " CASCADE");
+            stat.execute(dialectManager.dropTable(tableName));
             conn.commit();
             Bootstrap.shutdown();
         } catch (Exception e) {
@@ -97,7 +105,6 @@ public class SQLTableTest {
 
     @Test
     public void testProjection() {
-
         SQLTable collection = new SQLTable(tableName, connectionFactory);
         collection.project(new Column(tableName + ".c"));
         Assert.assertEquals(12, collection.size());
@@ -105,7 +112,9 @@ public class SQLTableTest {
         Set cellSets = tuple.getCells();
         Assert.assertEquals(1, cellSets.size());
         Cell cell = (Cell)cellSets.iterator().next();
-        Assert.assertEquals(tableName + ".c", cell.getColumn().getFullColumnName());
+        Assert.assertTrue(
+                (tableName + ".c").equalsIgnoreCase(cell.getColumn().getFullColumnName())
+        );
     }
 
     @Test
@@ -118,7 +127,8 @@ public class SQLTableTest {
         Set cellSets = tuple.getCells();
         Assert.assertEquals(1, cellSets.size());
         Cell cell = (Cell)cellSets.iterator().next();
-        Assert.assertEquals(tableName + ".c", cell.getColumn().getFullColumnName());
+        Assert.assertTrue(
+            (tableName + ".c").equalsIgnoreCase(cell.getColumn().getFullColumnName()));
     }
 
     @Test

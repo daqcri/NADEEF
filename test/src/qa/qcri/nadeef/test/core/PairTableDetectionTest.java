@@ -25,6 +25,7 @@ import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,9 +33,12 @@ import java.util.List;
  * Pair table unit test.
  */
 public class PairTableDetectionTest {
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+                '*', File.separatorChar);
     @Before
     public void setUp() {
-        Bootstrap.start();
+        Bootstrap.start(testConfig);
         NadeefConfiguration.setAlwaysOverride(true);
         Tracer.setVerbose(true);
         Tracer.setInfo(true);
@@ -59,11 +63,7 @@ public class PairTableDetectionTest {
     }
 
     private void verifyViolationResult(int expectRow)
-        throws
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException {
+        throws Exception {
         int rowCount = Violations.getViolationRowCount();
         Assert.assertEquals(expectRow, rowCount);
     }

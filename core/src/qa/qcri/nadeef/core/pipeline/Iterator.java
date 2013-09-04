@@ -30,7 +30,7 @@ import java.util.concurrent.*;
  */
 public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
-    private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors() * 2;
+    private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
     private Rule rule;
     private int totalBlockSize;
     private int blockCount;

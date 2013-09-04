@@ -1,9 +1,7 @@
 {
     "source" : {
-        "url" : "localhost/unittest",
-        "username" : "tester",
-        "password" : "tester",
-        "type" : "postgres"
+        "url" : "memory:nadeefdb;create=true",
+        "type" : "derby"
     },
     "rule" : [
         {

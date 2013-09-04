@@ -24,7 +24,9 @@ import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 import qa.qcri.nadeef.test.TestDataRepository;
 
+import java.io.File;
 import java.io.IOException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,11 +36,13 @@ import java.util.List;
 public class ViolationRepairTest {
     private Collection<Violation> violations;
     private FDRuleBuilder ruleBuilder;
-
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+                '*', File.separatorChar);
     @Before
     public void setup() {
         try {
-            Bootstrap.start();
+            Bootstrap.start(testConfig);
             violations = Violations.fromCSV(TestDataRepository.getViolationTestData1());
         } catch (IOException e) {
             Assert.fail("Setup failed.");
@@ -56,7 +60,12 @@ public class ViolationRepairTest {
     public void FDRepair1() {
         try {
             Schema.Builder builder = new Schema.Builder();
-            Schema schema = builder.table("test").column("B").column("A").column("C").build();
+            Schema schema =
+                builder.table("test")
+                    .column("B", Types.VARCHAR)
+                    .column("A", Types.VARCHAR)
+                    .column("C", Types.VARCHAR)
+                    .build();
             List<Rule> rules =
                 (List<Rule>) ruleBuilder.name("fd1")
                     .schema(schema)

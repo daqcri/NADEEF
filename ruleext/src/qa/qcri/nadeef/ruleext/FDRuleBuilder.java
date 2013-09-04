@@ -71,7 +71,7 @@ public class FDRuleBuilder extends RuleBuilder {
     @Override
     public Collection<File> generate() throws IOException {
         STGroupFile stFile =
-                new STGroupFile("qa/qcri/nadeef/ruleext/template/FDRuleBuilder.stg", '$', '$');
+            new STGroupFile("qa/qcri/nadeef/ruleext/template/FDRuleBuilder.stg", '$', '$');
         ST st = stFile.getInstanceOf("fdTemplate");
         st.add("leftHandSideInitialize", lhs);
         st.add("rightHandSideInitialize", rhs);

@@ -76,7 +76,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                destdir="${build.dir}"
                classpath="${vendor.dir};"
                classpathref="vendors.jars"
-               encoding="utf-8"/>
+               encoding="utf-8">
+        </javac>
     </target>
 
     <target name="core" depends="tools">
@@ -91,6 +92,9 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                encoding="utf-8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
+        <copy todir="${build.dir}/qa/qcri/nadeef/core/util/sql/template">
+            <fileset dir="core/src/qa/qcri/nadeef/core/util/sql/template" />
+        </copy>
     </target>
 
     <target name="ruleext" depends="core">

@@ -24,6 +24,7 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 
 import java.io.File;
+import java.sql.Types;
 import java.util.Collection;
 
 /**
@@ -52,7 +53,12 @@ public class FDRuleBuilderTest {
         try {
             Schema.Builder schemaBuilder = new Schema.Builder();
             Schema schema =
-                schemaBuilder.table("table").column("A").column("B").column("C").build();
+                schemaBuilder
+                    .table("table")
+                    .column("A", Types.VARCHAR)
+                    .column("B", Types.VARCHAR)
+                    .column("C", Types.VARCHAR)
+                    .build();
             output = fdRuleBuilder
                 .name("Test")
                 .table("table")
@@ -66,10 +72,11 @@ public class FDRuleBuilderTest {
             schema =
                 new Schema.Builder()
                     .table("table")
-                    .column("D")
-                    .column("E")
-                    .column("F")
-                    .column("GG").build();
+                    .column("D", Types.VARCHAR)
+                    .column("E", Types.VARCHAR)
+                    .column("F", Types.VARCHAR)
+                    .column("GG", Types.VARCHAR)
+                    .build();
             output = fdRuleBuilder
                 .table("table")
                 .schema(schema)
@@ -91,7 +98,12 @@ public class FDRuleBuilderTest {
         try {
             Schema.Builder schemaBuilder = new Schema.Builder();
             Schema schema =
-                schemaBuilder.table("table").column("A").column("B").column("C").build();
+                schemaBuilder
+                    .table("table")
+                    .column("A", Types.VARCHAR)
+                    .column("B", Types.VARCHAR)
+                    .column("C", Types.VARCHAR)
+                    .build();
             output = fdRuleBuilder
                 .name("Test")
                 .schema(schema)
@@ -113,7 +125,12 @@ public class FDRuleBuilderTest {
         try {
             Schema.Builder schemaBuilder = new Schema.Builder();
             Schema schema =
-                schemaBuilder.table("table").column("A").column("B").column("C").build();
+                schemaBuilder
+                    .table("table")
+                    .column("A", Types.VARCHAR)
+                    .column("B", Types.VARCHAR)
+                    .column("C", Types.VARCHAR)
+                    .build();
             output = fdRuleBuilder
                 .table("table")
                 .schema(schema)

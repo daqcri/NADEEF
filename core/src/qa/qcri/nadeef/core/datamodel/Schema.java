@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
 public class Schema {
     private String tableName;
     private Column[] columns;
+    private int[] types;
 
     //<editor-fold desc="Builder">
     /**
@@ -33,9 +35,11 @@ public class Schema {
     public static class Builder {
         private String tableName;
         List<Column> columns;
+        List<Integer> types;
 
         public Builder() {
             columns = Lists.newArrayList();
+            types = Lists.newArrayList();
         }
 
         public Builder table(String tableName) {
@@ -43,20 +47,23 @@ public class Schema {
             return this;
         }
 
-        public Builder column(Column column) {
+        public Builder column(Column column, int type) {
             columns.add(column);
+            types.add(type);
             return this;
         }
 
-        public Builder column(String columnName) {
+        public Builder column(String columnName, int type) {
             columns.add(new Column(tableName, columnName));
+            types.add(type);
             return this;
         }
 
         public Schema build() {
             Column[] result = new Column[columns.size()];
             columns.toArray(result);
-            return new Schema(tableName, result);
+
+            return new Schema(tableName, result, Ints.toArray(types));
         }
     }
     //</editor-fold>
@@ -66,10 +73,11 @@ public class Schema {
      * @param tableName table name.
      * @param columns column array.
      */
-    public Schema(String tableName, Column[] columns) {
+    public Schema(String tableName, Column[] columns, int[] types) {
         this.tableName = Preconditions.checkNotNull(tableName);
         Preconditions.checkArgument(columns != null && columns.length > 0);
         this.columns = columns;
+        this.types = types;
     }
 
     /**
@@ -80,8 +88,10 @@ public class Schema {
         Preconditions.checkNotNull(schema);
         this.tableName = schema.tableName;
         this.columns = new Column[schema.columns.length];
+        this.types = new int[schema.columns.length];
         for (int i = 0; i < schema.columns.length; i++) {
             this.columns[i] = schema.columns[i];
+            this.types[i] = schema.types[i];
         }
     }
 
@@ -121,6 +131,14 @@ public class Schema {
      */
     public Column[] getColumns() {
         return columns;
+    }
+
+    /**
+     * Gets the column type collection.
+     * @return column type collection.
+     */
+    public int[] getTypes() {
+        return types;
     }
 
     /**

@@ -28,7 +28,7 @@ import java.util.concurrent.*;
  */
 public class ViolationDetector<T>
     extends Operator<Rule, Collection<Violation>> {
-    private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors() * 2;
+    private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
 
     private Rule rule;
     private Collection<Violation> resultCollection;

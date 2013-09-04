@@ -68,8 +68,8 @@ public class AdultRule2 extends PairTupleRule {
         Tuple t1 = tuplePair.getLeft();
         Tuple t2 = tuplePair.getRight();
         if (t1.get("race").equals(t2.get("race"))) {
-            int wgt1 = Integer.parseInt(t1.get("fnlwgt"));
-            int wgt2 = Integer.parseInt(t2.get("fnlwgt"));
+            int wgt1 = (Integer)t1.get("fnlwgt");
+            int wgt2 = (Integer)t2.get("fnlwgt");
             if (Math.abs(wgt1 - wgt2) <= wgt1 * 0.5) {
                 Violation violation = new Violation(this.ruleName);
                 violation.addCell(t1.getCell("race"));

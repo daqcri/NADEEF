@@ -91,6 +91,17 @@ public class DBConnectionFactory {
             }
         }
 
+
+        // special shutdown for derby.
+        /*
+        if (NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBY) {
+            try {
+                DriverManager.getConnection("jdbc:derby:;shutdown=true");
+            } catch (SQLException e) {
+                tracer.err("Shutdown Derby failed.", e);
+            }
+        }
+        */
         nadeefPool = null;
     }
 
@@ -119,36 +130,17 @@ public class DBConnectionFactory {
     }
 
     /**
-     * Gets the JDBC connection based on the dialect.
-     * @param dialect Database type.
-     * @param url Database URL.
-     * @param userName login user name.
-     * @param password Login user password.
-     * @return JDBC connection.
-     */
-    public static Connection createConnection(
-            SQLDialect dialect,
-            String url,
-            String userName,
-            String password
-    ) throws
-        ClassNotFoundException,
-        SQLException,
-        IllegalAccessException,
-        InstantiationException {
-        String driverName = getDriverName(dialect);
-        Class.forName(driverName).newInstance();
-        Connection conn = DriverManager.getConnection(url, userName, password);
-        conn.setAutoCommit(false);
-        return conn;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void finalize() {
+        // skip finalizing the nadeef pool
+        if (sourcePool == nadeefPool) {
+            return;
+        }
+
         tracer.verbose("Closing a connection pool @" + sourcePool.getUrl());
+
         if (sourcePool != null) {
             try {
                 sourcePool.close();
@@ -157,14 +149,6 @@ public class DBConnectionFactory {
             }
         }
         sourcePool = null;
-
-        if (sourceConfig != null && sourceConfig.getDialect() == SQLDialect.DERBY) {
-            try {
-                DriverManager.getConnection("jdbc:derby:;shutdown=true");
-            } catch (SQLException e) {
-                tracer.err("Shutdown Derby failed.", e);
-            }
-        }
     }
 
     // </editor-fold>
@@ -182,11 +166,12 @@ public class DBConnectionFactory {
     }
 
     /**
-     * Get the JDBC connection based on the dialect.
+     * Gets the JDBC connection based on the dialect.
      * @param dbConfig dbconfig.
+     * @param autoCommit auto commit flag.
      * @return JDBC connection.
      */
-    public static Connection createConnection(DBConfig dbConfig)
+    public static Connection createConnection(DBConfig dbConfig, boolean autoCommit)
         throws
             ClassNotFoundException,
             SQLException,
@@ -200,8 +185,22 @@ public class DBConnectionFactory {
                 dbConfig.getUserName(),
                 dbConfig.getPassword()
             );
-        conn.setAutoCommit(false);
+        conn.setAutoCommit(autoCommit);
         return conn;
+    }
+
+    /**
+     * Get the JDBC connection based on the dialect.
+     * @param dbConfig dbconfig.
+     * @return JDBC connection.
+     */
+    public static Connection createConnection(DBConfig dbConfig)
+            throws
+            ClassNotFoundException,
+            SQLException,
+            IllegalAccessException,
+            InstantiationException {
+        return createConnection(dbConfig, false);
     }
 
     /**
@@ -211,6 +210,16 @@ public class DBConnectionFactory {
     // TODO: currently it is limited to 1 source db.
     private void initializeSource(DBConfig dbConfig) {
         if (dbConfig == sourceConfig || dbConfig.equals(sourceConfig)) {
+            return;
+        }
+
+        // if the source is as the same as the nadeef source,
+        // reuse the nadeef connection pool.
+        DBConfig nadeefConfig = NadeefConfiguration.getDbConfig();
+        if (dbConfig == nadeefConfig ||
+            dbConfig.getUrl().equalsIgnoreCase(nadeefConfig.getUrl())) {
+            sourcePool = nadeefPool;
+            sourceConfig = dbConfig;
             return;
         }
 

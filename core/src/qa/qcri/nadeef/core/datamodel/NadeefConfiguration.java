@@ -173,14 +173,6 @@ public class NadeefConfiguration {
     }
 
     /**
-     * Sets the <code>DBConfig</code> of Nadeef metadata database.
-     * @return meta data <code>DBConfig</code>.
-     */
-    public static void setDbConfig(DBConfig dbConfig_) {
-        dbConfig = Preconditions.checkNotNull(dbConfig_);
-    }
-
-    /**
      * Try gets the rule builder from the extensions.
      * @param typeName type name.
      * @return RuleBuilder instance.

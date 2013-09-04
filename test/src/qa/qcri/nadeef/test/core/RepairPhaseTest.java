@@ -18,12 +18,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
+
+import java.io.File;
+import java.sql.Connection;
 
 /**
  * Test the repair phase of NADEEF.
@@ -31,18 +38,44 @@ import qa.qcri.nadeef.tools.Tracer;
 public class RepairPhaseTest {
     private NodeCacheManager cacheManager;
 
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+            '*', File.separatorChar);
+
     @Before
     public void setup() {
-        Bootstrap.start();
-        Tracer.setVerbose(true);
-        Tracer.setInfo(true);
+        Bootstrap.start(testConfig);
         cacheManager = NodeCacheManager.getInstance();
+        Tracer.setVerbose(true);
+        NadeefConfiguration.setAlwaysOverride(true);
+        Connection conn = null;
+        try {
+            conn = DBConnectionFactory.getNadeefConnection();
+            CSVTools.dump(
+                conn,
+                SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
+                TestDataRepository.getLocationData1(),
+                "location",
+                true
+            );
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assert.fail(ex.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
+        }
     }
 
     @After
     public void teardown() {
         Assert.assertEquals(2, cacheManager.getSize());
-        cacheManager.clear();
+        Bootstrap.shutdown();
     }
 
     @Test

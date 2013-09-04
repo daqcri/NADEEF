@@ -29,6 +29,7 @@ import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,10 +41,14 @@ import java.util.List;
  */
 @RunWith(JUnit4.class)
 public class StressDetectionTest {
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+                '*', File.separatorChar);
+
     @Before
     public void setUp() {
-        Bootstrap.start();
-        Tracer.setVerbose(false);
+        Bootstrap.start(testConfig);
+        Tracer.setVerbose(true);
         Tracer.setInfo(true);
     }
 
@@ -151,20 +156,21 @@ public class StressDetectionTest {
         String right
     ) {
         Connection conn = null;
+        PreparedStatement ps1 = null, ps2 = null, ps3 = null;
         int totalViolation = 0;
         try {
             conn = DBConnectionFactory.createConnection(dbConfig);
-            PreparedStatement ps1 =
+            ps1 =
                 conn.prepareStatement(
                     "select distinct " + right + " from " + tableName + " where " + left + " = ?"
                 );
 
-            PreparedStatement ps2 = conn.prepareStatement(
+            ps2 = conn.prepareStatement(
                 "select count(*) as count from " + tableName + " where " + left + " = ? and " +
                     right + " = ?"
             );
 
-            PreparedStatement ps3 =
+            ps3 =
                 conn.prepareStatement(
                     "select distinct(" + left + ") from " + tableName
                 );
@@ -202,24 +208,31 @@ public class StressDetectionTest {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    //ignore
+            try {
+                if (ps1 != null) {
+                    ps1.close();
                 }
+
+                if (ps2 != null) {
+                    ps2.close();
+                }
+
+                if (ps3 != null) {
+                    ps3.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+                // ignore;
             }
         }
 
         return totalViolation * 4;
     }
 
-    private void verifyViolationResult(int expectRow)
-        throws
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException {
+    private void verifyViolationResult(int expectRow) throws Exception {
         int rowCount = Violations.getViolationRowCount();
         Assert.assertEquals(expectRow, rowCount);
     }

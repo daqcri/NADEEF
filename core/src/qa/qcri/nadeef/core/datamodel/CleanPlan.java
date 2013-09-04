@@ -26,6 +26,8 @@ import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.tools.*;
 
 import java.io.File;
@@ -74,29 +76,57 @@ public class CleanPlan {
         List<Schema> schemas = Lists.newArrayList();
 
         Connection conn = null;
+        NadeefSQLDialectManagerBase dialectManager = null;
         try {
             // ----------------------------------------
             // parsing the source config
             // ----------------------------------------
             JSONObject src = (JSONObject) jsonObject.get("source");
-            String type = (String) src.get("type");
-            DBConfig dbConfig;
 
+            String type = "derby";
+            DBConfig dbConfig = null;
+            String username = "";
+            String password = "";
+
+            if (src.containsKey("type")) {
+                type = (String)src.get("type");
+            }
+
+            if (src.containsKey("username")) {
+                username = (String)src.get("username");
+            }
+
+            if (src.containsKey("password")) {
+                password = (String)src.get("password");
+            }
+
+            SQLDialect sqlDialect = null;
             switch (type) {
-            case "csv":
-                isCSV = true;
-                dbConfig = NadeefConfiguration.getDbConfig();
-                break;
-            default:
-                // TODO: support different type of DB.
-                SQLDialect sqlDialect = SQLDialect.POSTGRES;
-                DBConfig.Builder builder = new DBConfig.Builder();
+                case "csv":
+                    isCSV = true;
+                    dbConfig = NadeefConfiguration.getDbConfig();
+                    sqlDialect = dbConfig.getDialect();
+                    break;
+                case "derby":
+                default:
+                    sqlDialect = SQLDialect.DERBY;
+                    break;
+                case "postgres":
+                    sqlDialect = SQLDialect.POSTGRES;
+                    break;
+            }
+
+            if (dbConfig == null) {
                 dbConfig =
-                    builder.username((String) src.get("username"))
-                        .password((String) src.get("password"))
-                        .url((String) src.get("url")).dialect(sqlDialect)
+                    new DBConfig.Builder()
+                        .username(username)
+                        .password(password)
+                        .url((String) src.get("url"))
+                        .dialect(sqlDialect)
                         .build();
             }
+
+            dialectManager = SQLDialectManagerFactory.getDialectManagerInstance(sqlDialect);
 
             // ----------------------------------------
             // parsing the rules
@@ -162,10 +192,11 @@ public class CleanPlan {
                         if (!copiedTables.contains(targetTableNames.get(j))) {
                             String tableName =
                                 CSVTools.dump(
-                                        conn,
-                                        file,
-                                        targetTableNames.get(j),
-                                        NadeefConfiguration.getAlwaysOverrideTable()
+                                    conn,
+                                    dialectManager,
+                                    file,
+                                    targetTableNames.get(j),
+                                    NadeefConfiguration.getAlwaysOverrideTable()
                                 );
                             copiedTables.add(targetTableNames.get(j));
                             targetTableNames.set(j, tableName);
@@ -206,6 +237,7 @@ public class CleanPlan {
                         if (!copiedTables.contains(targetTableNames.get(j))) {
                             DBMetaDataTool.copy(
                                 dbConfig,
+                                dialectManager,
                                 sourceTableNames.get(j),
                                 targetTableNames.get(j)
                             );
@@ -275,6 +307,7 @@ public class CleanPlan {
                 try {
                     conn.close();
                 } catch (SQLException ex) {
+                    // ignore;
                 }
             }
         }

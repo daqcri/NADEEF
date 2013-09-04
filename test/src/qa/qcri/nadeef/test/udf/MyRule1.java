@@ -33,8 +33,8 @@ public class MyRule1 extends SingleTupleRule {
     @Override
     public Collection<Violation> detect(Tuple tuple) {
         List<Violation> result = new ArrayList();
-        String city = tuple.get("city");
-        String zip = tuple.get("zip");
+        String city = (String)tuple.get("city");
+        String zip = (String)tuple.get("zip");
         if (zip.equalsIgnoreCase("1183JV")) {
             if (!city.equalsIgnoreCase("amsterdam")) {
                 Violation newViolation = new Violation(this.ruleName);

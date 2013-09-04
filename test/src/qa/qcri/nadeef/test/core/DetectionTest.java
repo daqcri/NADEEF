@@ -20,14 +20,17 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -35,15 +38,27 @@ import java.util.List;
  */
 @RunWith(JUnit4.class)
 public class DetectionTest {
-    @BeforeClass
-    public static void startup() {
-        Bootstrap.start();
-        Tracer.setVerbose(true);
+    private static String testConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+            '*',
+            File.separatorChar
+        );
 
+    @Before
+    public void setup() {
+        Bootstrap.start(testConfig);
+        Tracer.setVerbose(true);
+        NadeefConfiguration.setAlwaysOverride(true);
         Connection conn = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
-            CSVTools.dump(conn, TestDataRepository.getLocationData1(), "location", true);
+            CSVTools.dump(
+                conn,
+                SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
+                TestDataRepository.getLocationData1(),
+                "location",
+                true
+            );
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
@@ -56,18 +71,10 @@ public class DetectionTest {
                 }
             }
         }
-        Bootstrap.shutdown();
-    }
-
-    @Before
-    public void setup() {
-        Bootstrap.start();
-        Tracer.setVerbose(true);
-        NadeefConfiguration.setAlwaysOverride(true);
     }
 
     @After
-    public void teardown() {
+    public void shutdown() {
         Bootstrap.shutdown();
     }
 
@@ -131,7 +138,7 @@ public class DetectionTest {
                 CleanExecutor executor = new CleanExecutor(cleanPlan);
                 executor.detect();
             }
-            verifyViolationResult(104 );
+            verifyViolationResult(104);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -191,11 +198,7 @@ public class DetectionTest {
     }
 
     private void verifyViolationResult(int expectRow)
-        throws
-        ClassNotFoundException,
-        SQLException,
-        InstantiationException,
-        IllegalAccessException {
+        throws Exception {
         int rowCount = Violations.getViolationRowCount();
         Assert.assertEquals(expectRow, rowCount);
     }
