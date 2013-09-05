@@ -47,9 +47,13 @@ public class StressDetectionTest {
 
     @Before
     public void setUp() {
-        Bootstrap.start(testConfig);
-        Tracer.setVerbose(true);
-        Tracer.setInfo(true);
+        try {
+            Bootstrap.start(testConfig);
+            Tracer.setVerbose(true);
+            Tracer.setInfo(true);
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
+        }
     }
 
     @After
@@ -130,6 +134,8 @@ public class StressDetectionTest {
 
     @Test
     public void cleanExecutorTest80k() {
+        Tracer.setVerbose(false);
+        Tracer.setInfo(false);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan80k();
             List<String> tableNames = cleanPlan.getRule().getTableNames();

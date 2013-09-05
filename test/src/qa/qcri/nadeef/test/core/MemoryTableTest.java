@@ -42,18 +42,18 @@ public class MemoryTableTest {
     private List<Tuple> testTuples;
     @Before
     public void setup() {
-        Bootstrap.start(testConfig);
-        Tracer.setVerbose(true);
-
-        Schema schema =
-            new Schema.Builder()
-                .table("test")
-                .column("C", Types.VARCHAR)
-                .column("A", Types.VARCHAR)
-                .column("B", Types.VARCHAR)
-                .build();
-        File dumpFile = TestDataRepository.getDumpTestCSVFile();
         try {
+            Bootstrap.start(testConfig);
+            Tracer.setVerbose(true);
+
+            Schema schema =
+                new Schema.Builder()
+                    .table("test")
+                    .column("C", Types.VARCHAR)
+                    .column("A", Types.VARCHAR)
+                    .column("B", Types.VARCHAR)
+                    .build();
+            File dumpFile = TestDataRepository.getDumpTestCSVFile();
             List<String[]> content = CSVTools.read(dumpFile, ",");
             testTuples = Lists.newArrayList();
             List<byte[]> values = Lists.newArrayList();
@@ -66,7 +66,7 @@ public class MemoryTableTest {
                 testTuples.add(new Tuple(i + 1, schema, Lists.newArrayList(values)));
                 values.clear();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
         }

@@ -34,8 +34,12 @@ public class DBInstallerTest {
 
     @BeforeClass
     public static void setUp() {
-        Bootstrap.start(testConfig1);
-        NadeefConfiguration.setTestMode(true);
+        try {
+            Bootstrap.start(testConfig1);
+            NadeefConfiguration.setTestMode(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Test

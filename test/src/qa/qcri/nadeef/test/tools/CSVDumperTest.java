@@ -48,8 +48,8 @@ public class CSVDumperTest {
     private static NadeefSQLDialectManagerBase dialectManager;
     @BeforeClass
     public static void setUp() {
-        Bootstrap.start(testConfig);
         try {
+           Bootstrap.start(testConfig);
            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
            dialectManager =
                SQLDialectManagerFactory.getDialectManagerInstance(dbConfig.getDialect());

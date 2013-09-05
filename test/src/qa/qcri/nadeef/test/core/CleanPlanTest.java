@@ -51,11 +51,10 @@ public class CleanPlanTest {
 
     @Before
     public void setup() {
-        Bootstrap.start(testConfig);
-        Tracer.setVerbose(true);
-
         Connection conn = null;
         try {
+            Bootstrap.start(testConfig);
+            Tracer.setVerbose(true);
             conn = DBConnectionFactory.getNadeefConnection();
             CSVTools.dump(
                 conn,

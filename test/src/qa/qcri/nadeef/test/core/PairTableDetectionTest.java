@@ -38,10 +38,14 @@ public class PairTableDetectionTest {
                 '*', File.separatorChar);
     @Before
     public void setUp() {
-        Bootstrap.start(testConfig);
-        NadeefConfiguration.setAlwaysOverride(true);
-        Tracer.setVerbose(true);
-        Tracer.setInfo(true);
+        try {
+            Bootstrap.start(testConfig);
+            NadeefConfiguration.setAlwaysOverride(true);
+            Tracer.setVerbose(true);
+            Tracer.setInfo(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @After

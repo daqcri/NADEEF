@@ -50,10 +50,9 @@ public class SQLTableTest {
                 '*', File.separatorChar);
     @Before
     public void setup() {
-        Bootstrap.start(testConfig);
         Connection conn = null;
         try {
-            Bootstrap.start();
+            Bootstrap.start(testConfig);
             dbconfig =
                 new DBConfig.Builder()
                     .dialect(SQLDialect.DERBY)

@@ -32,7 +32,6 @@ import java.nio.file.Path;
 public class Bootstrap {
     private static boolean isStarted;
     private static final String configurationFile = "nadeef.conf";
-    private static Tracer tracer = Tracer.getTracer(Bootstrap.class);
 
     private Bootstrap() {}
 
@@ -54,7 +53,7 @@ public class Bootstrap {
      * Bootstrap NADEEF. It tries to load the NADEEF configuration file and install
      * metadata tables in the NADEEF database.
      */
-    public static synchronized boolean start() {
+    public static synchronized boolean start() throws Exception {
         return start(configurationFile);
     }
 
@@ -63,10 +62,11 @@ public class Bootstrap {
      * metadata tables in the NADEEF database.
      * @param configFile NADEEF config file.
      */
-    public static synchronized boolean start(String configFile) {
+    public static synchronized boolean start(String configFile) throws Exception {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(configFile));
         if (isStarted) {
-            tracer.info("Nadeef is already started.");
+            // Here the logging is not yet started.
+            System.out.println("Nadeef is already started.");
             return true;
         }
 
@@ -75,6 +75,8 @@ public class Bootstrap {
             // set the logging directory
             Path outputPath = NadeefConfiguration.getOutputPath();
             Tracer.setLoggingDir(outputPath.toString());
+            Tracer tracer = Tracer.getTracer(Bootstrap.class);
+            tracer.verbose("Tracer initialized at " + outputPath.toString());
 
             DBConnectionFactory.initializeNadeefConnectionPool();
 
@@ -96,14 +98,12 @@ public class Bootstrap {
 
             DBInstaller.install(violationTableName, repairTableName, auditTableName);
         } catch (FileNotFoundException ex) {
-            tracer.err("Nadeef configuration is not found.", ex);
+            System.err.println("Nadeef configuration is not found.");
+            ex.printStackTrace();
         } catch (Exception ex) {
-            tracer.err(
-                "There is something wrong with the NADEEF config. Nadeef database is not " +
-                "able to install, abort.",
-                ex
-            );
-            System.exit(1);
+            System.err.println("NADEEF initialization failed, please check the log for detail.");
+            ex.printStackTrace();
+            throw ex;
         }
 
         isStarted = true;

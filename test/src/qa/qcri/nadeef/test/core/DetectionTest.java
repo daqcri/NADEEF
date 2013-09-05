@@ -46,11 +46,11 @@ public class DetectionTest {
 
     @Before
     public void setup() {
-        Bootstrap.start(testConfig);
-        Tracer.setVerbose(true);
-        NadeefConfiguration.setAlwaysOverride(true);
         Connection conn = null;
         try {
+            Bootstrap.start(testConfig);
+            Tracer.setVerbose(true);
+            NadeefConfiguration.setAlwaysOverride(true);
             conn = DBConnectionFactory.getNadeefConnection();
             CSVTools.dump(
                 conn,

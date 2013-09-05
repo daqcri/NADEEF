@@ -30,7 +30,11 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 public class FlowTest {
     @Before
     public void setUp() {
-        Bootstrap.start();
+        try {
+            Bootstrap.start();
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
+        }
     }
 
     @Test

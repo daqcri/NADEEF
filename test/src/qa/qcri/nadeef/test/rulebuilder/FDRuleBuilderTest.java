@@ -35,8 +35,12 @@ public class FDRuleBuilderTest {
 
     @BeforeClass
     public static void setup() {
-        Bootstrap.start();
-        workingDirectory = Files.createTempDir();
+        try {
+            Bootstrap.start();
+            workingDirectory = Files.createTempDir();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @AfterClass

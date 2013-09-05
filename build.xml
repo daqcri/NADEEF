@@ -159,32 +159,40 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
             destdir="${build.root}/doc"
             header="NADEEF Core"
             packagenames=
-                    "qa.qcri.nadeef.core.datamodel,
-                     qa.qcri.nadeef.core.exception,
-                     qa.qcri.nadeef.core.pipeline,
-                     qa.qcri.nadeef.core.util,
-                     qa.qcri.nadeef.tools,
-                     qa.qcri.nadeef.service"
+                "qa.qcri.nadeef.core.datamodel,
+                 qa.qcri.nadeef.core.exception,
+                 qa.qcri.nadeef.core.pipeline,
+                 qa.qcri.nadeef.core.util,
+                 qa.qcri.nadeef.tools,
+                 qa.qcri.nadeef.service"
             doctitle="NADEEF Core">
         </javadoc>
     </target>
 
     <!-- JUnit -->
-    <target name="unittest" depends="compile">
+    <path id="test.classpath">
+        <pathelement location="${test.dir}" />
+        <fileset dir="${build.root}/bin">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="unittest" depends="jar">
         <mkdir dir="${build.root}/testresult" />
-        <junit printsummary="yes">
-            <classpath>
-                <fileset dir="${build.root}" includes="nadeef*.jar" />
-                <fileset dir="${vendor.dir}" includes="junit-4.11.jar"/>
-            </classpath>
+        <junit printsummary="yes" haltonfailure="no" showoutput="no">
+            <classpath refid="test.classpath" />
             <formatter type="plain" />
             <formatter type="xml" />
 
-            <batchtest fork="no" todir="${build.root}/testresult">
-                <fileset dir="${build.dir}">
+            <batchtest fork="yes" todir="${build.root}/testresult">
+                <fileset dir="${test.dir}">
                     <include name="**/*Test*.class" />
+                    <exclude name="**/TestDataRepository.class" />
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport>
+            <report todir="${build.root}/testresult/testreports"/>
+        </junitreport>
     </target>
 </project>

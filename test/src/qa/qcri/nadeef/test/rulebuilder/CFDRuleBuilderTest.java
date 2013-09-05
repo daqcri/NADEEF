@@ -34,7 +34,11 @@ import java.util.List;
 public class CFDRuleBuilderTest {
     @Before
     public void setup() {
-        Bootstrap.start();
+        try {
+            Bootstrap.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @After

@@ -44,7 +44,7 @@ public class ViolationRepairTest {
         try {
             Bootstrap.start(testConfig);
             violations = Violations.fromCSV(TestDataRepository.getViolationTestData1());
-        } catch (IOException e) {
+        } catch (Exception e) {
             Assert.fail("Setup failed.");
             e.printStackTrace();
         }

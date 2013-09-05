@@ -14,22 +14,27 @@
 package qa.qcri.nadeef.test.core;
 
 import com.google.common.collect.Lists;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.List;
 
 /**
  * CleanExecutor test.
  */
+@RunWith(JUnit4.class)
 public class CleanExecutorTest {
     private static String testConfig =
         "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
@@ -39,8 +44,31 @@ public class CleanExecutorTest {
 
     @Before
     public void setup() {
-        Bootstrap.start(testConfig);
-        Tracer.setVerbose(true);
+        Connection conn = null;
+        try {
+            Bootstrap.start(testConfig);
+            Tracer.setVerbose(true);
+            NadeefConfiguration.setAlwaysOverride(true);
+            conn = DBConnectionFactory.getNadeefConnection();
+            CSVTools.dump(
+                conn,
+                SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
+                TestDataRepository.getLocationData1(),
+                "location",
+                true
+            );
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assert.fail(ex.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
+        }
     }
 
     @After
@@ -48,7 +76,8 @@ public class CleanExecutorTest {
         Bootstrap.shutdown();
     }
 
-    public static class DetectThread implements Runnable {
+    @Ignore
+    static class DetectThread implements Runnable {
         private CleanExecutor cleanExecutor;
         public DetectThread(CleanExecutor cleanExecutor) {
             this.cleanExecutor = cleanExecutor;
@@ -60,7 +89,8 @@ public class CleanExecutorTest {
         }
     }
 
-    public static class RepairThread implements Runnable {
+    @Ignore
+    static class RepairThread implements Runnable {
         private CleanExecutor cleanExecutor;
         public RepairThread(CleanExecutor cleanExecutor) {
             this.cleanExecutor = cleanExecutor;
@@ -73,7 +103,7 @@ public class CleanExecutorTest {
     }
 
     @Test
-    public void percentageTest() {
+    public void progressIndicatorTest() {
         try {
             List<Double> result = Lists.newArrayList();
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
