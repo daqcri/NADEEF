@@ -4,7 +4,7 @@ jdk:
   - openjdk7
 
 after_script:
-  - ant unittest
+  - ant regression
 
 before_script:
   - psql -c 'create database unittest;' -U postgres
