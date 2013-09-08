@@ -188,6 +188,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                 <fileset dir="${test.dir}">
                     <include name="**/*Test*.class" />
                     <exclude name="**/TestDataRepository.class" />
+                    <exclude name="**/NadeefTestBase.class" />
                 </fileset>
             </batchtest>
         </junit>
@@ -208,6 +209,10 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
             <batchtest fork="yes" todir="${build.root}/testresult">
                 <fileset dir="${test.dir}">
                     <include name="**/*Test*.class" />
+                    <!-- this is to avoid build machine time out -->
+                    <exclude name="**/StressDetectionTest.class" />
+
+                    <exclude name="**/NadeefTestBase.class" />
                     <exclude name="**/TestDataRepository.class" />
                 </fileset>
             </batchtest>
