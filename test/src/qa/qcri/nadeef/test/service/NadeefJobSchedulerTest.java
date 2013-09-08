@@ -13,11 +13,12 @@
 
 package qa.qcri.nadeef.test.service;
 
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
@@ -26,23 +27,23 @@ import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.service.NadeefJobScheduler;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TJobStatusType;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.net.InetAddress;
 import java.sql.Connection;
 
 /**
  * JobScheduler test.
  */
-public class NadeefJobSchedulerTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*',
-            File.separatorChar
-        );
+@RunWith(Parameterized.class)
+public class NadeefJobSchedulerTest extends NadeefTestBase{
+
+    public NadeefJobSchedulerTest(String config) {
+        super(config);
+    }
 
     @Before
     public void setup() {

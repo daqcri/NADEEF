@@ -18,14 +18,16 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.Types;
 import java.util.Collection;
@@ -35,11 +37,14 @@ import java.util.Set;
 /**
  * MemoryTable test.
  */
-public class MemoryTableTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-                '*', File.separatorChar);
+@RunWith(Parameterized.class)
+public class MemoryTableTest extends NadeefTestBase {
+    public MemoryTableTest(String testConfig_) {
+        super(testConfig_);
+    }
+
     private List<Tuple> testTuples;
+
     @Before
     public void setup() {
         try {

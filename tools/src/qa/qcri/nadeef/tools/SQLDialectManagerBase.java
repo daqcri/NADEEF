@@ -66,6 +66,19 @@ public abstract class SQLDialectManagerBase {
     public abstract String limitRow(int row);
 
     /**
+     * Inserts values into a table from CSV row used for batch loading.
+     * @param metaData column meta data.
+     * @param tableName target table name.
+     * @param row row value.
+     * @return SQL statement.
+     */
+    public abstract String importFromCSV(
+        ResultSetMetaData metaData,
+        String tableName,
+        String row
+    );
+
+    /**
      * Creates a table in the database from a CSV file header.
      * @param tableName table name.
      * @param content table description.
@@ -73,16 +86,4 @@ public abstract class SQLDialectManagerBase {
      */
     public abstract String createTableFromCSV(String tableName, String content);
 
-    /**
-     * Inserts values into a table from CSV row used for batch loading.
-     * @param metaData column meta data.
-     * @param tableName target table name.
-     * @param row row value.
-     * @return SQL statement.
-     */
-    public abstract String insertTableFromCSV(
-        ResultSetMetaData metaData,
-        String tableName,
-        String row
-    );
 }

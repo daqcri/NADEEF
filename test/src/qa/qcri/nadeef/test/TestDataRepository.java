@@ -26,6 +26,13 @@ import java.util.List;
  * Factory class to get TestData.
  */
 public class TestDataRepository {
+    public static String DerbyConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
+                '*', File.separatorChar);
+    public static String PostgresConfig =
+        "test*src*qa*qcri*nadeef*test*input*config*postgresConfig.conf".replace(
+                '*', File.separatorChar);
+
 
     public static File getDumpTestCSVFile() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*dumptest.csv";

@@ -195,4 +195,26 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
             <report todir="${build.root}/testresult/testreports"/>
         </junitreport>
     </target>
+
+    <!-- enable regression test -->
+    <target name="regression" depends="jar">
+        <mkdir dir="${build.root}/testresult" />
+        <junit printsummary="yes" haltonfailure="no" showoutput="no">
+            <sysproperty key="regression" value="yes" />
+            <classpath refid="test.classpath" />
+            <formatter type="plain" />
+            <formatter type="xml" />
+
+            <batchtest fork="yes" todir="${build.root}/testresult">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test*.class" />
+                    <exclude name="**/TestDataRepository.class" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport>
+            <report todir="${build.root}/testresult/testreports"/>
+        </junitreport>
+    </target>
+
 </project>

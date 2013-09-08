@@ -21,7 +21,9 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Wrapper class for executing the violation detection.

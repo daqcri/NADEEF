@@ -17,8 +17,8 @@ import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Fixes;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;

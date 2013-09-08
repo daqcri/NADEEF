@@ -33,6 +33,7 @@ public class SQLDialectManagerFactory {
                 result = new DerbySQLManager();
                 break;
             case POSTGRES:
+                result = new PostgresSQLManager();
                 break;
         }
         return result;

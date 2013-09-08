@@ -19,7 +19,6 @@ import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.charset.Charset;
 import java.sql.Types;

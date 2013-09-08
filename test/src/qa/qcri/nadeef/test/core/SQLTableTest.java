@@ -19,18 +19,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.SQLDialect;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Collection;
@@ -40,14 +40,17 @@ import java.util.concurrent.TimeUnit;
 /**
  * SourceDeserializer Test.
  */
-@RunWith(JUnit4.class)
-public class SQLTableTest {
+@RunWith(Parameterized.class)
+
+public class SQLTableTest extends NadeefTestBase {
     private String tableName;
     private DBConfig dbconfig;
     private DBConnectionFactory connectionFactory;
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-                '*', File.separatorChar);
+
+    public SQLTableTest(String config_) {
+        super(config_);
+    }
+
     @Before
     public void setup() {
         Connection conn = null;

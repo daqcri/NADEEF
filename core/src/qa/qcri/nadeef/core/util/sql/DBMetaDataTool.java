@@ -14,9 +14,10 @@
 package qa.qcri.nadeef.core.util.sql;
 
 import qa.qcri.nadeef.core.datamodel.Column;
-import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Schema;
-import qa.qcri.nadeef.tools.*;
+import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SqlQueryBuilder;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
 
@@ -164,8 +165,10 @@ public final class DBMetaDataTool {
         try {
             conn = DBConnectionFactory.createConnection(dbConfig, true);
             DatabaseMetaData meta = conn.getMetaData();
-            resultSet = meta.getTables(null, null, tableName.toUpperCase(), null);
-            return resultSet.next();
+            boolean result =
+                meta.getTables(null, null, tableName.toUpperCase(), null).next() ||
+                meta.getTables(null, null, tableName.toLowerCase(), null).next();
+            return result;
         } finally {
             if (resultSet != null) {
                 resultSet.close();

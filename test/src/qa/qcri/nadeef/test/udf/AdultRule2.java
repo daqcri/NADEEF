@@ -16,7 +16,6 @@ package qa.qcri.nadeef.test.udf;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.datamodel.IteratorStream;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -19,31 +19,30 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
  * Stress testing on detection.
  */
-@RunWith(JUnit4.class)
-public class StressDetectionTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-                '*', File.separatorChar);
+@RunWith(Parameterized.class)
+public class StressDetectionTest extends NadeefTestBase {
+    public StressDetectionTest(String config_) {
+        super(config_);
+    }
 
     @Before
     public void setUp() {

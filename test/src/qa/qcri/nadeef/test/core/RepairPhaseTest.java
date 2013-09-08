@@ -17,30 +17,32 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.sql.Connection;
 
 /**
  * Test the repair phase of NADEEF.
  */
-public class RepairPhaseTest {
+@RunWith(Parameterized.class)
+public class RepairPhaseTest extends NadeefTestBase {
     private NodeCacheManager cacheManager;
 
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*', File.separatorChar);
+    public RepairPhaseTest(String config_) {
+        super(config_);
+    }
 
     @Before
     public void setup() {

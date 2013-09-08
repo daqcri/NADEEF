@@ -15,10 +15,13 @@ package qa.qcri.nadeef.test.udf;/*
  * Copyright (C) Qatar Computing Research Institute, 2013.
  * All rights reserved.
  */
-import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.datamodel.IteratorStream;
 
-import java.util.*;
+import qa.qcri.nadeef.core.datamodel.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class MyRule4 extends PairTupleRule {

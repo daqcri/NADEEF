@@ -13,33 +13,40 @@
 
 package qa.qcri.nadeef.test.tools;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
-
-import java.io.File;
+import qa.qcri.nadeef.test.NadeefTestBase;
 
 /**
  * DBInstaller Test.
  */
-public class DBInstallerTest {
-    private static String testConfig1 =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*',
-            File.separatorChar
-        );
+@RunWith(Parameterized.class)
+public class DBInstallerTest extends NadeefTestBase {
 
-    @BeforeClass
-    public static void setUp() {
+    public DBInstallerTest(String config) {
+        super(config);
+    }
+
+    @Before
+    public void setUp() {
         try {
-            Bootstrap.start(testConfig1);
+            Bootstrap.start(testConfig);
             NadeefConfiguration.setTestMode(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @After
+    public void tearDown() {
+        Bootstrap.shutdown();
     }
 
     @Test

@@ -18,14 +18,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
@@ -33,12 +34,15 @@ import java.util.List;
 /**
  * Violation repair test.
  */
-public class ViolationRepairTest {
+@RunWith(Parameterized.class)
+public class ViolationRepairTest extends NadeefTestBase {
     private Collection<Violation> violations;
     private FDRuleBuilder ruleBuilder;
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-                '*', File.separatorChar);
+
+    public ViolationRepairTest(String config_) {
+        super(config_);
+    }
+
     @Before
     public void setup() {
         try {

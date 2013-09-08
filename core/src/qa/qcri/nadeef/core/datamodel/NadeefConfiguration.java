@@ -207,7 +207,7 @@ public class NadeefConfiguration {
      * @return violation table name.
      */
     public static String getViolationTableName() {
-        return "violation";
+        return "VIOLATION";
     }
 
     /**
@@ -215,7 +215,7 @@ public class NadeefConfiguration {
      * @return violation table name.
      */
     public static String getRepairTableName() {
-        return "repair";
+        return "REPAIR";
     }
 
     /**
@@ -247,7 +247,7 @@ public class NadeefConfiguration {
      * @return audit table name.
      */
     public static String getAuditTableName() {
-        return "audit";
+        return "AUDIT";
     }
 
     /**

@@ -16,31 +16,29 @@ package qa.qcri.nadeef.test.core;
 import com.google.common.collect.Lists;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.sql.Connection;
 import java.util.List;
 
 /**
  * CleanExecutor test.
  */
-@RunWith(JUnit4.class)
-public class CleanExecutorTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*',
-            File.separatorChar
-        );
+@RunWith(value = Parameterized.class)
+public class CleanExecutorTest extends NadeefTestBase {
+    public CleanExecutorTest(String testConfig_) {
+        super(testConfig_);
+    }
 
     @Before
     public void setup() {

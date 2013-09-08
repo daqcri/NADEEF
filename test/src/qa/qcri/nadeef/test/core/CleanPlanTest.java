@@ -13,25 +13,27 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
+import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
@@ -40,13 +42,12 @@ import java.util.List;
 /**
  * CleanPlan unit test
  */
-@RunWith(JUnit4.class)
-public class CleanPlanTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*',
-            File.separatorChar
-        );
+@RunWith(value = Parameterized.class)
+public class CleanPlanTest extends NadeefTestBase {
+    public CleanPlanTest(String testConfig_) {
+        super(testConfig_);
+    }
+
     private ExpectedException thrown = ExpectedException.none();
 
     @Before

@@ -37,3 +37,22 @@ InstallAuditTable(auditTableName) ::= <<
         time timestamp
     )
 >>
+
+CreateTableFromCSV(tableName, content) ::= <<
+    CREATE TABLE $tableName$ (
+        tid serial,
+        $content$
+    )
+>>
+
+InsertTableFromCSV(tableName, columns, values) ::= <<
+    INSERT INTO $tableName$ ( $columns$ ) VALUES ($values$)
+>>
+
+CountTable(tableName) ::= <<
+    SELECT COUNT(*) FROM $tableName$
+>>
+
+NextVid(tableName) ::= <<
+    SELECT MAX(vid) + 1 as vid from $tableName$
+>>

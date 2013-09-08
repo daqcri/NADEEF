@@ -13,9 +13,12 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
@@ -23,26 +26,22 @@ import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 /**
  * Tests for CleanExecutor.
  */
-@RunWith(JUnit4.class)
-public class DetectionTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*',
-            File.separatorChar
-        );
+@RunWith(Parameterized.class)
+public class DetectionTest extends NadeefTestBase{
+    public DetectionTest(String testConfig_) {
+        super(testConfig_);
+    }
 
     @Before
     public void setup() {

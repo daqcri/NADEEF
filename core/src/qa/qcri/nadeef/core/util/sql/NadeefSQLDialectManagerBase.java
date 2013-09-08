@@ -13,6 +13,9 @@
 
 package qa.qcri.nadeef.core.util.sql;
 
+import com.google.common.base.Preconditions;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.tools.SQLDialectManagerBase;
@@ -21,33 +24,60 @@ import qa.qcri.nadeef.tools.SQLDialectManagerBase;
  * Interface for cross vendor Database methods.
  */
 public abstract class NadeefSQLDialectManagerBase extends SQLDialectManagerBase {
+
+    /**
+     * Gets the template file.
+     * @return template group file.
+     */
+    protected abstract STGroupFile getTemplate();
+
     /**
      * Install violation tables.
      * @param violationTableName violation table name.
      * @return SQL statement.
      */
-    public abstract String createViolationTable(String violationTableName);
+    public String createViolationTable(String violationTableName) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST st = template.getInstanceOf("InstallViolationTable");
+        st.add("violationTableName", violationTableName.toUpperCase());
+        return st.render();
+    }
 
     /**
      * Install repair tables.
      * @param repairTableName repair table name.
      * @return SQL statement.
      */
-    public abstract String createRepairTable(String repairTableName);
+    public String createRepairTable(String repairTableName) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST st = template.getInstanceOf("InstallRepairTable");
+        st.add("repairTableName", repairTableName.toUpperCase());
+        return st.render();
+    }
 
     /**
      * Install auditing tables.
      * @param auditTableName audit table name.
      * @return SQL statement.
      */
-    public abstract String createAuditTable(String auditTableName);
+    public String createAuditTable(String auditTableName) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST st = template.getInstanceOf("InstallAuditTable");
+        st.add("auditTableName", auditTableName.toUpperCase());
+        return st.render();
+    }
 
     /**
      * Next Vid.
      * @param tableName violation table name.
      * @return SQL statement.
      */
-    public abstract String nextVid(String tableName);
+    public String nextVid(String tableName) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST st = template.getInstanceOf("NextVid");
+        st.add("tableName", tableName.toUpperCase());
+        return st.render();
+    }
 
     /**
      * Inserts a violation.
@@ -56,6 +86,7 @@ public abstract class NadeefSQLDialectManagerBase extends SQLDialectManagerBase 
      * @param cell violated cell.
      * @return SQL statement.
      */
+    // TODO: change to use ST
     public String insertViolation(String ruleId, int vid, Cell cell) {
         StringBuilder sqlBuilder = new StringBuilder(1024);
         Column column = cell.getColumn();
@@ -81,4 +112,17 @@ public abstract class NadeefSQLDialectManagerBase extends SQLDialectManagerBase 
         sqlBuilder.append("\')");
         return sqlBuilder.toString();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String createTableFromCSV(String tableName, String content) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST st = template.getInstanceOf("CreateTableFromCSV");
+        st.add("tableName", tableName.toUpperCase());
+        st.add("content", content);
+        return st.render();
+    }
+
 }

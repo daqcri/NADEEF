@@ -14,8 +14,8 @@
 package qa.qcri.nadeef.core.util.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.tools.SQLDialectManagerBase;
 import qa.qcri.nadeef.tools.SQLDialect;
+import qa.qcri.nadeef.tools.SQLDialectManagerBase;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
@@ -36,7 +36,15 @@ public final class DBInstaller {
         try {
             conn = DBConnectionFactory.getNadeefConnection();
             DatabaseMetaData metaData = conn.getMetaData();
-            ResultSet resultSet = metaData.getTables(null, null, tableName.toUpperCase(), null);
+
+            // deal with case
+            ResultSet resultSet =
+                metaData.getTables(null, null, tableName.toLowerCase(), null);
+            if (resultSet.next()) {
+                return true;
+            }
+
+            resultSet = metaData.getTables(null, null, tableName.toUpperCase(), null);
             return resultSet.next();
         } finally {
             if (conn != null) {

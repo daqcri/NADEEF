@@ -16,7 +16,6 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.ProgressReport;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

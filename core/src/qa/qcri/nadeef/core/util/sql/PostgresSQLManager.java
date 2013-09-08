@@ -25,12 +25,11 @@ import java.sql.Types;
 /**
  * Database manager for Apache Derby database.
  */
-public class DerbySQLManager extends NadeefSQLDialectManagerBase {
-    private static STGroupFile template =
+public class PostgresSQLManager extends NadeefSQLDialectManagerBase {
+    public static STGroupFile template =
         new STGroupFile(
-            "qa*qcri*nadeef*core*util*sql*template*DerbyTemplate.stg".replace(
-            "*", File.separator
-            ), '$', '$');
+            "qa*qcri*nadeef*core*util*sql*template*PostgresTemplate.stg".replace(
+                "*", File.separator), '$', '$');
 
     /**
      * {@inheritDoc}
@@ -46,10 +45,7 @@ public class DerbySQLManager extends NadeefSQLDialectManagerBase {
     @Override
     public void copyTable(Statement stat, String sourceName, String targetName)
             throws SQLException {
-        stat.execute(
-            "CREATE TABLE " + targetName + " AS SELECT * FROM " + sourceName + " WITH NO DATA"
-        );
-        stat.execute("INSERT INTO " + targetName + " SELECT * FROM " + sourceName);
+        stat.execute("SELECT * INTO " + targetName + " FROM " + sourceName);
     }
 
     /**
@@ -67,7 +63,7 @@ public class DerbySQLManager extends NadeefSQLDialectManagerBase {
      */
     @Override
     public String limitRow(int row) {
-        return " FETCH FIRST " + row + " ROW ONLY";
+        return " LIMIT " + row;
     }
 
     /**

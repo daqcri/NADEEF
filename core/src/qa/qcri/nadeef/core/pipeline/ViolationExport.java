@@ -15,10 +15,11 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-
-import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.datamodel.Cell;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.tools.Tracer;

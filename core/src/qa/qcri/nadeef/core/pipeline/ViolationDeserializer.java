@@ -16,8 +16,8 @@ package qa.qcri.nadeef.core.pipeline;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

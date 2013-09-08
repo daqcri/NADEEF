@@ -112,8 +112,11 @@ public class CSVTools {
             fullTableName = "csv_" + tableName;
 
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet tables = meta.getTables(null, null, fullTableName.toUpperCase(), null);
-            if (tables.next()) {
+            boolean hasTableExist =
+                meta.getTables(null, null, fullTableName.toLowerCase(), null).next() ||
+                meta.getTables(null, null, fullTableName.toUpperCase(), null).next();
+
+            if (hasTableExist) {
                 if (!overwrite) {
                     tracer.info(
                         "Found table " + fullTableName + " exists and choose not to overwrite."
@@ -148,7 +151,7 @@ public class CSVTools {
                 }
 
                 lineCount ++;
-                sql = dialectManager.insertTableFromCSV(metaData, fullTableName, line);
+                sql = dialectManager.importFromCSV(metaData, fullTableName, line);
                 stat.addBatch(sql);
             }
 

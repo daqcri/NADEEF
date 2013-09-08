@@ -20,7 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.Rule;
+import qa.qcri.nadeef.core.datamodel.SimpleExpression;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.CFDRuleBuilder;
 

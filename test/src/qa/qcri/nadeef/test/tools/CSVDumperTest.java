@@ -13,41 +13,44 @@
 
 package qa.qcri.nadeef.test.tools;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * CSV Dumper test.
  */
-@RunWith(JUnit4.class)
-public class CSVDumperTest {
-    private static String testConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-            '*',
-            File.separatorChar
-        );
+@RunWith(Parameterized.class)
+public class CSVDumperTest extends NadeefTestBase {
     private static String tableName;
     private static Connection conn;
     private static NadeefSQLDialectManagerBase dialectManager;
-    @BeforeClass
-    public static void setUp() {
+
+    public CSVDumperTest(String config) {
+        super(config);
+    }
+
+    @Before
+    public void setUp() {
         try {
            Bootstrap.start(testConfig);
            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
@@ -61,8 +64,8 @@ public class CSVDumperTest {
         }
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @After
+    public void tearDown() {
         Statement stat = null;
         if (conn != null) {
             try {
