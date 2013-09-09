@@ -11,7 +11,4 @@ before_script:
   - psql -c 'create database unittest;' -U postgres
   - psql -c "create user tester with password 'tester';" -U postgres -d unittest
   - mysql -e "create database unittest;"
-  - mysql -e "create user 'tester'@'localhost' identified by 'tester';"
-  - mysql -e "grant all privileges on *.* to 'travis'@'localhost';"
-  - mysql -e "grant all privileges on *.* to 'tester'@'localhost';"
 
