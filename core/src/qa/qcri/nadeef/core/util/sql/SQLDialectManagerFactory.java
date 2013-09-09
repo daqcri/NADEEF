@@ -35,6 +35,9 @@ public class SQLDialectManagerFactory {
             case POSTGRES:
                 result = new PostgresSQLManager();
                 break;
+            case MYSQL:
+                result = new MySQLManager();
+                break;
         }
         return result;
     }

@@ -160,6 +160,8 @@ public class DBConnectionFactory {
                 return "org.postgresql.Driver";
             case DERBY:
                 return "org.apache.derby.jdbc.EmbeddedDriver";
+            case MYSQL:
+                return "com.mysql.jdbc.Driver";
             default:
                 throw new UnsupportedOperationException();
         }

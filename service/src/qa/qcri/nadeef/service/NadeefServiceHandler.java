@@ -15,7 +15,9 @@ package qa.qcri.nadeef.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+
 import org.apache.thrift.TException;
+
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;

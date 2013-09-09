@@ -13,10 +13,7 @@
 
 package qa.qcri.nadeef.test.core;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -52,6 +49,7 @@ public class CleanPlanTest extends NadeefTestBase {
 
     @Before
     public void setup() {
+        Assume.assumeTrue(testConfig.contains("derby"));
         Connection conn = null;
         try {
             Bootstrap.start(testConfig);
@@ -61,7 +59,7 @@ public class CleanPlanTest extends NadeefTestBase {
                 conn,
                 SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
                 TestDataRepository.getLocationData1(),
-                "location",
+                "LOCATION",
                 true
             );
         } catch (Exception ex) {
@@ -100,7 +98,7 @@ public class CleanPlanTest extends NadeefTestBase {
             Rule rule = cleanPlan.getRule();
             List<String> tableNames = rule.getTableNames();
             Assert.assertEquals(1, tableNames.size());
-            Assert.assertEquals("location_copy", tableNames.get(0));
+            Assert.assertEquals("LOCATION_COPY", tableNames.get(0));
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());

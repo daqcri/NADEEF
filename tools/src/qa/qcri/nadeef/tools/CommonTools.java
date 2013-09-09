@@ -77,46 +77,6 @@ public final class CommonTools {
     }
 
     /**
-     * Builds up JDBC connection url.
-     * @param url url.
-     * @param dialect sql dialect.
-     * @return JDBC connection url string.
-     */
-    public static String buildJdbcUrl(String url, SQLDialect dialect) {
-        StringBuilder jdbcUrl = new StringBuilder("jdbc:");
-        switch (dialect) {
-            default:
-            case DERBY:
-                jdbcUrl.append("derby:").append(url);
-                break;
-            case POSTGRES:
-                jdbcUrl.append("postgresql").append("://").append(url);
-                break;
-        }
-
-        return jdbcUrl.toString();
-    }
-
-    /**
-     * Gets the {@link SQLDialect} from a string.
-     * @param type type string.
-     * @return sql dialect.
-     */
-    public static SQLDialect getSQLDialect(String type) {
-        SQLDialect result;
-        switch (type) {
-            default:
-            case "derby":
-                result = SQLDialect.DERBY;
-                break;
-            case "postgres":
-                result = SQLDialect.POSTGRES;
-                break;
-        }
-        return result;
-    }
-
-    /**
      * Loads a class in runtime using default classpath.
      * @param className class name.
      * @return Class type.

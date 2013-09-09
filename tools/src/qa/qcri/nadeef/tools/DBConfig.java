@@ -33,7 +33,7 @@ public class DBConfig {
         private String userName;
         private String password;
         private String url = "localhost/unittest";
-        private SQLDialect dialect = SQLDialect.POSTGRES;
+        private SQLDialect dialect = SQLDialect.DERBY;
 
         public Builder username(String userName) {
             this.userName = userName;
@@ -118,7 +118,7 @@ public class DBConfig {
      */
     public String getUrl() {
         if (!url.contains("jdbc:")) {
-            return CommonTools.buildJdbcUrl(url, dialect);
+            return SQLDialectManagerBase.buildJdbcUrl(url, dialect);
         }
         return url;
     }

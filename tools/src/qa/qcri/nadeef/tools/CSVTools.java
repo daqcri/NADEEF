@@ -109,12 +109,12 @@ public class CSVTools {
             stat.setFetchSize(1024);
 
             // overwrites existing tables if necessary
-            fullTableName = "csv_" + tableName;
+            fullTableName = "CSV_" + tableName;
 
             DatabaseMetaData meta = conn.getMetaData();
             boolean hasTableExist =
                 meta.getTables(null, null, fullTableName.toLowerCase(), null).next() ||
-                meta.getTables(null, null, fullTableName.toUpperCase(), null).next();
+                meta.getTables(null, null, fullTableName.toUpperCase(), null).next();;
 
             if (hasTableExist) {
                 if (!overwrite) {

@@ -31,11 +31,12 @@ public abstract class NadeefTestBase {
     public static List<String[]> configs() {
         String[][] data;
         // regression test check
-        if (System.getProperty("regression") != null) {
+        if (System.getProperty("regression") == null) {
             data =
                 new String[][] {
                     { TestDataRepository.DerbyConfig },
-                    { TestDataRepository.PostgresConfig }
+                    { TestDataRepository.PostgresConfig },
+                    { TestDataRepository.MySQLConfig}
                 };
         } else {
             data =

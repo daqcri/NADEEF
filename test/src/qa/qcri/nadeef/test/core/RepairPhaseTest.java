@@ -58,7 +58,7 @@ public class RepairPhaseTest extends NadeefTestBase {
                 conn,
                 SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
                 TestDataRepository.getLocationData1(),
-                "location",
+                "LOCATION",
                 true
             );
         } catch (Exception ex) {

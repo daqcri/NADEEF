@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.util.sql;
 
+import com.google.common.base.Preconditions;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -25,12 +26,11 @@ import java.sql.Types;
 /**
  * Database manager for Apache Derby database.
  */
-public class PostgresSQLManager extends NadeefSQLDialectManagerBase {
+public class MySQLManager extends NadeefSQLDialectManagerBase {
     public static STGroupFile template =
         new STGroupFile(
-            "qa*qcri*nadeef*core*util*sql*template*PostgresTemplate.stg".replace(
+            "qa*qcri*nadeef*core*util*sql*template*MySQLTemplate.stg".replace(
                 "*", File.separator), '$', '$');
-
     /**
      * {@inheritDoc}
      */
@@ -45,7 +45,12 @@ public class PostgresSQLManager extends NadeefSQLDialectManagerBase {
     @Override
     public void copyTable(Statement stat, String sourceName, String targetName)
             throws SQLException {
-        stat.execute("SELECT * INTO " + targetName + " FROM " + sourceName);
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST st = template.getInstanceOf("CopyTable");
+        st.add("source", sourceName);
+        st.add("target", targetName);
+        String sql = st.render();
+        stat.execute(sql);
     }
 
     /**
@@ -77,7 +82,10 @@ public class PostgresSQLManager extends NadeefSQLDialectManagerBase {
         try {
             for (int i = 0; i < tokens.length; i ++) {
                 // skip column 0 for tid.
-                columnBuilder.append(metaData.getColumnName(i + 2));
+                columnBuilder
+                    .append("`")
+                    .append(metaData.getColumnName(i + 2))
+                    .append("`");
 
                 int type = metaData.getColumnType(i + 2);
                 if (type == Types.VARCHAR || type == Types.CHAR) {
@@ -97,9 +105,34 @@ public class PostgresSQLManager extends NadeefSQLDialectManagerBase {
         }
 
         ST st = getTemplate().getInstanceOf("InsertTableFromCSV");
-        st.add("tableName", tableName.toUpperCase());
+        st.add("tableName", tableName);
         st.add("columns", columnBuilder.toString());
         st.add("values", valueBuilder.toString());
+        return st.render();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String createTableFromCSV(String tableName, String content) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+
+        StringBuilder sqlBuilder = new StringBuilder(1024);
+        String[] tokens = content.split(",");
+        int i = 0;
+        for (String token : tokens) {
+            if (i != 0) {
+                sqlBuilder.append(", ");
+            }
+            String[] vs = token.trim().split("\\s");
+            sqlBuilder.append("`").append(vs[0]).append("` ").append(vs[1]);
+            i ++;
+        }
+
+        ST st = template.getInstanceOf("CreateTableFromCSV");
+        st.add("tableName", tableName);
+        st.add("content", sqlBuilder.toString());
         return st.render();
     }
 }

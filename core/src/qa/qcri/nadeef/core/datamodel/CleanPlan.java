@@ -13,8 +13,10 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
@@ -30,6 +32,7 @@ import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
 import qa.qcri.nadeef.tools.*;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
@@ -101,19 +104,12 @@ public class CleanPlan {
             }
 
             SQLDialect sqlDialect = null;
-            switch (type) {
-                case "csv":
-                    isCSV = true;
-                    dbConfig = NadeefConfiguration.getDbConfig();
-                    sqlDialect = dbConfig.getDialect();
-                    break;
-                case "derby":
-                default:
-                    sqlDialect = SQLDialect.DERBY;
-                    break;
-                case "postgres":
-                    sqlDialect = SQLDialect.POSTGRES;
-                    break;
+            if (type.equalsIgnoreCase("csv")) {
+                isCSV = true;
+                dbConfig = NadeefConfiguration.getDbConfig();
+                sqlDialect = dbConfig.getDialect();
+            } else {
+                sqlDialect = SQLDialectManagerBase.getSQLDialect(type);
             }
 
             if (dbConfig == null) {
@@ -183,6 +179,9 @@ public class CleanPlan {
                         }
                     }
 
+                    // convert all table names to Upper case for cross db compatibility.
+                    targetTableNames = toUppercase(targetTableNames);
+
                     // source is a CSV file, dump it to NADEEF database.
                     conn = DBConnectionFactory.getNadeefConnection();
                     // This hashset is to prevent that tables are dumped for multiple times.
@@ -206,6 +205,9 @@ public class CleanPlan {
                 } else {
                     // working with database
                     List<String> sourceTableNames = (List<String>) ruleObj.get("table");
+                    // convert all table names to Upper case for cross db compatibility
+                    sourceTableNames = toUppercase(sourceTableNames);
+
                     for (String tableName : sourceTableNames) {
                         if (!DBMetaDataTool.isTableExist(dbConfig, tableName)) {
                             throw new InvalidCleanPlanException(
@@ -223,9 +225,12 @@ public class CleanPlan {
                         // with default table names.
                         targetTableNames = Lists.newArrayList();
                         for (String sourceTableName : sourceTableNames) {
-                            targetTableNames.add(sourceTableName + "_copy");
+                            targetTableNames.add(sourceTableName + "_COPY");
                         }
                     }
+
+                    // convert all table names to Upper case for cross db compatibility
+                    targetTableNames = toUppercase(targetTableNames);
 
                     Preconditions.checkArgument(
                         sourceTableNames.size() == targetTableNames.size() &&
@@ -333,4 +338,12 @@ public class CleanPlan {
         return rule;
     }
     // </editor-fold>
+
+    private static List<String> toUppercase(List<String> vals) {
+        List<String> tmp = Lists.newArrayList();
+        for (String val : vals) {
+            tmp.add(val == null ? null : val.toUpperCase());
+        }
+        return tmp;
+    }
 }

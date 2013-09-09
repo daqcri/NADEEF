@@ -21,6 +21,7 @@ import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.SQLDialectManagerBase;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
@@ -77,7 +78,7 @@ public class NadeefConfiguration {
                 .url(url)
                 .username(username)
                 .password(password)
-                .dialect(CommonTools.getSQLDialect(type))
+                .dialect(SQLDialectManagerBase.getSQLDialect(type))
                 .build();
 
         JSONObject general = (JSONObject)jsonObject.get("general");

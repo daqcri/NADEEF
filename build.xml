@@ -187,7 +187,6 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
             <batchtest fork="yes" todir="${build.root}/testresult">
                 <fileset dir="${test.dir}">
                     <include name="**/*Test*.class" />
-                    <exclude name="**/StressDetectionTest.class" />
                     <exclude name="**/TestDataRepository.class" />
                     <exclude name="**/NadeefTestBase.class" />
                     <exclude name="**/MyTestRule1.class" />
@@ -202,7 +201,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
         </junitreport>
     </target>
 
-    <!-- enable regression test -->
+    <!-- regression test -->
     <target name="regression" depends="jar">
         <mkdir dir="${build.root}/testresult" />
         <junit printsummary="yes" haltonfailure="no" showoutput="no">
@@ -223,12 +222,6 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.root}/testresult/testreports">
-            <fileset dir="${build.root}/testresult">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report todir="${build.root}/testresult/testreports"/>
-        </junitreport>
     </target>
 
 </project>

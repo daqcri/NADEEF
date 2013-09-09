@@ -23,6 +23,52 @@ import java.sql.Statement;
 public abstract class SQLDialectManagerBase {
 
     /**
+     * Builds up JDBC connection url.
+     * @param url url.
+     * @param dialect sql dialect.
+     * @return JDBC connection url string.
+     */
+    public static String buildJdbcUrl(String url, SQLDialect dialect) {
+        StringBuilder jdbcUrl = new StringBuilder("jdbc:");
+        switch (dialect) {
+            default:
+            case DERBY:
+                jdbcUrl.append("derby:").append(url);
+                break;
+            case POSTGRES:
+                jdbcUrl.append("postgresql://").append(url);
+                break;
+            case MYSQL:
+                jdbcUrl.append("mysql://").append(url);
+                break;
+        }
+
+        return jdbcUrl.toString();
+    }
+
+    /**
+     * Gets the {@link qa.qcri.nadeef.tools.SQLDialect} from a string.
+     * @param type type string.
+     * @return sql dialect.
+     */
+    public static SQLDialect getSQLDialect(String type) {
+        SQLDialect result;
+        switch (type) {
+            default:
+            case "derby":
+                result = SQLDialect.DERBY;
+                break;
+            case "postgres":
+                result = SQLDialect.POSTGRES;
+                break;
+            case "mysql":
+                result = SQLDialect.MYSQL;
+                break;
+        }
+        return result;
+    }
+
+    /**
      * Copy table.
      * @param sourceName source name.
      * @param targetName target name.
@@ -39,7 +85,7 @@ public abstract class SQLDialectManagerBase {
      * @return SQL statement.
      */
     public String dropTable(String tableName) {
-        return "DROP TABLE " + tableName.toUpperCase();
+        return "DROP TABLE " + tableName;
     }
 
     /**
@@ -48,7 +94,7 @@ public abstract class SQLDialectManagerBase {
      * @return SQL statement.
      */
     public String selectAll(String tableName) {
-        return "SELECT * FROM " + tableName.toUpperCase();
+        return "SELECT * FROM " + tableName;
     }
 
     /**
