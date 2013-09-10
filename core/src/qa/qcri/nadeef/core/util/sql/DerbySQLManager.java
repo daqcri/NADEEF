@@ -17,10 +17,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.io.File;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
+import java.sql.*;
 
 /**
  * Database manager for Apache Derby database.
@@ -44,12 +41,54 @@ public class DerbySQLManager extends NadeefSQLDialectManagerBase {
      * {@inheritDoc}
      */
     @Override
-    public void copyTable(Statement stat, String sourceName, String targetName)
+    public void copyTable(Connection conn, String sourceName, String targetName)
             throws SQLException {
-        stat.execute(
-            "CREATE TABLE " + targetName + " AS SELECT * FROM " + sourceName + " WITH NO DATA"
-        );
-        stat.execute("INSERT INTO " + targetName + " SELECT * FROM " + sourceName);
+        Statement stat = null;
+        try {
+            stat = conn.createStatement();
+            // reconstruct the SQL statement to create a table with auto-increment tid
+            ResultSet rs = stat.executeQuery("SELECT * FROM " + sourceName);
+            ResultSetMetaData metaData = rs.getMetaData();
+            boolean hasTid = false;
+            int countNum = metaData.getColumnCount();
+            StringBuilder sqlBuilder = new StringBuilder(1024);
+            StringBuilder columns = new StringBuilder(1024);
+
+            for (int i = 1; i <= countNum; i ++) {
+                String columnName = metaData.getColumnName(i);
+                if (i != 1) {
+                    sqlBuilder.append(",");
+                    columns.append(",");
+                }
+                sqlBuilder.append(columnName)
+                          .append(" ")
+                          .append(metaData.getColumnTypeName(i))
+                          .append("(")
+                          .append(metaData.getColumnDisplaySize(i))
+                          .append(") ");
+                columns.append(columnName);
+                if (columnName.equalsIgnoreCase("tid")) {
+                    hasTid = true;
+                }
+            }
+
+            if (hasTid) {
+                stat.execute("CREATE TABLE " + targetName + " AS SELECT * FROM " + sourceName + " WITH NO DATA");
+            } else {
+                ST st = getTemplate().getInstanceOf("CreateTableFromCSV");
+                st.add("tableName", targetName);
+                st.add("content", sqlBuilder.toString());
+                String sql = st.render();
+                stat.execute(sql);
+            }
+            String sql =
+                "INSERT INTO " + targetName + " (" + columns.toString() + ") SELECT * FROM " + sourceName;
+            stat.execute(sql);
+        } finally {
+            if (stat != null) {
+                stat.close();
+            }
+        }
     }
 
     /**

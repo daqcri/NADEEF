@@ -51,23 +51,7 @@ public final class DBMetaDataTool {
             if (isTableExist(dbConfig, targetTableName)) {
                 stat.execute(dialectManager.dropTable(targetTableName));
             }
-            dialectManager.copyTable(stat, sourceTableName, targetTableName);
-            // stat.execute("SELECT * INTO " + targetTableName + " FROM " + sourceTableName);
-
-            // TODO: adds tid column when the source table doesn't have it.
-            /*
-            resultSet =
-                stat.executeQuery(
-                "select * from information_schema.columns where table_name = " +
-                '\'' + targetTableName +
-                "\' and column_name = \'tid\'"
-            );
-
-            if (!resultSet.next()) {
-                stat.execute("alter table " + targetTableName + " add column tid serial primary key");
-            }
-            conn.commit();
-            */
+            dialectManager.copyTable(conn, sourceTableName, targetTableName);
         } finally {
             if (resultSet != null) {
                 resultSet.close();

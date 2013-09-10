@@ -17,10 +17,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.io.File;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
+import java.sql.*;
 
 /**
  * Database manager for Apache Derby database.
@@ -43,9 +40,25 @@ public class PostgresSQLManager extends NadeefSQLDialectManagerBase {
      * {@inheritDoc}
      */
     @Override
-    public void copyTable(Statement stat, String sourceName, String targetName)
+    public void copyTable(Connection conn, String sourceName, String targetName)
             throws SQLException {
-        stat.execute("SELECT * INTO " + targetName + " FROM " + sourceName);
+        Statement stat = null;
+        try {
+            stat = conn.createStatement();
+            stat.execute("SELECT * INTO " + targetName + " FROM " + sourceName);
+            ResultSet rs = stat.executeQuery(
+                "select * from information_schema.columns where table_name = '" +
+                    targetName + "' and column_name = 'tid'"
+            );
+
+            if (!rs.next()) {
+                stat.execute("alter table " + targetName + " add column tid serial primary key");
+            }
+        } finally {
+            if (stat != null) {
+                stat.close();
+            }
+        }
     }
 
     /**

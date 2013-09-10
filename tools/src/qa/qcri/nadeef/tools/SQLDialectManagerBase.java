@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.tools;
 
+import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -70,11 +71,12 @@ public abstract class SQLDialectManagerBase {
 
     /**
      * Copy table.
+     * @param conn connection.
      * @param sourceName source name.
      * @param targetName target name.
      */
     public abstract void copyTable(
-        Statement stat,
+        Connection conn,
         String sourceName,
         String targetName
     ) throws SQLException;

@@ -204,7 +204,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
     <!-- regression test -->
     <target name="regression" depends="jar">
         <mkdir dir="${build.root}/testresult" />
-        <junit printsummary="yes" haltonfailure="no" showoutput="no">
+        <junit printsummary="yes" haltonfailure="no" showoutput="no" failureproperty="failed">
             <sysproperty key="regression" value="yes" />
             <classpath refid="test.classpath" />
             <formatter type="plain" />
@@ -222,6 +222,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                 </fileset>
             </batchtest>
         </junit>
+        <fail message="Test failed, please check the result." if="failed" />
     </target>
 
 </project>

@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit;
  * SourceDeserializer Test.
  */
 @RunWith(Parameterized.class)
-
 public class SQLTableTest extends NadeefTestBase {
     private String tableName;
     private DBConfig dbconfig;

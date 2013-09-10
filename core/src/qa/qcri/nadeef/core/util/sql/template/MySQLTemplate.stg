@@ -56,7 +56,3 @@ CountTable(tableName) ::= <<
 NextVid(tableName) ::= <<
     SELECT MAX(vid) + 1 as vid from $tableName$
 >>
-
-CopyTable(source, target) ::= <<
-    CREATE TABLE $target$ AS SELECT * FROM $source$
->>
