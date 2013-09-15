@@ -1,0 +1,199 @@
+/* -------------------------- HTML Default CSS ------------------------ */
+html, body {
+	background-color: #eee;
+}
+
+body {
+	padding-top: 60px;
+}
+
+.one-edge-shadow {
+	-webkit-box-shadow: 0 8px 6px -8px black;
+	-moz-box-shadow: 0 8px 6px -8px black;
+	box-shadow: 0 8px 6px -8px black;
+}
+
+#footer {
+	padding-top: 20px;
+}
+
+.tab-content {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	padding: 10px;
+	background-color: #fff;
+	-webkit-box-shadow: 3px 4px 6px -4px black;
+	-moz-box-shadow: 3px 4px 6px -4px black;
+	box-shadow: 3px 4px 6px -4px black;
+}
+
+.modal-backdrop { 
+	background: gray;
+}
+
+.nav-tabs {
+    margin-bottom: 0;
+}
+
+.fullwidth {
+	width: 95%;
+}
+
+#rule_editor { 
+	width: 96%;
+  	min-height: 200px;
+}
+
+#cleanPlanPopup .modal-body {
+	max-height: 50%;
+}
+
+#cleanPlanPopup {
+    width: 48%;
+    left: 45%;
+    top: 5%;
+}
+
+.cont {
+    overflow: hidden;
+    max-width: 100px;
+    -o-text-overflow: ellipsis;  /* Opera */
+       text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.box-header {
+	position: relative;
+	padding: 10px 20px;
+	margin: 0;
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+	background-image: linear-gradient(#888, #999);
+	background-repeat: repeat-x;
+	border: 1px solid #6e8290;
+	border-bottom-color: #586873;
+	border-radius: 4px 4px 0 0;
+}
+
+/* -------------------------- D3 Widget CSS ------------------------ */
+.line {
+	stroke: steelblue;
+	stroke-width: 1;
+	fill: none;
+}
+
+.axis {
+	shape-rendering: crispEdges;
+
+}
+
+.axis line {   
+	stroke: black;
+	stroke: lightgray;
+}
+
+.axis .minor {
+	stroke-opacity: .5;
+}
+
+.axis path {
+	display: none;
+}
+
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
+}
+
+.block {
+	border-style: solid;
+	border-width: 1px;
+	border-color: lightgray;
+	padding: 5px;
+}
+
+.row_selected {
+	font-weight: bold;
+}
+
+.node {
+	stroke: #fff;
+	stroke-width: 1.5px;
+}
+
+.link {
+	stroke: #999;
+	stroke-opacity: .6;
+}
+
+.widget {
+	margin: 10px 20px 15px 20px;
+	display: block;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.overview:before {
+	position: relative;
+	content: "Overview";
+	top: 0px;
+	left: 0px;
+	padding: 4px 20px 10px;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	color: #9da0a4;
+	-webkit-border-radius: 4px 0 4px 0;
+	-moz-border-radius: 4px 0 4px 0;
+    border-radius: 4px 0 4px 0;
+}
+
+.error:before {
+	position: relative;
+	content: "Error Distribution on rules";
+	top: 0px;
+	left: 0px;
+	padding: 4px 20px 10px;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	color: #9da0a4;
+	-webkit-border-radius: 4px 0 4px 0;
+	-moz-border-radius: 4px 0 4px 0;
+    border-radius: 4px 0 4px 0;
+}
+
+.attributes:before {
+	position: relative;
+	content: "Error Distribution on attributes";
+	top: 0px;
+	left: 0px;
+	padding: 4px 20px 10px;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	color: #9da0a4;
+	-webkit-border-radius: 4px 0 4px 0;
+	-moz-border-radius: 4px 0 4px 0;
+    border-radius: 4px 0 4px 0;
+}
+
+.viograph:before {
+	position: relative;
+	content: "Violation Graph";
+	top: 0px;
+	left: 0px;
+	padding: 4px 20px 10px;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	color: #9da0a4;
+	-webkit-border-radius: 4px 0 4px 0;
+	-moz-border-radius: 4px 0 4px 0;
+    border-radius: 4px 0 4px 0;
+}

@@ -1,0 +1,62 @@
+<!-- ============ navigation bar =================== -->
+<div id="nav" class="navbar navbar-fixed-top one-edge-shadow">
+  <div class="navbar-inner" id="navbar">
+    <a class="brand" href="#">&nbsp;NADEEF</a>
+	<!-- <span class="label">Dashboard</span></a> -->
+    <ul class="nav">
+      <li><a id="home" href="#home">Home</a></li>
+    </ul>
+    <ul class="nav">
+      <li><a href="#dashboard">Dashboard</a></li>
+    </ul>
+    <ul class="nav">
+      <li>
+		<a role="button" 
+		   href="http://www.qcri.qa/our-research/data-analytics/data-analytics-projects">
+		  About Us</a>
+	  </li>
+    </ul>
+    <ul class="nav pull-right">
+	  <li style="margin-right: 5px">
+		<button class="btn" data-toggle="Reload" title="Refresh" id="refresh">
+		  <i class="icon-refresh"></i>
+		</button>
+	  </li>
+	  <li>
+		<button class="btn" data-toggle="Clear violation" title="Clean Violation" id="clear">
+		  <i class="icon-trash"></i>
+		</button>
+	  </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle pull-right"
+           data-toggle="dropdown" role="button" href="#">
+          <i class="icon-user"></i> Anonymous<b class='caret'></b>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a tabindex="0">Log Out</a></li>
+        </ul>
+      </li>
+    </ul>    
+  </div>
+  <div class="modal hide fade" id="aboutus" role="dialog">
+    <div class="modal-header">
+      <button
+		 type="button"
+		 class="close"
+		 data-dismiss="modal">&times;</button>
+      <h3>NADEEF Portal</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+		Copyright (C) Qatar Computing Research Institute, 2013 
+    	(<a href="http://da.qcri.org">http://da.qcri.org</a>).
+      </p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" data-dismiss="modal" class="btn btn-primary">
+		OK
+	  </a>
+    </div>
+  </div>
+</div>
+<!-- End of navigation -->

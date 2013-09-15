@@ -1,0 +1,17 @@
+<!-- ====================== Start of Table =====================-->
+<ul class="nav nav-tabs">
+  <% _.each(tabs, function(tab) { %>
+  <li id=<%= 'tab_' + tab.tag %>
+	  <% if (tab.isActive) { %> 
+	  class='active'
+	  <% } %>>
+    <a data-toggle="tab">
+      <%= tab.head %>
+    </a>
+  </li>         
+  <% }); %>
+</ul>
+<div class="tab-content">
+  <table id="table" class="table table-striped table-bordered"></table>
+</div>
+<!-- End of Table -->
