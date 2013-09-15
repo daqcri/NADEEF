@@ -20,8 +20,8 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -58,8 +58,8 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         try {
             conn = DBConnectionFactory.getNadeefConnection();
             stat = conn.createStatement();
-            NadeefSQLDialectManagerBase dialectManager =
-                SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+            SQLDialectBase dialectManager =
+                SQLDialectFactory.getNadeefDialectManagerInstance();
 
             synchronized (ViolationExport.class) {
                 // TODO: this is not out-of-process safe.

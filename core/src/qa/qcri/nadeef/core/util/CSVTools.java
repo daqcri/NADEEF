@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.base.Stopwatch;
+
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
@@ -68,7 +70,7 @@ public class CSVTools {
      * @param file CSV file.
      * @return new created table name.
      */
-    public static String dump(Connection conn, SQLDialectTools dialectManager, File file)
+    public static String dump(Connection conn, SQLDialectBase dialectManager, File file)
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
         String tableName = dump(conn, dialectManager, file, fileName, true);
@@ -88,7 +90,7 @@ public class CSVTools {
      */
     public static String dump(
             Connection conn,
-            SQLDialect dialectManager,
+            SQLDialectBase dialectManager,
             File file,
             String tableName,
             boolean overwrite

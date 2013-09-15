@@ -75,6 +75,7 @@ public class Bootstrap {
             // set the logging directory
             Path outputPath = NadeefConfiguration.getOutputPath();
             Tracer.setLoggingDir(outputPath.toString());
+            Tracer.setLoggingPrefix("log");
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
 

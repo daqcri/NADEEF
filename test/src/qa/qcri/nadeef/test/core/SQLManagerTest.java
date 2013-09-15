@@ -22,8 +22,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 
 import java.io.BufferedReader;
@@ -111,8 +111,8 @@ public class SQLManagerTest extends NadeefTestBase {
 
     @Test
     public void copyTableTest() {
-        NadeefSQLDialectManagerBase dialect =
-            SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+        SQLDialectBase dialect =
+            SQLDialectFactory.getNadeefDialectManagerInstance();
 
         Connection conn = null;
         try {

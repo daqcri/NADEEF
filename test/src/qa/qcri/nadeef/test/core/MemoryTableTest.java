@@ -24,7 +24,7 @@ import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;

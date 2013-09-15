@@ -89,11 +89,6 @@ public class CleanExecutor {
         if (updateFlow != null && updateFlow.isRunning()) {
             updateFlow.forceStop();
         }
-
-        queryFlow = null;
-        detectFlow = null;
-        repairFlow = null;
-        updateFlow = null;
     }
     //</editor-fold>
 

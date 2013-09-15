@@ -16,7 +16,6 @@ package qa.qcri.nadeef.core.util.sql;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.*;
@@ -34,7 +33,7 @@ public final class DBMetaDataTool {
      */
     public static void copy(
         DBConfig dbConfig,
-        NadeefSQLDialectManagerBase dialectManager,
+        SQLDialectBase dialectManager,
         String sourceTableName,
         String targetTableName
     ) throws
@@ -78,8 +77,8 @@ public final class DBMetaDataTool {
             throw new IllegalArgumentException("Unknown table name " + tableName);
         }
 
-        NadeefSQLDialectManagerBase dialectManager =
-            SQLDialectManagerFactory.getDialectManagerInstance(config.getDialect());
+        SQLDialectBase dialectManager =
+            SQLDialectFactory.getDialectManagerInstance(config.getDialect());
         Tracer tracer = Tracer.getTracer(DBMetaDataTool.class);
         Connection conn = null;
         Statement stat = null;
@@ -87,7 +86,7 @@ public final class DBMetaDataTool {
         Schema result = null;
 
         try {
-            SqlQueryBuilder builder = new SqlQueryBuilder();
+            SQLQueryBuilder builder = new SQLQueryBuilder();
             builder.addFrom(tableName);
             builder.setLimit(1);
             String sql = builder.build(dialectManager);

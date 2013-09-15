@@ -17,10 +17,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.util.sql.SQLQueryBuilder;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SqlQueryBuilder;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.ByteArrayOutputStream;
@@ -37,9 +37,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class SQLTable extends Table {
     private DBConnectionFactory connectionFactory;
-    private NadeefSQLDialectManagerBase dialectManager;
+    private SQLDialectBase dialectManager;
     private String tableName;
-    private SqlQueryBuilder sqlQuery;
+    private SQLQueryBuilder sqlQuery;
     private List<Tuple> tuples;
     private long updateTimestamp = -1;
     private long changeTimestamp = System.currentTimeMillis();
@@ -57,11 +57,11 @@ public class SQLTable extends Table {
         super(tableName);
         this.connectionFactory = connectionFactory;
         this.dialectManager =
-            SQLDialectManagerFactory.getDialectManagerInstance(
-                    connectionFactory.getSourceDBConfig().getDialect()
+            SQLDialectFactory.getDialectManagerInstance(
+                connectionFactory.getSourceDBConfig().getDialect()
             );
         this.tableName = tableName;
-        this.sqlQuery = new SqlQueryBuilder();
+        this.sqlQuery = new SQLQueryBuilder();
         this.sqlQuery.addFrom(tableName);
     }
 
@@ -206,7 +206,7 @@ public class SQLTable extends Table {
 
                 SQLTable newTable =
                     new SQLTable(tableName, connectionFactory);
-                newTable.sqlQuery = new SqlQueryBuilder(sqlQuery);
+                newTable.sqlQuery = new SQLQueryBuilder(sqlQuery);
                 newTable.sqlQuery.addWhere(columnFilter.toString());
                 result.add(newTable);
             }
@@ -296,7 +296,7 @@ public class SQLTable extends Table {
         Statement stat = null;
         ResultSet resultSet = null;
         try {
-            SqlQueryBuilder builder = new SqlQueryBuilder(sqlQuery);
+            SQLQueryBuilder builder = new SQLQueryBuilder(sqlQuery);
             builder.setLimit(1);
             String sql = builder.build(dialectManager);
             tracer.verbose(sql);

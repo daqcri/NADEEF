@@ -20,8 +20,8 @@ import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.*;
@@ -49,8 +49,8 @@ public class Violations {
         int result = -1;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
-            NadeefSQLDialectManagerBase dialectManager =
-                    SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+            SQLDialectBase dialectManager =
+                    SQLDialectFactory.getNadeefDialectManagerInstance();
             String tableName = NadeefConfiguration.getViolationTableName();
 
             stat = conn.createStatement();
@@ -93,8 +93,8 @@ public class Violations {
             conn = DBConnectionFactory.getNadeefConnection();
             stat = conn.createStatement();
             String tableName = NadeefConfiguration.getViolationTableName();
-            NadeefSQLDialectManagerBase dialectManager =
-                    SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+            SQLDialectBase dialectManager =
+                    SQLDialectFactory.getNadeefDialectManagerInstance();
             rs = stat.executeQuery(dialectManager.nextVid(tableName));
             if (rs.next()) {
                 result = rs.getInt("vid");

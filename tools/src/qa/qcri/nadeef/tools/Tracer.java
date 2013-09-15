@@ -42,7 +42,7 @@ public class Tracer {
     private static Calendar calendar;
     private static DateFormat dateFormat;
     private static ConsoleAppender consoleAppender;
-
+    private static String logPrefix;
     private Logger logger;
 
     //</editor-fold>
@@ -53,7 +53,7 @@ public class Tracer {
         console = System.out;
         calendar = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("MMddHHmmss");
-        logFileName = "log" + dateFormat.format(calendar.getTime()) + ".txt";
+        logFileName = dateFormat.format(calendar.getTime()) + ".txt";
         consoleAppender = new ConsoleAppender(new SimpleLayout());
     }
 
@@ -119,7 +119,6 @@ public class Tracer {
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
-
     /**
      * Initialize the logging directory.
      * @param outputPathName output logging directory.
@@ -132,7 +131,7 @@ public class Tracer {
             return;
         }
 
-        String outputFile = outputPath + File.separator + logFileName;
+        String outputFile = outputPath + File.separator + getLogFileName();
         try {
             FileAppender logFile =
                 new FileAppender(
@@ -143,8 +142,16 @@ public class Tracer {
 
         } catch (IOException e) {
             Tracer tracer = getTracer(Tracer.class);
-            tracer.info("Cannot open log file : " + logFileName);
+            tracer.info("Cannot open log file : " + getLogFileName());
         }
+    }
+
+    /**
+     * Sets the logging file name prefix.
+     * @param logPrefix_ logging file name prefix.
+     */
+    public static void setLoggingPrefix(String logPrefix_) {
+        logPrefix = logPrefix_;
     }
 
     /**
@@ -366,6 +373,11 @@ public class Tracer {
     //</editor-fold>
 
     //<editor-fold desc="Private Helper">
+
+    private static String getLogFileName() {
+        return logPrefix + logFileName;
+    }
+
     private static String formatEntry(
         StatType type,
         String prefix,

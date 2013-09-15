@@ -13,10 +13,8 @@
 
 package qa.qcri.nadeef.core.datamodel;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
@@ -25,14 +23,16 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.*;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
+import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.Reader;
 import java.sql.Connection;
@@ -79,7 +79,7 @@ public class CleanPlan {
         List<Schema> schemas = Lists.newArrayList();
 
         Connection conn = null;
-        NadeefSQLDialectManagerBase dialectManager = null;
+        SQLDialectBase dialectManager = null;
         try {
             // ----------------------------------------
             // parsing the source config
@@ -109,7 +109,7 @@ public class CleanPlan {
                 dbConfig = NadeefConfiguration.getDbConfig();
                 sqlDialect = dbConfig.getDialect();
             } else {
-                sqlDialect = SQLDialectManagerBase.getSQLDialect(type);
+                sqlDialect = SQLDialectTools.getSQLDialect(type);
             }
 
             if (dbConfig == null) {
@@ -122,7 +122,7 @@ public class CleanPlan {
                         .build();
             }
 
-            dialectManager = SQLDialectManagerFactory.getDialectManagerInstance(sqlDialect);
+            dialectManager = SQLDialectFactory.getDialectManagerInstance(sqlDialect);
 
             // ----------------------------------------
             // parsing the rules

@@ -17,7 +17,7 @@ import com.google.common.base.Strings;
 import org.apache.commons.dbcp.BasicDataSource;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SQLDialect;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -133,7 +133,7 @@ public class DBConnectionFactory {
      * {@inheritDoc}
      */
     @Override
-    public void finalize() {
+    protected void finalize() {
         // skip finalizing the nadeef pool
         if (sourcePool == nadeefPool) {
             return;
@@ -148,7 +148,6 @@ public class DBConnectionFactory {
                 tracer.err("Exception during closing source pool", e);
             }
         }
-        sourcePool = null;
     }
 
     // </editor-fold>

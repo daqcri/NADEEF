@@ -31,11 +31,14 @@ import java.util.Collection;
 class FixImport extends Operator<Rule, Collection<Fix>> {
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
-        Connection conn = DBConnectionFactory.getNadeefConnection();
+        Connection conn = null;
+        Statement stat = null;
+        ResultSet resultSet = null;
         Collection<Fix> result = null;
         try {
-            Statement stat = conn.createStatement();
-            ResultSet resultSet =
+            conn = DBConnectionFactory.getNadeefConnection();
+            stat = conn.createStatement();
+            resultSet =
                 stat.executeQuery(
                     "select r.* from " +
                     NadeefConfiguration.getRepairTableName() +
@@ -50,6 +53,14 @@ class FixImport extends Operator<Rule, Collection<Fix>> {
             result = Fixes.fromQuery(resultSet);
             Tracer.putStatsEntry(Tracer.StatType.FixDeserialize, result.size());
         } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+
+            if (stat != null) {
+                stat.close();
+            }
+
             if (conn != null) {
                 conn.close();
             }

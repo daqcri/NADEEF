@@ -15,6 +15,8 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
+import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 /**
  * Configuration object for JDBC connection.
@@ -118,7 +120,7 @@ public class DBConfig {
      */
     public String getUrl() {
         if (!url.contains("jdbc:")) {
-            return SQLDialectManagerBase.buildJdbcUrl(url, dialect);
+            return SQLDialectTools.buildJdbcUrl(url, dialect);
         }
         return url;
     }

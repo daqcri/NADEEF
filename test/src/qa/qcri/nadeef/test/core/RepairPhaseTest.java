@@ -25,10 +25,10 @@ import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -56,7 +56,7 @@ public class RepairPhaseTest extends NadeefTestBase {
             conn = DBConnectionFactory.getNadeefConnection();
             CSVTools.dump(
                 conn,
-                SQLDialectManagerFactory.getNadeefDialectManagerInstance(),
+                SQLDialectFactory.getNadeefDialectManagerInstance(),
                 TestDataRepository.getLocationData1(),
                 "LOCATION",
                 true

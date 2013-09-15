@@ -30,13 +30,13 @@ public class SQLDialectFactory {
         SQLDialectBase result = null;
         switch (dialect) {
             case DERBY:
-                result = new DerbySQL();
+                result = new DerbySQLDialect();
                 break;
             case POSTGRES:
                 result = new PostgresSQLDialect();
                 break;
             case MYSQL:
-                result = new MySQL();
+                result = new MySQLDialect();
                 break;
         }
         return result;

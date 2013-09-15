@@ -22,11 +22,11 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 
 import java.io.BufferedReader;
@@ -43,7 +43,7 @@ import java.sql.Statement;
 public class CSVDumperTest extends NadeefTestBase {
     private static String tableName;
     private static Connection conn;
-    private static NadeefSQLDialectManagerBase dialectManager;
+    private static SQLDialectBase dialectManager;
 
     public CSVDumperTest(String config) {
         super(config);
@@ -55,7 +55,7 @@ public class CSVDumperTest extends NadeefTestBase {
            Bootstrap.start(testConfig);
            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
            dialectManager =
-               SQLDialectManagerFactory.getDialectManagerInstance(dbConfig.getDialect());
+               SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
            conn =
                DBConnectionFactory.createConnection(dbConfig);
            conn.setAutoCommit(false);

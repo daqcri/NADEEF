@@ -23,13 +23,13 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.NadeefSQLDialectManagerBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectManagerFactory;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.CSVTools;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.SQLDialect;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -60,8 +60,8 @@ public class SQLTableTest extends NadeefTestBase {
                     .dialect(SQLDialect.DERBY)
                     .url("memory:test;create=true")
                     .build();
-            NadeefSQLDialectManagerBase dialectManager =
-                    SQLDialectManagerFactory.getDialectManagerInstance(dbconfig.getDialect());
+            SQLDialectBase dialectManager =
+                    SQLDialectFactory.getDialectManagerInstance(dbconfig.getDialect());
             conn = DBConnectionFactory.createConnection(dbconfig);
             tableName =
                 CSVTools.dump(conn, dialectManager, TestDataRepository.getDumpTestCSVFile());
@@ -85,8 +85,8 @@ public class SQLTableTest extends NadeefTestBase {
         Connection conn = null;
         try {
             conn = connectionFactory.getSourceConnection();
-            NadeefSQLDialectManagerBase dialectManager =
-                SQLDialectManagerFactory.getNadeefDialectManagerInstance();
+            SQLDialectBase dialectManager =
+                SQLDialectFactory.getNadeefDialectManagerInstance();
             Statement stat = conn.createStatement();
             stat.execute(dialectManager.dropTable(tableName));
             conn.commit();
