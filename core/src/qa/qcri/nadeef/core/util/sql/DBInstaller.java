@@ -14,9 +14,8 @@
 package qa.qcri.nadeef.core.util.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.tools.sql.SQLDialect;
-import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.*;
 

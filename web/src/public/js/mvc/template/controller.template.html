@@ -6,7 +6,6 @@
 </ul>
 <div class="tab-content">
   <div class="tab-pane in active">
-    <div id="controller-alert"></div>
     <div class="control-group">
       <button class="btn" id="refresh_source">Refresh</button>
       <button class="btn" id="new_source" data-toggle="modal" href="#datasource">
@@ -15,7 +14,7 @@
     <div class="control-group">
       <select id="selected_source" class="selectbox fullwidth" size="5">
         <% _.each(sources, function(source) { %>
-        <option><%= source[0] %></option>
+        <option><%= source %></option>
         <% }); %>
       </select>
     </div>
@@ -31,7 +30,6 @@
 </ul>
 <div class="tab-content">
   <div class="tab-pane in active">
-    <div id="controller-alert"></div>
     <div class="control-group">
       <button class="btn" id="new_plan">New</button>
       <button class="btn" id="edit_plan">Edit</button>
@@ -104,7 +102,7 @@
           <input id="databaseurl" type="text">
         </div>
         <div class="control-group form-inline">
-          <label class="control-label required" for="datab asepassword">&nbsp;Password</label>
+          <label class="control-label required" for="databasepassword">&nbsp;Password</label>
           <input id="databasepassword" type="password">
         </div>
       </form>

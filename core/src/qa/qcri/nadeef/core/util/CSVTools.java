@@ -14,17 +14,17 @@
 package qa.qcri.nadeef.core.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.google.common.base.Stopwatch;
-
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.tools.Tracer;
-import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
-import java.io.*;
-import java.lang.String;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

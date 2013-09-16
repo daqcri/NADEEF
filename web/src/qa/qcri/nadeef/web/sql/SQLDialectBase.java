@@ -118,19 +118,40 @@ public abstract class SQLDialectBase {
      */
     public String queryRuleDistribution() {
         return "select rid, count(distinct(tupleid)) as tuple, " +
-            "count(distinct(tablename)) as table from violation group by rid";
+            "count(distinct(tablename)) as tablecount from VIOLATION group by rid";
     }
 
+    /**
+     * Query distinct table from violation.
+     * @return SQL query.
+     */
     public String queryDistinctTable() {
         return "select distinct(tablename) from violation";
     }
 
+    /**
+     * Query table count.
+     * @param tableName table name.
+     * @return SQL query.
+     */
     public String countTable(String tableName) {
         return "select count(*) from " + tableName;
     }
 
+    /**
+     * Count distinct violation.
+     * @return SQL query.
+     */
     public String countViolation() {
         return "select count(distinct(tupleid)) from violation";
+    }
+
+    /**
+     * Query violation relations.
+     * @return SQL query.
+     */
+    public String queryViolationRelation() {
+        return "SELECT DISTINCT(VID), TUPLEID FROM VIOLATION ORDER BY VID";
     }
 
     /**

@@ -18,10 +18,23 @@ public final class Bootstrap {
     private static String fileName = "nadeef.conf";
 
     /**
+     * Nadeef thrift client.
+     */
+    private static NadeefClient nadeefClient;
+
+    /**
      * Shutdown hook.
      */
     public static void shutdown() {
+        nadeefClient.shutdown();
+    }
 
+    /**
+     * Gets NADEEF Thrift client.
+     * @return nadeef client.
+     */
+    public static NadeefClient getNadeefClient() {
+        return nadeefClient;
     }
 
     /**
@@ -43,6 +56,14 @@ public final class Bootstrap {
             DBConnectionFactory.initializeNadeefConnectionPool();
 
             DBInstaller.install();
+
+            // initialize nadeef client
+            nadeefClient =
+                NadeefClient.getInstance(
+                    NadeefConfiguration.getServerUrl(),
+                    NadeefConfiguration.getServerPort()
+                );
+
         } catch (FileNotFoundException ex) {
             System.err.println("Nadeef Configuration cannot be found.");
             ex.printStackTrace();

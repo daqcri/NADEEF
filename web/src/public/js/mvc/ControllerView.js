@@ -6,7 +6,6 @@ define(
 	 'text!mvc/template/controller.template.html',
 	 'text!mvc/template/detail.template.html'],
 	function(Table, CleanPlanView, ProgressBarView, ControllerTemplate, DetailTemplate) {
-		var isSubscribed;
 		var domId;
 
 		function info(msg) {
@@ -29,7 +28,7 @@ define(
 
 		function render(id) {
 			domId = id;
-			renderRuleList();
+			renderSourceList();
 			ProgressBarView.start('progressbar');
 		}
         
@@ -41,7 +40,7 @@ define(
 	        return $("#selected_source").val();
         }
 
-		function renderRuleList() {
+		function renderSourceList() {
 			$.getJSON('/data/source', function(source) {
 				var sources = source['data'];
 				$.getJSON('/data/rule', function(data) {
@@ -82,7 +81,6 @@ define(
 		}
 		
 		function renderTable() {
-			var selectedSource = getSelectedSource();
 			var activeTable = $('#tables li.active')[0].id;
 			if (activeTable == 'tab_source') {
 				Table.load(getSelectedSource());
@@ -99,7 +97,7 @@ define(
 						dataType : 'json',
 						data: rule,
 						success: function(data, status) {
-							info("A repair job is successfully submited.");
+							info("A repair job is successfully submitted.");
 							var key = data['result'];
 							console.log('Received job key : ' + key);
 							if (key != null) {
@@ -129,7 +127,7 @@ define(
 								dataType : 'json',
 								data: plan,
 								success: function(data, status) {
-									info("A job is successfully submited.");
+									info("A job is successfully submitted.");
 									var key = data['result'];
 									console.log('Received job key : ' + key);
 									if (key != null) {
@@ -148,11 +146,11 @@ define(
 		
 		function bindEvent() {
 			$('#refresh_rule').on('click', function(e) {
-				renderRuleList();
+				renderSourceList();
 			});
 
 			$('#refresh_source').on('click', function(e) {
-				renderRuleList();
+				renderSourceList();
 			});
 			
 			$('#new_plan').on('click', function(e) {
@@ -163,7 +161,7 @@ define(
 			});
 
 			$('#cleanPlanPopup').on('hidden', function(e) {
-				renderRuleList();
+				renderSourceList();
 				// info('You just successfully updated a rule.');				
 			});
 
@@ -203,7 +201,7 @@ define(
 				detect(selectedPlan);
 			});
 
-			$('repair').on('click', function(e) {
+			$('#repair').on('click', function(e) {
 				var selectedPlan = getSelectedPlan();
 				if (selectedPlan == null || !_.isArray(selectedPlan)) {
 					err('No rule is selected.');

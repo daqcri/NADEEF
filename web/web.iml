@@ -38,6 +38,8 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="ruleext" />
+    <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
+    <orderEntry type="module" module-name="service" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

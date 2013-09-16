@@ -29,7 +29,9 @@ import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
-import qa.qcri.nadeef.tools.*;
+import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 

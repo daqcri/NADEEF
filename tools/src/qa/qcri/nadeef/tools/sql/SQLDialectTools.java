@@ -13,10 +13,6 @@
 
 package qa.qcri.nadeef.tools.sql;
 
-import java.sql.Connection;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
 /**
  * Base class for cross vendor Database calling.
  */
@@ -32,7 +28,7 @@ public abstract class SQLDialectTools {
         switch (dialect) {
             default:
             case DERBY:
-                jdbcUrl.append("derby:").append(url);
+                jdbcUrl.append("derby://").append(url);
                 break;
             case POSTGRES:
                 jdbcUrl.append("postgresql://").append(url);
@@ -65,5 +61,19 @@ public abstract class SQLDialectTools {
                 break;
         }
         return result;
+    }
+
+    public static String getDriverName(SQLDialect dialect) {
+        switch (dialect) {
+            case POSTGRES:
+                return "org.postgresql.Driver";
+            case DERBY:
+                return "org.apache.derby.jdbc.ClientDriver";
+                // return "org.apache.derby.jdbc.EmbeddedDriver";
+            case MYSQL:
+                return "com.mysql.jdbc.Driver";
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 }

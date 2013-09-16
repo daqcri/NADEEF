@@ -80,7 +80,7 @@ public class DerbySQLDialect extends SQLDialectBase {
     @Override
     public String queryTopK(int k) {
         return "select tupleid, count(distinct(vid)) as count from violation group by tupleid " +
-            "order by count desc FETCH FIRST " + k + " ROW ONLY;";
+            "order by count desc FETCH FIRST " + k + " ROW ONLY";
 
     }
 }

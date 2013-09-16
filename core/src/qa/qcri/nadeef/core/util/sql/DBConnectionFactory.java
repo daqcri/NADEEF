@@ -17,8 +17,8 @@ import com.google.common.base.Strings;
 import org.apache.commons.dbcp.BasicDataSource;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -59,17 +59,18 @@ public class DBConnectionFactory {
             return;
         }
 
-        DBConfig sourceConfig = NadeefConfiguration.getDbConfig();
+        // special start for derby server
+        DBConfig dbconfig = NadeefConfiguration.getDbConfig();
         nadeefPool = new BasicDataSource();
-        nadeefPool.setUrl(sourceConfig.getUrl());
-        nadeefPool.setDriverClassName(getDriverName(sourceConfig.getDialect()));
+        nadeefPool.setUrl(dbconfig.getUrl());
+        nadeefPool.setDriverClassName(SQLDialectTools.getDriverName(dbconfig.getDialect()));
 
-        String username = sourceConfig.getUserName();
+        String username = dbconfig.getUserName();
         if (!Strings.isNullOrEmpty(username)) {
-            nadeefPool.setUsername(sourceConfig.getUserName());
+            nadeefPool.setUsername(dbconfig.getUserName());
         }
 
-        String password = sourceConfig.getPassword();
+        String password = dbconfig.getPassword();
         if (!Strings.isNullOrEmpty(password)) {
             nadeefPool.setPassword(password);
         }
@@ -91,17 +92,6 @@ public class DBConnectionFactory {
             }
         }
 
-
-        // special shutdown for derby.
-        /*
-        if (NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBY) {
-            try {
-                DriverManager.getConnection("jdbc:derby:;shutdown=true");
-            } catch (SQLException e) {
-                tracer.err("Shutdown Derby failed.", e);
-            }
-        }
-        */
         nadeefPool = null;
     }
 
@@ -152,20 +142,6 @@ public class DBConnectionFactory {
 
     // </editor-fold>
 
-    //<editor-fold desc="Private methods">
-    private static String getDriverName(SQLDialect dialect) {
-        switch (dialect) {
-            case POSTGRES:
-                return "org.postgresql.Driver";
-            case DERBY:
-                return "org.apache.derby.jdbc.EmbeddedDriver";
-            case MYSQL:
-                return "com.mysql.jdbc.Driver";
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
     /**
      * Gets the JDBC connection based on the dialect.
      * @param dbConfig dbconfig.
@@ -178,7 +154,7 @@ public class DBConnectionFactory {
             SQLException,
             IllegalAccessException,
             InstantiationException {
-        String driverName = getDriverName(dbConfig.getDialect());
+        String driverName = SQLDialectTools.getDriverName(dbConfig.getDialect());
         Class.forName(driverName).newInstance();
         Connection conn =
             DriverManager.getConnection(
@@ -235,7 +211,7 @@ public class DBConnectionFactory {
         sourceConfig = dbConfig;
         sourcePool = new BasicDataSource();
         sourcePool.setUrl(sourceConfig.getUrl());
-        sourcePool.setDriverClassName(getDriverName(sourceConfig.getDialect()));
+        sourcePool.setDriverClassName(SQLDialectTools.getDriverName(sourceConfig.getDialect()));
 
         String username = sourceConfig.getUserName();
         if (!Strings.isNullOrEmpty(username)) {

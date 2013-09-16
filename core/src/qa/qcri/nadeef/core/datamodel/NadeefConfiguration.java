@@ -21,8 +21,8 @@ import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 import java.io.File;
 import java.io.Reader;
@@ -44,6 +44,9 @@ public class NadeefConfiguration {
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
     private static Optional<Class> decisionMakerClass;
     private static Path outputPath;
+    private static String serverUrl = "localhost";
+    private static int serverPort = 9000;
+
     //<editor-fold desc="Public methods">
 
     /**
@@ -131,6 +134,28 @@ public class NadeefConfiguration {
             RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
             ruleExtension.put(key, writer);
         }
+
+        if (jsonObject.containsKey("web")) {
+            JSONObject thrift = (JSONObject)jsonObject.get("web");
+            serverUrl = (String)thrift.get("url");
+            serverPort = ((Long)thrift.get("port")).intValue();
+        }
+    }
+
+    /**
+     * Gets the server url.
+     * @return server url.
+     */
+    public static String getServerUrl() {
+        return serverUrl;
+    }
+
+    /**
+     * Gets server port.
+     * @return port number
+     */
+    public static int getServerPort() {
+        return serverPort;
     }
 
     /**
