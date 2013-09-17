@@ -67,7 +67,7 @@ public abstract class SQLDialectBase {
      * @return SQL query.
      */
     public String queryRule() {
-        return "select x.name, x.type, x.code, x.table1, x.table2, x.java_code from RULE x " +
+        return "select x.name, y.name, x.code, x.table1, x.table2, x.java_code from RULE x " +
             "inner join RULETYPE y on x.type = y.type order by x.name";
 
     }
@@ -77,7 +77,7 @@ public abstract class SQLDialectBase {
      * @return SQL query.
      */
     public String queryRule(String ruleName) {
-        return "select x.name, x.type, x.code, x.table1, x.table2, x.java_code from RULE x " +
+        return "select x.name, y.name, x.code, x.table1, x.table2, x.java_code from RULE x " +
             "inner join RULETYPE y on x.type = y.type where x.name = '" + ruleName + "'";
 
     }
@@ -93,7 +93,7 @@ public abstract class SQLDialectBase {
 
     /**
      * Insert a new rule.
-     * @param typecode type.
+     * @param type type.
      * @param code code.
      * @param table1 table 1.
      * @param table2 table 2.
@@ -101,7 +101,7 @@ public abstract class SQLDialectBase {
      * @return SQL query.
      */
     public abstract String insertRule(
-        int typecode, String code, String table1, String table2, String name
+        String type, String code, String table1, String table2, String name
     );
 
     /**

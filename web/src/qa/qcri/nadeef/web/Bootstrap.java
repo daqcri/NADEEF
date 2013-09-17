@@ -23,13 +23,6 @@ public final class Bootstrap {
     private static NadeefClient nadeefClient;
 
     /**
-     * Shutdown hook.
-     */
-    public static void shutdown() {
-        nadeefClient.shutdown();
-    }
-
-    /**
      * Gets NADEEF Thrift client.
      * @return nadeef client.
      */
@@ -49,8 +42,8 @@ public final class Bootstrap {
             NadeefConfiguration.initialize(new FileReader(fileName));
             // set the logging directory
             Path outputPath = NadeefConfiguration.getOutputPath();
-            Tracer.setLoggingDir(outputPath.toString());
             Tracer.setLoggingPrefix("dashboard");
+            Tracer.setLoggingDir(outputPath.toString());
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
             DBConnectionFactory.initializeNadeefConnectionPool();
@@ -58,12 +51,12 @@ public final class Bootstrap {
             DBInstaller.install();
 
             // initialize nadeef client
-            nadeefClient =
-                NadeefClient.getInstance(
-                    NadeefConfiguration.getServerUrl(),
-                    NadeefConfiguration.getServerPort()
-                );
+            NadeefClient.initialize(
+                NadeefConfiguration.getServerUrl(),
+                NadeefConfiguration.getServerPort()
+            );
 
+            nadeefClient = NadeefClient.getInstance();
         } catch (FileNotFoundException ex) {
             System.err.println("Nadeef Configuration cannot be found.");
             ex.printStackTrace();

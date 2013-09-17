@@ -29,6 +29,7 @@ public class SQLDialectFactory {
     public static SQLDialectBase getDialectManagerInstance(SQLDialect dialect) {
         SQLDialectBase result = null;
         switch (dialect) {
+            case DERBYMEMORY:
             case DERBY:
                 result = new DerbySQLDialect();
                 break;

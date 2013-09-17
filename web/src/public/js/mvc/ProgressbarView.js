@@ -19,7 +19,10 @@ define(
 					    var html = 
                             _.template(ProgressBarTemplate)({ progress: values });
 						$('#' + id).html(html);
-					});
+					})
+                    .fail(function(request, status, err) {
+                        alert(request.responseText);
+                    });
 				}, 1000);
 				isSubscribed = true;
 			}

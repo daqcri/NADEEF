@@ -16,7 +16,8 @@ create table $name$ (
     enabled boolean not null)
 >>
 
-InsertRule(typecode, code, table1, table2, name) ::= <<
+InsertRule(type, code, table1, table2, name) ::= <<
 insert into RULE (name, type, code, table1, table2, last_edit_timestamp)
-  values ('$name$', $typecode$, '$code$', '$table1$', '$table2$', current_timestamp)
+  select '$name$', x.type, '$code$', '$table1$', '$table2$', current_timestamp from
+  ruletype x where x.name = '$type$'
 >>

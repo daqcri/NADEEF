@@ -70,7 +70,7 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 update(dialectInstance.deleteViolation(), "Deleting violation");
-                return null;
+                return success(0);
             }
         });
     }
@@ -125,25 +125,11 @@ public final class Dashboard {
                     return fail("Input cannot be null.");
                 }
 
-                // TODO: remove this and move into the query
-                int typecode = 0;
-                switch (type) {
-                    case "UDF":
-                        typecode = 0;
-                        break;
-                    case "FD":
-                        typecode = 1;
-                        break;
-                    case "CFD":
-                        typecode = 2;
-                        break;
-                }
-
                 // Doing a delete and insert
                 update(dialectInstance.deleteRule(name), "update rule");
 
                 update(
-                    dialectInstance.insertRule(typecode, code, table1, table2, name),
+                    dialectInstance.insertRule(type.toUpperCase(), code, table1, table2, name),
                     "insert rule"
                 );
                 return success(0);
@@ -153,6 +139,7 @@ public final class Dashboard {
     //</editor-fold>
 
     //<editor-fold desc="source actions">
+    @SuppressWarnings("unchecked")
     private static void setupSource() {
         get(new Route("/data/source") {
             @Override
@@ -196,6 +183,7 @@ public final class Dashboard {
     //</editor-fold>
 
     //<editor-fold desc="Widget actions">
+    @SuppressWarnings("unchecked")
     private static void setupWidget() {
         get(new Route("/widget/attribute") {
             @Override
@@ -303,6 +291,7 @@ public final class Dashboard {
         get(new Route("/data/progress") {
             @Override
             public Object handle(Request request, Response response) {
+                response.type("application/json");
                 String result;
                 try {
                     result = nadeefClient.getJobStatus();
@@ -451,10 +440,11 @@ public final class Dashboard {
     ) {
         Connection conn = null;
         ResultSet rs = null;
+        Statement stat = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
             conn.setAutoCommit(true);
-            Statement stat = conn.createStatement();
+            stat = conn.createStatement();
             rs = stat.executeQuery(sql);
             return queryToJson(rs, fetechAll, includeHeader);
         } catch (SQLException ex) {
@@ -464,6 +454,10 @@ public final class Dashboard {
             try {
                 if (rs != null) {
                     rs.close();
+                }
+
+                if (stat != null) {
+                    stat.close();
                 }
 
                 if (conn != null) {
@@ -476,22 +470,28 @@ public final class Dashboard {
 
     private static void update(String sql, String err) {
         Connection conn = null;
+        Statement stat = null;
         try {
             conn = DBConnectionFactory.getNadeefConnection();
             conn.setAutoCommit(true);
-            Statement stat = conn.createStatement();
+            stat = conn.createStatement();
             stat.execute(sql);
         } catch (SQLException ex) {
             tracer.err(err, ex);
         } finally {
-            if (conn != null) {
-                try {
+            try {
+                if (stat != null) {
+                    stat.close();
+                }
+
+                if (conn != null) {
                     conn.close();
-                } catch (SQLException e) {}
-            }
+                }
+            } catch (SQLException e) {}
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static String queryToJson(
         ResultSet rs,
         boolean fetchAll,
@@ -525,12 +525,14 @@ public final class Dashboard {
         return result.toJSONString();
     }
 
+    @SuppressWarnings("unchecked")
     private static String success(int value) {
         JSONObject obj = new JSONObject();
         obj.put("data", value);
         return obj.toJSONString();
     }
 
+    @SuppressWarnings("unchecked")
     private static String fail(String err) {
         JSONObject obj = new JSONObject();
         obj.put("error", err);

@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.web;
 
+import com.google.common.base.Preconditions;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -28,62 +29,75 @@ import qa.qcri.nadeef.service.thrift.TRule;
 import java.util.List;
 
 /**
- * Nadeef Thrift client.
+ * Nadeef Thrift client. This is the wrapper class for calling thrift methods.
  */
 public final class NadeefClient {
     private static NadeefClient instance;
+    private static String url;
+    private static int port;
 
-    private TNadeefService.Client client;
-    private TTransport transport;
+    /**
+     * Initialize the Client params.
+     * @param url_ remote url.
+     * @param port_ port number.
+     */
+    public static void initialize(String url_, int port_) {
+        Preconditions.checkArgument(url == null && port == 0);
+        url = Preconditions.checkNotNull(url_);
+        port = port_;
+    }
 
     /**
      * Gets the instance of client.
      * @return instance.
      */
-    public synchronized static NadeefClient getInstance(
-        String url,
-        int port
-    ) throws TTransportException {
+    public synchronized static NadeefClient getInstance() throws TTransportException {
+        Preconditions.checkNotNull(url);
         if (instance == null) {
-            instance = new NadeefClient(url, port);
+            instance = new NadeefClient();
         }
         return instance;
     }
 
-    private NadeefClient(String url, int port) throws TTransportException {
-        transport = new TSocket(url, port);
-        transport.open();
-        TProtocol protocol = new TBinaryProtocol(transport);
-        client = new TNadeefService.Client(protocol);
-    }
+    private NadeefClient() {}
 
-    /**
-     * Shutdown the client.
-     */
-    public void shutdown() {
-        if (transport != null) {
-            transport.close();
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     public String generate(
         String type,
         String name,
         String code,
         String table1
     ) throws TException {
+        TTransport transport = new TSocket(url, port);
+        transport.open();
+        TProtocol protocol = new TBinaryProtocol(transport);
+        TNadeefService.Client client = new TNadeefService.Client(protocol);
+
         TRule rule = new TRule(name, type, code);
         JSONObject result = new JSONObject();
-        result.put("data", client.generate(rule, table1));
+        String gen = client.generate(rule, table1);
+        result.put("data", gen);
+
+        transport.close();
         return result.toJSONString();
     }
 
+    @SuppressWarnings("unchecked")
     public String verify(String type, String name, String code) throws TException {
-        JSONObject result = new JSONObject();
-        result.put("data", client.verify(new TRule(name, type, code)));
-        return result.toJSONString();
+        TTransport transport = new TSocket(url, port);
+        transport.open();
+        TProtocol protocol = new TBinaryProtocol(transport);
+        TNadeefService.Client client = new TNadeefService.Client(protocol);
+
+        JSONObject json = new JSONObject();
+        boolean result = client.verify(new TRule(name, type, code));
+        json.put("data", result);
+
+        transport.close();
+        return json.toJSONString();
     }
 
+    @SuppressWarnings("unchecked")
     public String detect(
         String type,
         String name,
@@ -91,12 +105,21 @@ public final class NadeefClient {
         String table1,
         String table2
     ) throws TException {
+        TTransport transport = new TSocket(url, port);
+        transport.open();
+        TProtocol protocol = new TBinaryProtocol(transport);
+        TNadeefService.Client client = new TNadeefService.Client(protocol);
+
         TRule rule = new TRule(name, type, code);
-        JSONObject result = new JSONObject();
-        result.put("data", client.detect(rule, table1, table2));
-        return result.toJSONString();
+        JSONObject json = new JSONObject();
+        String result = client.detect(rule, table1, table2);
+        json.put("data", result);
+
+        transport.close();
+        return json.toJSONString();
     }
 
+    @SuppressWarnings("unchecked")
     public String repair(
         String type,
         String name,
@@ -104,27 +127,42 @@ public final class NadeefClient {
         String table1,
         String table2
     ) throws TException {
+        TTransport transport = new TSocket(url, port);
+        transport.open();
+        TProtocol protocol = new TBinaryProtocol(transport);
+        TNadeefService.Client client = new TNadeefService.Client(protocol);
+
         TRule rule = new TRule(name, type, code);
         JSONObject result = new JSONObject();
         result.put("data", client.repair(rule, table1, table2));
+
+        transport.close();
         return result.toJSONString();
     }
 
+    @SuppressWarnings("unchecked")
     public String getJobStatus() throws TException {
+        TTransport transport = new TSocket(url, port);
+        transport.open();
+        TProtocol protocol = new TBinaryProtocol(transport);
+        TNadeefService.Client client = new TNadeefService.Client(protocol);
+
         JSONObject result = new JSONObject();
         List<TJobStatus> statusList = client.getAllJobStatus();
         JSONArray jsonArray = new JSONArray();
 
         for (TJobStatus status : statusList) {
             JSONObject obj = new JSONObject();
-            obj.put("status", status.getStatus());
+            obj.put("status", status.getStatus().toString());
             obj.put("overallProgress", status.getOverallProgress());
             obj.put("key", status.getKey());
             obj.put("progress", status.getProgress());
             obj.put("name", status.getNames());
             jsonArray.add(obj);
         }
+
         result.put("data", jsonArray);
+        transport.close();
         return result.toJSONString();
     }
 }

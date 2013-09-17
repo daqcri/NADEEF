@@ -89,7 +89,7 @@ define(
 					dataType: "json",
 					data: rule,
 					success: function(data, status) {
-						var code = data['result'];
+						var code = data['data'];
 						editor.setValue(code);
 						$('#udf').trigger('click');
 						

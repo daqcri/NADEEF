@@ -14,6 +14,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <!-- Common property values -->
     <property name="project.name" value="nadeef" />
+    <property name="dashboard.name" value="nadeef-web" />
     <property name="build.root" value="out" />
     <property name="build.dir" value="${build.root}/production" />
     <property name="test.dir" value="${build.root}/test" />
@@ -38,12 +39,12 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="all"
             description="Clean build on all the NADEEF files and creates the JAR file."
-            depends="clean, test, service, jar">
+            depends="clean, compile">
      </target>
 
     <target name="compile" 
             description="Compile all the NADEEF components"
-            depends="test">
+            depends="test, web">
     </target>
 
     <target name="jar" depends="compile">
@@ -55,12 +56,19 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
         </manifestclasspath>
 
         <jar destfile="${build.root}/bin/${project.name}.jar">
-            <fileset dir="${build.dir}" includes="**/*" />
+            <fileset dir="${build.dir}" includes="**/*">
+                <exclude name="qa/qcri/nadeef/web/**" />
+            </fileset>
             <manifest>
                 <attribute name="Main-Class" value="${console.class}" />
-                <attribute name="Class-Path" value="${jar.classpath}" />
+                <!-- <attribute name="Class-Path" value="${jar.classpath}" /> -->
             </manifest>
         </jar>
+
+        <jar destfile="${build.root}/bin/${dashboard.name}.jar">
+            <fileset dir="${build.dir}" includes="qa/qcri/nadeef/web/*" />
+        </jar>
+
         <copy todir="${build.root}/bin">
             <fileset dir="${vendor.dir}" />
         </copy>
@@ -137,6 +145,25 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                classpath="${vendor.dir}"
                classpathref="vendors.jars">
         </javac>
+    </target>
+
+    <target name="web" depends="core, service, ruleext, tools">
+        <mkdir dir="${build.dir}" />
+        <fail message="JDK 1.7 required" unless="version1.7" />
+        <javac includeantruntime="false"
+               fork="true"
+               debug="on"
+               srcdir="web/src"
+               destdir="${build.dir}"
+               classpathref="vendors.jars"
+               encoding="utf-8">
+        </javac>
+        <copy todir="${build.dir}/qa/qcri/nadeef/web/sql/template">
+            <fileset dir="web/src/qa/qcri/nadeef/web/sql/template" />
+        </copy>
+        <copy todir="${build.dir}/qa/qcri/nadeef/web/public">
+            <fileset dir="web/src/public" />
+        </copy>
     </target>
 
     <target name="test" depends="core, console, tools, ruleext, service">

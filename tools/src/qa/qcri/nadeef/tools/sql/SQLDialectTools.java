@@ -30,6 +30,9 @@ public abstract class SQLDialectTools {
             case DERBY:
                 jdbcUrl.append("derby://").append(url);
                 break;
+            case DERBYMEMORY:
+                jdbcUrl.append("derby:").append(url);
+                break;
             case POSTGRES:
                 jdbcUrl.append("postgresql://").append(url);
                 break;
@@ -59,6 +62,8 @@ public abstract class SQLDialectTools {
             case "mysql":
                 result = SQLDialect.MYSQL;
                 break;
+            case "derbymemory":
+                result = SQLDialect.DERBYMEMORY;
         }
         return result;
     }
@@ -67,9 +72,10 @@ public abstract class SQLDialectTools {
         switch (dialect) {
             case POSTGRES:
                 return "org.postgresql.Driver";
+            case DERBYMEMORY:
+                return "org.apache.derby.jdbc.EmbeddedDriver";
             case DERBY:
                 return "org.apache.derby.jdbc.ClientDriver";
-                // return "org.apache.derby.jdbc.EmbeddedDriver";
             case MYSQL:
                 return "com.mysql.jdbc.Driver";
             default:

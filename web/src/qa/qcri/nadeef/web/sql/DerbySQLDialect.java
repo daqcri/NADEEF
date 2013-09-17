@@ -63,11 +63,11 @@ public class DerbySQLDialect extends SQLDialectBase {
      * {@inheritDoc}
      */
     @Override
-    public String insertRule(int typecode, String code, String table1, String table2, String name) {
+    public String insertRule(String type, String code, String table1, String table2, String name) {
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         ST instance = template.getInstanceOf("InsertRule");
         instance.add("name", name);
-        instance.add("typecode", typecode);
+        instance.add("type", type);
         instance.add("code", code);
         instance.add("table1", table1);
         instance.add("table2", table2);
@@ -81,6 +81,5 @@ public class DerbySQLDialect extends SQLDialectBase {
     public String queryTopK(int k) {
         return "select tupleid, count(distinct(vid)) as count from violation group by tupleid " +
             "order by count desc FETCH FIRST " + k + " ROW ONLY";
-
     }
 }

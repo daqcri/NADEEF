@@ -19,6 +19,7 @@ package qa.qcri.nadeef.tools.sql;
 public enum SQLDialect {
     POSTGRES,
     MYSQL,
-    DERBY
+    DERBY,
+    DERBYMEMORY
 }
 

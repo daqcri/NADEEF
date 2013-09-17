@@ -98,7 +98,7 @@ define(
 						data: rule,
 						success: function(data, status) {
 							info("A repair job is successfully submitted.");
-							var key = data['result'];
+							var key = data['data'];
 							console.log('Received job key : ' + key);
 							if (key != null) {
 								window.localStorage[key] = rule.name;
@@ -128,7 +128,7 @@ define(
 								data: plan,
 								success: function(data, status) {
 									info("A job is successfully submitted.");
-									var key = data['result'];
+									var key = data['data'];
 									console.log('Received job key : ' + key);
 									if (key != null) {
 										window.localStorage[key] = plan.name;
