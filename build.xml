@@ -15,15 +15,31 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
     <!-- Common property values -->
     <property name="project.name" value="nadeef" />
     <property name="dashboard.name" value="nadeef-web" />
+    <property name="service.name" value="nadeef-service" />
+
     <property name="build.root" value="out" />
     <property name="build.dir" value="${build.root}/production" />
     <property name="test.dir" value="${build.root}/test" />
     <property name="testresult.dir" value="${build.root}/testresult" />
     <property name="vendor.dir" value="vendors" />
-    <property name="console.class" value="qa.qcri.console.Console" />
+
+    <property name="console.class" value="qa.qcri.nadeef.console.Console" />
+    <property name="dashboard.class" value="qa.qcri.nadeef.web.NadeefStart" />
+    <property name="service.class" value="qa.qcri.nadeef.service.NadeefService" />
 
     <!-- Common used paths -->
-    <path id="vendors.jars">
+    <path id="service.deps">
+        <fileset dir="${vendor.dir}" includes="*.jar" />
+        <fileset dir="${build.root}/bin" includes="${project.name}.jar" />
+    </path>
+
+    <path id="dashboard.deps">
+        <fileset dir="${vendor.dir}" includes="*.jar" />
+        <fileset dir="${build.root}/bin" includes="${project.name}.jar" />
+        <fileset dir="${build.root}/bin" includes="${service.name}.jar" />
+    </path>
+
+    <path id="core.deps">
         <fileset dir="${vendor.dir}" includes="*.jar" />
     </path>
 
@@ -39,7 +55,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="all"
             description="Clean build on all the NADEEF files and creates the JAR file."
-            depends="clean, compile">
+            depends="clean, compile, jar">
      </target>
 
     <target name="compile" 
@@ -48,25 +64,49 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
     </target>
 
     <target name="jar" depends="compile">
-        <mkdir dir="${build.root}/bin" />
-        <manifestclasspath property="jar.classpath" jarfile="${build.root}/bin/${project.name}.jar">
-            <classpath>
-                <fileset dir="${vendor.dir}" includes="*.jar" />
-            </classpath>
+        <manifestclasspath property="dashboard.manifest"
+                           jarfile="${dashboard.name}.jar">
+            <classpath refid="dashboard.deps" />
+        </manifestclasspath>
+
+        <manifestclasspath property="console.manifest"
+                           jarfile="${project.name}.jar">
+            <classpath refid="core.deps" />
+        </manifestclasspath>
+
+        <manifestclasspath property="service.manifest"
+                           jarfile="${service.name}.jar">
+            <classpath refid="service.deps" />
         </manifestclasspath>
 
         <jar destfile="${build.root}/bin/${project.name}.jar">
             <fileset dir="${build.dir}" includes="**/*">
                 <exclude name="qa/qcri/nadeef/web/**" />
+                <exclude name="qa/qcri/nadeef/service/**" />
             </fileset>
             <manifest>
                 <attribute name="Main-Class" value="${console.class}" />
-                <!-- <attribute name="Class-Path" value="${jar.classpath}" /> -->
+                <attribute name="Created-By" value="${ant.java.version}" />
+                <attribute name="Class-Path" value="${console.manifest}" />
+            </manifest>
+        </jar>
+
+        <jar destfile="${build.root}/bin/${service.name}.jar">
+            <fileset dir="${build.dir}" includes="qa/qcri/nadeef/service/**" />
+            <manifest>
+                <attribute name="Main-Class" value="${service.class}" />
+                <attribute name="Created-By" value="${ant.java.version}" />
+                <attribute name="Class-Path" value="${service.manifest}" />
             </manifest>
         </jar>
 
         <jar destfile="${build.root}/bin/${dashboard.name}.jar">
-            <fileset dir="${build.dir}" includes="qa/qcri/nadeef/web/*" />
+            <fileset dir="${build.dir}" includes="qa/qcri/nadeef/web/**" />
+            <manifest>
+                <attribute name="Main-Class" value="${dashboard.class}" />
+                <attribute name="Created-By" value="${ant.java.version}" />
+                <attribute name="Class-Path" value="${dashboard.manifest}" />
+            </manifest>
         </jar>
 
         <copy todir="${build.root}/bin">
@@ -83,7 +123,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="console/src"
                destdir="${build.dir}"
                classpath="${vendor.dir};"
-               classpathref="vendors.jars"
+               classpathref="core.deps"
                encoding="utf-8">
         </javac>
     </target>
@@ -96,7 +136,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                debug="on"
                srcdir="core/src"
                destdir="${build.dir}"
-               classpathref="vendors.jars"
+               classpathref="core.deps"
                encoding="utf-8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
@@ -112,7 +152,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                fork="true"
                srcdir="ruleext/src"
                destdir="${build.dir}"
-               classpathref="vendors.jars"
+               classpathref="core.deps"
                encoding="utf-8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
@@ -129,7 +169,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="tools/src"
                destdir="${build.dir}"
                classpath="${vendor.dir}"
-               classpathref="vendors.jars"
+               classpathref="core.deps"
                encoding="utf-8">
             <compilerarg value="-Xlint:unchecked" />
         </javac>
@@ -143,19 +183,19 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="service/src"
                destdir="${build.dir}"
                classpath="${vendor.dir}"
-               classpathref="vendors.jars">
+               classpathref="core.deps">
         </javac>
     </target>
 
     <target name="web" depends="core, service, ruleext, tools">
-        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.root}/bin" />
         <fail message="JDK 1.7 required" unless="version1.7" />
         <javac includeantruntime="false"
                fork="true"
                debug="on"
                srcdir="web/src"
                destdir="${build.dir}"
-               classpathref="vendors.jars"
+               classpathref="dashboard.deps"
                encoding="utf-8">
         </javac>
         <copy todir="${build.dir}/qa/qcri/nadeef/web/sql/template">
@@ -173,7 +213,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="test/src"
                destdir="${test.dir}"
                classpath="${build.dir}"
-               classpathref="vendors.jars"
+               classpathref="core.deps"
                encoding="utf-8"/>
     </target>
 

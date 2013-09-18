@@ -22,14 +22,14 @@ import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -94,7 +94,7 @@ public class CleanPlanTest extends NadeefTestBase {
 
             DBConfig source = cleanPlan.getSourceDBConfig();
             Assert.assertEquals("jdbc:derby:memory:nadeefdb;create=true", source.getUrl());
-            Assert.assertEquals(SQLDialect.DERBY, source.getDialect());
+            Assert.assertEquals(SQLDialect.DERBYMEMORY, source.getDialect());
             Rule rule = cleanPlan.getRule();
             List<String> tableNames = rule.getTableNames();
             Assert.assertEquals(1, tableNames.size());

@@ -32,14 +32,19 @@ import java.util.List;
 public final class CommonTools {
     private static Tracer tracer = Tracer.getTracer(CommonTools.class);
 
-    private static boolean isWindows() {
+    public static boolean isWindows() {
         String osName = System.getProperty("os.name");
         return osName.indexOf("Win") >= 0;
     }
 
-    private static boolean isMac() {
+    public static boolean isMac() {
         String osName = System.getProperty("os.name");
         return osName.indexOf("mac") >= 0;
+    }
+
+    public static boolean isLinux() {
+        String osName = System.getProperty("os.name");
+        return osName.indexOf("Linux") >= 0;
     }
 
     /**

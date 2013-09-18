@@ -2,15 +2,16 @@
   <library name="org.apache.thrift:libthrift:0.9.0" type="repository">
     <properties maven-id="org.apache.thrift:libthrift:0.9.0" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/vendors/libthrift-0.9.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/commons-lang-2.5.jar!/" />
-      <root url="jar://$PROJECT_DIR$/vendors/servlet-api-2.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/httpclient-4.1.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/vendors/httpcore-4.1.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/commons-logging-1.1.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/commons-codec-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/javax.servlet-3.0.0.v201112011016.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/libthrift-0.9.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/vendors/libthrift-0.9.0.jar!/" />
+    </SOURCES>
   </library>
 </component>

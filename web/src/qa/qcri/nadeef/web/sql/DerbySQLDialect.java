@@ -25,7 +25,7 @@ import java.io.File;
 public class DerbySQLDialect extends SQLDialectBase {
     private static STGroupFile template =
         new STGroupFile(
-            "qa*qcri*nadeef**web*sql*template*DerbyTemplate.stg".replace(
+            "qa*qcri*nadeef*web*sql*template*DerbyTemplate.stg".replace(
                 "*", File.separator
             ), '$', '$');
 

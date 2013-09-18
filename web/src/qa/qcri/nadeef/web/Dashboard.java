@@ -47,7 +47,7 @@ public final class Dashboard {
             public Object handle(Request request, Response response) {
                 response.type("text/html");
                 response.redirect("/index.html");
-                return null;
+                return success(0);
             }
         });
     }
@@ -296,7 +296,7 @@ public final class Dashboard {
                 try {
                     result = nadeefClient.getJobStatus();
                 } catch (Exception ex) {
-                    tracer.err("Generate code failed.", ex);
+                    tracer.err("Request progress failed.", ex);
                     result = fail(ex.getMessage());
                 }
                 return result;
@@ -419,7 +419,12 @@ public final class Dashboard {
         dialectInstance = DBInstaller.dialectInstance;
         nadeefClient = Bootstrap.getNadeefClient();
 
-        externalStaticFileLocation("/home/si/qcri/github/trunk/web/src/public");
+        String rootDir = System.getProperty("rootDir");
+        if (Strings.isNullOrEmpty(rootDir)) {
+            staticFileLocation("qa/qcri/nadeef/web/public");
+        } else {
+            externalStaticFileLocation(rootDir);
+        }
 
         setupHome();
         setupRule();

@@ -1,7 +1,7 @@
 {
     "source" : {
         "url" : "memory:nadeefdb;create=true",
-        "type" : "derby"
+        "type" : "derbymemory"
     },
     "rule" : [
         {

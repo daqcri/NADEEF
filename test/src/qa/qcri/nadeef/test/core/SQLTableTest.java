@@ -22,12 +22,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
@@ -57,7 +57,7 @@ public class SQLTableTest extends NadeefTestBase {
             Bootstrap.start(testConfig);
             dbconfig =
                 new DBConfig.Builder()
-                    .dialect(SQLDialect.DERBY)
+                    .dialect(SQLDialect.DERBYMEMORY)
                     .url("memory:test;create=true")
                     .build();
             SQLDialectBase dialectManager =

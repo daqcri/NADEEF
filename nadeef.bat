@@ -11,7 +11,7 @@ if not exist "out\bin\nadeef.jar" goto noCompile
 
 :START
 set BuildVersion=1.0.1019
-"%JAVA_HOME%\bin\java" -d64 -Xmx2048M -cp out\bin\*;out\test;examples\ qa.qcri.nadeef.console.Console
+"%JAVA_HOME%\bin\java" -d64 -Xmx2048M -Dderby.drda.startNetworkServer=true -cp out\bin\*;out\test;examples\ qa.qcri.nadeef.console.Console
 goto end
 
 :noJDK
