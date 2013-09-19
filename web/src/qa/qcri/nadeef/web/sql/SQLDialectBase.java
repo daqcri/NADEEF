@@ -126,7 +126,7 @@ public abstract class SQLDialectBase {
      * @return SQL query.
      */
     public String queryDistinctTable() {
-        return "select distinct(tablename) from violation";
+        return "select distinct(tablename) from VIOLATION";
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class SQLDialectBase {
      * @return SQL query.
      */
     public String countViolation() {
-        return "select count(distinct(tupleid)) from violation";
+        return "select count(distinct(tupleid)) from VIOLATION";
     }
 
     /**

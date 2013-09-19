@@ -15,7 +15,7 @@ package qa.qcri.nadeef.service;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TSimpleServer;
+import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
@@ -40,8 +40,10 @@ public class NadeefService extends AbstractIdleService {
             new TNadeefService.Processor(handler);
         TServerTransport serverTransport = new TServerSocket(port);
         server =
-            new TSimpleServer(
-                new TServer.Args(serverTransport).processor(processor)
+            new TThreadPoolServer(
+                new TThreadPoolServer
+                    .Args(serverTransport)
+                    .processor(processor)
             );
         tracer.info("Starting NADEEF server @ " + port);
         server.serve();

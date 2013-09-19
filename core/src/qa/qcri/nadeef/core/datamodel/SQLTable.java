@@ -223,8 +223,10 @@ public class SQLTable extends Table {
 
             if (indexName != null) {
                 try {
-                    stat.executeUpdate("DROP INDEX " + indexName);
+                    stat.executeUpdate("DROP INDEX " + indexName + " ON " + tableName);
+                    conn.commit();
                 } catch (Exception ex) {
+                    tracer.err("drop index " + indexName + " failed.");
                     // ignore;
                 }
             }

@@ -19,6 +19,8 @@ import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.DerbySQLDialect;
+import qa.qcri.nadeef.web.sql.MySQLDialect;
+import qa.qcri.nadeef.web.sql.PostgresSQLDialect;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
 
 import java.sql.Connection;
@@ -43,12 +45,15 @@ class DBInstaller {
             // TODO: do inject dep. for generic function
             SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
             switch (dialect) {
+                case DERBYMEMORY:
                 case DERBY:
                     dialectInstance = new DerbySQLDialect();
                     break;
                 case POSTGRES:
+                    dialectInstance = new PostgresSQLDialect();
                     break;
                 case MYSQL:
+                    dialectInstance = new MySQLDialect();
                     break;
             }
 
@@ -56,11 +61,13 @@ class DBInstaller {
 
             // skip when those dbs are already existed
             DatabaseMetaData meta = conn.getMetaData();
-            if (!meta.getTables(null, null, "RULE", null).next()) {
+            if (!meta.getTables(null, null, "RULE", null).next() &&
+                !meta.getTables(null, null, "rule", null).next()) {
                 stat.execute(dialectInstance.installRule());
             }
 
-            if (!meta.getTables(null, null, "RULETYPE", null).next()) {
+            if (!meta.getTables(null, null, "RULETYPE", null).next() &&
+                !meta.getTables(null, null, "ruletype", null).next()) {
                 stat.execute(dialectInstance.installRuleType());
                 stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
                 stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");

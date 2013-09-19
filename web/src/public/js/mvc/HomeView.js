@@ -60,7 +60,7 @@ define([
 
         $('#clear').on('click', function(e) {
             $.ajax({
-                url: '/table/violation',
+                url: '/data/violation',
                 type: "DELETE",
                 success: function(e) {
                     info('Violations are removed');

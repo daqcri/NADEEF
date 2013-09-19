@@ -103,9 +103,11 @@ define(
 					data: rule,
 					success: function(data, status) {
 						var code = data['data'];
-						editor.setValue(code);
-						$('#udf').trigger('click');
-						
+                        if (!code) {
+                            err("<string>Error</string>: Code generation failed.");
+                        } else {
+						    editor.setValue(code, -1);
+                        }
 					},
 					error: function(data, status) {
 						err("<strong>Error</strong>: " + data.responseText);
@@ -121,10 +123,10 @@ define(
 					dataType: "json",
 					data: rule,
 					success: function(data, status) {
-						info("Verification successed.", 'success');
+						info("Verification succeeded.");
 					},
 					error: function(data, status) {
-						err("<strong>Error</strong>: " + data.responseText, 'error');
+						err("<strong>Error</strong>: " + data.responseText);
 					}
 				});				
 			});

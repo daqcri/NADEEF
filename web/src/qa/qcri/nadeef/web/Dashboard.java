@@ -58,7 +58,7 @@ public final class Dashboard {
         /**
          * Gets violation table.
          */
-        get(new Route("/table/violation") {
+        get(new Route("/data/violation") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
@@ -66,7 +66,7 @@ public final class Dashboard {
             }
         });
 
-        delete(new Route("/table/violation") {
+        delete(new Route("/data/violation") {
             @Override
             public Object handle(Request request, Response response) {
                 update(dialectInstance.deleteViolation(), "Deleting violation");

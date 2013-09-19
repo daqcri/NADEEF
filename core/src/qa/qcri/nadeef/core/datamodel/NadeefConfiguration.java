@@ -135,8 +135,8 @@ public class NadeefConfiguration {
             ruleExtension.put(key, writer);
         }
 
-        if (jsonObject.containsKey("web")) {
-            JSONObject thrift = (JSONObject)jsonObject.get("web");
+        if (jsonObject.containsKey("thrift")) {
+            JSONObject thrift = (JSONObject)jsonObject.get("thrift");
             serverUrl = (String)thrift.get("url");
             serverPort = ((Long)thrift.get("port")).intValue();
         }

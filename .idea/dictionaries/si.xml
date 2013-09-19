@@ -2,6 +2,7 @@
   <dictionary name="si">
     <words>
       <w>jdbc</w>
+      <w>tablename</w>
     </words>
   </dictionary>
 </component>

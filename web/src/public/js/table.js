@@ -195,7 +195,12 @@ define(["jquery", "bootstrap", "datatable"], function() {
 			instance.fnDestroy();
 		}
 
-		$.getJSON('/table/' + tablename, function(data) {
+        var url = '/table/' + tablename;
+        if (tablename == 'violation') {
+            url = '/data/violation';
+        }
+
+		$.getJSON(url, function(data) {
 			var vdata = data['data'];
 			var schema = data['schema'];
 			var columns = new Array();
@@ -240,7 +245,7 @@ define(["jquery", "bootstrap", "datatable"], function() {
 	}
 
     function filter(e) {
-        if (instance != null)　{
+        if (instance != null) {
             instance.fnFilter(e);
         }
     }
