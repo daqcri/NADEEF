@@ -31,8 +31,8 @@ public class MyRule3 extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
-        leftHandSide.add(new Column("csv_hospital_10k.zipcode"));
-        rightHandSide.add(new Column("csv_hospital_10k.city"));
+        leftHandSide.add(new Column("CSV_HOSPITAL_10K.zipcode"));
+        rightHandSide.add(new Column("CSV_HOSPITAL_10K.city"));
     }
 
     /**

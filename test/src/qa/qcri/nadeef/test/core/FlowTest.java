@@ -17,21 +17,26 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.test.NadeefTestBase;
 
 /**
  * FlowEngine test.
  */
-@RunWith(JUnit4.class)
-public class FlowTest {
+@RunWith(Parameterized.class)
+public class FlowTest extends NadeefTestBase {
+    public FlowTest(String testConfig_) {
+        super(testConfig_);
+    }
+
     @Before
     public void setUp() {
         try {
-            Bootstrap.start();
+            Bootstrap.start(testConfig);
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }

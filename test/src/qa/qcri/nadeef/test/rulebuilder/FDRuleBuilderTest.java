@@ -14,14 +14,17 @@
 package qa.qcri.nadeef.test.rulebuilder;
 
 import com.google.common.io.Files;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
+import qa.qcri.nadeef.test.NadeefTestBase;
 
 import java.io.File;
 import java.sql.Types;
@@ -30,21 +33,26 @@ import java.util.Collection;
 /**
  * Test for FD Rule writer.
  */
-public class FDRuleBuilderTest {
+@RunWith(Parameterized.class)
+public class FDRuleBuilderTest extends NadeefTestBase {
     private static File workingDirectory;
 
-    @BeforeClass
-    public static void setup() {
+    public FDRuleBuilderTest(String testConfig_) {
+        super(testConfig_);
+    }
+
+    @Before
+    public void setup() {
         try {
-            Bootstrap.start();
+            Bootstrap.start(testConfig);
             workingDirectory = Files.createTempDir();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @After
+    public void tearDown() {
         Bootstrap.shutdown();
         // remove all the temp files.
         workingDirectory.delete();

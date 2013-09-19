@@ -86,23 +86,9 @@ public class SQLQueryBuilder implements Cloneable {
         this.wheres.add(where);
     }
 
-    public void addWhere(List<String> wheres) {
-        Preconditions.checkNotNull(wheres);
-        this.wheres.addAll(wheres);
-    }
-
     public void addFrom(String from) {
         Preconditions.checkNotNull(from);
         this.froms.add(from);
-    }
-
-    public void addFrom(List<String> froms) {
-        Preconditions.checkNotNull(froms);
-        this.froms.addAll(froms);
-    }
-
-    public void addDistinct(Collection<String> distincts) {
-        this.distincts.addAll(distincts);
     }
 
     public void addDistinct(String disintct) {

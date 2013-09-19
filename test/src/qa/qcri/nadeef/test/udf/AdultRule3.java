@@ -39,17 +39,17 @@ public class AdultRule3 extends SingleTupleRule {
         rhs = new ArrayList<>();
         leftFilterExpressions = new ArrayList<>();
         rightFilterExpressions = new ArrayList<>();
-        filterCache = new HashMap<Column, SimpleExpression>();
+        filterCache = new HashMap<>();
 
-        lhs.add(new Column("csv_adult_1k.relationship"));
+        lhs.add(new Column("CSV_ADULT_1K.relationship"));
 
-        rhs.add(new Column("csv_adult_1k.sex"));
+        rhs.add(new Column("CSV_ADULT_1K.sex"));
 
         leftFilterExpressions.add(
-                SimpleExpression.newEqual(new Column("csv_adult_1k.relationship"), "Wife"));
+                SimpleExpression.newEqual(new Column("CSV_ADULT_1K.relationship"), "Wife"));
 
         rightFilterExpressions.add(
-                SimpleExpression.newEqual(new Column("csv_adult_1k.sex"), "Female"));
+                SimpleExpression.newEqual(new Column("CSV_ADULT_1K.sex"), "Female"));
         /*
         leftFilterExpressions.add(
                 SimpleExpression.newEqual(new Column("csv_adult_1k.relationship"), "Wife"));

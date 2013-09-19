@@ -183,7 +183,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                srcdir="service/src"
                destdir="${build.dir}"
                classpath="${vendor.dir}"
-               classpathref="core.deps">
+               classpathref="core.deps"
+               encoding="utf-8">
         </javac>
     </target>
 
@@ -222,7 +223,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
         <mkdir dir="${build.root}/doc" />
         <javadoc
             sourcepath="core/src;tools/src"
-            classpathref="vendors.jars"
+            classpathref="core.deps"
             destdir="${build.root}/doc"
             header="NADEEF Core"
             packagenames=

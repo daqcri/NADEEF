@@ -67,7 +67,7 @@ public class DBConnectionFactory {
 
         String username = dbconfig.getUserName();
         if (!Strings.isNullOrEmpty(username)) {
-            nadeefPool.setUsername(dbconfig.getUserName());
+            nadeefPool.setUsername(username);
         }
 
         String password = dbconfig.getPassword();
@@ -123,7 +123,7 @@ public class DBConnectionFactory {
      * {@inheritDoc}
      */
     @Override
-    protected void finalize() {
+    protected void finalize() throws Throwable {
         // skip finalizing the nadeef pool
         if (sourcePool == nadeefPool) {
             return;
@@ -131,13 +131,13 @@ public class DBConnectionFactory {
 
         tracer.verbose("Closing a connection pool @" + sourcePool.getUrl());
 
-        if (sourcePool != null) {
-            try {
-                sourcePool.close();
-            } catch (Exception e) {
-                tracer.err("Exception during closing source pool", e);
-            }
+        try {
+            sourcePool.close();
+        } catch (Exception e) {
+            tracer.err("Exception during closing source pool", e);
         }
+
+       super.finalize();
     }
 
     // </editor-fold>
