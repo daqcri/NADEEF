@@ -180,8 +180,7 @@ public class SQLTable extends Table {
 
             synchronized (indexLock) {
                 indexName =
-                    "IDX_" + tableName + "_" + column.getColumnName() + "_"
-                    + System.currentTimeMillis();
+                    "IDX_" + tableName + "_" + column.getColumnName();
 
                 // create the index.
                 String indexSQL =
@@ -223,10 +222,10 @@ public class SQLTable extends Table {
 
             if (indexName != null) {
                 try {
-                    stat.executeUpdate("DROP INDEX " + indexName + " ON " + tableName);
+                    stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
                     conn.commit();
                 } catch (Exception ex) {
-                    tracer.err("drop index " + indexName + " failed.");
+                    tracer.err("drop index " + indexName + " failed.", ex);
                     // ignore;
                 }
             }

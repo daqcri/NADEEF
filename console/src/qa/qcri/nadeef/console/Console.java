@@ -23,8 +23,8 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -62,6 +62,8 @@ public class Console {
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
     private static Tracer tracer = Tracer.getTracer(Console.class);
+    private static Process derbyProcess;
+    private static final int DERBY_PORT = 1527;
 
     //</editor-fold>
 
@@ -134,6 +136,23 @@ public class Console {
                 System.exit(1);
             }
 
+            // start derby db.
+            System.out.print("Start embedded database...");
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    if (derbyProcess != null)  {
+                        derbyProcess.destroy();
+                    }
+                }
+            });
+            derbyProcess =
+                Runtime.getRuntime().exec("java -d64 -jar out/bin/derbyrun.jar server start");
+            if (!CommonTools.waitForService(DERBY_PORT)) {
+                System.out.println("FAILED");
+                System.exit(1);
+            }
+
+            System.out.println("OK");
             // bootstrap Nadeef.
             Stopwatch stopwatch = new Stopwatch().start();
             Bootstrap.start();
@@ -148,6 +167,7 @@ public class Console {
                 );
             console.addCompleter(new ArgumentCompleter(loadCompleter));
 
+            console.clearScreen();
             console.println(logo);
             console.println();
             console.println(helpInfo);

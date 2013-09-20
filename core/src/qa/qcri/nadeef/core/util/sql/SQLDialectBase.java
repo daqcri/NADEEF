@@ -152,6 +152,16 @@ public abstract class SQLDialectBase {
     }
 
     /**
+     * Drop index.
+     * @param indexName index name.
+     * @param tableName drop table name.
+     * @return SQL statement.
+     */
+    public String dropIndex(String indexName, String tableName) {
+        return "DROP INDEX " + indexName;
+    }
+
+    /**
      * Select star..
      * @param tableName table name.
      * @return SQL statement.

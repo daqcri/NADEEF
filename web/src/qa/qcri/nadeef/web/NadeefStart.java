@@ -15,9 +15,6 @@ package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.tools.CommonTools;
 
-import java.io.IOException;
-import java.net.Socket;
-
 /**
  * Nadeef Dashboard launcher.
  */
@@ -38,7 +35,7 @@ public final class NadeefStart {
                 }
             });
 
-            if (isPortOccupied(WEB_PORT)) {
+            if (CommonTools.isPortOccupied(WEB_PORT)) {
                 System.err.println("Web port 4567 is occupied, please clear the port first.");
                 System.exit(1);
             }
@@ -46,7 +43,7 @@ public final class NadeefStart {
             System.out.print("Start embedded database...");
             derbyProcess =
                 runtime.exec("java -d64 -jar out/bin/derbyrun.jar server start");
-            if (!waitForService(DERBY_PORT)) {
+            if (!CommonTools.waitForService(DERBY_PORT)) {
                 System.out.println("FAILED");
                 System.exit(1);
             }
@@ -65,7 +62,7 @@ public final class NadeefStart {
                     );
             }
 
-            if (!waitForService(THRIFT_PORT)) {
+            if (!CommonTools.waitForService(THRIFT_PORT)) {
                 System.out.println("FAILED");
                 System.exit(1);
             };
@@ -77,34 +74,6 @@ public final class NadeefStart {
             destroyProcesses();
             System.err.println("Launching dashboard failed, shutdown.");
             ex.printStackTrace(System.err);
-        }
-    }
-
-    private static boolean waitForService(int port) {
-        int tryCount = 0;
-        while (true) {
-            if (isPortOccupied(port)) {
-                return true;
-            }
-
-            if (tryCount == MAX_TRY_COUNT) {
-                System.err.println("Waiting for port " + port + " time out.");
-                return false;
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-            tryCount ++;
-        }
-    }
-
-    private static boolean isPortOccupied(int port) {
-        try (Socket ignored = new Socket("localhost", port)) {
-            return true;
-        } catch (IOException ignored) {
-            return false;
         }
     }
 

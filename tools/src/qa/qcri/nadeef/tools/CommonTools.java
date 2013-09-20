@@ -21,6 +21,7 @@ import javax.tools.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public final class CommonTools {
 
     public static boolean isMac() {
         String osName = System.getProperty("os.name");
-        return osName.indexOf("mac") >= 0;
+        return osName.indexOf("Mac") >= 0;
     }
 
     public static boolean isLinux() {
@@ -164,5 +165,34 @@ public final class CommonTools {
                 .hash()
                 .asInt()
         );
+    }
+
+    public static boolean isPortOccupied(int port) {
+        try (Socket ignored = new Socket("localhost", port)) {
+            return true;
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
+
+    public static boolean waitForService(int port) {
+        final int MAX_TRY_COUNT = 10;
+        int tryCount = 0;
+        while (true) {
+            if (isPortOccupied(port)) {
+                return true;
+            }
+
+            if (tryCount == MAX_TRY_COUNT) {
+                System.err.println("Waiting for port " + port + " time out.");
+                return false;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+            tryCount ++;
+        }
     }
 }

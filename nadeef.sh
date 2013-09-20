@@ -8,7 +8,7 @@ if ! [ -d "out" ]; then
 else
     if [ $# -eq 1 ]; then
         if [ "$1" == "console" ]; then
-            cmd='java -Dderby.drda.startNetworkServer=true -d64 -cp out/bin/*:examples/:out/test qa.qcri.nadeef.console.Console'
+            cmd='java -d64 -cp out/bin/*:examples/:out/test qa.qcri.nadeef.console.Console'
             exec $cmd
         elif [ "$1" == "dashboard" ]; then
             cmd='java -d64 -cp out/bin/*:. qa.qcri.nadeef.web.NadeefStart'

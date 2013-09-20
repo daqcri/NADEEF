@@ -17,7 +17,10 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * NADEEF database installation utility class.
@@ -36,15 +39,9 @@ public final class DBInstaller {
             conn = DBConnectionFactory.getNadeefConnection();
             DatabaseMetaData metaData = conn.getMetaData();
 
-            // deal with case
-            ResultSet resultSet =
-                metaData.getTables(null, null, tableName.toLowerCase(), null);
-            if (resultSet.next()) {
-                return true;
-            }
-
-            resultSet = metaData.getTables(null, null, tableName.toUpperCase(), null);
-            return resultSet.next();
+            return metaData.getTables(null, null, tableName, null).next() ||
+                // TODO: a hack for case sensitive db, should use other methods
+                metaData.getTables(null, null, tableName.toLowerCase(), null).next();
         } finally {
             if (conn != null) {
                 conn.close();

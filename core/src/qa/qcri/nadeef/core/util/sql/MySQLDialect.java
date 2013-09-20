@@ -65,6 +65,14 @@ public class MySQLDialect extends SQLDialectBase {
      * {@inheritDoc}
      */
     @Override
+    public String dropIndex(String indexName, String tableName) {
+        return "DROP INDEX " + indexName +  "　ON　" + tableName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String countTable(String tableName) {
         ST st = getTemplate().getInstanceOf("CountTable");
         st.add("tableName", tableName);
