@@ -12,7 +12,6 @@ Launch NADEEF using command
     Options are:
         console : start the NADEEF console.
         dashboard : start the NADEEF dashboard.
-    
 ```
 
 More details on the instructions can be found in the [User Guide](https://github.com/daqcri/NADEEF/wiki/User-Guide).
