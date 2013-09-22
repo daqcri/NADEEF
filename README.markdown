@@ -6,9 +6,13 @@ NADEEF (or ''clean'' in Arabic, نظيف) is a commodity data cleaning system de
 
 ### See it in Action
 
-Launch NADEEF console using command 
+Launch NADEEF using command 
 ```
-    nadeef.sh or nadeef.bat
+    Usage: nadeef.[sh | bat] [OPTIONS]
+    Options are:
+        console : start the NADEEF console.
+        dashboard : start the NADEEF dashboard.
+    
 ```
 
 More details on the instructions can be found in the [User Guide](https://github.com/daqcri/NADEEF/wiki/User-Guide).
