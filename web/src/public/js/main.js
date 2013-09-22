@@ -21,17 +21,17 @@ require.config({
 		"datatable" : "lib/jquery.dataTables",
 		"d3" : "lib/d3.v3",
 		"nvd3" : "lib/nv.d3",
-		"ace" : "lib/ace-min/ace",
+		"ace" : "lib/ace-min/ace"
 	},
 
 	shim: {
         'jquery' : {
-            exports: '$',
+            exports: '$'
         },
 
         'underscore' : {
             deps : ['jquery'],
-            exports: '_',
+            exports: '_'
         },
         
 		'bootstrap' : {

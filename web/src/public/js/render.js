@@ -61,7 +61,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 		    if (result == null&&result.length == 0) {
 			    values = null;
 		    } else {
-			    values = new Array();
+			    values = [];
 			    for (var i = 0; i < result.length; i ++) {
 				    values.push({'label' : result[i][0], 'value' : result[i][1]});
 			    }
@@ -78,7 +78,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 				    .y(function(d) { return d.value })
 				    .staggerLabels(false)
 				    .tooltips(true)
-				    .showValues(true)
+				    .showValues(true);
 
 			    d3.select("#" + id + " svg")
 				    .datum(graph_data)
@@ -97,7 +97,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
     }
 
     function drawViolationRelation(id) {		
-	    $.getJSON('/widget/violation_relation', function(data) {			
+	    $.getJSON('/widget/violation_relation', function(data) {
 			var width = $('#violationRelation').width();
 			var height = $('#violationRelation').height();
 			
@@ -113,15 +113,15 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 				    .text("There are too many violations to show.");
 				return;
 			}
-		    var links = new Array();
-		    var nodes = new Array();
+		    var links = [];
+		    var nodes = [];
 
 		    var vid;
 		    var tid;
 		    var groupId;
 		    var maxGroupId = 0;
 		    var pre = null;
-		    var conns = new Array();
+		    var conns = [];
 			var hash = new HashMap();
 
 		    // process the graph
@@ -220,8 +220,8 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 			    return;
 		    }
 
-		    var affectedTuple = new Array();
-		    var affectedTable = new Array();
+		    var affectedTuple = [];
+		    var affectedTable = [];
 		    for (var i = 0; i < result.length; i ++) {
 			    affectedTuple.push({'label' : result[i][0], 'value' : result[i][1]});
 			    affectedTable.push({'label' : result[i][0], 'value' : result[i][2]});
@@ -247,7 +247,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 				    .margin({top: 30, right: 20, bottom: 50, left: 175})
 				    .showValues(true)
 				    .tooltips(false)
-				    .showControls(false)
+				    .showControls(false);
 
 			    chart.yAxis
 				    .tickFormat(d3.format(',.2f'));
@@ -273,7 +273,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 	    $.getJSON('/widget/top10', function(data) {
 			$('#' + id + ' svg').empty();
 		    var result = data['data'];
-		    var values = new Array();
+		    var values = [];
 		    for (var i = 0; i < result.length; i ++) {
 			    values.push({'label' : result[i][0], 'value' : result[i][1]});
 		    }
@@ -289,7 +289,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 				    .y(function(d) { return d.value })
 				    .staggerLabels(false)
 				    .tooltips(true)
-				    .showValues(true)
+				    .showValues(true);
 
 			    d3.select("#" + id + " svg")
 				    .attr("width", 400)

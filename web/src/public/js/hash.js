@@ -17,8 +17,8 @@
 // TODO: change to a class object
 define(['underscore'], function() {
 	function Map() {
-		this.keys = new Array();
-		this.values = new Array();
+		this.keys = [];
+		this.values = [];
 	}
 
 

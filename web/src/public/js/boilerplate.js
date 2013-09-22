@@ -22,8 +22,7 @@ define(
     function() {
         return {
             start : function() {
-                console.log('Initialize libraries...');
-				console.log('done.');
+                console.log('Initialize libraries...done');
             }
         };
     }

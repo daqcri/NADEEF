@@ -13,7 +13,7 @@ public class PostgresSQLDialect extends SQLDialectBase {
     private static STGroupFile template =
         new STGroupFile(
             "qa*qcri*nadeef*web*sql*template*PostgresTemplate.stg".replace(
-                "*", File.separator
+                "*", "/"
             ), '$', '$');
 
     /**

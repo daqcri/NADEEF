@@ -13,7 +13,7 @@ public class MySQLDialect extends SQLDialectBase {
     private static STGroupFile template =
         new STGroupFile(
             "qa*qcri*nadeef*web*sql*template*MySQLTemplate.stg".replace(
-                "*", File.separator
+                "*", "/"
             ), '$', '$');
 
     /**
