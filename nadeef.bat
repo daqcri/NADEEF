@@ -18,9 +18,9 @@ if not %argC% == 1 (
     goto usage
 ) else (
     if "%1" == "console" (
-        "%JAVA_HOME%\bin\java -d64 -Dderby.drda.startNetworkServer=true -cp out\bin\*;out\test;examples\ qa.qcri.nadeef.console.Console"
+        "%JAVA_HOME%\bin\java" -d64 -cp out\bin\*;out\test;examples\;out\production\ qa.qcri.nadeef.console.Console
     ) else if "%1" == "dashboard" (
-        "%JAVA_HOME%\bin\java -d64 -cp out/bin/*:. qa.qcri.nadeef.web.NadeefStart"
+        "%JAVA_HOME%\bin\java" -d64 -cp out\bin\*;out\production\ qa.qcri.nadeef.web.NadeefStart
     ) else (
         goto usage
     )
