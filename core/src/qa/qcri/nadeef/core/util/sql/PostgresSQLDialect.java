@@ -16,7 +16,6 @@ package qa.qcri.nadeef.core.util.sql;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.io.File;
 import java.sql.*;
 
 /**
@@ -26,7 +25,7 @@ public class PostgresSQLDialect extends SQLDialectBase {
     public static STGroupFile template =
         new STGroupFile(
             "qa*qcri*nadeef*core*util*sql*template*PostgresTemplate.stg".replace(
-                "*", File.separator), '$', '$');
+                "*", "/"), '$', '$');
 
     /**
      * {@inheritDoc}

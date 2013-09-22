@@ -17,7 +17,6 @@ import com.google.common.base.Preconditions;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.io.File;
 import java.sql.*;
 
 /**
@@ -27,7 +26,7 @@ public class MySQLDialect extends SQLDialectBase {
     public static STGroupFile template =
         new STGroupFile(
             "qa*qcri*nadeef*core*util*sql*template*MySQLTemplate.stg".replace(
-                "*", File.separator), '$', '$');
+                "*", "/"), '$', '$');
     /**
      * {@inheritDoc}
      */
@@ -66,7 +65,7 @@ public class MySQLDialect extends SQLDialectBase {
      */
     @Override
     public String dropIndex(String indexName, String tableName) {
-        return "DROP INDEX " + indexName +  "　ON　" + tableName;
+        return "DROP INDEX " + indexName +  " ON " + tableName;
     }
 
     /**
