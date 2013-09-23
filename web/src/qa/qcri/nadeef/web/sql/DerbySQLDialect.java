@@ -14,10 +14,9 @@
 package qa.qcri.nadeef.web.sql;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-
-import java.io.File;
 
 /**
  * Derby SQL Dialect.
@@ -57,6 +56,33 @@ public class DerbySQLDialect extends SQLDialectBase {
         ST instance = template.getInstanceOf("InstallRuleType");
         instance.add("name", "RULETYPE");
         return instance.render();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String queryTable(String tableName, int start, int interval, String filter) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST instance = template.getInstanceOf("QueryViolation");
+        instance.add("tablename", tableName);
+        instance.add("start", start);
+        instance.add("interval", interval);
+        if (!Strings.isNullOrEmpty(filter)) {
+            filter = "%" + filter + "%";
+        } else {
+            filter = "%";
+        }
+        instance.add("filter", filter);
+        return instance.render();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String querySchema(String tableName) {
+            return "SELECT * FROM " + tableName + " FETCH FIRST 1 ROWS ONLY";
     }
 
     /**

@@ -128,7 +128,7 @@ define(
 		function detect(plans) {
 			// clean the violation before start new detection.
 			$.ajax({
-				url: '/data/violation',
+				url: '/table/violation',
 				type: "DELETE",
 				success: function(e) {
 					_.each(plans, function(planName) {

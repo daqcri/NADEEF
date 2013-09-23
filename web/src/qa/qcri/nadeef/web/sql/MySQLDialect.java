@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.io.File;
-
 /**
  * MySQL Dialect.
  */
@@ -44,6 +42,22 @@ public class MySQLDialect extends SQLDialectBase {
         ST instance = template.getInstanceOf("InstallRuleType");
         instance.add("name", "RULETYPE");
         return instance.render();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String queryTable(String name, int start, int interval, String filter) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String querySchema(String tableName) {
+        return "SELECT " + tableName + " LIMIT 1";
     }
 
     /**

@@ -53,37 +53,73 @@ public final class Dashboard {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Violation actions">
-    private static void setupViolation() {
+    //<editor-fold desc="Table actions">
+    private static void setupTable() {
         /**
-         * Gets violation table.
+         * Gets violation table with pagination support.
          */
-        get(new Route("/data/violation") {
+        get(new Route("/table/:tablename") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                return query(dialectInstance.queryViolation(), "querying violation", true, true);
+                String tableName = request.params("tablename");
+                JSONObject queryJson;
+                String result;
+                try {
+                    String start_ = request.queryParams("iDisplayStart");
+                    String interval_ = request.queryParams("iDisplayLength");
+                    String filter = request.params("sSearch");
+                    int start =
+                        Strings.isNullOrEmpty(start_) ? 0 : Integer.parseInt(start_);
+                    int interval =
+                        Strings.isNullOrEmpty(interval_) ? 10 : Integer.parseInt(interval_);
+
+                    queryJson =
+                        query(
+                            dialectInstance.queryTable(tableName, start, interval, filter),
+                            "Query table " + tableName,
+                            true
+                        );
+
+                    JSONObject countJson =
+                        query(
+                            dialectInstance.countTable(tableName),
+                            "Query table count " + tableName,
+                            true
+                        );
+                    JSONArray dataArray = (JSONArray)countJson.get("data");
+                    Integer count = (Integer)(((JSONArray)(dataArray.get(0))).get(0));
+                    queryJson.put("iTotalRecords", count.toString());
+                    queryJson.put("iTotalDisplayRecords", count.toString());
+                    queryJson.put("sEcho", request.queryParams("sEcho"));
+                    result = queryJson.toJSONString();
+                } catch (Exception ex) {
+                    result = fail(ex.getMessage());
+                }
+                return result;
             }
         });
 
-        delete(new Route("/data/violation") {
+        get(new Route("/table/:tablename/schema") {
+            @Override
+            public Object handle(Request request, Response response) {
+                response.type("application/json");
+                String tableName = request.params("tablename");
+                JSONObject result =
+                    query(
+                        dialectInstance.querySchema(tableName),
+                        "Query schema " + tableName,
+                        true
+                    );
+                return result.toJSONString();
+            }
+        });
+
+        delete(new Route("/table/violation") {
             @Override
             public Object handle(Request request, Response response) {
                 update(dialectInstance.deleteViolation(), "Deleting violation");
                 return success(0);
-            }
-        });
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Table actions">
-    private static void setupTable() {
-        get(new Route("/table/:tablename") {
-            @Override
-            public Object handle(Request request, Response response) {
-                String tableName = request.params("tablename");
-                response.type("application/json");
-                return query(dialectInstance.queryTable(tableName), "querying table", true, true);
             }
         });
     }
@@ -95,7 +131,12 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                return query(dialectInstance.queryRule(), "querying rules", true, true);
+                return
+                    query(
+                        dialectInstance.queryRule(),
+                        "querying rules",
+                        true
+                    ).toJSONString();
             }
         });
 
@@ -105,7 +146,10 @@ public final class Dashboard {
                 String ruleName = request.params("ruleName");
                 response.type("application/json");
                 return query(
-                    dialectInstance.queryRule(ruleName), "querying rule " + ruleName, true, true);
+                    dialectInstance.queryRule(ruleName),
+                    "querying rule " + ruleName,
+                    true
+                ).toJSONString();
             }
         });
 
@@ -189,7 +233,11 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                return query(dialectInstance.queryAttribute(), "querying attribute", true, true);
+                return query(
+                    dialectInstance.queryAttribute(),
+                    "querying attribute",
+                    true
+                ).toJSONString();
             }
         });
 
@@ -201,9 +249,8 @@ public final class Dashboard {
                     query(
                         dialectInstance.queryRuleDistribution(),
                         "querying rule distribution",
-                        true,
                         true
-                    );
+                    ).toJSONString();
             }
         });
 
@@ -211,7 +258,12 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                return query(dialectInstance.queryTopK(10), "querying top 10", true, true);
+                return
+                    query(
+                        dialectInstance.queryTopK(10),
+                        "querying top 10",
+                        true
+                    ).toJSONString();
             }
         });
 
@@ -222,9 +274,8 @@ public final class Dashboard {
                 return query(
                     dialectInstance.queryViolationRelation(),
                     "querying attribute",
-                    true,
                     true
-                );
+                ).toJSONString();
             }
         });
 
@@ -429,7 +480,6 @@ public final class Dashboard {
         setupHome();
         setupRule();
         setupTable();
-        setupViolation();
         setupSource();
         setupWidget();
         setupAction();
@@ -437,10 +487,9 @@ public final class Dashboard {
     //</editor-fold>
 
     //<editor-fold desc="Private helpers">
-    private static String query(
+    private static JSONObject query(
         String sql,
         String err,
-        boolean fetechAll,
         boolean includeHeader
     ) {
         Connection conn = null;
@@ -451,7 +500,7 @@ public final class Dashboard {
             conn.setAutoCommit(true);
             stat = conn.createStatement();
             rs = stat.executeQuery(sql);
-            return queryToJson(rs, fetechAll, includeHeader);
+            return queryToJson(rs, includeHeader);
         } catch (SQLException ex) {
             tracer.err(err, ex);
             rs = null;
@@ -497,9 +546,8 @@ public final class Dashboard {
     }
 
     @SuppressWarnings("unchecked")
-    private static String queryToJson(
+    private static JSONObject queryToJson(
         ResultSet rs,
-        boolean fetchAll,
         boolean includeHeader
     ) throws SQLException {
         JSONObject result = new JSONObject();
@@ -521,13 +569,10 @@ public final class Dashboard {
                 entry.add(rs.getObject(i));
             }
             data.add(entry);
-            if (!fetchAll) {
-                break;
-            }
         }
 
         result.put("data", data);
-        return result.toJSONString();
+        return result;
     }
 
     @SuppressWarnings("unchecked")

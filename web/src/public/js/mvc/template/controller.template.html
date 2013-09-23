@@ -73,11 +73,6 @@
 <p>
 
 <ul class="nav nav-tabs">
-<!--
-  <div class="box-header">
-    <i class="icon-tasks" style="margin-right: 10px;"></i>Progress
-  </div>
--->
   <li class="active">
     <a data-toggle="tab"><i class="icon-tasks" style="margin-right: 10px;">
       </i>Progress</a>
@@ -95,6 +90,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4>Create New Data Source</h4>
   </div>
+
   <div class="modal-body modal_large" name="source_modal">          
     <p>Connect to a Database</p>
     <div class="well well-small">
@@ -119,7 +115,8 @@
           <input id="databasepassword" type="password">
         </div>
       </form>
-    </div> <!-- close of well -->
+    </div>
+    <!-- close of well -->
     <div>
       <input type="file" id="csvfile" style="display:none" />
       <button class="btn btn-info">
@@ -127,6 +124,7 @@
       </button>
     </div>
   </div> <!-- close of modal body -->
+
   <div class="modal-footer">
     <a href="#" data-dismiss="modal" data-target="#datasource" class="btn">
       Test Connection

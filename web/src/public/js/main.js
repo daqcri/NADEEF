@@ -15,9 +15,9 @@ require.config({
     baseUri: '.',
 	paths: {
 		"text" : "lib/text",
-		"jquery" : "lib/jquery-1.7.1.min",
-		"underscore" : "lib/underscore-min",
-		"bootstrap" : "lib/bootstrap.min",
+		"jquery" : "lib/jquery-1.10.2",
+		"underscore" : "lib/underscore",
+		"bootstrap" : "lib/bootstrap",
 		"datatable" : "lib/jquery.dataTables",
 		"d3" : "lib/d3.v3",
 		"nvd3" : "lib/nv.d3",

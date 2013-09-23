@@ -21,3 +21,11 @@ insert into RULE (name, type, code, table1, table2, last_edit_timestamp)
   select '$name$', x.type, '$code$', '$table1$', '$table2$', current_timestamp from
   ruletype x where x.name = '$type$'
 >>
+
+QueryViolation(tablename, start, interval, filter) ::= <<
+    select
+        *
+    from
+        $tablename$
+    offset $start$ rows fetch next $interval$ rows only
+>>

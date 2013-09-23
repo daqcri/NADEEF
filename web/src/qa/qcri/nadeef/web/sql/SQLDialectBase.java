@@ -38,12 +38,13 @@ public abstract class SQLDialectBase {
 
     /**
      * Query Violation table.
+     * @param tableName table name.
+     * @param start start index.
+     * @param interval interval.
+     * @param filter filter.
      * @return query SQL.
      */
-    public String queryViolation() {
-        return "select vid as Vid, rid as RuleName, tablename as TableName, " +
-            "tupleid as TupleID, attribute as ColumnName, value as Value from VIOLATION";
-    }
+    public abstract String queryTable(String tableName, int start, int interval, String filter);
 
     /**
      * Delete violation.
@@ -54,13 +55,11 @@ public abstract class SQLDialectBase {
     }
 
     /**
-     * Query Table.
+     * Query Table schema.
      * @param tableName query table name.
      * @return query SQL.
      */
-    public String queryTable(String tableName) {
-        return "SELECT * FROM " + tableName;
-    }
+    public abstract String querySchema(String tableName);
 
     /**
      * Query supported rules.

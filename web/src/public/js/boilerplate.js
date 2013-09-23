@@ -14,7 +14,6 @@
 define(
     ['jquery',
      'text',
-     'jquery',
      'underscore',
      'bootstrap',
      'd3',
