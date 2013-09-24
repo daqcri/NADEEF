@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
  * drives the cleaning execution.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class CleanExecutor {
 
@@ -73,7 +74,7 @@ public class CleanExecutor {
      * CleanExecutor finalizer.
      */
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable{
         if (queryFlow != null && queryFlow.isRunning()) {
             queryFlow.forceStop();
         }
@@ -89,6 +90,8 @@ public class CleanExecutor {
         if (updateFlow != null && updateFlow.isRunning()) {
             updateFlow.forceStop();
         }
+
+        super.finalize();
     }
     //</editor-fold>
 
@@ -229,7 +232,7 @@ public class CleanExecutor {
      * Runs both the detection and repair.
      */
     public CleanExecutor run() {
-        int changedCells = 0;
+        int changedCells;
         currentIterationNumber = 0;
 
         do {

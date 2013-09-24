@@ -28,10 +28,12 @@ import java.io.File;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Nadeef configuration class.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
@@ -127,12 +129,12 @@ public class NadeefConfiguration {
         }
 
         JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
-        Set<String> keySet = (Set<String>)ruleext.keySet();
-        for (String key : keySet) {
-            String builderClassName = (String)ruleext.get(key);
+        Set<Map.Entry> entries = ruleext.entrySet();
+        for (Map.Entry<String, String> entry : entries) {
+            String builderClassName = entry.getValue();
             Class builderClass = CommonTools.loadClass(builderClassName);
             RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
-            ruleExtension.put(key, writer);
+            ruleExtension.put(entry.getKey(), writer);
         }
 
         if (jsonObject.containsKey("thrift")) {

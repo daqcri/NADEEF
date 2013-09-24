@@ -20,6 +20,8 @@ import java.io.PrintStream;
 
 /**
  * ConsoleReader to PrintStream adapter.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class ConsoleReaderAdaptor extends PrintStream {
     private ConsoleReader consoleReader;

@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Tuple class represents a tuple (row) in a table.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Tuple {
     private Tracer tracer = Tracer.getTracer(Tuple.class);

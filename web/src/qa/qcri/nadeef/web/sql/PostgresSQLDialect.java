@@ -6,6 +6,8 @@ import org.stringtemplate.v4.STGroupFile;
 
 /**
  * Postgres SQLDialect.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class PostgresSQLDialect extends SQLDialectBase {
     private static STGroupFile template =

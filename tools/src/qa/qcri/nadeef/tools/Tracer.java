@@ -19,7 +19,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.log4j.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,6 +31,8 @@ import java.util.Map;
 
 /**
  * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 // TODO: Make statistic summary generic
 public class Tracer {

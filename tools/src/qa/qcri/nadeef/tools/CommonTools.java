@@ -28,7 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Common helper tools
+ * Common helper tools.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public final class CommonTools {
     private static Tracer tracer = Tracer.getTracer(CommonTools.class);

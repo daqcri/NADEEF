@@ -45,6 +45,8 @@ import java.util.List;
 
 /**
  * Nadeef cleaning plan.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class CleanPlan {
     private DBConfig source;

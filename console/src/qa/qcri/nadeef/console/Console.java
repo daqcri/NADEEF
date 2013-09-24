@@ -39,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * User interactive console.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Console {
 

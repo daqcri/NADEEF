@@ -25,6 +25,8 @@ import qa.qcri.nadeef.tools.Tracer;
 
 /**
  * Service container which starts / stops the NADEEF thrift service.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class NadeefService extends AbstractIdleService {
     private TServer server;

@@ -21,6 +21,8 @@ import java.util.UUID;
 /**
  * Node Cache manager manages the input/output of the node execution.
  * It is basically a pair-value container.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class NodeCacheManager {
     private static HashMap<String, Object> cachePool;

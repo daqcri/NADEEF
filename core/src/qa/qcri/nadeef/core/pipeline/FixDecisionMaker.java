@@ -20,6 +20,7 @@ import java.util.Collection;
 /**
  * FixDecisionMaker provides algorithm which selects the right candidate fix based on a
  * collection of @see Fix.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public abstract class FixDecisionMaker extends Operator<Collection<Fix>, Collection<Fix>> {
     /**

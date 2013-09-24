@@ -46,11 +46,11 @@ define([
     }
 
     function bindEvent() {
-        $('#widget ul li').on('click', function(e) {
+        $('#widget').find('ul li').on('click', function(e) {
             renderWidget(e.currentTarget.id);
         });
 
-        $('#tables ul li').on('click', function(e) {
+        $('#tables').find('ul li').on('click', function(e) {
             renderTable(e.currentTarget.id);
         });
 

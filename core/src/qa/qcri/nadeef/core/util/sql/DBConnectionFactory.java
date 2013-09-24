@@ -26,6 +26,8 @@ import java.sql.SQLException;
 
 /**
  * Database JDBC Connection Factory class.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class DBConnectionFactory {
     private static Tracer tracer = Tracer.getTracer(DBConnectionFactory.class);

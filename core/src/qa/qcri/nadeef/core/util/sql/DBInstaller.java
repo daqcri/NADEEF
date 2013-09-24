@@ -24,6 +24,8 @@ import java.sql.Statement;
 
 /**
  * NADEEF database installation utility class.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public final class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);

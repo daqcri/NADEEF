@@ -22,6 +22,8 @@ import java.sql.*;
 
 /**
  * An utility class for getting meta data from database.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public final class DBMetaDataTool {
     /**
@@ -109,25 +111,19 @@ public final class DBMetaDataTool {
         } catch (Exception ex) {
             tracer.err("Cannot get valid schema.", ex);
         } finally {
-            if (resultSet != null) {
-                try {
+            try {
+                if (resultSet != null) {
                     resultSet.close();
-                } catch (Exception ex) {}
-            }
-
-            if (stat != null) {
-                try {
-                    stat.close();
-                } catch (Exception ex) {};
-            }
-
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
                 }
-            }
+
+                if (stat != null) {
+                    stat.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {}
         }
         return result;
     }
@@ -153,9 +149,7 @@ public final class DBMetaDataTool {
                 meta.getTables(null, null, tableName.toLowerCase(), null).next();
             return result;
         } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
+            resultSet.close();
             if (conn != null) {
                 conn.close();
             }

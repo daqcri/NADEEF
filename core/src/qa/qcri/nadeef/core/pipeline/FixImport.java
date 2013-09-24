@@ -27,6 +27,7 @@ import java.util.Collection;
 
 /**
  * Imports the fix data from database.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 class FixImport extends Operator<Rule, Collection<Fix>> {
     @Override

@@ -23,6 +23,8 @@ import java.nio.file.Path;
 
 /**
  * Bootstrap class which initialize the Database and Configuration.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public final class Bootstrap {
     /**

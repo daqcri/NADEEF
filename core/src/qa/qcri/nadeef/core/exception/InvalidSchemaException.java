@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.core.exception;
 
 /**
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class InvalidSchemaException extends Exception {
     private Exception innerException;

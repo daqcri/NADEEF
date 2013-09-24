@@ -27,13 +27,18 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 
 /**
  * NADEEF job scheduler.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class NadeefJobScheduler {
     private static NadeefJobScheduler instance;

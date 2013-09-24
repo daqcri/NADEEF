@@ -34,6 +34,8 @@ import java.util.List;
 
 /**
  * Violation Extension helper.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Violations {
     private static Tracer tracer = Tracer.getTracer(Violations.class);

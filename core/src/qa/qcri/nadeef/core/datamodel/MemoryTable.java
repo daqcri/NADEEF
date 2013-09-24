@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * MemoryTable represents a table which resides in memory.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class MemoryTable extends Table {
     private List<Tuple> tuples;
@@ -37,6 +38,10 @@ public class MemoryTable extends Table {
     }
 
     //<editor-fold desc="Table override methods">
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void recycle() {
         tuples.clear();

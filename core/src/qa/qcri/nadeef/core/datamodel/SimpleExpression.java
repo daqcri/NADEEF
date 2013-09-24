@@ -25,6 +25,7 @@ import java.util.Map;
 /**
  * Expression class describes a simple expression used in the scope.
  * An expression contains a left operator and a assigned value.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class SimpleExpression {
 

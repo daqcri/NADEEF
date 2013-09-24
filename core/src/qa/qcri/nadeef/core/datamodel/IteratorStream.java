@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Streaming output (Bounded Queued Buffer).
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 // TODO: make it a generic data structure.
 public class IteratorStream<E> {

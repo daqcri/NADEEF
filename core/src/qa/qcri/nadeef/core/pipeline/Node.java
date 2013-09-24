@@ -20,6 +20,7 @@ import java.util.UUID;
 
 /**
  * A component runs in the pipeline.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Node {
 
@@ -55,7 +56,7 @@ public class Node {
 
     @SuppressWarnings("unchecked")
     public String execute(String key) {
-        Object result = null;
+        Object result;
         if (operator == null) {
             throw new NullPointerException("Operator is null.");
         }
@@ -111,8 +112,7 @@ public class Node {
     }
 
     /**
-     * Gets the current progress percentage.
-     * @return progress percentage.
+     * Resets the operator.
      */
     void reset() {
         operator.reset();

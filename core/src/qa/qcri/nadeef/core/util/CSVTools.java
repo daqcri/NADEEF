@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * CSVTools is a simple tool which dumps CSV data into database given a table name.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class CSVTools {
     // <editor-fold desc="Public methods">

@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * Comparator which compares two {@link Tuple} by {@link Column}.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 class TupleComparator implements Comparator<Tuple> {
     private List<Column> columns;

@@ -15,6 +15,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 /**
  * Operation enumeration.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public enum Operation {
     EQ(0),

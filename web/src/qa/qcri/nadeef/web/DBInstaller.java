@@ -30,6 +30,8 @@ import java.sql.Statement;
 
 /**
  * DB Installer for Dashboard.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);

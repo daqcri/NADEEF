@@ -22,6 +22,7 @@ import java.util.*;
 /**
  * EquivalentClass is an implementation of {@link FixDecisionMaker} based on EquivalentClass
  * algorithm.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class EquivalentClass extends FixDecisionMaker {
     /**
@@ -150,9 +151,9 @@ public class EquivalentClass extends FixDecisionMaker {
         }
 
         // collect the remaining constant assign fix.
-        Set<Cell> cells = assignMap.keySet();
-        for (Cell cell : cells) {
-            Fix newFix = fixBuilder.left(cell).right(assignMap.get(cell)).build();
+        Set<Map.Entry<Cell, String>> entries = assignMap.entrySet();
+        for (Map.Entry<Cell, String> entry : entries) {
+            Fix newFix = fixBuilder.left(entry.getKey()).right(entry.getValue()).build();
             result.add(newFix);
         }
         return result;

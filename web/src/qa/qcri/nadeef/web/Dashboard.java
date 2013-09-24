@@ -31,6 +31,8 @@ import static spark.Spark.*;
 
 /**
  * Start class for launching dashboard.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public final class Dashboard {
     private static Tracer tracer;

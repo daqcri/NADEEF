@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * SQLTable represents a {@link Table} which resides in a database.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class SQLTable extends Table {
     private DBConnectionFactory connectionFactory;

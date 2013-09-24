@@ -15,16 +15,14 @@ package qa.qcri.nadeef.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-
 import org.apache.thrift.TException;
-
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.service.thrift.*;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -40,6 +38,8 @@ import java.util.List;
 
 /**
  * NadeefServiceHandler handles request for NADEEF service.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 // TODO: speedup the compiling stage by using object caching.
 public class NadeefServiceHandler implements TNadeefService.Iface {

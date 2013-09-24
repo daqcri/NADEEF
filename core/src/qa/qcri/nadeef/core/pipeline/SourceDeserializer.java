@@ -28,6 +28,8 @@ import java.util.List;
 /**
  * SourceDeserializer generates tuples for the rule. It also does the optimization
  * based on the input rule hints.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class SourceDeserializer extends Operator<Rule, Collection<Table>> {
     private DBConnectionFactory connectionFactory;

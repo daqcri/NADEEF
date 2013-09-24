@@ -26,6 +26,8 @@ import java.util.Collection;
 
 /**
  * Import violations from violation table.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class ViolationDeserializer extends Operator<Rule, Collection<Violation>> {
 

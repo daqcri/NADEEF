@@ -28,6 +28,7 @@ import java.util.Collection;
 
 /**
  * Export fix into the repair database.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     private static Tracer tracer = Tracer.getTracer(FixExport.class);

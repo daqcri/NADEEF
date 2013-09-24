@@ -6,6 +6,8 @@ import org.stringtemplate.v4.STGroupFile;
 
 /**
  * MySQL Dialect.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class MySQLDialect extends SQLDialectBase {
     private static STGroupFile template =

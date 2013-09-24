@@ -20,6 +20,8 @@ import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 /**
  * Configuration object for JDBC connection.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class DBConfig {
     private String userName;

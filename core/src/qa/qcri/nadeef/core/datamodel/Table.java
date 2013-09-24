@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * A Table represents a collection of <code>Tuples</code>.
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public abstract class Table {
     protected Schema schema;
@@ -70,7 +71,7 @@ public abstract class Table {
      * Clean up the resources for this <code>Table</code>. After recycling the table instance
      * should not be used any more.
      */
-    public void recycle() {};
+    public void recycle() {}
     //</editor-fold desc="Public methods">
 
     //<editor-fold desc="Default Table behavior">

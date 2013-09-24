@@ -20,6 +20,8 @@ import org.stringtemplate.v4.STGroupFile;
 
 /**
  * Derby SQL Dialect.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class DerbySQLDialect extends SQLDialectBase {
     private static STGroupFile template =

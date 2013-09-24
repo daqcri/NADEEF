@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Operator which executes the repair of a rule.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class ViolationRepair
     extends Operator<Collection<Violation>, Collection<Collection<Fix>>> {
@@ -56,7 +58,7 @@ public class ViolationRepair
             setPercentage(count / violations.size());
         }
 
-        long elapseTime = 0l;
+        long elapseTime;
         if (violations.size() != 0) {
             elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS) / violations.size();
         } else {

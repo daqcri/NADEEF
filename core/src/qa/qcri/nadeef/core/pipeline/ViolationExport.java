@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Export violations into the target place.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     /**

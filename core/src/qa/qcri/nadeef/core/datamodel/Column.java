@@ -17,6 +17,8 @@ import qa.qcri.nadeef.tools.CommonTools;
 
 /**
  * A Column represents a Column in a table. It contains a table name and a attribute name.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Column {
     private String tableName;
@@ -61,14 +63,6 @@ public class Column {
         this.attributeName = attributeName;
     }
     //</editor-fold>
-
-    /**
-     * Gets the schema name.
-     * @return schema name.
-     */
-    public String getSchemaName() {
-        return schemaName;
-    }
 
     /**
      * Gets the table name.
@@ -123,11 +117,7 @@ public class Column {
 
         Column column = (Column)obj;
 
-        if (getFullColumnName().equalsIgnoreCase(column.getFullColumnName())) {
-            return true;
-        }
-
-        return false;
+        return getFullColumnName().equalsIgnoreCase(column.getFullColumnName());
     }
 
     @Override

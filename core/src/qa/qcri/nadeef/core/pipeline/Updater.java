@@ -34,6 +34,8 @@ import java.util.HashMap;
  * Updater fixes the source data and exports it in the database.
  * It returns <code>True</code> when there is no Cell changed in
  * the pipeline. In this case the pipeline will stop.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
@@ -125,6 +127,10 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         } finally {
             if (conn != null) {
                 conn.close();
+            }
+
+            if (auditInsertStat != null) {
+                auditInsertStat.close();
             }
 
             if (stat != null) {

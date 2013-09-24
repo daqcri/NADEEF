@@ -31,6 +31,8 @@ import java.util.List;
 
 /**
  * Fix extension class.
+ *
+ * @author Si Yin <siyin@qf.org.qa>
  */
 public class Fixes {
     /**
