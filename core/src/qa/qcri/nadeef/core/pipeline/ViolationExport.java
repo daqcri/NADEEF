@@ -19,7 +19,7 @@ import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.Tracer;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Export violations into the target place.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     /**
@@ -58,7 +58,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         Statement stat = null;
         int count = 0;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             stat = conn.createStatement();
             SQLDialectBase dialectManager =
                 SQLDialectFactory.getNadeefDialectManagerInstance();

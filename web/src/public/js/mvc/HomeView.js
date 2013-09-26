@@ -10,18 +10,20 @@
  * NADEEF has patent pending nevertheless the following is granted.
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
-
-// TODO: make the view render in a independent module.
 define([
+    "router",
     "render",
     "table",
+    "requester",
     "text!mvc/template/home.template.html",
     "text!mvc/template/table.template.html",
     "text!mvc/template/tab.template.html",
     "mvc/ControllerView"
 ], function(
+    Router,
     Renderer,
     Table,
+    Requester,
     HomeTemplate,
     TableTemplate,
     WidgetTemplate,
@@ -32,7 +34,7 @@ define([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ["<span>" + msg + "</span></div>"]].join(''));
     
         window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
     }
@@ -46,11 +48,11 @@ define([
     }
 
     function bindEvent() {
-        $('#widget').find('ul li').on('click', function(e) {
+        $('#widget').find("ul li").on('click', function(e) {
             renderWidget(e.currentTarget.id);
         });
 
-        $('#tables').find('ul li').on('click', function(e) {
+        $('#tables').find("ul li").on('click', function(e) {
             renderTable(e.currentTarget.id);
         });
 
@@ -58,11 +60,16 @@ define([
             refresh();
         });
 
-        $('#clear').on('click', function(e) {
+        $('#clear').on('click', function() {
+            var state = window.history.state;
+            if (state == null || state.projectName == '') {
+                Router.redirectToRoot();
+            }
+
             $.ajax({
-                url: '/table/violation',
+                url: '/' + state.projectName + '/table/violation',
                 type: "DELETE",
-                success: function(e) {
+                success: function() {
                     info('Violations are removed');
                     refresh();
                 }
@@ -71,29 +78,41 @@ define([
     }
 
     function refresh() {
-        var defaultWidget = $('#widget li.active');
+        var defaultWidget = $('#widget').find('li.active');
         if (defaultWidget != null) {
             renderWidget(defaultWidget[0].id);
         }
 
-        var defaultTable = $('#tables li.active');
+        var defaultTable = $('#tables').find('li.active');
         if (defaultTable != null) {
             renderTable(defaultTable[0].id);
         }           
     }
     
-    function start() {        
+    function start() {
+        var state = window.history.state;
+        if (state == null || state.projectName == '') {
+            Router.redirectToRoot();
+            return;
+        }
+
+        projectName = state.projectName;
+
         render();
         bindEvent();
         // render default view
-        var defaultWidget = $('#widget li.active');
-        if (defaultWidget != null) {
+        var defaultWidget = $('#widget').find('li.active');
+        if (defaultWidget != null && defaultWidget.length > 0) {
             renderWidget(defaultWidget[0].id);
+        } else {
+            renderWidget("overview");
         }
 
-        var defaultTable = $('#tables li.active');
-        if (defaultTable != null) {
+        var defaultTable = $('#tables').find('li.active');
+        if (defaultTable != null && defaultTable.length > 0) {
             renderTable(defaultTable[0].id);
+        } else {
+            renderTable("violation");
         }
     }
 
@@ -137,7 +156,6 @@ define([
     }
     
     function render() {
-        Table.init();
         var widgetTabs = {
             tabs: [
                 {tag : "overview", head : "Overview", isActive : true},

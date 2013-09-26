@@ -25,7 +25,7 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
@@ -187,7 +187,7 @@ public class CleanPlan {
                     targetTableNames = toUppercase(targetTableNames);
 
                     // source is a CSV file, dump it to NADEEF database.
-                    conn = DBConnectionFactory.getNadeefConnection();
+                    conn = DBConnectionPool.getNadeefConnection();
                     // This hashset is to prevent that tables are dumped for multiple times.
                     for (int j = 0; j < targetTableNames.size(); j++) {
                         File file = CommonTools.getFile(fullFileNames.get(j));

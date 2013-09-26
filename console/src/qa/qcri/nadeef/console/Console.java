@@ -52,7 +52,7 @@ public class Console {
             "/_/|_/\\_,_/\\_,_/\\__/\\__/ __/\n" +
             "Data Cleaning solution (Build " + System.getenv("BuildVersion")  +
             ", using Java " + System.getProperty("java.version") + ").\n" +
-            "Copyright (C) Qatar Computing Research Institute, 2013 (http://da.qcri.org).";
+            "Copyright (C) Qatar Computing Research Institute, 2013 - Present (http://da.qcri.org).";
 
     private static final String helpInfo = "Type 'help' to see what commands we have.";
 

@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadFactory;
 /**
  * Wrapper class for executing the violation detection.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class ViolationDetector<T>
     extends Operator<Rule, Collection<Violation>> {

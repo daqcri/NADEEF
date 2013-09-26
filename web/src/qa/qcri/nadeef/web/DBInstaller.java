@@ -15,7 +15,7 @@ package qa.qcri.nadeef.web;
 
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.DerbySQLDialect;
@@ -31,7 +31,7 @@ import java.sql.Statement;
 /**
  * DB Installer for Dashboard.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
@@ -41,7 +41,7 @@ class DBInstaller {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             stat = conn.createStatement();
 
             // TODO: do inject dep. for generic function

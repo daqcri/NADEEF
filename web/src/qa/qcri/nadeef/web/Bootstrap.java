@@ -14,7 +14,6 @@
 package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileNotFoundException;
@@ -24,7 +23,7 @@ import java.nio.file.Path;
 /**
  * Bootstrap class which initialize the Database and Configuration.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public final class Bootstrap {
     /**
@@ -61,7 +60,6 @@ public final class Bootstrap {
             Tracer.setLoggingDir(outputPath.toString());
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
-            DBConnectionFactory.initializeNadeefConnectionPool();
 
             DBInstaller.install();
 

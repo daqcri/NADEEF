@@ -17,7 +17,7 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,7 +27,7 @@ import java.util.Collection;
 /**
  * Import violations from violation table.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class ViolationDeserializer extends Operator<Rule, Collection<Violation>> {
 
@@ -39,7 +39,7 @@ public class ViolationDeserializer extends Operator<Rule, Collection<Violation>>
      */
     @Override
     public Collection<Violation> execute(Rule rule) throws Exception {
-        Connection conn = DBConnectionFactory.getNadeefConnection();
+        Connection conn = DBConnectionPool.getNadeefConnection();
         Collection<Violation> result = null;
         try {
             Statement stat = conn.createStatement();

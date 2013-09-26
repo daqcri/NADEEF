@@ -17,7 +17,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
 import spark.Request;
@@ -32,7 +32,7 @@ import static spark.Spark.*;
 /**
  * Start class for launching dashboard.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public final class Dashboard {
     private static Tracer tracer;
@@ -195,7 +195,7 @@ public final class Dashboard {
                 JSONObject json = new JSONObject();
                 JSONArray result = new JSONArray();
                 try {
-                    conn = DBConnectionFactory.getNadeefConnection();
+                    conn = DBConnectionPool.getNadeefConnection();
                     DatabaseMetaData meta = conn.getMetaData();
                     ResultSet rs = meta.getTables(null, null, null, new String[] {"TABLE"});
                     while (rs.next()) {
@@ -291,7 +291,7 @@ public final class Dashboard {
                 JSONArray result = new JSONArray();
                 ResultSet rs = null;
                 try {
-                    conn = DBConnectionFactory.getNadeefConnection();
+                    conn = DBConnectionPool.getNadeefConnection();
                     stat = conn.createStatement();
                     rs = stat.executeQuery(dialectInstance.queryDistinctTable());
                     List<String> tableNames = Lists.newArrayList();
@@ -498,7 +498,7 @@ public final class Dashboard {
         ResultSet rs = null;
         Statement stat = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             conn.setAutoCommit(true);
             stat = conn.createStatement();
             rs = stat.executeQuery(sql);
@@ -528,7 +528,7 @@ public final class Dashboard {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             conn.setAutoCommit(true);
             stat = conn.createStatement();
             stat.execute(sql);

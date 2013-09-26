@@ -23,7 +23,7 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 public class SQLTableTest extends NadeefTestBase {
     private String tableName;
     private DBConfig dbconfig;
-    private DBConnectionFactory connectionFactory;
+    private DBConnectionPool connectionFactory;
 
     public SQLTableTest(String config_) {
         super(config_);
@@ -62,10 +62,10 @@ public class SQLTableTest extends NadeefTestBase {
                     .build();
             SQLDialectBase dialectManager =
                     SQLDialectFactory.getDialectManagerInstance(dbconfig.getDialect());
-            conn = DBConnectionFactory.createConnection(dbconfig);
+            conn = DBConnectionPool.createConnection(dbconfig);
             tableName =
                 CSVTools.dump(conn, dialectManager, TestDataRepository.getDumpTestCSVFile());
-            connectionFactory = DBConnectionFactory.createDBConnectionFactory(dbconfig);
+            connectionFactory = DBConnectionPool.createDBConnectionFactory(dbconfig);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

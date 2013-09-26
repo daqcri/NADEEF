@@ -27,7 +27,7 @@ import java.util.concurrent.*;
 
 /**
  * Iterator.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">

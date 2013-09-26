@@ -11,22 +11,42 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(["text!mvc/template/navbar.template.html"], function(page) {
+define([
+    "router",
+    "text!mvc/template/navbar.template.html"
+], function(Router, NavbarTemplate) {
     function bindEvent() {
-        $('#navbar li a').on('click', function(e) {
+        $('#navbar').find('li a').on('click', function() {
             $('#navbar').find('.active').removeClass('active');
             $(this).parent().addClass('active');
+        });
+
+        $("#project-button").on("click", function() {
+            var newProject = $("#create-new-project").val();
+            var selectedProject = $("#select-existing-project").val();
+
+            // TODO: project validation here
+            var state;
+            if (newProject != null && newProject != "") {
+                state = { "name" : newProject, "create" : true };
+            } else {
+                state = { "name" : selectedProject, "create" : false };
+            }
+
+            $("#projectModal").modal('hide');
+            Router.redirect('#home', state);
         });
     }
     
     function render() {
-        $('body').append(_.template(page)());
-        bindEvent();
+        $('body').append(_.template(NavbarTemplate)());
     }
     
 	function start() {
 		render();
 		bindEvent();
+
+        $("#projectModal").modal('show');
 	}
 	
     return {

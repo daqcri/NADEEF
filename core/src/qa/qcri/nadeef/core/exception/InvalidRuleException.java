@@ -15,7 +15,7 @@ package qa.qcri.nadeef.core.exception;
 
 /**
  * InvalidRuleException.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class InvalidRuleException extends Exception {
     private Exception innerException;

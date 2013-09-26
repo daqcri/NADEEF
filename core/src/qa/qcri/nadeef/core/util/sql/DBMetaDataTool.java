@@ -23,7 +23,7 @@ import java.sql.*;
 /**
  * An utility class for getting meta data from database.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public final class DBMetaDataTool {
     /**
@@ -47,7 +47,7 @@ public final class DBMetaDataTool {
         Statement stat = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig, true);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             if (isTableExist(dbConfig, targetTableName)) {
                 stat.execute(dialectManager.dropTable(targetTableName));
@@ -93,7 +93,7 @@ public final class DBMetaDataTool {
             builder.setLimit(1);
             String sql = builder.build(dialectManager);
 
-            conn = DBConnectionFactory.createConnection(config);
+            conn = DBConnectionPool.createConnection(config);
             stat = conn.createStatement();
 
             resultSet = stat.executeQuery(sql);
@@ -142,7 +142,7 @@ public final class DBMetaDataTool {
         Connection conn = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig, true);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             DatabaseMetaData meta = conn.getMetaData();
             boolean result =
                 meta.getTables(null, null, tableName.toUpperCase(), null).next() ||

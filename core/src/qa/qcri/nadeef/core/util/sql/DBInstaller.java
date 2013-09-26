@@ -24,21 +24,21 @@ import java.sql.Statement;
 
 /**
  * NADEEF database installation utility class.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public final class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
 
     /**
-     * Checks whether NADEEF is installed in the targeted database connection.
+     * Checks whether the target table is installed in the targeted database connection.
+     * @param conn connection.
      * @param tableName source tableName.
-     * @return TRUE when Nadeef is already installed on the database.
+     * @return {@code TRUE} when Nadeef is already installed on the database.
      */
-    public static boolean isInstalled(String tableName) throws SQLException {
-        Connection conn = null;
+    private static boolean isInstalled(
+        Connection conn,
+        String tableName
+    ) throws SQLException {
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
             DatabaseMetaData metaData = conn.getMetaData();
 
             return metaData.getTables(null, null, tableName, null).next() ||
@@ -53,30 +53,40 @@ public final class DBInstaller {
 
     /**
      * Install NADEEF on the target database.
+     * @param connectionPool Connection pool.
      */
-    public static void install(
-        String violationTableName,
-        String repairTableName,
-        String auditTableName) throws SQLException {
+    public static void install(DBConnectionPool connectionPool) throws SQLException {
         Connection conn = null;
         Statement stat = null;
+        SQLDialect dialect = connectionPool.getNadeefConfig().getDialect();
+        SQLDialectBase dialectManager =
+            SQLDialectFactory.getDialectManagerInstance(dialect);
+        String violationTableName = NadeefConfiguration.getViolationTableName();
+        String repairTableName = NadeefConfiguration.getRepairTableName();
+        String auditTableName = NadeefConfiguration.getAuditTableName();
 
+        // TODO: make tables BNCF
         try {
-            if (isInstalled(violationTableName)) {
-                tracer.info("Nadeef is installed on the database, please try uninstall first.");
-                return;
+            conn = connectionPool.getNadeefConnection();
+            stat = conn.createStatement();
+
+            if (isInstalled(conn, violationTableName)) {
+                tracer.info("Violation is already installed on the database, skip installing.");
+            } else {
+                stat.execute(dialectManager.createViolationTable(violationTableName));
             }
 
-            SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
-            SQLDialectBase dialectManager =
-                SQLDialectFactory.getDialectManagerInstance(dialect);
+            if (isInstalled(conn, repairTableName)) {
+                tracer.info("Violation is already installed on the database, skip installing.");
+            } else {
+                stat.execute(dialectManager.createViolationTable(repairTableName));
+            }
 
-            conn = DBConnectionFactory.getNadeefConnection();
-            stat = conn.createStatement();
-            // TODO: make tables BNCF
-            stat.execute(dialectManager.createViolationTable(violationTableName));
-            stat.execute(dialectManager.createRepairTable(repairTableName));
-            stat.execute(dialectManager.createAuditTable(auditTableName));
+            if (isInstalled(conn, auditTableName)) {
+                tracer.info("Violation is already installed on the database, skip installing.");
+            } else {
+                stat.execute(dialectManager.createAuditTable(auditTableName));
+            }
 
             conn.commit();
         } catch (SQLException ex) {
@@ -94,31 +104,48 @@ public final class DBInstaller {
     }
 
     /**
-     * Uninstall NADEEF from the target database.
-     * @param tableName uninstall table name.
+     * Uninstall NADEEF on the target database.
+     * @param connectionPool Connection pool.
      */
-    public static void uninstall(String tableName) throws SQLException {
+    public static void uninstall(DBConnectionPool connectionPool) throws SQLException {
         Connection conn = null;
-        SQLDialectBase dialectManager =
-            SQLDialectFactory.getNadeefDialectManagerInstance();
         Statement stat = null;
-        if (isInstalled(tableName)) {
-            try {
-                conn = DBConnectionFactory.getNadeefConnection();
-                stat = conn.createStatement();
-                stat.execute(dialectManager.dropTable(tableName));
-                stat.close();
-                conn.commit();
-            } catch (Exception ex) {
-                tracer.err("Exception during uninstall table " + tableName, ex);
-            } finally {
-                if (stat != null) {
-                    stat.close();
-                }
+        SQLDialect dialect = connectionPool.getNadeefConfig().getDialect();
+        SQLDialectBase dialectManager =
+            SQLDialectFactory.getDialectManagerInstance(dialect);
 
-                if (conn != null) {
-                    conn.close();
-                }
+        // TODO: make tables BNCF
+        try {
+            String violationTableName = NadeefConfiguration.getViolationTableName();
+            String repairTableName = NadeefConfiguration.getRepairTableName();
+            String auditTableName = NadeefConfiguration.getAuditTableName();
+
+            conn = connectionPool.getNadeefConnection();
+            stat = conn.createStatement();
+
+            if (isInstalled(conn, violationTableName)) {
+                stat.execute(dialectManager.dropTable(violationTableName));
+            }
+
+            if (isInstalled(conn, repairTableName)) {
+                stat.execute(dialectManager.dropTable(repairTableName));
+            }
+
+            if (isInstalled(conn, auditTableName)) {
+                stat.execute(dialectManager.dropTable(auditTableName));
+            }
+
+            conn.commit();
+        } catch (SQLException ex) {
+            tracer.err("SQLException during installing tables.", ex);
+            throw ex;
+        } finally {
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
             }
         }
     }

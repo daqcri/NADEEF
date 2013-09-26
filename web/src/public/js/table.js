@@ -59,7 +59,6 @@ define(["jquery", "bootstrap", "datatable"], function() {
             }
         } );
 
-
         /* Default class modification */
         $.extend( $.fn.dataTableExt.oStdClasses, {
             "sWrapper": "dataTables_wrapper form-inline"

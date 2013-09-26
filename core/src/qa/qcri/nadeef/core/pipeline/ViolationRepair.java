@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Operator which executes the repair of a rule.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class ViolationRepair
     extends Operator<Collection<Violation>, Collection<Collection<Fix>>> {

@@ -11,16 +11,17 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(
-	['ace',
+define([
+    'requester',
+    'ace',
 	 'text!mvc/template/cleanplan.template.html'],
-	function(Ace, CleanPlanTemplate) {
+	function(Requester, Ace, CleanPlanTemplate) {
 		var editor;
         var sources;
         var rules;
 
 		function getRule() {
-            var type =  $('#select_ruletype .active')[0].id;
+            var type =  $('#select_ruletype').find('.active')[0].id;
 			var table1;
 			var table2;
 			var tables = $('#select_source').val();
@@ -46,10 +47,10 @@ define(
 				table2: table2
 			};
 		}
-        
+
 		function render(id, rule) {
             // TODO: use a better chain pattern
-            $.getJSON('/data/source', function(data) {
+            Requester.getSource(function(data) {
                 sources = data['data'];
 			    var cleanPlanHtml = 
                     _.template(CleanPlanTemplate) (
@@ -73,6 +74,7 @@ define(
 					editor.setValue(rule.code, -1);
 				}
 			    editor.getSession().setMode("ace/mode/java");
+
 				$('#cleanPlanPopup').modal();
             });
 		}
@@ -81,7 +83,7 @@ define(
             $('#save').on('click', function(e) {
 				var rule = getRule();
 				$.ajax({
-					url: "/data/rule",
+					url: "/" + getProjectName() + "/data/rule",
 					type: "POST",
 					dataType: "json",
 					data: rule,
@@ -97,7 +99,7 @@ define(
 			$('#generate').on('click', function(e) {
 				var rule = getRule();
 				$.ajax({
-					url: "/do/generate",
+					url: "/" + getProjectName() + "/do/generate",
 					type: "POST",
 					dataType: "json",
 					data: rule,
@@ -118,7 +120,7 @@ define(
 			$('#verify').on('click', function(e) {
 				var rule = getRule();
 				$.ajax({
-					url: "/do/verify",
+					url: "/" + getProjectName() + "/do/verify",
 					type: "POST",
 					dataType: "json",
 					data: rule,

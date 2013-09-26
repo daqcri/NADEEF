@@ -13,20 +13,18 @@
 
 /* Simple routing system */
 define([], function() {
-    var routes =
-        [{hash:'#home', controller:'HomeView'},
-         {hash:'#dashboard',  controller:'DashboardView'}];
+    var routes = [
+            {hash:'#home', controller:'HomeView'},
+            {hash:'#dashboard',  controller:'DashboardView'},
+            {hash:'#project', controller: 'NavbarView'}
+        ];
     var currentHash = '';
-     
+
     function start() {
         setInterval(hashCheck, 200);
     }
      
     function hashCheck() {
-		if (window.location.hash == '') {
-			window.location.hash = 'home';
-		}
-		
         if (window.location.hash != currentHash) {
             for (var i = 0, currentRoute; currentRoute = routes[i++];) {
                 if (window.location.hash == currentRoute.hash) {
@@ -42,8 +40,18 @@ define([], function() {
             controller.start();
         });
     }
-     
+
+    function redirect(url, state) {
+        window.history.pushState(state, null, url);
+    }
+
+    function redirectToRoot() {
+        window.history.pushState(null, null, "#project");
+    }
+
     return {
-        start : start
+        start : start,
+        redirect : redirect,
+        redirectToRoot : redirectToRoot
     };
 });

@@ -18,7 +18,7 @@ import org.stringtemplate.v4.STGroupFile;
 /**
  * Abstract class for cross-vendor DB compatibility.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public abstract class SQLDialectBase {
 

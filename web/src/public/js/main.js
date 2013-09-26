@@ -59,12 +59,26 @@ require.config({
 });
 
 // render the first page
-require(
-    ['boilerplate', 'router', 'mvc/NavbarView'],
-    function(Bootstrap, Router, NavbarView) {
-        Bootstrap.start();
-        Router.start();
-        NavbarView.start();
-        $('#home').trigger('click');
-    }
-);
+require([
+    'router',
+    'jquery',
+    'text',
+    'underscore',
+    'bootstrap',
+    'd3',
+    'nvd3',
+    'table'
+], function(
+    Router,
+    JQuery,
+    Text,
+    Underscore,
+    Bootstrap,
+    D3,
+    Nvd3,
+    Table
+) {
+    Router.start();
+    Table.init();
+    Router.redirect('#project');
+});

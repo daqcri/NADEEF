@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Schema class provides a mapping between column and value for a table.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class Schema {
     private String tableName;

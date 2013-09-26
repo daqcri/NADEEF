@@ -16,14 +16,18 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
  * drives the cleaning execution.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class CleanExecutor {
 
@@ -36,26 +40,22 @@ public class CleanExecutor {
     private Flow repairFlow;
     private Flow updateFlow;
     private int currentIterationNumber;
-
+    private DBConnectionPool connectionPool;
     //</editor-fold>
 
     //<editor-fold desc="Constructor / Deconstructor">
 
     /**
      * Constructor.
-     */
-    public CleanExecutor(CleanPlan cleanPlan) {
-        initialize(cleanPlan);
-    }
-
-    /**
-     * Initialize <code>CleanExecutor</code> with a cleanPlan.
      * @param cleanPlan input {@link CleanPlan}.
+     * @param dbConfig meta data dbconfig.
      */
-    public void initialize(CleanPlan cleanPlan) {
+    public CleanExecutor(CleanPlan cleanPlan, DBConfig dbConfig) throws SQLException {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
-
+        this.connectionPool =
+            DBConnectionPool.createDBConnectionPool(cleanPlan.getSourceDBConfig(), dbConfig);
+        DBInstaller.install(this.connectionPool);
         assembleFlow();
     }
 
@@ -160,16 +160,6 @@ public class CleanExecutor {
     }
 
     /**
-     * Gets the current iteration number.
-     * @return the current iteration number.
-     */
-    public int getCurrentIterationNumber() {
-        synchronized (this) {
-            return currentIterationNumber;
-        }
-    }
-
-    /**
      * Gets the current percentage of Run.
      * @return current percentage of Run.
      */
@@ -265,7 +255,9 @@ public class CleanExecutor {
             String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
             // assemble the query flow.
             queryFlow = new Flow("query");
-            queryFlow.setInputKey(inputKey).addNode(new SourceDeserializer(cleanPlan));
+            queryFlow
+                .setInputKey(inputKey)
+                .addNode(new SourceDeserializer(cleanPlan, connectionPool));
 
             if (rule.supportOneInput()) {
                 queryFlow

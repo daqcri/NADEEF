@@ -21,7 +21,6 @@ define(['underscore'], function() {
 		this.values = [];
 	}
 
-
 	Map.prototype.size = function() {
 		return this.keys.length;
 	}
@@ -72,5 +71,7 @@ define(['underscore'], function() {
 		return false;
 	}
 
-	return Map;
+	return {
+        Map: Map
+    };
 });

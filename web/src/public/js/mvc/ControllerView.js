@@ -94,7 +94,7 @@ define(
 		}
 		
 		function renderTable() {
-			var activeTable = $('#tables li.active')[0].id;
+			var activeTable = $('#tables').find('li.active')[0].id;
 			if (activeTable == 'tab_source') {
 				Table.load(getSelectedSource());
 			}

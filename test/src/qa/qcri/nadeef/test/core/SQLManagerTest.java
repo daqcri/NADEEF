@@ -14,14 +14,13 @@
 package qa.qcri.nadeef.test.core;
 
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Assert;
 import org.junit.Before;
-
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
@@ -50,7 +49,7 @@ public class SQLManagerTest extends NadeefTestBase {
         Connection conn = null;
         try {
             Bootstrap.start(testConfig);
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             Statement stat = conn.createStatement();
 
             BufferedReader reader = new BufferedReader(new FileReader(testFile));
@@ -89,7 +88,7 @@ public class SQLManagerTest extends NadeefTestBase {
     public void shutdown() {
         Connection conn = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             Statement stat = conn.createStatement();
             stat.execute("DROP TABLE DUMPTEST");
             stat.execute("DROP TABLE DUMPTEST2");
@@ -116,7 +115,7 @@ public class SQLManagerTest extends NadeefTestBase {
 
         Connection conn = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             Statement stat = conn.createStatement();
             dialect.copyTable(conn, "DUMPTEST", "DUMPTEST2");
             conn.commit();

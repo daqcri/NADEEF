@@ -22,7 +22,7 @@ import java.sql.*;
 /**
  * Database manager for Apache Derby database.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class MySQLDialect extends SQLDialectBase {
     public static STGroupFile template =

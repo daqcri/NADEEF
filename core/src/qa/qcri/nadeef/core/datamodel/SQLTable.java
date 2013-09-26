@@ -16,7 +16,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.core.util.sql.SQLQueryBuilder;
@@ -34,10 +34,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * SQLTable represents a {@link Table} which resides in a database.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class SQLTable extends Table {
-    private DBConnectionFactory connectionFactory;
+    private DBConnectionPool connectionFactory;
     private SQLDialectBase dialectManager;
     private String tableName;
     private SQLQueryBuilder sqlQuery;
@@ -54,7 +54,7 @@ public class SQLTable extends Table {
      * @param tableName tuple collection table name.
      * @param connectionFactory database connection pool.
      */
-    public SQLTable(String tableName, DBConnectionFactory connectionFactory) {
+    public SQLTable(String tableName, DBConnectionPool connectionFactory) {
         super(tableName);
         this.connectionFactory = connectionFactory;
         this.dialectManager =

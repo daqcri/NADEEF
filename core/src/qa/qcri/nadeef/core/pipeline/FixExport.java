@@ -18,7 +18,7 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Fixes;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -28,7 +28,7 @@ import java.util.Collection;
 
 /**
  * Export fix into the repair database.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     private static Tracer tracer = Tracer.getTracer(FixExport.class);
@@ -54,7 +54,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         Statement stat = null;
         int count = 0;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = DBConnectionPool.getNadeefConnection();
             stat = conn.createStatement();
             int id = Fixes.generateFixId();
             for (Collection<Fix> fixes : fixCollection) {

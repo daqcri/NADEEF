@@ -19,7 +19,7 @@ import qa.qcri.nadeef.tools.sql.SQLDialect;
 /**
  * Factory class to generate {@link SQLDialectBase} class instance.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class SQLDialectFactory {
 

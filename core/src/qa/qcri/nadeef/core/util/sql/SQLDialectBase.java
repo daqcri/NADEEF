@@ -26,7 +26,7 @@ import java.sql.SQLException;
 /**
  * Interface for cross vendor Database methods.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public abstract class SQLDialectBase {
 

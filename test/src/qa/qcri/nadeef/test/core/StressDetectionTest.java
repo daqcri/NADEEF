@@ -24,7 +24,7 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -164,7 +164,7 @@ public class StressDetectionTest extends NadeefTestBase {
         PreparedStatement ps1 = null, ps2 = null, ps3 = null;
         int totalViolation = 0;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig);
+            conn = DBConnectionPool.createConnection(dbConfig);
             ps1 =
                 conn.prepareStatement(
                     "select distinct " + right + " from " + tableName + " where " + left + " = ?"

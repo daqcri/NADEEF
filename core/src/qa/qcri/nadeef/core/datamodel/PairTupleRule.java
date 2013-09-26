@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * PairTupleRule represents a rule which deals with pair of tuples.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public abstract class PairTupleRule extends Rule<TuplePair> {
     //<editor-fold desc="Constructor">

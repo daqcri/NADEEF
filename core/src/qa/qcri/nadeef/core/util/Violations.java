@@ -19,7 +19,7 @@ import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.Tracer;
@@ -42,15 +42,16 @@ public class Violations {
 
     /**
      * Generates violation row number from the database.
+     * @param pool connection pool
      * @return new unique violation id.
      */
-    public static int getViolationRowCount() throws Exception {
+    public static int getViolationRowCount(DBConnectionPool pool) throws Exception {
         Connection conn = null;
         Statement stat = null;
         ResultSet rs = null;
         int result = -1;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = pool.getNadeefConnection();
             SQLDialectBase dialectManager =
                     SQLDialectFactory.getNadeefDialectManagerInstance();
             String tableName = NadeefConfiguration.getViolationTableName();
@@ -86,13 +87,13 @@ public class Violations {
      * Generates violation id from the database.
      * @return new unique violation id.
      */
-    public static int generateViolationId() throws Exception {
+    public static int generateViolationId(DBConnectionPool pool) throws Exception {
         Connection conn = null;
         Statement stat = null;
         ResultSet rs = null;
         int result = -1;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = pool.getNadeefConnection();
             stat = conn.createStatement();
             String tableName = NadeefConfiguration.getViolationTableName();
             SQLDialectBase dialectManager =
