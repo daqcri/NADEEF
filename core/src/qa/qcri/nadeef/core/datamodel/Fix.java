@@ -19,7 +19,6 @@ import com.google.common.base.Preconditions;
 /**
  * Fix represents a suggestion of changing a cell to a value. This is the result from repairing
  * violations.
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class Fix {
 

@@ -22,7 +22,9 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.test.NadeefTestBase;
+import qa.qcri.nadeef.tools.DBConfig;
 
 /**
  * DBInstaller Test.
@@ -51,29 +53,18 @@ public class DBInstallerTest extends NadeefTestBase {
 
     @Test
     public void installerTest() {
-        String violationTableName = NadeefConfiguration.getViolationTableName();
-        String repairTableName = NadeefConfiguration.getRepairTableName();
-        String auditTableName = NadeefConfiguration.getAuditTableName();
         try {
-            if (DBInstaller.isInstalled(violationTableName)) {
-                DBInstaller.uninstall(violationTableName);
-            }
+            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
+            String violationTableName = NadeefConfiguration.getViolationTableName();
+            String repairTableName = NadeefConfiguration.getRepairTableName();
+            String auditTableName = NadeefConfiguration.getAuditTableName();
+            DBInstaller.install(dbConfig);
+            Assert.assertTrue(DBMetaDataTool.isTableExist(dbConfig, violationTableName));
+            DBInstaller.uninstall(dbConfig);
 
-            if (DBInstaller.isInstalled(repairTableName)) {
-                DBInstaller.uninstall(repairTableName);
-            }
-
-            if (DBInstaller.isInstalled(auditTableName)) {
-                DBInstaller.uninstall(auditTableName);
-            }
-
-            DBInstaller.install(violationTableName, repairTableName, auditTableName);
-            Assert.assertTrue(DBInstaller.isInstalled(violationTableName));
-            DBInstaller.uninstall(violationTableName);
-            DBInstaller.uninstall(repairTableName);
-
-            Assert.assertFalse(DBInstaller.isInstalled(violationTableName));
-            Assert.assertFalse(DBInstaller.isInstalled(repairTableName));
+            Assert.assertFalse(DBMetaDataTool.isTableExist(dbConfig, violationTableName));
+            Assert.assertFalse(DBMetaDataTool.isTableExist(dbConfig, repairTableName));
+            Assert.assertFalse(DBMetaDataTool.isTableExist(dbConfig, auditTableName));
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
             ex.printStackTrace();

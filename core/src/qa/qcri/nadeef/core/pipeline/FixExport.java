@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Fix;
@@ -32,12 +33,14 @@ import java.util.Collection;
  */
 class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     private static Tracer tracer = Tracer.getTracer(FixExport.class);
+    private DBConnectionPool connectionPool;
     /**
      * Constructor.
      * @param plan clean plan.
      */
-    public FixExport(CleanPlan plan) {
+    public FixExport(CleanPlan plan, DBConnectionPool connectionPool_) {
         super(plan);
+        connectionPool = Preconditions.checkNotNull(connectionPool_);
     }
 
     /**
@@ -54,9 +57,9 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         Statement stat = null;
         int count = 0;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn = connectionPool.getNadeefConnection();
             stat = conn.createStatement();
-            int id = Fixes.generateFixId();
+            int id = Fixes.generateFixId(connectionPool);
             for (Collection<Fix> fixes : fixCollection) {
                 for (Fix fix : fixes) {
                     String sql = getSQLInsert(id, fix);

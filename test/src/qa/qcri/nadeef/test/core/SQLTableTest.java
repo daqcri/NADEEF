@@ -43,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 @RunWith(Parameterized.class)
 public class SQLTableTest extends NadeefTestBase {
     private String tableName;
-    private DBConfig dbconfig;
     private DBConnectionPool connectionFactory;
 
     public SQLTableTest(String config_) {
@@ -52,31 +51,20 @@ public class SQLTableTest extends NadeefTestBase {
 
     @Before
     public void setup() {
-        Connection conn = null;
         try {
             Bootstrap.start(testConfig);
-            dbconfig =
-                new DBConfig.Builder()
-                    .dialect(SQLDialect.DERBYMEMORY)
-                    .url("memory:test;create=true")
-                    .build();
+            DBConfig dbConfig = new DBConfig.Builder()
+                .dialect(SQLDialect.DERBYMEMORY)
+                .url("memory:test;create=true")
+                .build();
             SQLDialectBase dialectManager =
-                    SQLDialectFactory.getDialectManagerInstance(dbconfig.getDialect());
-            conn = DBConnectionPool.createConnection(dbconfig);
+                    SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
             tableName =
-                CSVTools.dump(conn, dialectManager, TestDataRepository.getDumpTestCSVFile());
-            connectionFactory = DBConnectionPool.createDBConnectionFactory(dbconfig);
+                CSVTools.dump(dbConfig, dialectManager, TestDataRepository.getDumpTestCSVFile());
+            connectionFactory = DBConnectionPool.createDBConnectionPool(dbConfig, dbConfig);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
-                }
-            }
         }
     }
 

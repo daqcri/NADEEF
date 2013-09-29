@@ -27,7 +27,6 @@ import java.nio.file.Path;
  * Bootstrapping prepares runtime environment for NADEEF. It is invoked before NADEEF starts
  * and also after NADEEF exits.
  *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class Bootstrap {
     private static boolean isStarted;

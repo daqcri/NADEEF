@@ -19,8 +19,6 @@ import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.RuleBuilder;
@@ -82,6 +80,7 @@ public class Console {
         @Override
         public void run() {
             executor.detect();
+            executor.shutdown();
         }
     }
     //</editor-fold>
@@ -101,6 +100,7 @@ public class Console {
         @Override
         public void run() {
             executor.repair();
+            executor.shutdown();
         }
     }
 
@@ -120,6 +120,7 @@ public class Console {
         @Override
         public void run() {
             executor.run();
+            executor.shutdown();
         }
     }
 
@@ -296,7 +297,7 @@ public class Console {
         for (Rule rule : rules) {
             CleanPlan cleanPlan = new CleanPlan(dbConfig, rule);
             cleanPlans.add(cleanPlan);
-            executors.add(new CleanExecutor(cleanPlan));
+            executors.add(new CleanExecutor(cleanPlan, NadeefConfiguration.getDbConfig()));
         }
     }
 
@@ -310,18 +311,19 @@ public class Console {
         String fileName = splits[1];
         File file = CommonTools.getFile(fileName);
         try {
-            cleanPlans = CleanPlan.createCleanPlanFromJSON(new FileReader(file));
-        } catch (InvalidCleanPlanException ex) {
-            tracer.err("Invalid CleanPlan file", ex);
+            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
+            cleanPlans =
+                CleanPlan.createCleanPlanFromJSON(
+                    new FileReader(file),
+                    dbConfig
+                );
+            executors.clear();
+            for (CleanPlan cleanPlan : cleanPlans) {
+                executors.add(new CleanExecutor(cleanPlan, dbConfig));
+            }
+        } catch (Exception ex) {
+            tracer.err("Loading CleanPlan failed.", ex);
             return;
-        } catch (InvalidRuleException ex) {
-            tracer.err("Invalid Rule definition", ex);
-            return;
-        }
-
-        executors.clear();
-        for (CleanPlan cleanPlan : cleanPlans) {
-            executors.add(new CleanExecutor(cleanPlan));
         }
         console.println(
             cleanPlans.size()

@@ -15,13 +15,12 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import org.json.simple.JSONObject;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 /**
  * Configuration object for JDBC connection.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class DBConfig {
     private String userName;
@@ -54,6 +53,11 @@ public class DBConfig {
             return this;
         }
 
+        public Builder url(String hostname, String dbname) {
+            this.url(hostname + "/" + dbname);
+            return this;
+        }
+
         public Builder dialect(SQLDialect dialect) {
             this.dialect = dialect;
             return this;
@@ -66,6 +70,14 @@ public class DBConfig {
     //</editor-fold>
 
     //<editor-fold desc="Constructor">
+
+    /**
+     * DBConfig copy constructor.
+     * @param jsonObject JSON object.
+     */
+    public DBConfig(JSONObject jsonObject) {
+        Preconditions.checkNotNull(jsonObject);
+    }
 
     /**
      * DBConfig copy constructor.
@@ -142,10 +154,10 @@ public class DBConfig {
     }
 
     /**
-     * Gets the server name.
-     * @return server name.
+     * Gets the host name.
+     * @return host name.
      */
-    public String getServerName() {
+    public String getHostName() {
         if (url != null) {
             String[] tokens = url.split("/");
             if (tokens.length != 0) {

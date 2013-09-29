@@ -32,8 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Nadeef configuration class.
- * @author Si Yin <siyin@qf.org.qa>
+ * NADEEF configuration class.
  */
 public class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
@@ -55,6 +54,7 @@ public class NadeefConfiguration {
      * Initialize NADEEF with JSON object.
      * @param jsonObject json input.
      */
+    @SuppressWarnings("unchecked")
     public synchronized static void initialize(JSONObject jsonObject) throws Exception {
         Preconditions.checkNotNull(jsonObject);
         JSONObject database = (JSONObject)jsonObject.get("database");
@@ -183,6 +183,15 @@ public class NadeefConfiguration {
     public static void setAlwaysOverride(boolean isAlwaysOverride) {
         alwaysOverrideTable = isAlwaysOverride;
     }
+
+    /**
+     * Sets MaxIterationNumber.
+     * @param maxIterationNumber_ Max iteration number.
+     */
+    public static void setMaxIterationNumber(int maxIterationNumber_) {
+        maxIterationNumber = maxIterationNumber_;
+    }
+
     /**
      * Is Nadeef running in TestMode.
      * @return True when Nadeef is running in test mode.

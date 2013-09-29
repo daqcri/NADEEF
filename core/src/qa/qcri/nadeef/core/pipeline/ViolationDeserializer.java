@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -30,6 +31,11 @@ import java.util.Collection;
  *
  */
 public class ViolationDeserializer extends Operator<Rule, Collection<Violation>> {
+    private DBConnectionPool connectionPool;
+
+    ViolationDeserializer(DBConnectionPool connectionPool_) {
+        connectionPool = Preconditions.checkNotNull(connectionPool_);
+    }
 
     /**
      * Execute the operator.
@@ -39,7 +45,7 @@ public class ViolationDeserializer extends Operator<Rule, Collection<Violation>>
      */
     @Override
     public Collection<Violation> execute(Rule rule) throws Exception {
-        Connection conn = DBConnectionPool.getNadeefConnection();
+        Connection conn = connectionPool.getNadeefConnection();
         Collection<Violation> result = null;
         try {
             Statement stat = conn.createStatement();

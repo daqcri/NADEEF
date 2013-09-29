@@ -27,7 +27,6 @@ public final class NadeefStart {
     private static final int THRIFT_PORT = 9091;
     private static final int WEB_PORT = 4567;
 
-    private static final int MAX_TRY_COUNT = 10;
     public static void main(String[] args) {
         try {
             Runtime runtime = Runtime.getRuntime();

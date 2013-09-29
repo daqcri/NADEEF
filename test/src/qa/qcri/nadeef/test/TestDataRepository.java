@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.test;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 
@@ -153,7 +154,8 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile1())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getTestFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan2()
@@ -161,7 +163,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile2())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getTestFile2()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan3()
@@ -169,7 +172,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile3())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getTestFile3()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan4()
@@ -177,7 +181,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile4())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getTestFile4()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static List<CleanPlan> getCleanPlan5()
@@ -185,7 +190,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getTestFile5()));
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getTestFile5()), NadeefConfiguration.getDbConfig());
     }
 
     public static CleanPlan getCleanPlan6()
@@ -193,7 +199,8 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-            return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan6File())).get(0);
+            return CleanPlan.createCleanPlanFromJSON(
+                new FileReader(getCleanPlan6File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan7()
@@ -201,7 +208,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan7File())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getCleanPlan7File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan8()
@@ -209,7 +217,8 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan8File())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getCleanPlan8File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan9()
@@ -217,7 +226,8 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getCleanPlan9File())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getCleanPlan9File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan10k()
@@ -225,7 +235,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan10kFile())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getStressPlan10kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan30k()
@@ -233,7 +244,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan30kFile())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getStressPlan30kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan40k()
@@ -241,7 +253,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan40kFile())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getStressPlan40kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan80k()
@@ -249,7 +262,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan80kFile())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getStressPlan80kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan90k()
@@ -257,7 +271,8 @@ public class TestDataRepository {
         InvalidRuleException,
         FileNotFoundException,
         InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getStressPlan90kFile())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getStressPlan90kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getPairCleanPlan1()
@@ -265,6 +280,7 @@ public class TestDataRepository {
             InvalidRuleException,
             FileNotFoundException,
             InvalidCleanPlanException {
-        return CleanPlan.createCleanPlanFromJSON(new FileReader(getPairCleanPlanFile1())).get(0);
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getPairCleanPlanFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 }

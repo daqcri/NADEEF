@@ -18,7 +18,9 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
@@ -67,22 +69,22 @@ public class CSVTools {
 
     /**
      * Dumps CSV file content into a database with default schema name and generated table name.
-     * @param conn JDBC connection.
+     * @param dbConfig DB connection config.
      * @param dialectManager SQL dialect manager.
      * @param file CSV file.
      * @return new created table name.
      */
-    public static String dump(Connection conn, SQLDialectBase dialectManager, File file)
+    public static String dump(DBConfig dbConfig, SQLDialectBase dialectManager, File file)
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
-        String tableName = dump(conn, dialectManager, file, fileName, true);
+        String tableName = dump(dbConfig, dialectManager, file, fileName, true);
         return tableName;
     }
 
     /**
      * Dumps CSV file content into a specified database. It replaces the table if the table
      * already existed.
-     * @param conn JDBC connection.
+     * @param dbConfig JDBC connection config.
      * @param file CSV file.
      * @param dialectManager SQL dialect manager.
      * @param tableName new created table name.
@@ -91,13 +93,13 @@ public class CSVTools {
      * @return new created table name.
      */
     public static String dump(
-            Connection conn,
+            DBConfig dbConfig,
             SQLDialectBase dialectManager,
             File file,
             String tableName,
             boolean overwrite
     ) throws SQLException {
-        Preconditions.checkNotNull(conn);
+        Preconditions.checkNotNull(dbConfig);
         Preconditions.checkNotNull(dialectManager);
 
         Tracer tracer = Tracer.getTracer(CSVTools.class);
@@ -105,11 +107,9 @@ public class CSVTools {
         String fullTableName = null;
         Statement stat = null;
         String sql;
-
+        Connection conn = null;
         try {
-            if (conn.isClosed()) {
-                throw new IllegalAccessException("JDBC connection is already closed.");
-            }
+            conn = DBConnectionPool.createConnection(dbConfig);
             conn.setAutoCommit(false);
             stat = conn.createStatement();
             stat.setFetchSize(1024);
@@ -178,6 +178,10 @@ public class CSVTools {
         } finally {
             if (stat != null) {
                 stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
             }
         }
         return fullTableName;

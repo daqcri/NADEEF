@@ -37,34 +37,59 @@ exception TNadeefRemoteException {
 service TNadeefService {
     /**
      * Generates UDF code for the rule.
+     * @param rule Rule.
+     * @param tableName target table name.
+     * @return generated code.
      */
     string generate(1:TRule rule, 2: string tableName)
         throws (1:TNadeefRemoteException re),
 
     /**
      * Verify the given rule.
+     * @param rule input rule.
      */
     bool verify(1: TRule rule),
 
     /**
      * Detect with the given rule.
+     * @param rule input rule.
+     * @param table1 table 1 name.
+     * @param table2 table 2 name.
+     * @param outputdb output database name.
+     * @return job key.
      */
-    string detect(1: TRule rule, 2: string table1, 3: string table2)
-        throws (1:TNadeefRemoteException re),
+    string detect(
+        1: TRule rule,
+        2: string table1,
+        3: string table2,
+        4: string outputdb = 'nadeefdb'
+    ) throws (1:TNadeefRemoteException re),
 
     /**
      * Repair with the given rule.
+     * @param rule input rule.
+     * @param table1 table 1 name.
+     * @param table2 table 2 name.
+     * @param outputdb output database name.
+     * @return job key.
      */
-    string repair(1: TRule rule, 2: string table1, 3: string table2)
-        throws (1:TNadeefRemoteException re),
+    string repair(
+        1: TRule rule,
+        2: string table1,
+        3: string table2,
+        4: string outputdb = 'nadeefdb'
+    ) throws (1:TNadeefRemoteException re),
 
     /**
      * Gets status of a specific job.
+     * @param rule input rule.
+     * @return job status.
      */
     TJobStatus getJobStatus(1: string key),
 
     /**
      * Gets all job status.
+     * @return all the job status.
      */
     list<TJobStatus> getAllJobStatus()
 }

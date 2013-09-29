@@ -30,8 +30,6 @@ import java.sql.Statement;
 
 /**
  * DB Installer for Dashboard.
- *
- *
  */
 class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
@@ -41,7 +39,7 @@ class DBInstaller {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
             stat = conn.createStatement();
 
             // TODO: do inject dep. for generic function

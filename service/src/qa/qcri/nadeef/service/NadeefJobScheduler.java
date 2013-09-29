@@ -37,8 +37,6 @@ import java.util.concurrent.Executors;
 
 /**
  * NADEEF job scheduler.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class NadeefJobScheduler {
     private static NadeefJobScheduler instance;
@@ -57,8 +55,7 @@ public class NadeefJobScheduler {
             hostname = "localhost";
         }
 
-        // TODO: move to per process approach or multithreading, currently it is
-        // limited to 1 because of synchronization of DBConnection factory.
+        // TODO: the limit is one.
         service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         runningCleaner = Maps.newConcurrentMap();
         runningRules = Maps.newConcurrentMap();
@@ -148,7 +145,7 @@ public class NadeefJobScheduler {
      * @param cleanPlan clean plan.
      * @return job key.
      */
-    public String submitDetectJob(CleanPlan cleanPlan) {
+    public String submitDetectJob(CleanPlan cleanPlan) throws Exception {
         NadeefJob job = createNewJob(cleanPlan, JobType.Detect);
         ListenableFuture<String> future =
             service.submit(new CleanExecutorCaller(new WeakReference<>(job)));
@@ -161,7 +158,7 @@ public class NadeefJobScheduler {
      * @param cleanPlan clean plan.
      * @return job key.
      */
-    public String submitRepairJob(CleanPlan cleanPlan) {
+    public String submitRepairJob(CleanPlan cleanPlan) throws Exception {
         NadeefJob job = createNewJob(cleanPlan, JobType.Repair);
 
         ListenableFuture<String> future =
@@ -231,7 +228,10 @@ public class NadeefJobScheduler {
         return result;
     }
 
-    private static synchronized NadeefJob createNewJob(CleanPlan cleanPlan, JobType type) {
+    private static synchronized NadeefJob createNewJob(
+        CleanPlan cleanPlan,
+        JobType type
+    ) throws Exception {
         Preconditions.checkNotNull(cleanPlan);
 
         String ruleName = cleanPlan.getRule().getRuleName();
@@ -248,6 +248,7 @@ public class NadeefJobScheduler {
             }
         }
         NadeefJob job = new NadeefJob(key, new CleanExecutor(cleanPlan), type);
+
         keys.add(key);
         runningCleaner.put(key, job);
         runningRules.put(key, ruleName);

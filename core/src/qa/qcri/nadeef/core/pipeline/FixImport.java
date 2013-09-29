@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
@@ -30,6 +31,12 @@ import java.util.Collection;
  *
  */
 class FixImport extends Operator<Rule, Collection<Fix>> {
+    private DBConnectionPool connectionPool;
+
+    public FixImport(DBConnectionPool connectionPool_) {
+        connectionPool = Preconditions.checkNotNull(connectionPool_);
+    }
+
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
         Connection conn = null;
@@ -37,7 +44,7 @@ class FixImport extends Operator<Rule, Collection<Fix>> {
         ResultSet resultSet = null;
         Collection<Fix> result = null;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn = connectionPool.getNadeefConnection();
             stat = conn.createStatement();
             resultSet =
                 stat.executeQuery(

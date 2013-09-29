@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -49,7 +51,7 @@ public class SQLManagerTest extends NadeefTestBase {
         Connection conn = null;
         try {
             Bootstrap.start(testConfig);
-            conn = DBConnectionPool.getNadeefConnection();
+            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
             Statement stat = conn.createStatement();
 
             BufferedReader reader = new BufferedReader(new FileReader(testFile));
@@ -88,7 +90,7 @@ public class SQLManagerTest extends NadeefTestBase {
     public void shutdown() {
         Connection conn = null;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
             Statement stat = conn.createStatement();
             stat.execute("DROP TABLE DUMPTEST");
             stat.execute("DROP TABLE DUMPTEST2");
@@ -114,9 +116,10 @@ public class SQLManagerTest extends NadeefTestBase {
             SQLDialectFactory.getNadeefDialectManagerInstance();
 
         Connection conn = null;
+        Statement stat = null;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
-            Statement stat = conn.createStatement();
+            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
+            stat = conn.createStatement();
             dialect.copyTable(conn, "DUMPTEST", "DUMPTEST2");
             conn.commit();
             Assert.assertEquals(12, getMaxTid(stat, "DUMPTEST2"));
@@ -124,13 +127,14 @@ public class SQLManagerTest extends NadeefTestBase {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+            try {
+                if (stat != null) {
+                    stat.close();
                 }
-            }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {}
         }
     }
 

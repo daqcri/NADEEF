@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Cell;
@@ -36,12 +37,15 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
+    private DBConnectionPool connectionPool;
+
     /**
      * Constructor.
      * @param plan clean plan.
      */
-    public ViolationExport(CleanPlan plan) {
+    public ViolationExport(CleanPlan plan, DBConnectionPool connectionPool_) {
         super(plan);
+        connectionPool = Preconditions.checkNotNull(connectionPool_);
     }
 
     /**
@@ -58,14 +62,14 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         Statement stat = null;
         int count = 0;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn = connectionPool.getNadeefConnection();
             stat = conn.createStatement();
             SQLDialectBase dialectManager =
                 SQLDialectFactory.getNadeefDialectManagerInstance();
 
             synchronized (ViolationExport.class) {
                 // TODO: this is not out-of-process safe.
-                int vid = Violations.generateViolationId();
+                int vid = Violations.generateViolationId(connectionPool);
                 for (Violation violation : violations) {
                     count ++;
                     List<Cell> cells = Lists.newArrayList(violation.getCells());

@@ -139,15 +139,6 @@ public class DBConnectionPool {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        shutdown();
-       super.finalize();
-    }
-
-    /**
      * Gets the JDBC connection based on the dialect.
      * @param dbConfig dbconfig.
      * @param autoCommit auto commit flag.

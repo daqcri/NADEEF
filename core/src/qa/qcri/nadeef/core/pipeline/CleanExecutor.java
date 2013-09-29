@@ -21,7 +21,6 @@ import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -46,16 +45,27 @@ public class CleanExecutor {
     //<editor-fold desc="Constructor / Deconstructor">
 
     /**
+     * Constructor. Use default NADEEF default config as DB config.
+     * @param cleanPlan input {@link CleanPlan}.
+     */
+    public CleanExecutor(CleanPlan cleanPlan) throws Exception {
+        this(cleanPlan, NadeefConfiguration.getDbConfig());
+    }
+
+    /**
      * Constructor.
      * @param cleanPlan input {@link CleanPlan}.
      * @param dbConfig meta data dbconfig.
      */
-    public CleanExecutor(CleanPlan cleanPlan, DBConfig dbConfig) throws SQLException {
+    public CleanExecutor(CleanPlan cleanPlan, DBConfig dbConfig) throws Exception {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
         this.connectionPool =
-            DBConnectionPool.createDBConnectionPool(cleanPlan.getSourceDBConfig(), dbConfig);
-        DBInstaller.install(this.connectionPool);
+            DBConnectionPool.createDBConnectionPool(
+                cleanPlan.getSourceDBConfig(),
+                dbConfig
+            );
+        DBInstaller.install(dbConfig);
         assembleFlow();
     }
 
@@ -71,10 +81,9 @@ public class CleanExecutor {
     }
 
     /**
-     * CleanExecutor finalizer.
+     * Shutdown the CleanExecutor.
      */
-    @Override
-    public void finalize() throws Throwable{
+    public void shutdown() {
         if (queryFlow != null && queryFlow.isRunning()) {
             queryFlow.forceStop();
         }
@@ -91,11 +100,30 @@ public class CleanExecutor {
             updateFlow.forceStop();
         }
 
+        if (connectionPool != null) {
+            connectionPool.shutdown();
+        }
+    }
+
+    /**
+     * CleanExecutor finalizer.
+     */
+    @Override
+    public void finalize() throws Throwable{
+        shutdown();
         super.finalize();
     }
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
+
+    /**
+     * Gets the connection pool.
+     * @return connection pool.
+     */
+    public DBConnectionPool getConnectionPool() {
+        return connectionPool;
+    }
 
     /**
      * Gets the output from Detect.
@@ -282,14 +310,14 @@ public class CleanExecutor {
             } else {
                 detectFlow.addNode(new ViolationDetector<Table>(rule), 6);
             }
-            detectFlow.addNode(new ViolationExport(cleanPlan));
+            detectFlow.addNode(new ViolationExport(cleanPlan, connectionPool));
 
             // assemble the repair flow
             repairFlow = new Flow("repair");
             repairFlow.setInputKey(inputKey)
-                .addNode(new ViolationDeserializer())
+                .addNode(new ViolationDeserializer(connectionPool))
                 .addNode(new ViolationRepair(rule), 6)
-                .addNode(new FixExport(cleanPlan));
+                .addNode(new FixExport(cleanPlan, connectionPool));
 
             // assemble the updater flow
             updateFlow = new Flow("update");
@@ -313,7 +341,7 @@ public class CleanExecutor {
             }
 
             updateFlow.setInputKey(inputKey)
-                .addNode(new FixImport())
+                .addNode(new FixImport(connectionPool))
                 .addNode(fixDecisionMaker, 6)
                 .addNode(new Updater(cleanPlan.getSourceDBConfig()));
 

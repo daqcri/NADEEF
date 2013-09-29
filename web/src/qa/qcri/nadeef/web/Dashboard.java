@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
@@ -62,6 +63,7 @@ public final class Dashboard {
          */
         get(new Route("/table/:tablename") {
             @Override
+            @SuppressWarnings("unchecked")
             public Object handle(Request request, Response response) {
                 response.type("application/json");
                 String tableName = request.params("tablename");
@@ -195,7 +197,7 @@ public final class Dashboard {
                 JSONObject json = new JSONObject();
                 JSONArray result = new JSONArray();
                 try {
-                    conn = DBConnectionPool.getNadeefConnection();
+                    conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
                     DatabaseMetaData meta = conn.getMetaData();
                     ResultSet rs = meta.getTables(null, null, null, new String[] {"TABLE"});
                     while (rs.next()) {
@@ -210,7 +212,7 @@ public final class Dashboard {
                             result.add(rs.getString(3));
                         }
                     }
-                } catch (SQLException ex) {
+                } catch (Exception ex) {
                     tracer.err("querying source", ex);
                     return null;
                 } finally {
@@ -291,7 +293,10 @@ public final class Dashboard {
                 JSONArray result = new JSONArray();
                 ResultSet rs = null;
                 try {
-                    conn = DBConnectionPool.getNadeefConnection();
+                    conn =
+                        DBConnectionPool.createConnection(
+                            NadeefConfiguration.getDbConfig()
+                        );
                     stat = conn.createStatement();
                     rs = stat.executeQuery(dialectInstance.queryDistinctTable());
                     List<String> tableNames = Lists.newArrayList();
@@ -315,7 +320,7 @@ public final class Dashboard {
                         result.add(rs.getInt(1));
                     }
                     json.put("data", result);
-                } catch (SQLException ex) {
+                } catch (Exception ex) {
                     tracer.err("querying source", ex);
                     return null;
                 } finally {
@@ -498,12 +503,15 @@ public final class Dashboard {
         ResultSet rs = null;
         Statement stat = null;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn =
+                DBConnectionPool.createConnection(
+                    NadeefConfiguration.getDbConfig()
+                );
             conn.setAutoCommit(true);
             stat = conn.createStatement();
             rs = stat.executeQuery(sql);
             return queryToJson(rs, includeHeader);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             tracer.err(err, ex);
             rs = null;
         } finally {
@@ -528,11 +536,14 @@ public final class Dashboard {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn = DBConnectionPool.getNadeefConnection();
+            conn =
+                DBConnectionPool.createConnection(
+                    NadeefConfiguration.getDbConfig()
+                );
             conn.setAutoCommit(true);
             stat = conn.createStatement();
             stat.execute(sql);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             tracer.err(err, ex);
         } finally {
             try {

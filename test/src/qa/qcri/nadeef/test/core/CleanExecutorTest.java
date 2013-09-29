@@ -22,13 +22,11 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -42,14 +40,12 @@ public class CleanExecutorTest extends NadeefTestBase {
 
     @Before
     public void setup() {
-        Connection conn = null;
         try {
             Bootstrap.start(testConfig);
             Tracer.setVerbose(true);
             NadeefConfiguration.setAlwaysOverride(true);
-            conn = DBConnectionPool.getNadeefConnection();
             CSVTools.dump(
-                conn,
+                NadeefConfiguration.getDbConfig(),
                 SQLDialectFactory.getNadeefDialectManagerInstance(),
                 TestDataRepository.getLocationData1(),
                 "LOCATION",
@@ -58,14 +54,6 @@ public class CleanExecutorTest extends NadeefTestBase {
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
-                }
-            }
         }
     }
 
