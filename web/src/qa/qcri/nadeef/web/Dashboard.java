@@ -19,7 +19,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
 import spark.Request;
 import spark.Response;
@@ -32,12 +34,11 @@ import static spark.Spark.*;
 
 /**
  * Start class for launching dashboard.
- *
- *
  */
 public final class Dashboard {
     private static Tracer tracer;
     private static SQLDialectBase dialectInstance;
+    private static SQLDialect dialect;
     private static NadeefClient nadeefClient;
 
     //<editor-fold desc="Home page">
@@ -61,12 +62,18 @@ public final class Dashboard {
         /**
          * Gets violation table with pagination support.
          */
-        get(new Route("/table/:tablename") {
+        get(new Route("/:project/table/:tablename") {
             @Override
             @SuppressWarnings("unchecked")
             public Object handle(Request request, Response response) {
                 response.type("application/json");
                 String tableName = request.params("tablename");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(tableName) || Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 JSONObject queryJson;
                 String result;
                 try {
@@ -80,6 +87,7 @@ public final class Dashboard {
 
                     queryJson =
                         query(
+                            project,
                             dialectInstance.queryTable(tableName, start, interval, filter),
                             "Query table " + tableName,
                             true
@@ -87,6 +95,7 @@ public final class Dashboard {
 
                     JSONObject countJson =
                         query(
+                            project,
                             dialectInstance.countTable(tableName),
                             "Query table count " + tableName,
                             true
@@ -104,13 +113,20 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/table/:tablename/schema") {
+        get(new Route("/:project/table/:tablename/schema") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
                 String tableName = request.params("tablename");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(tableName) || Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 JSONObject result =
                     query(
+                        project,
                         dialectInstance.querySchema(tableName),
                         "Query schema " + tableName,
                         true
@@ -119,10 +135,20 @@ public final class Dashboard {
             }
         });
 
-        delete(new Route("/table/violation") {
+        delete(new Route("/:project/table/violation") {
             @Override
             public Object handle(Request request, Response response) {
-                update(dialectInstance.deleteViolation(), "Deleting violation");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
+                update(
+                    project,
+                    dialectInstance.deleteViolation(),
+                    "Deleting violation"
+                );
                 return success(0);
             }
         });
@@ -131,12 +157,19 @@ public final class Dashboard {
 
     //<editor-fold desc="Rule actions">
     private static void setupRule() {
-        get(new Route("/data/rule") {
+        get(new Route("/:project/data/rule") {
             @Override
             public Object handle(Request request, Response response) {
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 response.type("application/json");
                 return
                     query(
+                        project,
                         dialectInstance.queryRule(),
                         "querying rules",
                         true
@@ -144,12 +177,19 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/data/rule/:ruleName") {
+        get(new Route("/:project/data/rule/:ruleName") {
             @Override
             public Object handle(Request request, Response response) {
                 String ruleName = request.params("ruleName");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project) || Strings.isNullOrEmpty(ruleName)) {
+                    return fail("Invalid input");
+                }
+
                 response.type("application/json");
                 return query(
+                    ruleName,
                     dialectInstance.queryRule(ruleName),
                     "querying rule " + ruleName,
                     true
@@ -157,15 +197,20 @@ public final class Dashboard {
             }
         });
 
-        post(new Route("/data/rule") {
+        post(new Route("/:project/data/rule") {
             @Override
             public Object handle(Request request, Response response) {
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 String type = request.queryParams("type");
                 String name = request.queryParams("name");
                 String table1 = request.queryParams("table1");
                 String table2 = request.queryParams("table2");
                 String code = request.queryParams("code");
-
                 if (Strings.isNullOrEmpty(type)
                     || Strings.isNullOrEmpty(name)
                     || Strings.isNullOrEmpty(table1)
@@ -174,9 +219,10 @@ public final class Dashboard {
                 }
 
                 // Doing a delete and insert
-                update(dialectInstance.deleteRule(name), "update rule");
+                update(project, dialectInstance.deleteRule(name), "update rule");
 
                 update(
+                    project,
                     dialectInstance.insertRule(type.toUpperCase(), code, table1, table2, name),
                     "insert rule"
                 );
@@ -189,13 +235,19 @@ public final class Dashboard {
     //<editor-fold desc="source actions">
     @SuppressWarnings("unchecked")
     private static void setupSource() {
-        get(new Route("/data/source") {
+        get(new Route("/:project/data/source") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
                 Connection conn = null;
                 JSONObject json = new JSONObject();
                 JSONArray result = new JSONArray();
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 try {
                     conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
                     DatabaseMetaData meta = conn.getMetaData();
@@ -219,7 +271,7 @@ public final class Dashboard {
                     if (conn != null) {
                         try {
                             conn.close();
-                        } catch (SQLException ex) {}
+                        } catch (SQLException ignore) {}
                     }
                 }
 
@@ -233,11 +285,18 @@ public final class Dashboard {
     //<editor-fold desc="Widget actions">
     @SuppressWarnings("unchecked")
     private static void setupWidget() {
-        get(new Route("/widget/attribute") {
+        get(new Route("/:project/widget/attribute") {
             @Override
             public Object handle(Request request, Response response) {
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 response.type("application/json");
                 return query(
+                    project,
                     dialectInstance.queryAttribute(),
                     "querying attribute",
                     true
@@ -245,12 +304,19 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/widget/rule") {
+        get(new Route("/:project/widget/rule") {
             @Override
             public Object handle(Request request, Response response) {
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 response.type("application/json");
                 return
                     query(
+                        project,
                         dialectInstance.queryRuleDistribution(),
                         "querying rule distribution",
                         true
@@ -258,12 +324,19 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/widget/top10") {
+        get(new Route("/:project/widget/top10") {
             @Override
             public Object handle(Request request, Response response) {
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 response.type("application/json");
                 return
                     query(
+                        project,
                         dialectInstance.queryTopK(10),
                         "querying top 10",
                         true
@@ -271,11 +344,18 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/widget/violation_relation") {
+        get(new Route("/:project/widget/violation_relation") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 return query(
+                    project,
                     dialectInstance.queryViolationRelation(),
                     "querying attribute",
                     true
@@ -283,10 +363,16 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/widget/overview") {
+        get(new Route("/:project/widget/overview") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid input");
+                }
+
                 Connection conn = null;
                 Statement stat = null;
                 JSONObject json = new JSONObject();
@@ -346,7 +432,7 @@ public final class Dashboard {
 
     //<editor-fold desc="Do actions">
     private static void setupAction() {
-        get(new Route("/data/progress") {
+        get(new Route("/progress") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
@@ -358,6 +444,61 @@ public final class Dashboard {
                     result = fail(ex.getMessage());
                 }
                 return result;
+            }
+        });
+
+        post(new Route("/do/create") {
+            @Override
+            public Object handle(Request request, Response response) {
+                String project = request.queryParams("project");
+                if (Strings.isNullOrEmpty(project)) {
+                    return fail("Invalid project name " + project);
+                }
+
+                DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                dbConfig.switchDatabase(project);
+
+                // create the database
+                if (dialect != SQLDialect.DERBY && dialect != SQLDialect.DERBYMEMORY) {
+                    Connection conn = null;
+                    Statement stat = null;
+                    try {
+                        DBConfig rootConfig = new DBConfig(dbConfig);
+                        rootConfig.switchDatabase("");
+                        conn = DBConnectionPool.createConnection(rootConfig, true);
+                        stat = conn.createStatement();
+                        stat.execute(dialectInstance.createDatabase(project));
+                    } catch (Exception ex) {
+                        String err = "Creating database " + project + " failed.";
+                        tracer.err(err, ex);
+                        return fail(err);
+                    } finally {
+                        try {
+                            if (stat != null) {
+                                stat.close();
+                            }
+
+                            if (conn != null) {
+                                conn.close();
+                            }
+                        } catch (SQLException e) {}
+                    }
+                }
+
+                // install the tables
+                try {
+                    DBInstaller.install(dbConfig);
+                } catch (Exception ex) {
+                    tracer.err(ex.getMessage(), ex);
+                    return fail("Installing databases failed.");
+                }
+
+                // TODO: magic string, and missing transaction.
+                return update(
+                    "nadeefdb",
+                    dialectInstance.insertProject(project),
+                    "Creating project " + project + " failed."
+                );
             }
         });
 
@@ -421,17 +562,20 @@ public final class Dashboard {
                 String code = request.queryParams("code");
                 String table1 = request.queryParams("table1");
                 String table2 = request.queryParams("table2");
+                String dbname = request.queryParams("project");
 
                 if (Strings.isNullOrEmpty(type) ||
                     Strings.isNullOrEmpty(name) ||
                     Strings.isNullOrEmpty(code) ||
+                    Strings.isNullOrEmpty(dbname) ||
                     Strings.isNullOrEmpty(table1)) {
                     return fail("Input cannot be NULL.");
                 }
 
                 String result;
                 try {
-                    result = nadeefClient.detect(type, name, code, table1, table2);
+                    result =
+                        nadeefClient.detect(type, name, code, table1, table2, dbname);
                 } catch (Exception ex) {
                     tracer.err("Detection failed.", ex);
                     result = fail(ex.getMessage());
@@ -448,17 +592,20 @@ public final class Dashboard {
                 String code = request.queryParams("code");
                 String table1 = request.queryParams("table1");
                 String table2 = request.queryParams("table2");
+                String dbname = request.queryParams("project");
 
                 if (Strings.isNullOrEmpty(type) ||
                     Strings.isNullOrEmpty(name) ||
                     Strings.isNullOrEmpty(code) ||
+                    Strings.isNullOrEmpty(dbname) ||
                     Strings.isNullOrEmpty(table1)) {
                     return fail("Input cannot be NULL.");
                 }
 
                 String result;
                 try {
-                    result = nadeefClient.repair(type, name, code, table1, table2);
+                    result =
+                        nadeefClient.repair(type, name, code, table1, table2, dbname);
                 } catch (Exception ex) {
                     tracer.err("Generate code failed.", ex);
                     result = fail(ex.getMessage());
@@ -474,7 +621,8 @@ public final class Dashboard {
     public static void main(String[] args) {
         Bootstrap.start();
         tracer = Tracer.getTracer(Dashboard.class);
-        dialectInstance = DBInstaller.dialectInstance;
+        dialect = NadeefConfiguration.getDbConfig().getDialect();
+        dialectInstance = SQLDialectBase.createDialectBaseInstance(dialect);
         nadeefClient = Bootstrap.getNadeefClient();
 
         String rootDir = System.getProperty("rootDir");
@@ -495,6 +643,7 @@ public final class Dashboard {
 
     //<editor-fold desc="Private helpers">
     private static JSONObject query(
+        String dbname,
         String sql,
         String err,
         boolean includeHeader
@@ -503,11 +652,9 @@ public final class Dashboard {
         ResultSet rs = null;
         Statement stat = null;
         try {
-            conn =
-                DBConnectionPool.createConnection(
-                    NadeefConfiguration.getDbConfig()
-                );
-            conn.setAutoCommit(true);
+            DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+            dbConfig.switchDatabase(dbname);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             rs = stat.executeQuery(sql);
             return queryToJson(rs, includeHeader);
@@ -532,19 +679,19 @@ public final class Dashboard {
         return null;
     }
 
-    private static void update(String sql, String err) {
+    private static String update(String dbname, String sql, String err) {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn =
-                DBConnectionPool.createConnection(
-                    NadeefConfiguration.getDbConfig()
-                );
-            conn.setAutoCommit(true);
+            DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+            dbConfig.switchDatabase(dbname);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             stat.execute(sql);
+            return success(0);
         } catch (Exception ex) {
             tracer.err(err, ex);
+            return fail(ex.getMessage());
         } finally {
             try {
                 if (stat != null) {

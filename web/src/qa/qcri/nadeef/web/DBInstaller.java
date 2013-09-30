@@ -13,19 +13,15 @@
 
 package qa.qcri.nadeef.web;
 
-import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
-import qa.qcri.nadeef.web.sql.DerbySQLDialect;
-import qa.qcri.nadeef.web.sql.MySQLDialect;
-import qa.qcri.nadeef.web.sql.PostgresSQLDialect;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -33,49 +29,25 @@ import java.sql.Statement;
  */
 class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
-    static SQLDialectBase dialectInstance;
 
-    public static void install() throws Exception {
+    public static void installMetaData() throws Exception {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
+            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig(), true);
             stat = conn.createStatement();
 
-            // TODO: do inject dep. for generic function
             SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
-            switch (dialect) {
-                case DERBYMEMORY:
-                case DERBY:
-                    dialectInstance = new DerbySQLDialect();
-                    break;
-                case POSTGRES:
-                    dialectInstance = new PostgresSQLDialect();
-                    break;
-                case MYSQL:
-                    dialectInstance = new MySQLDialect();
-                    break;
-            }
-
-            Preconditions.checkNotNull(dialectInstance);
+            SQLDialectBase dialectInstance = SQLDialectBase.createDialectBaseInstance(dialect);
 
             // skip when those dbs are already existed
             DatabaseMetaData meta = conn.getMetaData();
-            if (!meta.getTables(null, null, "RULE", null).next() &&
-                !meta.getTables(null, null, "rule", null).next()) {
-                stat.execute(dialectInstance.installRule());
+            if (!meta.getTables(null, null, "PROJECT", null).next() &&
+                !meta.getTables(null, null, "project", null).next()) {
+                stat.execute(dialectInstance.installProject());
             }
-
-            if (!meta.getTables(null, null, "RULETYPE", null).next() &&
-                !meta.getTables(null, null, "ruletype", null).next()) {
-                stat.execute(dialectInstance.installRuleType());
-                stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
-                stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
-                stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
-            }
-            conn.commit();
-        } catch (SQLException ex) {
-            tracer.err("Install Dashboard DB failed.", ex);
+        } catch (Exception ex) {
+            tracer.err("Install Dashboard Meta DB failed.", ex);
             System.exit(1);
         } finally {
             if (stat != null) {
@@ -86,6 +58,53 @@ class DBInstaller {
                 conn.close();
             }
         }
+    }
 
+    public static void install(DBConfig dbConfig) throws Exception {
+        Connection conn = null;
+        Statement stat = null;
+        try {
+            conn = DBConnectionPool.createConnection(dbConfig, true);
+            stat = conn.createStatement();
+
+            SQLDialect dialect = dbConfig.getDialect();
+            SQLDialectBase dialectInstance = SQLDialectBase.createDialectBaseInstance(dialect);
+
+            // skip when those dbs are already existed
+            DatabaseMetaData meta = conn.getMetaData();
+            if (dialect == SQLDialect.DERBY || dialect == SQLDialect.DERBYMEMORY) {
+                if (!meta.getTables(null, dbConfig.getUserName(), "RULE", null).next()) {
+                    stat.execute(dialectInstance.installRule());
+                }
+
+                if (!meta.getTables(null, dbConfig.getUserName(), "RULETYPE", null).next()) {
+                    stat.execute(dialectInstance.installRuleType());
+                    stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
+                    stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
+                    stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
+                }
+            } else {
+                if (!meta.getTables(null, null, "RULE", null).next() &&
+                    !meta.getTables(null, null, "rule", null).next()) {
+                    stat.execute(dialectInstance.installRule());
+                }
+
+                if (!meta.getTables(null, null, "RULETYPE", null).next() &&
+                    !meta.getTables(null, null, "ruletype", null).next()) {
+                    stat.execute(dialectInstance.installRuleType());
+                    stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
+                    stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
+                    stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
+                }
+            }
+        } finally {
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 }

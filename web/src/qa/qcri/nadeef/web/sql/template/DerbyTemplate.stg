@@ -9,6 +9,14 @@ create table $name$ (
    last_edit_timestamp timestamp)
 >>
 
+InstallProject(name) ::= <<
+create table $name$ (
+    id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    dbname varchar(255) NOT NULL UNIQUE,
+    name varchar(255) UNIQUE
+)
+>>
+
 InstallRuleType(name) ::= <<
 create table $name$ (
     type integer primary key not null,

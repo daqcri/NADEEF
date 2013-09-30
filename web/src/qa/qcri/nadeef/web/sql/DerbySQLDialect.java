@@ -20,8 +20,6 @@ import org.stringtemplate.v4.STGroupFile;
 
 /**
  * Derby SQL Dialect.
- *
- *
  */
 public class DerbySQLDialect extends SQLDialectBase {
     private static STGroupFile template =
@@ -46,6 +44,17 @@ public class DerbySQLDialect extends SQLDialectBase {
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         ST instance = template.getInstanceOf("InstallRule");
         instance.add("name", "RULE");
+        return instance.render();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String installProject() {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        ST instance = template.getInstanceOf("InstallProject");
+        instance.add("name", "PROJECT");
         return instance.render();
     }
 

@@ -98,7 +98,7 @@ public class DBConfig {
      * @param url DB connection URL.
      * @param dialect SQL dialect.
      */
-    public DBConfig(String userName, String password, String url, SQLDialect dialect) {
+    private DBConfig(String userName, String password, String url, SQLDialect dialect) {
         Preconditions.checkArgument(
             !Strings.isNullOrEmpty(url)
         );
@@ -140,13 +140,27 @@ public class DBConfig {
     }
 
     /**
-     * Gets the Database name.
+     * Switches the database name.
+     * @param databaseName database input.
+     */
+    public DBConfig switchDatabase(String databaseName) {
+        if (dialect == SQLDialect.DERBYMEMORY || dialect == SQLDialect.DERBY) {
+            url = getHostName() + "/" + getDatabaseName() + ";user=" + databaseName;
+            userName = databaseName;
+        } else {
+            url = getHostName() + "/" + getDatabaseName();
+        }
+        return this;
+    }
+
+    /**
+     * Gets the database name.
      * @return database name.
      */
     public String getDatabaseName() {
         if (url != null) {
-            String[] tokens = url.split("/");
-            if (tokens.length > 1) {
+            String[] tokens = url.split("[/;]");
+            if (tokens.length > 2) {
                 return tokens[1];
             }
         }
@@ -159,8 +173,8 @@ public class DBConfig {
      */
     public String getHostName() {
         if (url != null) {
-            String[] tokens = url.split("/");
-            if (tokens.length != 0) {
+            String[] tokens = url.split("[/;]");
+            if (tokens.length > 2) {
                 return tokens[0];
             }
         }

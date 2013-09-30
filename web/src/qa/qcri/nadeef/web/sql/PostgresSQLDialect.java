@@ -6,8 +6,6 @@ import org.stringtemplate.v4.STGroupFile;
 
 /**
  * Postgres SQLDialect.
- *
- *
  */
 public class PostgresSQLDialect extends SQLDialectBase {
     private static STGroupFile template =
@@ -39,6 +37,14 @@ public class PostgresSQLDialect extends SQLDialectBase {
      * {@inheritDoc}
      */
     @Override
+    public String installProject() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String installRuleType() {
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         ST instance = template.getInstanceOf("InstallRuleType");
@@ -51,7 +57,7 @@ public class PostgresSQLDialect extends SQLDialectBase {
      */
     @Override
     public String queryTable(String name, int start, int interval, String filter) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
 
