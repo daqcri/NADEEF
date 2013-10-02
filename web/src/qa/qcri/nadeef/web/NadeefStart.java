@@ -17,8 +17,6 @@ import qa.qcri.nadeef.tools.CommonTools;
 
 /**
  * Nadeef Dashboard launcher.
- *
- *
  */
 public final class NadeefStart {
     private static Process derbyProcess;

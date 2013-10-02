@@ -11,36 +11,39 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(["jquery", "bootstrap", "datatable"], function() {
+define(["requester"], function(Requester) {
 	var instance = null;
 	function load(tablename) {
 		if (instance != null) {
 			instance.fnDestroy();
 		}
 
-        var url = '/table/' + tablename;
-		$.getJSON(url + '/schema', function(data) {
-			var schema = data['schema'];
-			var columns = [];
-			$('#table').empty().append('<thead><tr></tr></thead>');
-			for (var i = 0; i < schema.length; i ++) {
-				columns.push( { sTitle : schema[i] } );
-			}
+        Requester.getTableSchema(
+            tablename,
+            function(data) {
+                var schema = data['schema'];
+                var columns = [];
+                $('#table').empty().append('<thead><tr></tr></thead>');
+                for (var i = 0; i < schema.length; i ++) {
+                    columns.push( { sTitle : schema[i] } );
+                }
 
-			/* Add a select menu for each TH element in the table footer */
-			instance = $('#table').dataTable({
-                "bAutoWidth" : false,
-                "bSort": false,
-				"bProcessing" : true,
-				"bDestroy": true,
-
-                "bServerSide": true,
-                "sAjaxSource": url,
-                "sAjaxDataProp": 'data',
-				"sWrapper" : "dataTables_wrapper form-inline",
-                "aoColumns" : columns
-			});
-		});
+                var lastIndex = this.url.lastIndexOf("/");
+                var dataUrl = this.url.substring(0, lastIndex);
+                /* Add a select menu for each TH element in the table footer */
+                instance = $('#table').dataTable({
+                    "bAutoWidth" : false,
+                    "bSort": false,
+                    "bProcessing" : true,
+                    "bDestroy": true,
+                    "bServerSide": true,
+                    "sAjaxSource": dataUrl,
+                    "sAjaxDataProp": 'data',
+                    "sWrapper" : "dataTables_wrapper form-inline",
+                    "aoColumns" : columns
+                });
+            }
+        );
 	}
 
     function filter(e) {

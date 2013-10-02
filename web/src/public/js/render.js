@@ -14,9 +14,11 @@
 /**
  * Render module which draws different visualization graphs.
  */
-define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
+define([
+    'hash', 'd3', 'nvd3', 'table', 'requester'],
+    function(HashMap, D3, NVD3, Table, Requester) {
     function drawOverview(id) {
-	    $.getJSON('/widget/overview', function(json) {
+	    Requester.getOverview(function(json) {
 			$('#' + id + ' svg').empty();
 			
 		    var data = json['data'];
@@ -54,16 +56,18 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
     }
 
     function drawAttribute(id) {
-	    $.getJSON('/widget/attribute', function(json) {
+	    Requester.getAttribute(function(json) {
 			$('#' + id + ' svg').empty();
 		    var result = json['data'];
 		    var values;
-		    if (result == null&&result.length == 0) {
+		    if (result == null && result.length == 0) {
 			    values = null;
 		    } else {
 			    values = [];
 			    for (var i = 0; i < result.length; i ++) {
-				    values.push({'label' : result[i][0], 'value' : result[i][1]});
+				    values.push(
+				        {'label' : result[i][0], 'value' : result[i][1]}
+				    );
 			    }
 		    }
 
@@ -97,7 +101,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
     }
 
     function drawViolationRelation(id) {		
-	    $.getJSON('/widget/violation_relation', function(data) {
+	    Requester.getViolationRelation(function(data) {
 			var width = $('#violationRelation').width();
 			var height = $('#violationRelation').height();
 			
@@ -122,7 +126,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 		    var maxGroupId = 0;
 		    var pre = null;
 		    var conns = [];
-			var hash = new HashMap();
+			var hash = new HashMap.Map();
 
 		    // process the graph
 		    for (var i = 0; i < result.length; i ++) {
@@ -146,7 +150,8 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
 						     'target' :  groupId, 
 						     'value' : 1,
 						     'weight' : 1
-						    });
+						    }
+						);
 				    }
 				    conns.push(tid);
 			    } else {
@@ -213,7 +218,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
     }
 
     function drawDistribution(id) {
-	    $.getJSON('/widget/rule', function(data) {
+	    Requester.getRuleDistribution(function(data) {
 			$('#' + id + '  svg').empty();
 		    var result = data['data'];
 		    if (result == null || result.length == 0) {
@@ -270,7 +275,7 @@ define(['hash', 'd3', 'nvd3', 'table'], function(HashMap, D3, NVD3, Table) {
     }
     
     function drawTupleRank(id) {
-	    $.getJSON('/widget/top10', function(data) {
+	    Requester.getTupleRank(function(data) {
 			$('#' + id + ' svg').empty();
 		    var result = data['data'];
 		    var values = [];

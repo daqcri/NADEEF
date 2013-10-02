@@ -61,19 +61,12 @@ define([
         });
 
         $('#clear').on('click', function() {
-            var state = window.history.state;
-            if (state == null || state.projectName == '') {
-                Router.redirectToRoot();
-            }
-
-            $.ajax({
-                url: '/' + state.projectName + '/table/violation',
-                type: "DELETE",
-                success: function() {
+            Requester.deleteViolation(
+                function() {
                     info('Violations are removed');
                     refresh();
                 }
-            });
+            );
         });
     }
 

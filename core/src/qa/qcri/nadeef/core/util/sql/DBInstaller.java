@@ -48,7 +48,7 @@ public final class DBInstaller {
 
             if (DBMetaDataTool.isTableExist(dbConfig, violationTableName)) {
                 tracer.info(
-                    "Violation is already installed on the database."
+                    "Violation is already installed on the database, skip installing."
                 );
             } else {
                 stat.execute(dialectManager.createViolationTable(violationTableName));
@@ -56,7 +56,7 @@ public final class DBInstaller {
 
             if (DBMetaDataTool.isTableExist(dbConfig, repairTableName)) {
                 tracer.info(
-                    "Violation is already installed on the database, skip installing."
+                    "Repair is already installed on the database, skip installing."
                 );
             } else {
                 stat.execute(dialectManager.createRepairTable(repairTableName));
@@ -64,7 +64,7 @@ public final class DBInstaller {
 
             if (DBMetaDataTool.isTableExist(dbConfig, auditTableName)) {
                 tracer.info(
-                    "Violation is already installed on the database, skip installing."
+                    "Audit is already installed on the database, skip installing."
                 );
             } else {
                 stat.execute(dialectManager.createAuditTable(auditTableName));

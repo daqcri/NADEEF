@@ -66,7 +66,7 @@ define([
                 bindEvent();
 
                 // initialize the editor
-			    editor = Ace.edit("rule_editor");
+			    editor = Ace.edit("rule-editor");
 			    editor.setFontSize(14);
 				if (rule.code == null) {
 					editor.setValue("// Type your rule code here", -1);

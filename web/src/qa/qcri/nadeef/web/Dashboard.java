@@ -89,7 +89,6 @@ public final class Dashboard {
                         query(
                             project,
                             dialectInstance.queryTable(tableName, start, interval, filter),
-                            "Query table " + tableName,
                             true
                         );
 
@@ -97,7 +96,6 @@ public final class Dashboard {
                         query(
                             project,
                             dialectInstance.countTable(tableName),
-                            "Query table count " + tableName,
                             true
                         );
                     JSONArray dataArray = (JSONArray)countJson.get("data");
@@ -107,7 +105,7 @@ public final class Dashboard {
                     queryJson.put("sEcho", request.queryParams("sEcho"));
                     result = queryJson.toJSONString();
                 } catch (Exception ex) {
-                    result = fail(ex.getMessage());
+                    result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
             }
@@ -128,7 +126,6 @@ public final class Dashboard {
                     query(
                         project,
                         dialectInstance.querySchema(tableName),
-                        "Query schema " + tableName,
                         true
                     );
                 return result.toJSONString();
@@ -171,9 +168,8 @@ public final class Dashboard {
                     query(
                         project,
                         dialectInstance.queryRule(),
-                        "querying rules",
                         true
-                    ).toJSONString();
+                    );
             }
         });
 
@@ -189,11 +185,10 @@ public final class Dashboard {
 
                 response.type("application/json");
                 return query(
-                    ruleName,
+                    project,
                     dialectInstance.queryRule(ruleName),
-                    "querying rule " + ruleName,
                     true
-                ).toJSONString();
+                );
             }
         });
 
@@ -259,7 +254,8 @@ public final class Dashboard {
                              !tableName.equalsIgnoreCase("VIOLATION") &&
                              !tableName.equalsIgnoreCase("RULE") &&
                              !tableName.equalsIgnoreCase("RULETYPE") &&
-                             !tableName.equalsIgnoreCase("REPAIR")
+                             !tableName.equalsIgnoreCase("REPAIR") &&
+                             !tableName.equalsIgnoreCase("PROJECT")
                         ) {
                             result.add(rs.getString(3));
                         }
@@ -298,9 +294,8 @@ public final class Dashboard {
                 return query(
                     project,
                     dialectInstance.queryAttribute(),
-                    "querying attribute",
                     true
-                ).toJSONString();
+                );
             }
         });
 
@@ -318,9 +313,8 @@ public final class Dashboard {
                     query(
                         project,
                         dialectInstance.queryRuleDistribution(),
-                        "querying rule distribution",
                         true
-                    ).toJSONString();
+                    );
             }
         });
 
@@ -338,9 +332,8 @@ public final class Dashboard {
                     query(
                         project,
                         dialectInstance.queryTopK(10),
-                        "querying top 10",
                         true
-                    ).toJSONString();
+                    );
             }
         });
 
@@ -357,9 +350,8 @@ public final class Dashboard {
                 return query(
                     project,
                     dialectInstance.queryViolationRelation(),
-                    "querying attribute",
                     true
-                ).toJSONString();
+                );
             }
         });
 
@@ -379,10 +371,9 @@ public final class Dashboard {
                 JSONArray result = new JSONArray();
                 ResultSet rs = null;
                 try {
-                    conn =
-                        DBConnectionPool.createConnection(
-                            NadeefConfiguration.getDbConfig()
-                        );
+                    DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                    dbConfig.switchDatabase(project);
+                    conn = DBConnectionPool.createConnection(dbConfig);
                     stat = conn.createStatement();
                     rs = stat.executeQuery(dialectInstance.queryDistinctTable());
                     List<String> tableNames = Lists.newArrayList();
@@ -441,7 +432,7 @@ public final class Dashboard {
                     result = nadeefClient.getJobStatus();
                 } catch (Exception ex) {
                     tracer.err("Request progress failed.", ex);
-                    result = fail(ex.getMessage());
+                    result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
             }
@@ -522,7 +513,7 @@ public final class Dashboard {
                     result = nadeefClient.generate(type, name, code, table1);
                 } catch (Exception ex) {
                     tracer.err("Generate code failed.", ex);
-                    result = fail(ex.getMessage());
+                    result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
             }
@@ -548,7 +539,7 @@ public final class Dashboard {
                     result = nadeefClient.verify(type, name, code);
                 } catch (Exception ex) {
                     tracer.err("Generate code failed.", ex);
-                    result = fail(ex.getMessage());
+                    result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
             }
@@ -578,7 +569,7 @@ public final class Dashboard {
                         nadeefClient.detect(type, name, code, table1, table2, dbname);
                 } catch (Exception ex) {
                     tracer.err("Detection failed.", ex);
-                    result = fail(ex.getMessage());
+                    result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
             }
@@ -592,12 +583,12 @@ public final class Dashboard {
                 String code = request.queryParams("code");
                 String table1 = request.queryParams("table1");
                 String table2 = request.queryParams("table2");
-                String dbname = request.queryParams("project");
+                String dbName = request.queryParams("project");
 
                 if (Strings.isNullOrEmpty(type) ||
                     Strings.isNullOrEmpty(name) ||
                     Strings.isNullOrEmpty(code) ||
-                    Strings.isNullOrEmpty(dbname) ||
+                    Strings.isNullOrEmpty(dbName) ||
                     Strings.isNullOrEmpty(table1)) {
                     return fail("Input cannot be NULL.");
                 }
@@ -605,10 +596,10 @@ public final class Dashboard {
                 String result;
                 try {
                     result =
-                        nadeefClient.repair(type, name, code, table1, table2, dbname);
+                        nadeefClient.repair(type, name, code, table1, table2, dbName);
                 } catch (Exception ex) {
                     tracer.err("Generate code failed.", ex);
-                    result = fail(ex.getMessage());
+                    result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
             }
@@ -643,9 +634,8 @@ public final class Dashboard {
 
     //<editor-fold desc="Private helpers">
     private static JSONObject query(
-        String dbname,
+        String dbName,
         String sql,
-        String err,
         boolean includeHeader
     ) {
         Connection conn = null;
@@ -653,14 +643,14 @@ public final class Dashboard {
         Statement stat = null;
         try {
             DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
-            dbConfig.switchDatabase(dbname);
+            dbConfig.switchDatabase(dbName);
             conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             rs = stat.executeQuery(sql);
             return queryToJson(rs, includeHeader);
         } catch (Exception ex) {
-            tracer.err(err, ex);
-            rs = null;
+            tracer.err("Query \n" + sql + " failed.", ex);
+            return fail(ex.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -676,10 +666,9 @@ public final class Dashboard {
                 }
             } catch (SQLException e) {}
         }
-        return null;
     }
 
-    private static String update(String dbname, String sql, String err) {
+    private static JSONObject update(String dbname, String sql, String err) {
         Connection conn = null;
         Statement stat = null;
         try {
@@ -736,17 +725,17 @@ public final class Dashboard {
     }
 
     @SuppressWarnings("unchecked")
-    private static String success(int value) {
+    private static JSONObject success(int value) {
         JSONObject obj = new JSONObject();
         obj.put("data", value);
-        return obj.toJSONString();
+        return obj;
     }
 
     @SuppressWarnings("unchecked")
-    private static String fail(String err) {
+    private static JSONObject fail(String err) {
         JSONObject obj = new JSONObject();
         obj.put("error", err);
-        return obj.toJSONString();
+        return obj;
     }
 
     //</editor-fold>

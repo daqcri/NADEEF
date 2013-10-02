@@ -148,7 +148,7 @@ public class DBConfig {
             url = getHostName() + "/" + getDatabaseName() + ";user=" + databaseName;
             userName = databaseName;
         } else {
-            url = getHostName() + "/" + getDatabaseName();
+            url = getHostName() + "/" + databaseName;
         }
         return this;
     }

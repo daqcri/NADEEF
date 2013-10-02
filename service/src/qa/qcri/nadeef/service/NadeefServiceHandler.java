@@ -38,7 +38,6 @@ import java.util.List;
 
 /**
  * NadeefServiceHandler handles request for NADEEF service.
- *
  */
 // TODO: speedup the compiling stage by using object caching.
 public class NadeefServiceHandler implements TNadeefService.Iface {
@@ -148,14 +147,8 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         try {
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
 
-            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
-            DBConfig outputConfig =
-                new DBConfig.Builder()
-                .dialect(dbConfig.getDialect())
-                .username(dbConfig.getUserName())
-                .password(dbConfig.getPassword())
-                .url(dbConfig.getHostName(), outputdb)
-                .build();
+            DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+            dbConfig.switchDatabase(outputdb);
 
             String type = rule.getType();
             String name = rule.getName();
@@ -170,15 +163,15 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
 
                 ruleInstance = (Rule) udfClass.newInstance();
                 ruleInstance.initialize(rule.getName(), tables);
-                cleanPlan = new CleanPlan(outputConfig, ruleInstance);
+                cleanPlan = new CleanPlan(dbConfig, ruleInstance);
                 key = scheduler.submitDetectJob(cleanPlan);
             } else {
                 // TODO: declarative rule only supports 1 table
                 Collection<Rule> rules =
-                    buildAbstractRule(rule, table1);
+                    buildAbstractRule(dbConfig,  rule, table1);
                 for (Rule rule_ : rules) {
                     rule_.initialize(rule.getName(), tables);
-                    cleanPlan = new CleanPlan(outputConfig, rule_);
+                    cleanPlan = new CleanPlan(dbConfig, rule_);
                     key = scheduler.submitDetectJob(cleanPlan);
                 }
             }
@@ -276,7 +269,11 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         return jobScheduler.getJobStatus();
     }
 
-    private Collection<Rule> buildAbstractRule(TRule tRule, String tableName) throws Exception {
+    private Collection<Rule> buildAbstractRule(
+        DBConfig dbConfig,
+        TRule tRule,
+        String tableName
+    ) throws Exception {
         String type = tRule.getType();
         String name = tRule.getName();
         String code = tRule.getCode();
@@ -286,7 +283,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         RuleBuilder ruleBuilder;
         Collection<Rule> result;
         ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
-        Schema schema = DBMetaDataTool.getSchema(NadeefConfiguration.getDbConfig(), tableName);
+        Schema schema = DBMetaDataTool.getSchema(dbConfig, tableName);
         if (ruleBuilder != null) {
             result = ruleBuilder
                 .name(name)
