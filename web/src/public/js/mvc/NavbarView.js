@@ -13,40 +13,63 @@
 
 define([
     "router",
-    "text!mvc/template/navbar.template.html"
-], function(Router, NavbarTemplate) {
+    "requester",
+    "text!mvc/template/navbar.template.html",
+    "text!mvc/template/project.template.html",
+    "mvc/HomeView"
+], function(Router, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
     function bindEvent() {
-        $('#navbar').find('li a').on('click', function() {
+        $('#navbar').find("li a").on('click', function() {
             $('#navbar').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
 
+        $("#refresh").on('click', HomeView.refresh);
+
+        $("#change").on("click", function() {
+            $('#projectModal').find('.modal-body').remove();
+            startProject('projectModal');
+        });
+
         $("#project-button").on("click", function() {
             var newProject = $("#create-new-project").val();
-            var selectedProject = $("#select-existing-project").val();
 
             // TODO: project validation here
-            var state;
             if (newProject != null && newProject != "") {
-                state = { "name" : newProject, "create" : true };
+                Requester.createProject(newProject, function() {
+                    $("#projectModal").modal('hide');
+                    Router.redirect('#home', { name : newProject });
+                });
             } else {
-                state = { "name" : selectedProject, "create" : false };
+                var selectedProject = $("#select-existing-project").val();
+                $("#projectModal").modal('hide');
+                Router.redirect('#home', { name : selectedProject });
             }
-
-            $("#projectModal").modal('hide');
-            Router.redirect('#home', state);
         });
     }
     
     function render() {
         $('body').append(_.template(NavbarTemplate)());
     }
-    
+
+    function startProject(id) {
+        Requester.getProject(function(data) {
+            var projects = data['data'];
+            var modalHtml = _.template(ProjectTemplate) (
+                {
+                    projects: projects
+                }
+            );
+            $('#' + id).find(".modal-footer").before(modalHtml);
+            $('#' + id).modal('show');
+        });
+    }
+
 	function start() {
 		render();
 		bindEvent();
 
-        $("#projectModal").modal('show');
+        startProject('projectModal');
 	}
 	
     return {

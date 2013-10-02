@@ -20,6 +20,15 @@ define(['router'], function(Router) {
         return state.name;
     }
 
+    function getProject(successCallback, failureCallback) {
+        $.ajax({
+            url: '/project',
+            type: 'GET',
+            success: successCallback,
+            fail: failureCallback
+        });
+    }
+
     function deleteViolation(successCallback, failureCallback) {
         $.ajax({
             url: '/' + getProjectName() + '/table/violation',
@@ -123,9 +132,22 @@ define(['router'], function(Router) {
         });
     }
 
+    function createProject(projectName, successCallback, failureCallback) {
+        $.ajax({
+            url : '/project',
+            type: 'POST',
+            dataType: 'json',
+            data: { project : projectName },
+            success: successCallback,
+            fail: failureCallback
+        });
+    }
+
     return {
         doDetect : doDetect,
         deleteViolation : deleteViolation,
+        getProject: getProject,
+        createProject: createProject,
         getSource: getSource,
         getRule: getRule,
         getRuleDetail: getRuleDetail,

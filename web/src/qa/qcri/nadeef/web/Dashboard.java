@@ -421,24 +421,17 @@ public final class Dashboard {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Do actions">
-    private static void setupAction() {
-        get(new Route("/progress") {
+    //<editor-fold desc="Project actions">
+    private static void setupProject() {
+        get(new Route("/project") {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                String result;
-                try {
-                    result = nadeefClient.getJobStatus();
-                } catch (Exception ex) {
-                    tracer.err("Request progress failed.", ex);
-                    result = fail(ex.getMessage()).toJSONString();
-                }
-                return result;
+                return query("nadeefdb", "SELECT * FROM PROJECT", true);
             }
         });
 
-        post(new Route("/do/create") {
+        post(new Route("/project") {
             @Override
             public Object handle(Request request, Response response) {
                 String project = request.queryParams("project");
@@ -479,6 +472,7 @@ public final class Dashboard {
                 // install the tables
                 try {
                     DBInstaller.install(dbConfig);
+                    qa.qcri.nadeef.core.util.sql.DBInstaller.install(dbConfig);
                 } catch (Exception ex) {
                     tracer.err(ex.getMessage(), ex);
                     return fail("Installing databases failed.");
@@ -490,6 +484,25 @@ public final class Dashboard {
                     dialectInstance.insertProject(project),
                     "Creating project " + project + " failed."
                 );
+            }
+        });
+    }
+
+    //<editor-fold desc="Do actions">
+    private static void setupAction() {
+
+        get(new Route("/progress") {
+            @Override
+            public Object handle(Request request, Response response) {
+                response.type("application/json");
+                String result;
+                try {
+                    result = nadeefClient.getJobStatus();
+                } catch (Exception ex) {
+                    tracer.err("Request progress failed.", ex);
+                    result = fail(ex.getMessage()).toJSONString();
+                }
+                return result;
             }
         });
 
@@ -629,6 +642,7 @@ public final class Dashboard {
         setupSource();
         setupWidget();
         setupAction();
+        setupProject();
     }
     //</editor-fold>
 

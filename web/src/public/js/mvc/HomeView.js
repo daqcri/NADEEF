@@ -56,10 +56,6 @@ define([
             renderTable(e.currentTarget.id);
         });
 
-        $('#refresh').on('click', function(e) {
-            refresh();
-        });
-
         $('#clear').on('click', function() {
             Requester.deleteViolation(
                 function() {
@@ -83,14 +79,6 @@ define([
     }
     
     function start() {
-        var state = window.history.state;
-        if (state == null || state.projectName == '') {
-            Router.redirectToRoot();
-            return;
-        }
-
-        projectName = state.projectName;
-
         render();
         bindEvent();
         // render default view
@@ -142,7 +130,7 @@ define([
         case 'tab_tupleRank':
             Renderer.drawTupleRank('tupleRank');
             break;
-            case 'tab_violationRelation':
+        case 'tab_violationRelation':
             Renderer.drawViolationRelation('violationRelation');
             break;
         }
@@ -181,6 +169,7 @@ define([
     }
     
     return {
-        start: start
+        start: start,
+        refresh: refresh
     };
 });

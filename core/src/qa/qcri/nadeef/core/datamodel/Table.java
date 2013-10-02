@@ -21,8 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A Table represents a collection of <code>Tuples</code>.
- *
+ * A Table represents a collection of {@link Tuple}.
  */
 public abstract class Table {
     protected Schema schema;
