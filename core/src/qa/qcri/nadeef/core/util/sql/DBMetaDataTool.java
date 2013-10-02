@@ -140,7 +140,6 @@ public final class DBMetaDataTool {
                 InstantiationException,
                 ClassNotFoundException {
         Connection conn = null;
-        ResultSet resultSet = null;
         try {
             conn = DBConnectionFactory.createConnection(dbConfig, true);
             DatabaseMetaData meta = conn.getMetaData();
@@ -149,7 +148,6 @@ public final class DBMetaDataTool {
                 meta.getTables(null, null, tableName.toLowerCase(), null).next();
             return result;
         } finally {
-            resultSet.close();
             if (conn != null) {
                 conn.close();
             }
