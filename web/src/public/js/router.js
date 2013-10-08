@@ -19,19 +19,21 @@ define([], function() {
             {hash:'#project', controller: 'NavbarView'}
         ];
     var currentHash = '';
+    var currentState = '';
 
     function start() {
         setInterval(hashCheck, 200);
     }
      
     function hashCheck() {
-        if (window.location.hash != currentHash) {
+        if (window.location.hash != currentHash || window.history.state != currentState) {
             for (var i = 0, currentRoute; currentRoute = routes[i++];) {
                 if (window.location.hash == currentRoute.hash) {
                     loadController(currentRoute.controller);
 				}
             }
             currentHash = window.location.hash;
+            currentState = window.history.state;
         }
     }
      

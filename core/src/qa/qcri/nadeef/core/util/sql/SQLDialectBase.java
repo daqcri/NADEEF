@@ -18,6 +18,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -29,6 +30,28 @@ import java.sql.SQLException;
  *
  */
 public abstract class SQLDialectBase {
+    /**
+     * Creates SQLDialect instance.
+     * @param dialect dialect.
+     * @return SQLDialectBase instance.
+     */
+    public static SQLDialectBase createDialectBaseInstance(SQLDialect dialect) {
+        SQLDialectBase dialectInstance;
+        switch (dialect) {
+            default:
+            case DERBYMEMORY:
+            case DERBY:
+                dialectInstance = new DerbySQLDialect();
+                break;
+            case POSTGRES:
+                dialectInstance = new PostgresSQLDialect();
+                break;
+            case MYSQL:
+                dialectInstance = new MySQLDialect();
+                break;
+        }
+        return dialectInstance;
+    }
 
     /**
      * Gets the template file.

@@ -19,6 +19,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -109,18 +110,15 @@ public class CSVTools {
         String sql;
         Connection conn = null;
         try {
+            // overwrites existing tables if necessary
+            fullTableName = "CSV_" + tableName;
+
+            boolean hasTableExist = DBMetaDataTool.isTableExist(dbConfig, fullTableName);
+
             conn = DBConnectionPool.createConnection(dbConfig);
             conn.setAutoCommit(false);
             stat = conn.createStatement();
             stat.setFetchSize(1024);
-
-            // overwrites existing tables if necessary
-            fullTableName = "CSV_" + tableName;
-
-            DatabaseMetaData meta = conn.getMetaData();
-            boolean hasTableExist =
-                meta.getTables(null, null, fullTableName.toLowerCase(), null).next() ||
-                meta.getTables(null, null, fullTableName.toUpperCase(), null).next();;
 
             if (hasTableExist) {
                 if (!overwrite) {
@@ -133,7 +131,6 @@ public class CSVTools {
                     sql = dialectManager.dropTable(fullTableName);
                     tracer.verbose(sql);
                     stat.execute(sql);
-                    conn.commit();
                 }
             }
 
@@ -143,7 +140,6 @@ public class CSVTools {
             sql = dialectManager.createTableFromCSV(fullTableName, line);
             tracer.verbose(sql);
             stat.execute(sql);
-            conn.commit();
             tracer.info("Successfully created table " + fullTableName);
 
             ResultSet rs = stat.executeQuery(dialectManager.selectAll(fullTableName));
@@ -159,6 +155,10 @@ public class CSVTools {
                 lineCount ++;
                 sql = dialectManager.importFromCSV(metaData, fullTableName, line);
                 stat.addBatch(sql);
+
+                if (lineCount % 10240 == 0) {
+                    stat.executeBatch();
+                }
             }
 
             stat.executeBatch();
@@ -177,7 +177,7 @@ public class CSVTools {
             }
         } finally {
             if (stat != null) {
-                stat.close();
+                stat.closeOnCompletion();
             }
 
             if (conn != null) {

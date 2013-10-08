@@ -15,10 +15,13 @@ package qa.qcri.nadeef.web;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
@@ -27,6 +30,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.io.*;
 import java.sql.*;
 import java.util.List;
 
@@ -234,7 +238,6 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                Connection conn = null;
                 JSONObject json = new JSONObject();
                 JSONArray result = new JSONArray();
                 String project = request.params("project");
@@ -244,12 +247,11 @@ public final class Dashboard {
                 }
 
                 try {
-                    conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
-                    DatabaseMetaData meta = conn.getMetaData();
-                    ResultSet rs = meta.getTables(null, null, null, new String[] {"TABLE"});
-                    while (rs.next()) {
-                        // TODO: magic number
-                        String tableName = rs.getString(3);
+                    DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                    dbConfig.switchDatabase(project);
+
+                    List<String> tables = DBMetaDataTool.getTables(dbConfig);
+                    for (String tableName : tables) {
                         if ( !tableName.equalsIgnoreCase("AUDIT") &&
                              !tableName.equalsIgnoreCase("VIOLATION") &&
                              !tableName.equalsIgnoreCase("RULE") &&
@@ -257,18 +259,12 @@ public final class Dashboard {
                              !tableName.equalsIgnoreCase("REPAIR") &&
                              !tableName.equalsIgnoreCase("PROJECT")
                         ) {
-                            result.add(rs.getString(3));
+                            result.add(tableName);
                         }
                     }
                 } catch (Exception ex) {
                     tracer.err("querying source", ex);
-                    return null;
-                } finally {
-                    if (conn != null) {
-                        try {
-                            conn.close();
-                        } catch (SQLException ignore) {}
-                    }
+                    return fail(ex.getMessage());
                 }
 
                 json.put("data", result);
@@ -585,6 +581,107 @@ public final class Dashboard {
                     result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
+            }
+        });
+
+        post(new Route("/do/upload") {
+            @Override
+            public Object handle(Request request, Response response) {
+                String body = request.body();
+                BufferedReader reader = new BufferedReader(new StringReader(body));
+                BufferedWriter writer = null;
+                String line;
+                try {
+                    // parse the project name
+                    String projectName = null;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.contains("project")) {
+                            while ((line = reader.readLine()) != null) {
+                                if (!line.isEmpty()) {
+                                    projectName = line.trim();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (projectName != null) {
+                            break;
+                        }
+                    }
+
+                    // parse the file name
+                    int begin;
+                    String fileName = null;
+                    while ((line = reader.readLine()) != null) {
+                        String fileNamePrefix = "filename=";
+                        if (line.contains(fileNamePrefix)) {
+                            begin = line.indexOf(fileNamePrefix) + fileNamePrefix.length() + 1;
+                            for (int i = begin; i < line.length(); i ++) {
+                                if (line.charAt(i) == '\"') {
+                                    fileName = line.substring(begin, i);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (fileName != null) {
+                            break;
+                        }
+                    }
+
+                    // parse until the beginning of the file
+                    while ((line = reader.readLine()) != null) {
+                        if (line.isEmpty()) {
+                            break;
+                        }
+                    }
+
+                    // write to disk
+                    File outputFile = File.createTempFile("CSV_", fileName);
+                    writer = new BufferedWriter(new FileWriter(outputFile));
+                    while ((line = reader.readLine()) != null) {
+                        if (line.contains("multipartformboundary") || line.isEmpty()) {
+                            continue;
+                        }
+                        writer.write(line);
+                        writer.write("\n");
+                    }
+                    writer.flush();
+                    tracer.info("Write upload file to " + outputFile.getAbsolutePath());
+
+                    // dump into database
+                    DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                    dbConfig.switchDatabase(projectName);
+
+                    // TODO: resolve this by using injection deps.
+                    qa.qcri.nadeef.core.util.sql.SQLDialectBase dialectBase =
+                        qa.qcri.nadeef.core.util.sql.SQLDialectBase.createDialectBaseInstance(
+                            dbConfig.getDialect()
+                        );
+
+                    String tableName = Files.getNameWithoutExtension(fileName);
+                    CSVTools.dump(
+                        dbConfig,
+                        dialectBase,
+                        outputFile,
+                        tableName,
+                        NadeefConfiguration.getAlwaysOverrideTable());
+
+                } catch (Exception ex) {
+                    tracer.err("Upload file failed.", ex);
+                    return fail(ex.getMessage());
+                } finally {
+                    try {
+                        if (reader != null) {
+                            reader.close();
+                        }
+
+                        if (writer != null) {
+                            writer.close();
+                        }
+                    } catch (Exception ex) {}
+                }
+                return success(0);
             }
         });
 

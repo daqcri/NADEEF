@@ -61,8 +61,8 @@ public final class Bootstrap {
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
 
-            DBInstaller.installMetaData();
-
+            // install the meta data
+            DBInstaller.installMetaData(NadeefConfiguration.getDbConfig());
 
             // initialize nadeef client
             NadeefClient.initialize(

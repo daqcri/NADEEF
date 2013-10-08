@@ -15,6 +15,7 @@ package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
@@ -30,11 +31,11 @@ import java.sql.Statement;
 class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
 
-    public static void installMetaData() throws Exception {
+    public static void installMetaData(DBConfig dbConfig) throws Exception {
         Connection conn = null;
         Statement stat = null;
         try {
-            conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig(), true);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
 
             SQLDialect dialect = NadeefConfiguration.getDbConfig().getDialect();
@@ -68,34 +69,19 @@ class DBInstaller {
             stat = conn.createStatement();
 
             SQLDialect dialect = dbConfig.getDialect();
-            SQLDialectBase dialectInstance = SQLDialectBase.createDialectBaseInstance(dialect);
+            SQLDialectBase dialectInstance =
+                SQLDialectBase.createDialectBaseInstance(dialect);
 
             // skip when those dbs are already existed
-            DatabaseMetaData meta = conn.getMetaData();
-            if (dialect == SQLDialect.DERBY || dialect == SQLDialect.DERBYMEMORY) {
-                if (!meta.getTables(null, dbConfig.getUserName(), "RULE", null).next()) {
-                    stat.execute(dialectInstance.installRule());
-                }
+            if (!DBMetaDataTool.isTableExist(dbConfig, "RULE")) {
+                stat.execute(dialectInstance.installRule());
+            }
 
-                if (!meta.getTables(null, dbConfig.getUserName(), "RULETYPE", null).next()) {
-                    stat.execute(dialectInstance.installRuleType());
-                    stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
-                    stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
-                    stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
-                }
-            } else {
-                if (!meta.getTables(null, null, "RULE", null).next() &&
-                    !meta.getTables(null, null, "rule", null).next()) {
-                    stat.execute(dialectInstance.installRule());
-                }
-
-                if (!meta.getTables(null, null, "RULETYPE", null).next() &&
-                    !meta.getTables(null, null, "ruletype", null).next()) {
-                    stat.execute(dialectInstance.installRuleType());
-                    stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
-                    stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
-                    stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
-                }
+            if (!DBMetaDataTool.isTableExist(dbConfig, "RULETYPE")) {
+                stat.execute(dialectInstance.installRuleType());
+                stat.execute("INSERT INTO RULETYPE VALUES (0, 'UDF', true)");
+                stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
+                stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
             }
         } finally {
             if (stat != null) {

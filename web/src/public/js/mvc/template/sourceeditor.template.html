@@ -1,0 +1,67 @@
+<!-- Data source editor -->
+<div class="modal hide" id="source-editor">
+    <div class="modal-header">
+        <h4>Create New Data Source</h4>
+    </div>
+
+    <div class="modal-body modal_large">
+        <!--
+        <p>Connect to a Database</p>
+        <div class="well well-small">
+          <form class="form-horizontal" method="POST" action="">
+            <div class="control-group form-inline">
+              <label class="control-label required">&nbsp;Type</label>
+              <select>
+                <option>Postgres</option>
+                <option>MySQL</option>
+              </select>
+            </div>
+            <div class="control-group form-inline">
+              <label class="control-label required" for="databaseurl">&nbsp;URL</label>
+              <input id="databaseurl" type="text">
+            </div>
+            <div class="control-group form-inline">
+              <label class="control-label required" for="databaseurl">&nbsp;Username</label>
+              <input id="databaseurl" type="text">
+            </div>
+            <div class="control-group form-inline">
+              <label class="control-label required" for="databasepassword">&nbsp;Password</label>
+              <input id="databasepassword" type="password">
+            </div>
+          </form>
+        </div>
+        -->
+        <div>
+            <div id="dropbox">
+                <span class="message" id="dropbox-message">
+                    Drop CSV file here to upload.
+                </span>
+            </div>
+            <div class="progress" id="dropbox-progress">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <!--
+        <a href="#" data-dismiss="modal" data-target="#datasource" class="btn">
+          Test Connection
+        </a>
+        -->
+        <button href="#"
+           data-dismiss="modal"
+           data-target="#datasource"
+           class="btn"
+           id="source-editor-save">
+            Save
+        </button>
+        <button href="#"
+           data-dismiss="modal"
+           data-target="#datasource"
+           class="btn"
+           id="source-editor-cancel">
+            Cancel
+        </button>
+    </div>
+</div>

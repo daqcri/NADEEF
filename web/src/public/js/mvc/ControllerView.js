@@ -14,15 +14,19 @@
 define([
     'requester',
     'table',
+    'jquery.filedrop',
     'mvc/CleanPlanView',
     'mvc/ProgressbarView',
+    'mvc/SourceEditorView',
     'text!mvc/template/controller.template.html',
     'text!mvc/template/detail.template.html'
 ], function(
     Requester,
     Table,
+    FileDrop,
     CleanPlanView,
     ProgressBarView,
+    SourceEditorView,
     ControllerTemplate,
     DetailTemplate
 ) {
@@ -47,9 +51,9 @@ define([
     }
 
     function render(id) {
+        ProgressBarView.start('progressbar');
         domId = id;
         renderSourceList();
-        ProgressBarView.start('progressbar');
     }
 
     function getSelectedPlan() {
@@ -72,6 +76,8 @@ define([
                                 ({ sources: sources, plans: plans});
                         $('#' + domId).html(html);
 
+                        // render the source modal
+                        SourceEditorView.start('source-editor-modal');
                         bindEvent();
                     }
                 );
@@ -208,6 +214,10 @@ define([
                 var plan = data['data'][0];
                 CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
             });
+        });
+
+        $('#new-source').on('click', function(e) {
+            $('#source-editor').modal('show');
         });
 
         $('#selected_rule').on('change', function(e) {

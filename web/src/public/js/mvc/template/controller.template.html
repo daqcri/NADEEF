@@ -1,127 +1,77 @@
 <ul class="nav nav-tabs">
-  <li class="active">
-    <a data-toggle="tab"><i class="icon-folder-open" style="margin-right: 10px;">
-      </i>Data Sources</a>
-  </li>
+    <li class="active">
+        <a data-toggle="tab"><i class="icon-folder-open" style="margin-right: 10px;">
+        </i>Data Sources</a>
+    </li>
 </ul>
 <div class="tab-content">
-  <div class="tab-pane in active">
-    <div class="control-group">
-      <button class="btn" id="refresh_source">Refresh</button>
-      <button class="btn" id="new_source" data-toggle="modal" href="#datasource">
-        New Data Source</button>
+    <div class="tab-pane in active">
+        <div class="control-group">
+            <button class="btn" id="refresh_source">Refresh</button>
+            <button class="btn" id="new-source" data-toggle="modal">
+                New Data Source</button>
+        </div>
+        <div class="control-group">
+            <select id="selected_source" class="selectbox fullwidth" size="5">
+                <% _.each(sources, function(source) { %>
+                <option><%= source %></option>
+                <% }); %>
+            </select>
+        </div>
     </div>
-    <div class="control-group">
-      <select id="selected_source" class="selectbox fullwidth" size="5">
-        <% _.each(sources, function(source) { %>
-        <option><%= source %></option>
-        <% }); %>
-      </select>
-    </div>
-  </div>
 </div>
 <p>
 
 <ul class="nav nav-tabs">
-  <li class="active">
-    <a data-toggle="tab"><i class="icon-edit" style="margin-right: 10px;">
-      </i>Rules</a>
-  </li>
+    <li class="active">
+        <a data-toggle="tab"><i class="icon-edit" style="margin-right: 10px;">
+        </i>Rules</a>
+    </li>
 </ul>
 <div class="tab-content">
-  <div class="tab-pane in active">
-    <div class="control-group">
-      <button class="btn" id="new_plan">New</button>
-      <button class="btn" id="edit_plan">Edit</button>
-      <button class="btn" id="detect">Detect</button>
-      <button class="btn" id="repair">Repair</button>
+    <div class="tab-pane in active">
+        <div class="control-group">
+            <button class="btn" id="new_plan">New</button>
+            <button class="btn" id="edit_plan">Edit</button>
+            <button class="btn" id="detect">Detect</button>
+            <button class="btn" id="repair">Repair</button>
+        </div>
+        <div class="control-group">
+            <select multiple id="selected_rule" class="selectbox fullwidth" size="10">
+                <% _.each(plans, function(plan) { %>
+                <option><%= plan[0] %></option>
+                <% }); %>
+            </select>
+        </div>
+        <label>Details</label>
+        <div id="detail">
+            <div class="well well-small"><span>No detail is available.</span></div>
+        </div>
     </div>
-    <div class="control-group">
-      <select multiple id="selected_rule" class="selectbox fullwidth" size="10">
-        <% _.each(plans, function(plan) { %>
-        <option><%= plan[0] %></option>
-        <% }); %>
-      </select>
+    <div class="modal hide fade" id="cleanPlanPopup">
+        <div class="modal-header">
+            <button type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-hidden="true">
+                &times;
+            </button>
+            <h3>Edit Rule</h3>
+        </div>
+        <div class="modal-body" id="cleanPlanView"></div>
     </div>
-    <label>Details</label>  
-    <div id="detail">
-      <div class="well well-small"><span>No detail is available.</span></div>
-    </div>  
-  </div>
-  <div class="modal hide fade" id="cleanPlanPopup">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal"
-              aria-hidden="true">&times;</button>
-      <h3>Edit Rule</h3>
-    </div>
-    <div class="modal-body" id="cleanPlanView"></div>
-  </div>
 </div>
 <p>
 
 <ul class="nav nav-tabs">
-  <li class="active">
-    <a data-toggle="tab"><i class="icon-tasks" style="margin-right: 10px;">
-      </i>Progress</a>
-  </li>
+    <li class="active">
+        <a data-toggle="tab"><i class="icon-tasks" style="margin-right: 10px;">
+        </i>Progress</a>
+    </li>
 </ul>
 <div class="tab-content">
-  <div class="tab-pane in active">
-    <div id="progressbar"></div>
-  </div>
-</div>
-
-<!-- Data source modal -->
-<div class="modal hide" id="datasource">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4>Create New Data Source</h4>
-  </div>
-
-  <div class="modal-body modal_large" name="source_modal">
-    <p>Connect to a Database</p>
-    <div class="well well-small">
-      <form class="form-horizontal" method="POST" action="">
-        <div class="control-group form-inline">
-          <label class="control-label required">&nbsp;Type</label>
-          <select>
-            <option>Postgres</option>
-            <option>MySQL</option>
-          </select>
-        </div>
-        <div class="control-group form-inline">
-          <label class="control-label required" for="databaseurl">&nbsp;URL</label>
-          <input id="databaseurl" type="text">
-        </div>
-        <div class="control-group form-inline">
-          <label class="control-label required" for="databaseurl">&nbsp;Username</label>
-          <input id="databaseurl" type="text">
-        </div>
-        <div class="control-group form-inline">
-          <label class="control-label required" for="databasepassword">&nbsp;Password</label>
-          <input id="databasepassword" type="password">
-        </div>
-      </form>
+    <div class="tab-pane in active">
+        <div id="progressbar"></div>
     </div>
-    <!-- close of well -->
-    <div>
-      <input type="file" id="csvfile" style="display:none" />
-      <button class="btn btn-info">
-        Upload CSV file from your disk
-      </button>
-    </div>
-  </div> <!-- close of modal body -->
-
-  <div class="modal-footer">
-    <a href="#" data-dismiss="modal" data-target="#datasource" class="btn">
-      Test Connection
-    </a>
-    <a href="#" data-dismiss="modal" data-target="#datasource" class="btn">
-      Save
-    </a>
-    <a href="#" data-dismiss="modal" data-target="#datasource" class="btn">
-      Cancel
-    </a>
-  </div>
 </div>
-<!-- close of modal -->
+<div id="source-editor-modal"></div>

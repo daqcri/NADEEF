@@ -33,16 +33,30 @@ define([
 
         $("#project-button").on("click", function() {
             var newProject = $("#create-new-project").val();
+            if (newProject != null && newProject != "") {
+                var pattern = new RegExp("^[a-zA-Z]\\w*");
+                var match = pattern.exec(newProject);
+
+                // regexp check failed.
+                if (match != newProject) {
+                    $("#project-input").addClass("error");
+                    $("#project-input").find("span").text("Input text has incorrect char.");
+
+                    return;
+                }
+            }
 
             // TODO: project validation here
             if (newProject != null && newProject != "") {
                 Requester.createProject(newProject, function() {
                     $("#projectModal").modal('hide');
+                    $("#projectName").text(newProject);
                     Router.redirect('#home', { name : newProject });
                 });
             } else {
                 var selectedProject = $("#select-existing-project").val();
                 $("#projectModal").modal('hide');
+                $("#projectName").text(selectedProject);
                 Router.redirect('#home', { name : selectedProject });
             }
         });
@@ -61,6 +75,13 @@ define([
                 }
             );
             $('#' + id).find(".modal-footer").before(modalHtml);
+
+            // event handler for modal
+            $("#create-new-project").keypress(function() {
+                $("#project-input").removeClass("error");
+                $("#project-input").find("span").text("");
+            });
+
             $('#' + id).modal('show');
         });
     }
