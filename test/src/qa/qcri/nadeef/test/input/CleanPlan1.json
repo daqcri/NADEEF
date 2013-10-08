@@ -1,7 +1,9 @@
 {
     "source" : {
         "url" : "memory:nadeefdb;create=true",
-        "type" : "derbymemory"
+        "type" : "derbymemory",
+        "username" : "nadeefdb",
+        "password" : "nadeefdb"
     },
     "rule" : [
         {

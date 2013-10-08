@@ -29,7 +29,6 @@ import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -53,10 +52,7 @@ public class SQLTableTest extends NadeefTestBase {
     public void setup() {
         try {
             Bootstrap.start(testConfig);
-            DBConfig dbConfig = new DBConfig.Builder()
-                .dialect(SQLDialect.DERBYMEMORY)
-                .url("memory:test;create=true")
-                .build();
+            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
             SQLDialectBase dialectManager =
                     SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
             tableName =
