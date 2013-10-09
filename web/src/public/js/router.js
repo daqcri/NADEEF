@@ -19,21 +19,32 @@ define([], function() {
             {hash:'#project', controller: 'NavbarView'}
         ];
     var currentHash = '';
-    var currentState = '';
+    var currentState = null;
 
     function start() {
         setInterval(hashCheck, 200);
     }
      
     function hashCheck() {
+        if (_.isUndefined(window.history.state)) {
+            redirectToRoot();
+            return;
+        }
+
         if (window.location.hash != currentHash || window.history.state != currentState) {
+            currentHash = window.location.hash;
             for (var i = 0, currentRoute; currentRoute = routes[i++];) {
                 if (window.location.hash == currentRoute.hash) {
                     loadController(currentRoute.controller);
-				}
+
+                    if (window.history.state == null) {
+                        window.history.pushState(currentState);
+                    } else {
+                        currentState = window.history.state;
+                    }
+                    break;
+                }
             }
-            currentHash = window.location.hash;
-            currentState = window.history.state;
         }
     }
      

@@ -15,7 +15,13 @@ define(["requester"], function(Requester) {
 	var instance = null;
 	function load(tablename) {
 		if (instance != null) {
-			instance.fnDestroy();
+            try {
+			    instance.fnDestroy();
+            } catch (e) {
+                console.log(e);
+            } finally {
+                instance = null;
+            }
 		}
 
         Requester.getTableSchema(

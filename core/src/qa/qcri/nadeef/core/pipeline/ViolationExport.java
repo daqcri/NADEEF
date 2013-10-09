@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Export violations into the target place.
- *
- *
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     private DBConnectionPool connectionPool;
@@ -80,6 +78,10 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                         }
                         sql = dialectManager.insertViolation(violation.getRuleId(), vid, cell);
                         stat.addBatch(sql);
+                    }
+
+                    if (count % 10240 == 0) {
+                        stat.executeBatch();
                     }
                     vid ++;
                 }

@@ -82,55 +82,51 @@ define([
         function bindEvent() {
             $('#save').on('click', function(e) {
 				var rule = getRule();
-				$.ajax({
-					url: "/" + getProjectName() + "/data/rule",
-					type: "POST",
-					dataType: "json",
-					data: rule,
-					success: function(data, status) {						
-						$('#cleanPlanPopup').modal('hide');
-					},
-					error: function(data, status) {
-						err("<strong>Error</strong>: " + data.responseText);
-					}
-				});
+                Requester.createRule(
+                    rule,
+                    function() {
+                        $('#cleanPlanPopup').modal('hide');
+                    },
+                    function(data) {
+                        err("<strong>Error</strong>: " + data.responseText);
+                    }
+                );
             });
 
 			$('#generate').on('click', function(e) {
 				var rule = getRule();
-				$.ajax({
-					url: "/" + getProjectName() + "/do/generate",
-					type: "POST",
-					dataType: "json",
-					data: rule,
-					success: function(data, status) {
-						var code = data['data'];
+                Requester.doGenerate(
+                    rule,
+                    function(data) {
+                        var code = data['data'];
                         if (!code) {
                             err("<string>Error</string>: Code generation failed.");
                         } else {
-						    editor.setValue(code, -1);
+                            editor.setValue(code, -1);
                         }
-					},
-					error: function(data, status) {
-						err("<strong>Error</strong>: " + data.responseText);
-					}
-				});	
+                    },
+                    function(data) {
+                        err("<strong>Error</strong>: " + data.responseText);
+                    }
+                );
 			});
 
 			$('#verify').on('click', function(e) {
 				var rule = getRule();
-				$.ajax({
-					url: "/" + getProjectName() + "/do/verify",
-					type: "POST",
-					dataType: "json",
-					data: rule,
-					success: function(data, status) {
-						info("Verification succeeded.");
-					},
-					error: function(data, status) {
-						err("<strong>Error</strong>: " + data.responseText);
-					}
-				});				
+                Requester.doVerify(
+                    rule,
+                    function(data, status) {
+                        var result = data['data'];
+                        if (result) {
+                            info("Verification succeeded.");
+                        } else {
+                            err("Verification failed");
+                        }
+                    },
+                    function(data, status) {
+                        err("<strong>Error</strong>: " + data.responseText);
+                    }
+                );
 			});
         }
         

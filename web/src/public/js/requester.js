@@ -132,6 +132,51 @@ define(['router'], function(Router) {
         });
     }
 
+    function doVerify(data, successCallback, failureCallback) {
+        // inject project name
+        data.project = getProjectName();
+        $.ajax({
+            url : '/do/verify',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: successCallback,
+            fail: failureCallback
+        });
+    }
+
+    function doRepair(data, successCallback, failureCallback) {
+        // inject project name
+        data.project = getProjectName();
+        $.ajax({
+            url : '/do/repair',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: successCallback,
+            fail: failureCallback
+        });
+    }
+
+    function doGenerate(data, successCallback, failureCallback) {
+        // inject project name
+        data.project = getProjectName();
+        request("/do/generate", "POST", data, successCallback, failureCallback);
+    }
+
+    function createRule(data, successCallback, failureCallback) {
+        // inject project name
+        data.project = getProjectName();
+        $.ajax({
+            url : "/" + getProjectName() + "/data/rule",
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: successCallback,
+            fail: failureCallback
+        });
+    }
+
     function createProject(projectName, successCallback, failureCallback) {
         $.ajax({
             url : '/project',
@@ -145,9 +190,16 @@ define(['router'], function(Router) {
 
     return {
         doDetect : doDetect,
+        doVerify : doVerify,
+        doRepair : doRepair,
+        doGenerate : doGenerate,
+
         deleteViolation : deleteViolation,
-        getProject: getProject,
+
         createProject: createProject,
+        createRule: createRule,
+
+        getProject: getProject,
         getSource: getSource,
         getRule: getRule,
         getRuleDetail: getRuleDetail,

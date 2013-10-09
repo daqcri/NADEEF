@@ -201,10 +201,6 @@ public final class Dashboard {
             public Object handle(Request request, Response response) {
                 String project = request.params("project");
 
-                if (Strings.isNullOrEmpty(project)) {
-                    return fail("Invalid input");
-                }
-
                 String type = request.queryParams("type");
                 String name = request.queryParams("name");
                 String table1 = request.queryParams("table1");
@@ -213,7 +209,8 @@ public final class Dashboard {
                 if (Strings.isNullOrEmpty(type)
                     || Strings.isNullOrEmpty(name)
                     || Strings.isNullOrEmpty(table1)
-                    || Strings.isNullOrEmpty(code)) {
+                    || Strings.isNullOrEmpty(code)
+                    || Strings.isNullOrEmpty(project)) {
                     return fail("Input cannot be null.");
                 }
 
@@ -505,21 +502,25 @@ public final class Dashboard {
         post(new Route("/do/generate") {
             @Override
             public Object handle(Request request, Response response) {
+                response.type("application/json");
+
                 String type = request.queryParams("type");
                 String name = request.queryParams("name");
                 String code = request.queryParams("code");
                 String table1 = request.queryParams("table1");
+                String project = request.queryParams("project");
 
                 if (Strings.isNullOrEmpty(type) ||
                     Strings.isNullOrEmpty(name) ||
                     Strings.isNullOrEmpty(code) ||
-                    Strings.isNullOrEmpty(table1)) {
+                    Strings.isNullOrEmpty(table1) ||
+                    Strings.isNullOrEmpty(project)) {
                     return fail("Input cannot be NULL.");
                 }
 
                 String result;
                 try {
-                    result = nadeefClient.generate(type, name, code, table1);
+                    result = nadeefClient.generate(type, name, code, table1, project);
                 } catch (Exception ex) {
                     tracer.err("Generate code failed.", ex);
                     result = fail(ex.getMessage()).toJSONString();
@@ -531,6 +532,8 @@ public final class Dashboard {
         post(new Route("/do/verify") {
             @Override
             public Object handle(Request request, Response response) {
+                response.type("application/json");
+
                 String type = request.queryParams("type");
                 String name = request.queryParams("name");
                 String code = request.queryParams("code");
@@ -557,6 +560,8 @@ public final class Dashboard {
         post(new Route("/do/detect") {
             @Override
             public Object handle(Request request, Response response) {
+                response.type("application/json");
+
                 String type = request.queryParams("type");
                 String name = request.queryParams("name");
                 String code = request.queryParams("code");

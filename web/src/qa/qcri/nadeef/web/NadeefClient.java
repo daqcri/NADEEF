@@ -68,7 +68,8 @@ public final class NadeefClient {
         String type,
         String name,
         String code,
-        String table1
+        String table1,
+        String dbname
     ) throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
@@ -77,7 +78,7 @@ public final class NadeefClient {
 
         TRule rule = new TRule(name, type, code);
         JSONObject result = new JSONObject();
-        String gen = client.generate(rule, table1);
+        String gen = client.generate(rule, table1, dbname);
         result.put("data", gen);
 
         transport.close();

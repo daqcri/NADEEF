@@ -47,7 +47,8 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String generate(TRule tRule, String tableName) throws TNadeefRemoteException {
+    public String generate(TRule tRule, String tableName, String dbname)
+        throws TNadeefRemoteException {
         String result = "";
         String type = tRule.getType();
         String code = tRule.getCode();
@@ -58,12 +59,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         } else {
             String[] codeLines = code.split("\n");
             List<String> codes = Lists.newArrayList(codeLines);
+            DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+            dbConfig.switchDatabase(dbname);
 
             try {
                 Schema schema =
-                    DBMetaDataTool.getSchema(
-                        NadeefConfiguration.getDbConfig(), tableName
-                    );
+                    DBMetaDataTool.getSchema(dbConfig, tableName);
                 RuleBuilder ruleBuilder =
                     NadeefConfiguration.tryGetRuleBuilder(type.toString());
                 if (ruleBuilder != null) {

@@ -41,7 +41,7 @@ service TNadeefService {
      * @param tableName target table name.
      * @return generated code.
      */
-    string generate(1:TRule rule, 2: string tableName)
+    string generate(1:TRule rule, 2: string tableName, 3: string dbname)
         throws (1:TNadeefRemoteException re),
 
     /**
