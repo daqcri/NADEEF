@@ -38,3 +38,5 @@ NADEEF is released under the terms of the [MIT License](http://opensource.org/li
 
 For any issues or enhancement please use the [issue pages](https://github.com/daqcri/NADEEF/issues) in Github, 
 or contact [ntang@qf.org.qa](mailto:ntang@qf.org.qa). We will try our best to help you sort it out.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
