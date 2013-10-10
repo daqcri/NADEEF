@@ -2,7 +2,7 @@
 
 ### What is NADEEF?
 
-NADEEF (or ''clean'' in Arabic, نظيف) is a commodity data cleaning system developed by the data analytic group at [QCRI](da.qcri.org). 
+NADEEF (or ''clean'' in Arabic, نظيف) is a generalized data cleaning system developed by the data analytic group at [Qatar Computing Research Institute](da.qcri.org). 
 
 ### See it in Action
 
