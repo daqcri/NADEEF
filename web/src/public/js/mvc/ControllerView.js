@@ -97,6 +97,10 @@ define([
 
     function renderRuleDetail() {
         var selectedPlan = getSelectedPlan();
+        if (_.isUndefined(selectedPlan) || _.isNull(selectedPlan)) {
+            return;
+        }
+
         if (_.isArray(selectedPlan) && selectedPlan.length != 1) {
             $('#detail').html('');
         } else {

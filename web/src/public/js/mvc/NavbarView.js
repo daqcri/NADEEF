@@ -18,6 +18,14 @@ define([
     "text!mvc/template/project.template.html",
     "mvc/HomeView"
 ], function(Router, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
+    function err(msg) {
+        $('#projectModal-alert').html([
+            ['<div class="alert alert-error">'],
+            ['<button type="button" class="close" data-dismiss="alert">'],
+            ['&times;</button>'],
+            ['<span>' + msg + '</span></div>']].join(''));
+    }
+
     function bindEvent() {
         $('#navbar').find("li a").on('click', function() {
             $('#navbar').find('.active').removeClass('active');
@@ -40,8 +48,7 @@ define([
                 // regexp check failed.
                 if (match != newProject) {
                     $("#project-input").addClass("error");
-                    $("#project-input").find("span").text("Input text has incorrect char.");
-
+                    err("Input text has incorrect char.");
                     return;
                 }
             }
@@ -55,6 +62,11 @@ define([
                 });
             } else {
                 var selectedProject = $("#select-existing-project").val();
+                if (selectedProject == null) {
+                    err("No project is selected.");
+                    return;
+                }
+
                 $("#projectModal").modal('hide');
                 $("#projectName").text(selectedProject);
                 Router.redirect('#home', { name : selectedProject });
