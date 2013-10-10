@@ -34,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * CSVTools is a simple tool which dumps CSV data into database given a table name.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class CSVTools {
     // <editor-fold desc="Public methods">
@@ -106,82 +104,103 @@ public class CSVTools {
         Tracer tracer = Tracer.getTracer(CSVTools.class);
         Stopwatch stopwatch = new Stopwatch().start();
         String fullTableName = null;
-        Statement stat = null;
         String sql;
-        Connection conn = null;
+        BufferedReader reader = null;
+
         try {
             // overwrites existing tables if necessary
             fullTableName = "CSV_" + tableName;
 
             boolean hasTableExist = DBMetaDataTool.isTableExist(dbConfig, fullTableName);
 
-            conn = DBConnectionPool.createConnection(dbConfig);
-            conn.setAutoCommit(false);
-            stat = conn.createStatement();
-            stat.setFetchSize(1024);
-
-            if (hasTableExist) {
-                if (!overwrite) {
-                    tracer.info(
-                        "Found table " + fullTableName + " exists and choose not to overwrite."
-                    );
-                    return fullTableName;
-                } else {
+            // Create table
+            if (hasTableExist && !overwrite) {
+                tracer.info(
+                    "Found table " + fullTableName + " exists and choose not to overwrite."
+                );
+                return fullTableName;
+            } else {
+                Connection conn = null;
+                Statement stat = null;
+                try {
+                    conn = DBConnectionPool.createConnection(dbConfig, true);
                     stat = conn.createStatement();
                     sql = dialectManager.dropTable(fullTableName);
                     tracer.verbose(sql);
                     stat.execute(sql);
+
+                    reader = new BufferedReader(new FileReader(file));
+                    // TODO: check whether the header exists.
+                    String line;
+                    while ((line = reader.readLine()).isEmpty());
+                    sql = dialectManager.createTableFromCSV(fullTableName, line);
+                    tracer.verbose(sql);
+                    stat.execute(sql);
+                    tracer.info("Successfully created table " + fullTableName);
+                } finally {
+                    if (stat != null) {
+                        stat.close();
+                    }
+
+                    if (conn != null) {
+                        conn.close();
+                    }
                 }
+
+                // load the data
+                int lineCount = 0;
+                if (dialectManager.supportBulkLoad()) {
+                    lineCount = dialectManager.bulkLoad(dbConfig, fullTableName, file, true);
+                } else {
+                    try {
+                        conn = DBConnectionPool.createConnection(dbConfig, false);
+                        stat = conn.createStatement();
+                        ResultSet rs = stat.executeQuery(dialectManager.selectAll(fullTableName));
+                        ResultSetMetaData metaData = rs.getMetaData();
+                        String line;
+                        // Batch load the data
+                        while ((line = reader.readLine()) != null) {
+                            if (Strings.isNullOrEmpty(line)) {
+                                continue;
+                            }
+
+                            lineCount ++;
+                            sql = dialectManager.importFromCSV(metaData, fullTableName, line);
+                            stat.addBatch(sql);
+
+                            if (lineCount % 10240 == 0) {
+                                stat.executeBatch();
+                            }
+                        }
+
+                        stat.executeBatch();
+                        conn.commit();
+                    } finally {
+                        if (stat != null) {
+                            stat.close();
+                        }
+
+                        if (conn != null) {
+                            conn.close();
+                        }
+                    }
+                }
+
+                tracer.info(
+                    "Dumped " + lineCount + " rows in " +
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+                );
+                stopwatch.stop();
             }
-
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            // TODO: check whether the header exists.
-            String line = reader.readLine();
-            sql = dialectManager.createTableFromCSV(fullTableName, line);
-            tracer.verbose(sql);
-            stat.execute(sql);
-            tracer.info("Successfully created table " + fullTableName);
-
-            ResultSet rs = stat.executeQuery(dialectManager.selectAll(fullTableName));
-            ResultSetMetaData metaData = rs.getMetaData();
-
-            // Batch load the data
-            int lineCount = 0;
-            while ((line = reader.readLine()) != null) {
-                if (Strings.isNullOrEmpty(line)) {
-                    continue;
-                }
-
-                lineCount ++;
-                sql = dialectManager.importFromCSV(metaData, fullTableName, line);
-                stat.addBatch(sql);
-
-                if (lineCount % 10240 == 0) {
-                    stat.executeBatch();
-                }
-            }
-
-            stat.executeBatch();
-            conn.commit();
-            tracer.info(
-                "Dumped " + lineCount + " rows in " +
-                stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
-            );
-            stopwatch.stop();
         } catch (Exception ex) {
             tracer.err("Cannot load file " + file.getName(), ex);
-            if (conn != null) {
-                sql = dialectManager.dropTable(fullTableName);
-                stat.execute(sql);
-                conn.commit();
-            }
         } finally {
-            if (stat != null) {
-                stat.closeOnCompletion();
-            }
-
-            if (conn != null) {
-                conn.close();
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (Exception ex) {
+                // ignore
             }
         }
         return fullTableName;

@@ -24,8 +24,6 @@ import java.util.Set;
 
 /**
  * SQL Builder utility.
- *
- *
  */
 public class SQLQueryBuilder implements Cloneable {
     private Set<String> selects;

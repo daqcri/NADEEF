@@ -18,16 +18,16 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
  * Interface for cross vendor Database methods.
- *
- *
  */
 public abstract class SQLDialectBase {
     /**
@@ -52,6 +52,27 @@ public abstract class SQLDialectBase {
         }
         return dialectInstance;
     }
+
+    /**
+     * Returns True when bulk loading is supported.
+     * @return True when bulk loading is supported.
+     */
+    public abstract boolean supportBulkLoad();
+
+    /**
+     * Bulk load CSV file.
+     * @param dbConfig DBConfig.
+     * @param tableName table name.
+     * @param file CSV file.
+     * @param hasHeader has header.
+     * @return line of rows loaded.
+     */
+    public abstract int bulkLoad(
+        DBConfig dbConfig,
+        String tableName,
+        File file,
+        boolean hasHeader
+    );
 
     /**
      * Gets the template file.

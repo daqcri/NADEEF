@@ -20,8 +20,6 @@ import java.sql.*;
 
 /**
  * Database manager for Apache Derby database.
- *
- *
  */
 public class DerbySQLDialect extends SQLDialectBase {
     private static STGroupFile template =
