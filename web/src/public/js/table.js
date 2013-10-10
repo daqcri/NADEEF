@@ -12,17 +12,17 @@
  */
 
 define(["requester"], function(Requester) {
-	var instance = null;
-	function load(tablename) {
-		if (instance != null) {
+    var instance = null;
+    function load(tablename) {
+        if (instance != null) {
             try {
-			    instance.fnDestroy();
+                instance.fnDestroy();
             } catch (e) {
                 console.log(e);
             } finally {
                 instance = null;
             }
-		}
+        }
 
         Requester.getTableSchema(
             tablename,
@@ -50,7 +50,7 @@ define(["requester"], function(Requester) {
                 });
             }
         );
-	}
+    }
 
     function filter(e) {
         if (instance != null) {
@@ -207,10 +207,10 @@ define(["requester"], function(Requester) {
         }
     }
 
-	return {
-		load : load,
-		init : initialize,
+    return {
+        load : load,
+        init : initialize,
         filter : filter
-	};
+    };
 });
 

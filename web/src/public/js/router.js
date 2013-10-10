@@ -24,7 +24,7 @@ define([], function() {
     function start() {
         setInterval(hashCheck, 200);
     }
-     
+
     function hashCheck() {
         if (_.isUndefined(window.history.state)) {
             redirectToRoot();
@@ -47,7 +47,7 @@ define([], function() {
             }
         }
     }
-     
+
     function loadController(controllerName) {
         require(['mvc/' + controllerName], function(controller) {
             controller.start();
