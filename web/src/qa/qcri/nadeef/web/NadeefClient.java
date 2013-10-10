@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Nadeef Thrift client. This is the wrapper class for calling thrift methods.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public final class NadeefClient {
     private static NadeefClient instance;
@@ -68,7 +68,8 @@ public final class NadeefClient {
         String type,
         String name,
         String code,
-        String table1
+        String table1,
+        String dbname
     ) throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
@@ -77,7 +78,7 @@ public final class NadeefClient {
 
         TRule rule = new TRule(name, type, code);
         JSONObject result = new JSONObject();
-        String gen = client.generate(rule, table1);
+        String gen = client.generate(rule, table1, dbname);
         result.put("data", gen);
 
         transport.close();
@@ -105,7 +106,8 @@ public final class NadeefClient {
         String name,
         String code,
         String table1,
-        String table2
+        String table2,
+        String dbname
     ) throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
@@ -114,7 +116,7 @@ public final class NadeefClient {
 
         TRule rule = new TRule(name, type, code);
         JSONObject json = new JSONObject();
-        String result = client.detect(rule, table1, table2);
+        String result = client.detect(rule, table1, table2, dbname);
         json.put("data", result);
 
         transport.close();
@@ -127,7 +129,8 @@ public final class NadeefClient {
         String name,
         String code,
         String table1,
-        String table2
+        String table2,
+        String dbname
     ) throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
@@ -136,7 +139,7 @@ public final class NadeefClient {
 
         TRule rule = new TRule(name, type, code);
         JSONObject result = new JSONObject();
-        result.put("data", client.repair(rule, table1, table2));
+        result.put("data", client.repair(rule, table1, table2, dbname));
 
         transport.close();
         return result.toJSONString();

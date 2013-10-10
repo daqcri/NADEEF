@@ -17,7 +17,6 @@ package qa.qcri.nadeef.core.datamodel;
  * A Cell represents a basic unit in a data table. A Cell
  * contains a <code>Column</code> and a Value with an unique TupleId.
  *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class Cell {
     //<editor-fold desc="Private fields">

@@ -60,16 +60,12 @@ public class PairTableDetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getPairCleanPlan1();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(10);
+            int rowCount =
+                Violations.getViolationRowCount(executor.getConnectionPool());
+            Assert.assertEquals(10, rowCount);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
         }
-    }
-
-    private void verifyViolationResult(int expectRow)
-        throws Exception {
-        int rowCount = Violations.getViolationRowCount();
-        Assert.assertEquals(expectRow, rowCount);
     }
 }

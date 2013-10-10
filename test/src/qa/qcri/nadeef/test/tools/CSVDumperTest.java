@@ -21,19 +21,18 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.CSVTools;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -42,7 +41,7 @@ import java.sql.Statement;
 @RunWith(Parameterized.class)
 public class CSVDumperTest extends NadeefTestBase {
     private static String tableName;
-    private static Connection conn;
+    private static DBConfig dbConfig;
     private static SQLDialectBase dialectManager;
 
     public CSVDumperTest(String config) {
@@ -53,12 +52,9 @@ public class CSVDumperTest extends NadeefTestBase {
     public void setUp() {
         try {
            Bootstrap.start(testConfig);
-           DBConfig dbConfig = NadeefConfiguration.getDbConfig();
+           dbConfig = NadeefConfiguration.getDbConfig();
            dialectManager =
                SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
-           conn =
-               DBConnectionFactory.createConnection(dbConfig);
-           conn.setAutoCommit(false);
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
@@ -67,23 +63,25 @@ public class CSVDumperTest extends NadeefTestBase {
     @After
     public void tearDown() {
         Statement stat = null;
-        if (conn != null) {
+        Connection conn = null;
+        try {
+            conn = DBConnectionPool.createConnection(dbConfig);
+            stat = conn.createStatement();
+            stat.execute(dialectManager.dropTable(tableName));
+            conn.commit();
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
+        } finally {
             try {
-                stat = conn.createStatement();
-                stat.execute(dialectManager.dropTable(tableName));
-                conn.commit();
-            } catch (Exception ex) {
-                Assert.fail(ex.getMessage());
-            } finally {
-                try {
-                    if (stat != null) {
-                        stat.close();
-                    }
-
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
+                if (stat != null) {
+                    stat.close();
                 }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+                // ignore
             }
         }
     }
@@ -91,9 +89,10 @@ public class CSVDumperTest extends NadeefTestBase {
     @Test
     public void goodDumpTest() {
         Statement stat = null;
+        Connection conn = null;
         try {
             tableName =
-                CSVTools.dump(conn, dialectManager, TestDataRepository.getDumpTestCSVFile());
+                CSVTools.dump(dbConfig, dialectManager, TestDataRepository.getDumpTestCSVFile());
             Assert.assertNotNull("tableName cannot be null", tableName);
 
             BufferedReader reader =
@@ -105,6 +104,7 @@ public class CSVDumperTest extends NadeefTestBase {
             }
             reader.close();
 
+            conn = DBConnectionPool.createConnection(dbConfig);
             stat = conn.createStatement();
             ResultSet resultSet = stat.executeQuery("SELECT COUNT(*) FROM " + tableName);
             int rowCount = -1;
@@ -118,13 +118,15 @@ public class CSVDumperTest extends NadeefTestBase {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
         } finally {
-            if (stat != null) {
-                try {
+            try {
+                if (stat != null) {
                     stat.close();
-                } catch (SQLException e) {
-                    Assert.fail(e.getMessage());
                 }
-            }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {}
         }
     }
 }

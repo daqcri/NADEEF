@@ -16,6 +16,9 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.List;
@@ -23,7 +26,7 @@ import java.util.List;
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
  * drives the cleaning execution.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class CleanExecutor {
 
@@ -36,26 +39,33 @@ public class CleanExecutor {
     private Flow repairFlow;
     private Flow updateFlow;
     private int currentIterationNumber;
-
+    private DBConnectionPool connectionPool;
     //</editor-fold>
 
     //<editor-fold desc="Constructor / Deconstructor">
 
     /**
-     * Constructor.
+     * Constructor. Use default NADEEF default config as DB config.
+     * @param cleanPlan input {@link CleanPlan}.
      */
-    public CleanExecutor(CleanPlan cleanPlan) {
-        initialize(cleanPlan);
+    public CleanExecutor(CleanPlan cleanPlan) throws Exception {
+        this(cleanPlan, cleanPlan.getSourceDBConfig());
     }
 
     /**
-     * Initialize <code>CleanExecutor</code> with a cleanPlan.
+     * Constructor.
      * @param cleanPlan input {@link CleanPlan}.
+     * @param dbConfig meta data dbconfig.
      */
-    public void initialize(CleanPlan cleanPlan) {
+    public CleanExecutor(CleanPlan cleanPlan, DBConfig dbConfig) throws Exception {
         this.cleanPlan = Preconditions.checkNotNull(cleanPlan);
         this.cacheManager = NodeCacheManager.getInstance();
-
+        this.connectionPool =
+            DBConnectionPool.createDBConnectionPool(
+                cleanPlan.getSourceDBConfig(),
+                dbConfig
+            );
+        DBInstaller.install(dbConfig);
         assembleFlow();
     }
 
@@ -71,10 +81,9 @@ public class CleanExecutor {
     }
 
     /**
-     * CleanExecutor finalizer.
+     * Shutdown the CleanExecutor.
      */
-    @Override
-    public void finalize() throws Throwable{
+    public void shutdown() {
         if (queryFlow != null && queryFlow.isRunning()) {
             queryFlow.forceStop();
         }
@@ -91,11 +100,30 @@ public class CleanExecutor {
             updateFlow.forceStop();
         }
 
+        if (connectionPool != null) {
+            connectionPool.shutdown();
+        }
+    }
+
+    /**
+     * CleanExecutor finalizer.
+     */
+    @Override
+    public void finalize() throws Throwable{
+        shutdown();
         super.finalize();
     }
     //</editor-fold>
 
     //<editor-fold desc="Public methods">
+
+    /**
+     * Gets the connection pool.
+     * @return connection pool.
+     */
+    public DBConnectionPool getConnectionPool() {
+        return connectionPool;
+    }
 
     /**
      * Gets the output from Detect.
@@ -157,16 +185,6 @@ public class CleanExecutor {
      */
     public List<ProgressReport> getDetailRepairProgress() {
         return repairFlow.getDetailProgress();
-    }
-
-    /**
-     * Gets the current iteration number.
-     * @return the current iteration number.
-     */
-    public int getCurrentIterationNumber() {
-        synchronized (this) {
-            return currentIterationNumber;
-        }
     }
 
     /**
@@ -265,7 +283,9 @@ public class CleanExecutor {
             String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
             // assemble the query flow.
             queryFlow = new Flow("query");
-            queryFlow.setInputKey(inputKey).addNode(new SourceDeserializer(cleanPlan));
+            queryFlow
+                .setInputKey(inputKey)
+                .addNode(new SourceDeserializer(cleanPlan, connectionPool));
 
             if (rule.supportOneInput()) {
                 queryFlow
@@ -290,14 +310,14 @@ public class CleanExecutor {
             } else {
                 detectFlow.addNode(new ViolationDetector<Table>(rule), 6);
             }
-            detectFlow.addNode(new ViolationExport(cleanPlan));
+            detectFlow.addNode(new ViolationExport(cleanPlan, connectionPool));
 
             // assemble the repair flow
             repairFlow = new Flow("repair");
             repairFlow.setInputKey(inputKey)
-                .addNode(new ViolationDeserializer())
+                .addNode(new ViolationDeserializer(connectionPool))
                 .addNode(new ViolationRepair(rule), 6)
-                .addNode(new FixExport(cleanPlan));
+                .addNode(new FixExport(cleanPlan, connectionPool));
 
             // assemble the updater flow
             updateFlow = new Flow("update");
@@ -321,7 +341,7 @@ public class CleanExecutor {
             }
 
             updateFlow.setInputKey(inputKey)
-                .addNode(new FixImport())
+                .addNode(new FixImport(connectionPool))
                 .addNode(fixDecisionMaker, 6)
                 .addNode(new Updater(cleanPlan.getSourceDBConfig()));
 

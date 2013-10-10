@@ -13,13 +13,14 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.Tracer;
@@ -32,16 +33,17 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Export violations into the target place.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
+    private DBConnectionPool connectionPool;
+
     /**
      * Constructor.
      * @param plan clean plan.
      */
-    public ViolationExport(CleanPlan plan) {
+    public ViolationExport(CleanPlan plan, DBConnectionPool connectionPool_) {
         super(plan);
+        connectionPool = Preconditions.checkNotNull(connectionPool_);
     }
 
     /**
@@ -58,14 +60,14 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         Statement stat = null;
         int count = 0;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = connectionPool.getNadeefConnection();
             stat = conn.createStatement();
             SQLDialectBase dialectManager =
                 SQLDialectFactory.getNadeefDialectManagerInstance();
 
             synchronized (ViolationExport.class) {
                 // TODO: this is not out-of-process safe.
-                int vid = Violations.generateViolationId();
+                int vid = Violations.generateViolationId(connectionPool);
                 for (Violation violation : violations) {
                     count ++;
                     List<Cell> cells = Lists.newArrayList(violation.getCells());
@@ -76,6 +78,10 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                         }
                         sql = dialectManager.insertViolation(violation.getRuleId(), vid, cell);
                         stat.addBatch(sql);
+                    }
+
+                    if (count % 10240 == 0) {
+                        stat.executeBatch();
                     }
                     vid ++;
                 }

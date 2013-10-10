@@ -6,29 +6,16 @@
  */
 package qa.qcri.nadeef.service.thrift;
 
+import org.apache.thrift.EncodingUtils;
+import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
-
 import org.apache.thrift.scheme.TupleScheme;
-import org.apache.thrift.protocol.TTupleProtocol;
-import org.apache.thrift.protocol.TProtocolException;
-import org.apache.thrift.EncodingUtils;
-import org.apache.thrift.TException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.EnumSet;
-import java.util.Collections;
-import java.util.BitSet;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class TNadeefService {
 
@@ -36,46 +23,49 @@ public class TNadeefService {
 
     /**
      * Generates UDF code for the rule.
-     * 
-     * @param rule
-     * @param tableName
+     * @param rule Rule.
+     * @param tableName target table name.
+     * @return generated code.
      */
-    public String generate(TRule rule, String tableName) throws TNadeefRemoteException, org.apache.thrift.TException;
+    public String generate(TRule rule, String tableName, String dbname) throws TNadeefRemoteException, org.apache.thrift.TException;
 
     /**
      * Verify the given rule.
-     * 
-     * @param rule
+     * @param rule input rule.
      */
     public boolean verify(TRule rule) throws org.apache.thrift.TException;
 
     /**
      * Detect with the given rule.
-     * 
-     * @param rule
-     * @param table1
-     * @param table2
+     * @param rule input rule.
+     * @param table1 table 1 name.
+     * @param table2 table 2 name.
+     * @param outputdb output database name.
+     * @return job key.
+     *
      */
-    public String detect(TRule rule, String table1, String table2) throws TNadeefRemoteException, org.apache.thrift.TException;
+    public String detect(TRule rule, String table1, String table2, String outputdb) throws TNadeefRemoteException, org.apache.thrift.TException;
 
     /**
      * Repair with the given rule.
-     * 
-     * @param rule
-     * @param table1
-     * @param table2
+     * @param rule input rule.
+     * @param table1 table 1 name.
+     * @param table2 table 2 name.
+     * @param outputdb output database name.
+     * @return job key.
      */
-    public String repair(TRule rule, String table1, String table2) throws TNadeefRemoteException, org.apache.thrift.TException;
+    public String repair(TRule rule, String table1, String table2, String outputdb) throws TNadeefRemoteException, org.apache.thrift.TException;
 
     /**
      * Gets status of a specific job.
-     * 
-     * @param key
+     * @param key input job key.
+     * @return job status.
      */
     public TJobStatus getJobStatus(String key) throws org.apache.thrift.TException;
 
     /**
      * Gets all job status.
+     * @return all the job status.
      */
     public List<TJobStatus> getAllJobStatus() throws org.apache.thrift.TException;
 
@@ -83,13 +73,13 @@ public class TNadeefService {
 
   public interface AsyncIface {
 
-    public void generate(TRule rule, String tableName, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.generate_call> resultHandler) throws org.apache.thrift.TException;
+    public void generate(TRule rule, String tableName, String dbname, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.generate_call> resultHandler) throws org.apache.thrift.TException;
 
     public void verify(TRule rule, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.verify_call> resultHandler) throws org.apache.thrift.TException;
 
-    public void detect(TRule rule, String table1, String table2, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.detect_call> resultHandler) throws org.apache.thrift.TException;
+    public void detect(TRule rule, String table1, String table2, String outputdb, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.detect_call> resultHandler) throws org.apache.thrift.TException;
 
-    public void repair(TRule rule, String table1, String table2, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.repair_call> resultHandler) throws org.apache.thrift.TException;
+    public void repair(TRule rule, String table1, String table2, String outputdb, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.repair_call> resultHandler) throws org.apache.thrift.TException;
 
     public void getJobStatus(String key, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.getJobStatus_call> resultHandler) throws org.apache.thrift.TException;
 
@@ -117,17 +107,18 @@ public class TNadeefService {
       super(iprot, oprot);
     }
 
-    public String generate(TRule rule, String tableName) throws TNadeefRemoteException, org.apache.thrift.TException
+    public String generate(TRule rule, String tableName, String dbname) throws TNadeefRemoteException, org.apache.thrift.TException
     {
-      send_generate(rule, tableName);
+      send_generate(rule, tableName, dbname);
       return recv_generate();
     }
 
-    public void send_generate(TRule rule, String tableName) throws org.apache.thrift.TException
+    public void send_generate(TRule rule, String tableName, String dbname) throws org.apache.thrift.TException
     {
       generate_args args = new generate_args();
       args.setRule(rule);
       args.setTableName(tableName);
+      args.setDbname(dbname);
       sendBase("generate", args);
     }
 
@@ -167,18 +158,19 @@ public class TNadeefService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "verify failed: unknown result");
     }
 
-    public String detect(TRule rule, String table1, String table2) throws TNadeefRemoteException, org.apache.thrift.TException
+    public String detect(TRule rule, String table1, String table2, String outputdb) throws TNadeefRemoteException, org.apache.thrift.TException
     {
-      send_detect(rule, table1, table2);
+      send_detect(rule, table1, table2, outputdb);
       return recv_detect();
     }
 
-    public void send_detect(TRule rule, String table1, String table2) throws org.apache.thrift.TException
+    public void send_detect(TRule rule, String table1, String table2, String outputdb) throws org.apache.thrift.TException
     {
       detect_args args = new detect_args();
       args.setRule(rule);
       args.setTable1(table1);
       args.setTable2(table2);
+      args.setOutputdb(outputdb);
       sendBase("detect", args);
     }
 
@@ -195,18 +187,19 @@ public class TNadeefService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "detect failed: unknown result");
     }
 
-    public String repair(TRule rule, String table1, String table2) throws TNadeefRemoteException, org.apache.thrift.TException
+    public String repair(TRule rule, String table1, String table2, String outputdb) throws TNadeefRemoteException, org.apache.thrift.TException
     {
-      send_repair(rule, table1, table2);
+      send_repair(rule, table1, table2, outputdb);
       return recv_repair();
     }
 
-    public void send_repair(TRule rule, String table1, String table2) throws org.apache.thrift.TException
+    public void send_repair(TRule rule, String table1, String table2, String outputdb) throws org.apache.thrift.TException
     {
       repair_args args = new repair_args();
       args.setRule(rule);
       args.setTable1(table1);
       args.setTable2(table2);
+      args.setOutputdb(outputdb);
       sendBase("repair", args);
     }
 
@@ -286,9 +279,9 @@ public class TNadeefService {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void generate(TRule rule, String tableName, org.apache.thrift.async.AsyncMethodCallback<generate_call> resultHandler) throws org.apache.thrift.TException {
+    public void generate(TRule rule, String tableName, String dbname, org.apache.thrift.async.AsyncMethodCallback<generate_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      generate_call method_call = new generate_call(rule, tableName, resultHandler, this, ___protocolFactory, ___transport);
+      generate_call method_call = new generate_call(rule, tableName, dbname, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -296,10 +289,12 @@ public class TNadeefService {
     public static class generate_call extends org.apache.thrift.async.TAsyncMethodCall {
       private TRule rule;
       private String tableName;
-      public generate_call(TRule rule, String tableName, org.apache.thrift.async.AsyncMethodCallback<generate_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String dbname;
+      public generate_call(TRule rule, String tableName, String dbname, org.apache.thrift.async.AsyncMethodCallback<generate_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.rule = rule;
         this.tableName = tableName;
+        this.dbname = dbname;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -307,6 +302,7 @@ public class TNadeefService {
         generate_args args = new generate_args();
         args.setRule(rule);
         args.setTableName(tableName);
+        args.setDbname(dbname);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -353,9 +349,9 @@ public class TNadeefService {
       }
     }
 
-    public void detect(TRule rule, String table1, String table2, org.apache.thrift.async.AsyncMethodCallback<detect_call> resultHandler) throws org.apache.thrift.TException {
+    public void detect(TRule rule, String table1, String table2, String outputdb, org.apache.thrift.async.AsyncMethodCallback<detect_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      detect_call method_call = new detect_call(rule, table1, table2, resultHandler, this, ___protocolFactory, ___transport);
+      detect_call method_call = new detect_call(rule, table1, table2, outputdb, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -364,11 +360,13 @@ public class TNadeefService {
       private TRule rule;
       private String table1;
       private String table2;
-      public detect_call(TRule rule, String table1, String table2, org.apache.thrift.async.AsyncMethodCallback<detect_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String outputdb;
+      public detect_call(TRule rule, String table1, String table2, String outputdb, org.apache.thrift.async.AsyncMethodCallback<detect_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.rule = rule;
         this.table1 = table1;
         this.table2 = table2;
+        this.outputdb = outputdb;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -377,6 +375,7 @@ public class TNadeefService {
         args.setRule(rule);
         args.setTable1(table1);
         args.setTable2(table2);
+        args.setOutputdb(outputdb);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -391,9 +390,9 @@ public class TNadeefService {
       }
     }
 
-    public void repair(TRule rule, String table1, String table2, org.apache.thrift.async.AsyncMethodCallback<repair_call> resultHandler) throws org.apache.thrift.TException {
+    public void repair(TRule rule, String table1, String table2, String outputdb, org.apache.thrift.async.AsyncMethodCallback<repair_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      repair_call method_call = new repair_call(rule, table1, table2, resultHandler, this, ___protocolFactory, ___transport);
+      repair_call method_call = new repair_call(rule, table1, table2, outputdb, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -402,11 +401,13 @@ public class TNadeefService {
       private TRule rule;
       private String table1;
       private String table2;
-      public repair_call(TRule rule, String table1, String table2, org.apache.thrift.async.AsyncMethodCallback<repair_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String outputdb;
+      public repair_call(TRule rule, String table1, String table2, String outputdb, org.apache.thrift.async.AsyncMethodCallback<repair_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.rule = rule;
         this.table1 = table1;
         this.table2 = table2;
+        this.outputdb = outputdb;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -415,6 +416,7 @@ public class TNadeefService {
         args.setRule(rule);
         args.setTable1(table1);
         args.setTable2(table2);
+        args.setOutputdb(outputdb);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -528,7 +530,7 @@ public class TNadeefService {
       public generate_result getResult(I iface, generate_args args) throws org.apache.thrift.TException {
         generate_result result = new generate_result();
         try {
-          result.success = iface.generate(args.rule, args.tableName);
+          result.success = iface.generate(args.rule, args.tableName, args.dbname);
         } catch (TNadeefRemoteException re) {
           result.re = re;
         }
@@ -573,7 +575,7 @@ public class TNadeefService {
       public detect_result getResult(I iface, detect_args args) throws org.apache.thrift.TException {
         detect_result result = new detect_result();
         try {
-          result.success = iface.detect(args.rule, args.table1, args.table2);
+          result.success = iface.detect(args.rule, args.table1, args.table2, args.outputdb);
         } catch (TNadeefRemoteException re) {
           result.re = re;
         }
@@ -597,7 +599,7 @@ public class TNadeefService {
       public repair_result getResult(I iface, repair_args args) throws org.apache.thrift.TException {
         repair_result result = new repair_result();
         try {
-          result.success = iface.repair(args.rule, args.table1, args.table2);
+          result.success = iface.repair(args.rule, args.table1, args.table2, args.outputdb);
         } catch (TNadeefRemoteException re) {
           result.re = re;
         }
@@ -652,6 +654,7 @@ public class TNadeefService {
 
     private static final org.apache.thrift.protocol.TField RULE_FIELD_DESC = new org.apache.thrift.protocol.TField("rule", org.apache.thrift.protocol.TType.STRUCT, (short)1);
     private static final org.apache.thrift.protocol.TField TABLE_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("tableName", org.apache.thrift.protocol.TType.STRING, (short)2);
+    private static final org.apache.thrift.protocol.TField DBNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("dbname", org.apache.thrift.protocol.TType.STRING, (short)3);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -661,11 +664,13 @@ public class TNadeefService {
 
     private TRule rule; // required
     private String tableName; // required
+    private String dbname; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       RULE((short)1, "rule"),
-      TABLE_NAME((short)2, "tableName");
+      TABLE_NAME((short)2, "tableName"),
+      DBNAME((short)3, "dbname");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -684,6 +689,8 @@ public class TNadeefService {
             return RULE;
           case 2: // TABLE_NAME
             return TABLE_NAME;
+          case 3: // DBNAME
+            return DBNAME;
           default:
             return null;
         }
@@ -731,6 +738,8 @@ public class TNadeefService {
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, TRule.class)));
       tmpMap.put(_Fields.TABLE_NAME, new org.apache.thrift.meta_data.FieldMetaData("tableName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+      tmpMap.put(_Fields.DBNAME, new org.apache.thrift.meta_data.FieldMetaData("dbname", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(generate_args.class, metaDataMap);
     }
@@ -740,11 +749,13 @@ public class TNadeefService {
 
     public generate_args(
       TRule rule,
-      String tableName)
+      String tableName,
+      String dbname)
     {
       this();
       this.rule = rule;
       this.tableName = tableName;
+      this.dbname = dbname;
     }
 
     /**
@@ -757,6 +768,9 @@ public class TNadeefService {
       if (other.isSetTableName()) {
         this.tableName = other.tableName;
       }
+      if (other.isSetDbname()) {
+        this.dbname = other.dbname;
+      }
     }
 
     public generate_args deepCopy() {
@@ -767,6 +781,7 @@ public class TNadeefService {
     public void clear() {
       this.rule = null;
       this.tableName = null;
+      this.dbname = null;
     }
 
     public TRule getRule() {
@@ -817,6 +832,30 @@ public class TNadeefService {
       }
     }
 
+    public String getDbname() {
+      return this.dbname;
+    }
+
+    public generate_args setDbname(String dbname) {
+      this.dbname = dbname;
+      return this;
+    }
+
+    public void unsetDbname() {
+      this.dbname = null;
+    }
+
+    /** Returns true if field dbname is set (has been assigned a value) and false otherwise */
+    public boolean isSetDbname() {
+      return this.dbname != null;
+    }
+
+    public void setDbnameIsSet(boolean value) {
+      if (!value) {
+        this.dbname = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case RULE:
@@ -835,6 +874,14 @@ public class TNadeefService {
         }
         break;
 
+      case DBNAME:
+        if (value == null) {
+          unsetDbname();
+        } else {
+          setDbname((String)value);
+        }
+        break;
+
       }
     }
 
@@ -845,6 +892,9 @@ public class TNadeefService {
 
       case TABLE_NAME:
         return getTableName();
+
+      case DBNAME:
+        return getDbname();
 
       }
       throw new IllegalStateException();
@@ -861,6 +911,8 @@ public class TNadeefService {
         return isSetRule();
       case TABLE_NAME:
         return isSetTableName();
+      case DBNAME:
+        return isSetDbname();
       }
       throw new IllegalStateException();
     }
@@ -893,6 +945,15 @@ public class TNadeefService {
         if (!(this_present_tableName && that_present_tableName))
           return false;
         if (!this.tableName.equals(that.tableName))
+          return false;
+      }
+
+      boolean this_present_dbname = true && this.isSetDbname();
+      boolean that_present_dbname = true && that.isSetDbname();
+      if (this_present_dbname || that_present_dbname) {
+        if (!(this_present_dbname && that_present_dbname))
+          return false;
+        if (!this.dbname.equals(that.dbname))
           return false;
       }
 
@@ -932,6 +993,16 @@ public class TNadeefService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetDbname()).compareTo(typedOther.isSetDbname());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetDbname()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.dbname, typedOther.dbname);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -965,6 +1036,14 @@ public class TNadeefService {
         sb.append("null");
       } else {
         sb.append(this.tableName);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("dbname:");
+      if (this.dbname == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.dbname);
       }
       first = false;
       sb.append(")");
@@ -1030,6 +1109,14 @@ public class TNadeefService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 3: // DBNAME
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.dbname = iprot.readString();
+                struct.setDbnameIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -1053,6 +1140,11 @@ public class TNadeefService {
         if (struct.tableName != null) {
           oprot.writeFieldBegin(TABLE_NAME_FIELD_DESC);
           oprot.writeString(struct.tableName);
+          oprot.writeFieldEnd();
+        }
+        if (struct.dbname != null) {
+          oprot.writeFieldBegin(DBNAME_FIELD_DESC);
+          oprot.writeString(struct.dbname);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -1079,19 +1171,25 @@ public class TNadeefService {
         if (struct.isSetTableName()) {
           optionals.set(1);
         }
-        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetDbname()) {
+          optionals.set(2);
+        }
+        oprot.writeBitSet(optionals, 3);
         if (struct.isSetRule()) {
           struct.rule.write(oprot);
         }
         if (struct.isSetTableName()) {
           oprot.writeString(struct.tableName);
         }
+        if (struct.isSetDbname()) {
+          oprot.writeString(struct.dbname);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, generate_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
+        BitSet incoming = iprot.readBitSet(3);
         if (incoming.get(0)) {
           struct.rule = new TRule();
           struct.rule.read(iprot);
@@ -1100,6 +1198,10 @@ public class TNadeefService {
         if (incoming.get(1)) {
           struct.tableName = iprot.readString();
           struct.setTableNameIsSet(true);
+        }
+        if (incoming.get(2)) {
+          struct.dbname = iprot.readString();
+          struct.setDbnameIsSet(true);
         }
       }
     }
@@ -2281,6 +2383,7 @@ public class TNadeefService {
     private static final org.apache.thrift.protocol.TField RULE_FIELD_DESC = new org.apache.thrift.protocol.TField("rule", org.apache.thrift.protocol.TType.STRUCT, (short)1);
     private static final org.apache.thrift.protocol.TField TABLE1_FIELD_DESC = new org.apache.thrift.protocol.TField("table1", org.apache.thrift.protocol.TType.STRING, (short)2);
     private static final org.apache.thrift.protocol.TField TABLE2_FIELD_DESC = new org.apache.thrift.protocol.TField("table2", org.apache.thrift.protocol.TType.STRING, (short)3);
+    private static final org.apache.thrift.protocol.TField OUTPUTDB_FIELD_DESC = new org.apache.thrift.protocol.TField("outputdb", org.apache.thrift.protocol.TType.STRING, (short)4);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -2291,12 +2394,14 @@ public class TNadeefService {
     private TRule rule; // required
     private String table1; // required
     private String table2; // required
+    private String outputdb; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       RULE((short)1, "rule"),
       TABLE1((short)2, "table1"),
-      TABLE2((short)3, "table2");
+      TABLE2((short)3, "table2"),
+      OUTPUTDB((short)4, "outputdb");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2317,6 +2422,8 @@ public class TNadeefService {
             return TABLE1;
           case 3: // TABLE2
             return TABLE2;
+          case 4: // OUTPUTDB
+            return OUTPUTDB;
           default:
             return null;
         }
@@ -2366,22 +2473,28 @@ public class TNadeefService {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.TABLE2, new org.apache.thrift.meta_data.FieldMetaData("table2", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+      tmpMap.put(_Fields.OUTPUTDB, new org.apache.thrift.meta_data.FieldMetaData("outputdb", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(detect_args.class, metaDataMap);
     }
 
     public detect_args() {
+      this.outputdb = "nadeefdb";
+
     }
 
     public detect_args(
       TRule rule,
       String table1,
-      String table2)
+      String table2,
+      String outputdb)
     {
       this();
       this.rule = rule;
       this.table1 = table1;
       this.table2 = table2;
+      this.outputdb = outputdb;
     }
 
     /**
@@ -2397,6 +2510,9 @@ public class TNadeefService {
       if (other.isSetTable2()) {
         this.table2 = other.table2;
       }
+      if (other.isSetOutputdb()) {
+        this.outputdb = other.outputdb;
+      }
     }
 
     public detect_args deepCopy() {
@@ -2408,6 +2524,8 @@ public class TNadeefService {
       this.rule = null;
       this.table1 = null;
       this.table2 = null;
+      this.outputdb = "nadeefdb";
+
     }
 
     public TRule getRule() {
@@ -2482,6 +2600,30 @@ public class TNadeefService {
       }
     }
 
+    public String getOutputdb() {
+      return this.outputdb;
+    }
+
+    public detect_args setOutputdb(String outputdb) {
+      this.outputdb = outputdb;
+      return this;
+    }
+
+    public void unsetOutputdb() {
+      this.outputdb = null;
+    }
+
+    /** Returns true if field outputdb is set (has been assigned a value) and false otherwise */
+    public boolean isSetOutputdb() {
+      return this.outputdb != null;
+    }
+
+    public void setOutputdbIsSet(boolean value) {
+      if (!value) {
+        this.outputdb = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case RULE:
@@ -2508,6 +2650,14 @@ public class TNadeefService {
         }
         break;
 
+      case OUTPUTDB:
+        if (value == null) {
+          unsetOutputdb();
+        } else {
+          setOutputdb((String)value);
+        }
+        break;
+
       }
     }
 
@@ -2521,6 +2671,9 @@ public class TNadeefService {
 
       case TABLE2:
         return getTable2();
+
+      case OUTPUTDB:
+        return getOutputdb();
 
       }
       throw new IllegalStateException();
@@ -2539,6 +2692,8 @@ public class TNadeefService {
         return isSetTable1();
       case TABLE2:
         return isSetTable2();
+      case OUTPUTDB:
+        return isSetOutputdb();
       }
       throw new IllegalStateException();
     }
@@ -2580,6 +2735,15 @@ public class TNadeefService {
         if (!(this_present_table2 && that_present_table2))
           return false;
         if (!this.table2.equals(that.table2))
+          return false;
+      }
+
+      boolean this_present_outputdb = true && this.isSetOutputdb();
+      boolean that_present_outputdb = true && that.isSetOutputdb();
+      if (this_present_outputdb || that_present_outputdb) {
+        if (!(this_present_outputdb && that_present_outputdb))
+          return false;
+        if (!this.outputdb.equals(that.outputdb))
           return false;
       }
 
@@ -2629,6 +2793,16 @@ public class TNadeefService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetOutputdb()).compareTo(typedOther.isSetOutputdb());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOutputdb()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.outputdb, typedOther.outputdb);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -2670,6 +2844,14 @@ public class TNadeefService {
         sb.append("null");
       } else {
         sb.append(this.table2);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("outputdb:");
+      if (this.outputdb == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.outputdb);
       }
       first = false;
       sb.append(")");
@@ -2743,6 +2925,14 @@ public class TNadeefService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 4: // OUTPUTDB
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.outputdb = iprot.readString();
+                struct.setOutputdbIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -2773,6 +2963,11 @@ public class TNadeefService {
           oprot.writeString(struct.table2);
           oprot.writeFieldEnd();
         }
+        if (struct.outputdb != null) {
+          oprot.writeFieldBegin(OUTPUTDB_FIELD_DESC);
+          oprot.writeString(struct.outputdb);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -2800,7 +2995,10 @@ public class TNadeefService {
         if (struct.isSetTable2()) {
           optionals.set(2);
         }
-        oprot.writeBitSet(optionals, 3);
+        if (struct.isSetOutputdb()) {
+          optionals.set(3);
+        }
+        oprot.writeBitSet(optionals, 4);
         if (struct.isSetRule()) {
           struct.rule.write(oprot);
         }
@@ -2810,12 +3008,15 @@ public class TNadeefService {
         if (struct.isSetTable2()) {
           oprot.writeString(struct.table2);
         }
+        if (struct.isSetOutputdb()) {
+          oprot.writeString(struct.outputdb);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, detect_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(3);
+        BitSet incoming = iprot.readBitSet(4);
         if (incoming.get(0)) {
           struct.rule = new TRule();
           struct.rule.read(iprot);
@@ -2828,6 +3029,10 @@ public class TNadeefService {
         if (incoming.get(2)) {
           struct.table2 = iprot.readString();
           struct.setTable2IsSet(true);
+        }
+        if (incoming.get(3)) {
+          struct.outputdb = iprot.readString();
+          struct.setOutputdbIsSet(true);
         }
       }
     }
@@ -3296,6 +3501,7 @@ public class TNadeefService {
     private static final org.apache.thrift.protocol.TField RULE_FIELD_DESC = new org.apache.thrift.protocol.TField("rule", org.apache.thrift.protocol.TType.STRUCT, (short)1);
     private static final org.apache.thrift.protocol.TField TABLE1_FIELD_DESC = new org.apache.thrift.protocol.TField("table1", org.apache.thrift.protocol.TType.STRING, (short)2);
     private static final org.apache.thrift.protocol.TField TABLE2_FIELD_DESC = new org.apache.thrift.protocol.TField("table2", org.apache.thrift.protocol.TType.STRING, (short)3);
+    private static final org.apache.thrift.protocol.TField OUTPUTDB_FIELD_DESC = new org.apache.thrift.protocol.TField("outputdb", org.apache.thrift.protocol.TType.STRING, (short)4);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -3306,12 +3512,14 @@ public class TNadeefService {
     private TRule rule; // required
     private String table1; // required
     private String table2; // required
+    private String outputdb; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       RULE((short)1, "rule"),
       TABLE1((short)2, "table1"),
-      TABLE2((short)3, "table2");
+      TABLE2((short)3, "table2"),
+      OUTPUTDB((short)4, "outputdb");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3332,6 +3540,8 @@ public class TNadeefService {
             return TABLE1;
           case 3: // TABLE2
             return TABLE2;
+          case 4: // OUTPUTDB
+            return OUTPUTDB;
           default:
             return null;
         }
@@ -3381,22 +3591,28 @@ public class TNadeefService {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.TABLE2, new org.apache.thrift.meta_data.FieldMetaData("table2", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+      tmpMap.put(_Fields.OUTPUTDB, new org.apache.thrift.meta_data.FieldMetaData("outputdb", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(repair_args.class, metaDataMap);
     }
 
     public repair_args() {
+      this.outputdb = "nadeefdb";
+
     }
 
     public repair_args(
       TRule rule,
       String table1,
-      String table2)
+      String table2,
+      String outputdb)
     {
       this();
       this.rule = rule;
       this.table1 = table1;
       this.table2 = table2;
+      this.outputdb = outputdb;
     }
 
     /**
@@ -3412,6 +3628,9 @@ public class TNadeefService {
       if (other.isSetTable2()) {
         this.table2 = other.table2;
       }
+      if (other.isSetOutputdb()) {
+        this.outputdb = other.outputdb;
+      }
     }
 
     public repair_args deepCopy() {
@@ -3423,6 +3642,8 @@ public class TNadeefService {
       this.rule = null;
       this.table1 = null;
       this.table2 = null;
+      this.outputdb = "nadeefdb";
+
     }
 
     public TRule getRule() {
@@ -3497,6 +3718,30 @@ public class TNadeefService {
       }
     }
 
+    public String getOutputdb() {
+      return this.outputdb;
+    }
+
+    public repair_args setOutputdb(String outputdb) {
+      this.outputdb = outputdb;
+      return this;
+    }
+
+    public void unsetOutputdb() {
+      this.outputdb = null;
+    }
+
+    /** Returns true if field outputdb is set (has been assigned a value) and false otherwise */
+    public boolean isSetOutputdb() {
+      return this.outputdb != null;
+    }
+
+    public void setOutputdbIsSet(boolean value) {
+      if (!value) {
+        this.outputdb = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case RULE:
@@ -3523,6 +3768,14 @@ public class TNadeefService {
         }
         break;
 
+      case OUTPUTDB:
+        if (value == null) {
+          unsetOutputdb();
+        } else {
+          setOutputdb((String)value);
+        }
+        break;
+
       }
     }
 
@@ -3536,6 +3789,9 @@ public class TNadeefService {
 
       case TABLE2:
         return getTable2();
+
+      case OUTPUTDB:
+        return getOutputdb();
 
       }
       throw new IllegalStateException();
@@ -3554,6 +3810,8 @@ public class TNadeefService {
         return isSetTable1();
       case TABLE2:
         return isSetTable2();
+      case OUTPUTDB:
+        return isSetOutputdb();
       }
       throw new IllegalStateException();
     }
@@ -3595,6 +3853,15 @@ public class TNadeefService {
         if (!(this_present_table2 && that_present_table2))
           return false;
         if (!this.table2.equals(that.table2))
+          return false;
+      }
+
+      boolean this_present_outputdb = true && this.isSetOutputdb();
+      boolean that_present_outputdb = true && that.isSetOutputdb();
+      if (this_present_outputdb || that_present_outputdb) {
+        if (!(this_present_outputdb && that_present_outputdb))
+          return false;
+        if (!this.outputdb.equals(that.outputdb))
           return false;
       }
 
@@ -3644,6 +3911,16 @@ public class TNadeefService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetOutputdb()).compareTo(typedOther.isSetOutputdb());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOutputdb()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.outputdb, typedOther.outputdb);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -3685,6 +3962,14 @@ public class TNadeefService {
         sb.append("null");
       } else {
         sb.append(this.table2);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("outputdb:");
+      if (this.outputdb == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.outputdb);
       }
       first = false;
       sb.append(")");
@@ -3758,6 +4043,14 @@ public class TNadeefService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 4: // OUTPUTDB
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.outputdb = iprot.readString();
+                struct.setOutputdbIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -3788,6 +4081,11 @@ public class TNadeefService {
           oprot.writeString(struct.table2);
           oprot.writeFieldEnd();
         }
+        if (struct.outputdb != null) {
+          oprot.writeFieldBegin(OUTPUTDB_FIELD_DESC);
+          oprot.writeString(struct.outputdb);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -3815,7 +4113,10 @@ public class TNadeefService {
         if (struct.isSetTable2()) {
           optionals.set(2);
         }
-        oprot.writeBitSet(optionals, 3);
+        if (struct.isSetOutputdb()) {
+          optionals.set(3);
+        }
+        oprot.writeBitSet(optionals, 4);
         if (struct.isSetRule()) {
           struct.rule.write(oprot);
         }
@@ -3825,12 +4126,15 @@ public class TNadeefService {
         if (struct.isSetTable2()) {
           oprot.writeString(struct.table2);
         }
+        if (struct.isSetOutputdb()) {
+          oprot.writeString(struct.outputdb);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, repair_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(3);
+        BitSet incoming = iprot.readBitSet(4);
         if (incoming.get(0)) {
           struct.rule = new TRule();
           struct.rule.read(iprot);
@@ -3843,6 +4147,10 @@ public class TNadeefService {
         if (incoming.get(2)) {
           struct.table2 = iprot.readString();
           struct.setTable2IsSet(true);
+        }
+        if (incoming.get(3)) {
+          struct.outputdb = iprot.readString();
+          struct.setOutputdbIsSet(true);
         }
       }
     }

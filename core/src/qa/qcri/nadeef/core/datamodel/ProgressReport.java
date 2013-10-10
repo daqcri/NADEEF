@@ -14,7 +14,7 @@ package qa.qcri.nadeef.core.datamodel;
 
 /**
  * Progress report represents progress information used in progress bar.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class ProgressReport {
     private String operatorName;

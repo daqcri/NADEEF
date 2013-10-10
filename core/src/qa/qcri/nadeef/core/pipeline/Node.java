@@ -20,7 +20,7 @@ import java.util.UUID;
 
 /**
  * A component runs in the pipeline.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class Node {
 

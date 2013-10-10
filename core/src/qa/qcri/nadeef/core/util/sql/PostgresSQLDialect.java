@@ -21,7 +21,7 @@ import java.sql.*;
 /**
  * Database manager for Apache Derby database.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class PostgresSQLDialect extends SQLDialectBase {
     public static STGroupFile template =

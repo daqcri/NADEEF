@@ -1,0 +1,18 @@
+<!-- ============ Project selection =================== -->
+<div class="modal-body">
+    <div class="control-group">
+        <label for="select-existing-project">Select from existing projects</label>
+        <select id="select-existing-project" class="selectbox fullwidth" size="5">
+            <% _.each(projects, function(project) { %>
+            <option><%= project[1] %></option>
+            <% }); %>
+        </select>
+    </div>
+    <div class="control-group form-horizontal" id="project-input">
+        <label for="create-new-project">Create new project</label>
+        <input type="text"
+               id="create-new-project"
+               placeholder="Type here to create new project" />
+    </div>
+    <div id="projectModal-alert"></div>
+</div>

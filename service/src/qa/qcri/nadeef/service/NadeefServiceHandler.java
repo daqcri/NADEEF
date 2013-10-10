@@ -38,8 +38,6 @@ import java.util.List;
 
 /**
  * NadeefServiceHandler handles request for NADEEF service.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 // TODO: speedup the compiling stage by using object caching.
 public class NadeefServiceHandler implements TNadeefService.Iface {
@@ -49,7 +47,8 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String generate(TRule tRule, String tableName) throws TNadeefRemoteException {
+    public String generate(TRule tRule, String tableName, String dbname)
+        throws TNadeefRemoteException {
         String result = "";
         String type = tRule.getType();
         String code = tRule.getCode();
@@ -60,12 +59,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         } else {
             String[] codeLines = code.split("\n");
             List<String> codes = Lists.newArrayList(codeLines);
+            DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+            dbConfig.switchDatabase(dbname);
 
             try {
                 Schema schema =
-                    DBMetaDataTool.getSchema(
-                        NadeefConfiguration.getDbConfig(), tableName
-                    );
+                    DBMetaDataTool.getSchema(dbConfig, tableName);
                 RuleBuilder ruleBuilder =
                     NadeefConfiguration.tryGetRuleBuilder(type.toString());
                 if (ruleBuilder != null) {
@@ -127,7 +126,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String detect(TRule rule, String table1, String table2) throws TNadeefRemoteException {
+    public String detect(
+        TRule rule,
+        String table1,
+        String table2,
+        String outputdb
+    ) throws TNadeefRemoteException {
         tracer.info("Detect rule " + rule.getName() + "[" + rule.getType() + "]");
         if (!verify(rule)) {
             TNadeefRemoteException ex = new TNadeefRemoteException();
@@ -143,7 +147,10 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
 
         try {
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
-            DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
+
+            DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+            dbConfig.switchDatabase(outputdb);
+
             String type = rule.getType();
             String name = rule.getName();
             String key = null;
@@ -157,15 +164,15 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
 
                 ruleInstance = (Rule) udfClass.newInstance();
                 ruleInstance.initialize(rule.getName(), tables);
-                cleanPlan = new CleanPlan(config, ruleInstance);
+                cleanPlan = new CleanPlan(dbConfig, ruleInstance);
                 key = scheduler.submitDetectJob(cleanPlan);
             } else {
                 // TODO: declarative rule only supports 1 table
                 Collection<Rule> rules =
-                    buildAbstractRule(rule, table1);
+                    buildAbstractRule(dbConfig,  rule, table1);
                 for (Rule rule_ : rules) {
                     rule_.initialize(rule.getName(), tables);
-                    cleanPlan = new CleanPlan(config, rule_);
+                    cleanPlan = new CleanPlan(dbConfig, rule_);
                     key = scheduler.submitDetectJob(cleanPlan);
                 }
             }
@@ -191,7 +198,12 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public String repair(TRule rule, String table1, String table2) throws TNadeefRemoteException {
+    public String repair(
+        TRule rule,
+        String table1,
+        String table2,
+        String outputdb
+    ) throws TNadeefRemoteException {
         if (!verify(rule)) {
             TNadeefRemoteException ex = new TNadeefRemoteException();
             ex.setType(TNadeefExceptionType.COMPILE_ERROR);
@@ -213,7 +225,14 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
 
             Rule ruleInstance = (Rule) udfClass.newInstance();
             ruleInstance.initialize(rule.getName(), tables);
-            DBConfig config = new DBConfig(NadeefConfiguration.getDbConfig());
+            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
+            DBConfig config =
+                new DBConfig.Builder()
+                    .dialect(dbConfig.getDialect())
+                    .username(dbConfig.getUserName())
+                    .password(dbConfig.getPassword())
+                    .url(dbConfig.getHostName(), outputdb)
+                    .build();
 
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
             String key = scheduler.submitRepairJob(new CleanPlan(config, ruleInstance));
@@ -251,7 +270,11 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         return jobScheduler.getJobStatus();
     }
 
-    private Collection<Rule> buildAbstractRule(TRule tRule, String tableName) throws Exception {
+    private Collection<Rule> buildAbstractRule(
+        DBConfig dbConfig,
+        TRule tRule,
+        String tableName
+    ) throws Exception {
         String type = tRule.getType();
         String name = tRule.getName();
         String code = tRule.getCode();
@@ -261,7 +284,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         RuleBuilder ruleBuilder;
         Collection<Rule> result;
         ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
-        Schema schema = DBMetaDataTool.getSchema(NadeefConfiguration.getDbConfig(), tableName);
+        Schema schema = DBMetaDataTool.getSchema(dbConfig, tableName);
         if (ruleBuilder != null) {
             result = ruleBuilder
                 .name(name)

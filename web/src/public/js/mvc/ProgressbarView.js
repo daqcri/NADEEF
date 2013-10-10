@@ -18,7 +18,7 @@ define(
 		function start(id) {
 			if (!isSubscribed) {
 				setInterval(function() {
-					$.getJSON('/data/progress', function(data) {
+					$.getJSON('/progress', function(data) {
 						var values = new Array();
 						_.each(data['data'], function(v) {
 							var name = 

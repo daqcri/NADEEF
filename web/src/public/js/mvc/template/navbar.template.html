@@ -1,3 +1,11 @@
+<div class="modal hide" id="projectModal">
+    <div class="modal-header">
+        <h4>Open NADEEF Project</h4>
+    </div>
+    <div class="modal-footer">
+        <a id="project-button" class="btn">OK</a>
+    </div>
+</div>
 <!-- ============ navigation bar =================== -->
 <div id="nav" class="navbar navbar-fixed-top one-edge-shadow">
     <div class="navbar-inner" id="navbar">
@@ -20,23 +28,19 @@
                 <button class="btn" data-toggle="Reload" title="Refresh" id="refresh">
                     <i class="icon-refresh"></i>
                 </button>
-            </li>
-            <li>
-                <button class="btn" data-toggle="Clear violation" title="Clean Violation"
+                <button class="btn"
+                        data-toggle="Clear violation"
+                        title="Clear Violation"
                         id="clear">
                     <i class="icon-trash"></i>
                 </button>
-            </li>
-            <li class="dropdown">
-                <a class="dropdown-toggle pull-right"
-                   data-toggle="dropdown" role="button" href="#">
-                    <i class="icon-user"></i> Anonymous<b class='caret'></b>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a tabindex="0">Log Out</a></li>
-                </ul>
+                <button class="btn"
+                        title="Change Project"
+                        id="change">
+                    <i class="icon-user"></i>
+                    <span id="projectName"></span>
+                </button>
             </li>
         </ul>
     </div>
 </div>
-<!-- End of navigation -->

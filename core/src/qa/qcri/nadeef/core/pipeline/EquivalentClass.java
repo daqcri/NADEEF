@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * EquivalentClass is an implementation of {@link FixDecisionMaker} based on EquivalentClass
  * algorithm.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class EquivalentClass extends FixDecisionMaker {
     /**

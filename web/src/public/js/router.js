@@ -13,37 +13,58 @@
 
 /* Simple routing system */
 define([], function() {
-    var routes =
-        [{hash:'#home', controller:'HomeView'},
-         {hash:'#dashboard',  controller:'DashboardView'}];
+    var routes = [
+            {hash:'#home', controller:'HomeView'},
+            {hash:'#dashboard',  controller:'DashboardView'},
+            {hash:'#project', controller: 'NavbarView'}
+        ];
     var currentHash = '';
-     
+    var currentState = null;
+
     function start() {
         setInterval(hashCheck, 200);
     }
-     
+
     function hashCheck() {
-		if (window.location.hash == '') {
-			window.location.hash = 'home';
-		}
-		
-        if (window.location.hash != currentHash) {
+        if (_.isUndefined(window.history.state)) {
+            redirectToRoot();
+            return;
+        }
+
+        if (window.location.hash != currentHash || window.history.state != currentState) {
+            currentHash = window.location.hash;
             for (var i = 0, currentRoute; currentRoute = routes[i++];) {
                 if (window.location.hash == currentRoute.hash) {
                     loadController(currentRoute.controller);
-				}
+
+                    if (window.history.state == null) {
+                        window.history.pushState(currentState);
+                    } else {
+                        currentState = window.history.state;
+                    }
+                    break;
+                }
             }
-            currentHash = window.location.hash;
         }
     }
-     
+
     function loadController(controllerName) {
         require(['mvc/' + controllerName], function(controller) {
             controller.start();
         });
     }
-     
+
+    function redirect(url, state) {
+        window.history.pushState(state, null, url);
+    }
+
+    function redirectToRoot() {
+        window.history.pushState(null, null, "#project");
+    }
+
     return {
-        start : start
+        start : start,
+        redirect : redirect,
+        redirectToRoot : redirectToRoot
     };
 });

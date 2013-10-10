@@ -13,17 +13,18 @@
 
 package qa.qcri.nadeef.core.util.sql;
 
+import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.*;
+import java.util.List;
 
 /**
  * An utility class for getting meta data from database.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public final class DBMetaDataTool {
     /**
@@ -47,7 +48,7 @@ public final class DBMetaDataTool {
         Statement stat = null;
         ResultSet resultSet = null;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig, true);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             if (isTableExist(dbConfig, targetTableName)) {
                 stat.execute(dialectManager.dropTable(targetTableName));
@@ -93,7 +94,7 @@ public final class DBMetaDataTool {
             builder.setLimit(1);
             String sql = builder.build(dialectManager);
 
-            conn = DBConnectionFactory.createConnection(config);
+            conn = DBConnectionPool.createConnection(config);
             stat = conn.createStatement();
 
             resultSet = stat.executeQuery(sql);
@@ -129,6 +130,48 @@ public final class DBMetaDataTool {
     }
 
     /**
+     * Gets all the tables from the given {@inheritDoc DBConfig}.
+     * @param dbConfig DBConfig.
+     * @return table string collection.
+     */
+    public static List<String> getTables(DBConfig dbConfig) throws Exception {
+        Connection conn = null;
+        ResultSet rs = null;
+        List<String> tables = Lists.newArrayList();
+        try {
+            conn = DBConnectionPool.createConnection(dbConfig);
+            DatabaseMetaData metaData = conn.getMetaData();
+            SQLDialect dialect = dbConfig.getDialect();
+
+            if (dialect == SQLDialect.DERBY || dialect == SQLDialect.DERBYMEMORY) {
+                rs = metaData.getTables(
+                    null,
+                    dbConfig.getUserName().toUpperCase(),
+                    null,
+                    new String[] { "TABLE" }
+                );
+            } else {
+                rs = metaData.getTables(null, null, null, new String[] { "TABLE" });
+            }
+
+            while (rs.next()) {
+                tables.add(rs.getString(3));
+            }
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {}
+        }
+        return tables;
+    }
+
+    /**
      * Returns <code>True</code> when the given table exists in the connection.
      * @param tableName table name.
      * @return <code>True</code> when the given table exists in the connection.
@@ -141,11 +184,20 @@ public final class DBMetaDataTool {
                 ClassNotFoundException {
         Connection conn = null;
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig, true);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             DatabaseMetaData meta = conn.getMetaData();
-            boolean result =
-                meta.getTables(null, null, tableName.toUpperCase(), null).next() ||
-                meta.getTables(null, null, tableName.toLowerCase(), null).next();
+            boolean result;
+            SQLDialect dialect = dbConfig.getDialect();
+            if (dialect == SQLDialect.DERBYMEMORY || dialect == SQLDialect.DERBY) {
+                String username = dbConfig.getUserName().toUpperCase();
+                result =
+                    meta.getTables(null, username, tableName.toUpperCase(), null).next() ||
+                    meta.getTables(null, username, tableName.toLowerCase(), null).next();
+            } else {
+                result =
+                    meta.getTables(null, null, tableName.toUpperCase(), null).next() ||
+                    meta.getTables(null, null, tableName.toLowerCase(), null).next();
+            }
             return result;
         } finally {
             if (conn != null) {

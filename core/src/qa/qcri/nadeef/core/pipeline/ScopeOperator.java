@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Query engine operator, which generates optimized queries based on given hints.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class ScopeOperator<E>
     extends Operator<Collection<Table>, Collection<Table>> {

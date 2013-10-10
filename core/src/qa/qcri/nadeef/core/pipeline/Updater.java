@@ -19,7 +19,7 @@ import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -35,7 +35,7 @@ import java.util.HashMap;
  * It returns <code>True</code> when there is no Cell changed in
  * the pipeline. In this case the pipeline will stop.
  *
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
@@ -67,7 +67,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         String oldValue;
 
         try {
-            conn = DBConnectionFactory.createConnection(dbConfig);
+            conn = DBConnectionPool.createConnection(dbConfig);
             stat = conn.createStatement();
             auditInsertStat =
                 conn.prepareStatement(

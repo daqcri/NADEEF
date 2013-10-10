@@ -35,7 +35,7 @@ enum FlowState {
 /**
  * Flow contains a series of Nodes which can be connected and executed in sequence.
  * Currently the design only allows for one line of connected nodes.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class Flow {
     //<editor-fold desc="Private fields">

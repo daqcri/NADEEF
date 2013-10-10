@@ -14,13 +14,35 @@
 package qa.qcri.nadeef.web.sql;
 
 import org.stringtemplate.v4.STGroupFile;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 /**
  * Abstract class for cross-vendor DB compatibility.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public abstract class SQLDialectBase {
+
+    /**
+     * Creates SQLDialect instance.
+     * @param dialect dialect.
+     * @return SQLDialectBase instance.
+     */
+    public static SQLDialectBase createDialectBaseInstance(SQLDialect dialect) {
+        SQLDialectBase dialectInstance;
+        switch (dialect) {
+            default:
+            case DERBYMEMORY:
+            case DERBY:
+                dialectInstance = new DerbySQLDialect();
+                break;
+            case POSTGRES:
+                dialectInstance = new PostgresSQLDialect();
+                break;
+            case MYSQL:
+                dialectInstance = new MySQLDialect();
+                break;
+        }
+        return dialectInstance;
+    }
 
     /**
      * Gets the template file.
@@ -32,6 +54,11 @@ public abstract class SQLDialectBase {
      * Install Rule table.
      */
     public abstract String installRule();
+
+    /**
+     * Install Project table.
+     */
+    public abstract String installProject();
 
     /**
      * Install RuleType table.
@@ -81,6 +108,18 @@ public abstract class SQLDialectBase {
         return "select x.name, y.name, x.code, x.table1, x.table2, x.java_code from RULE x " +
             "inner join RULETYPE y on x.type = y.type where x.name = '" + ruleName + "'";
 
+    }
+
+    /**
+     * Insert a new project entry.
+     * @param projectName project name.
+     * @return SQL query.
+     */
+    public String insertProject(String projectName) {
+        return
+            "INSERT INTO PROJECT (dbname, name) VALUES (\'" +
+                projectName +
+                "\', \'" + projectName + "\')";
     }
 
     /**
@@ -153,6 +192,15 @@ public abstract class SQLDialectBase {
      */
     public String queryViolationRelation() {
         return "SELECT DISTINCT(VID), TUPLEID FROM VIOLATION ORDER BY VID";
+    }
+
+    /**
+     * Creates a new database.
+     * @param dbName database name.
+     * @return SQL query.
+     */
+    public String createDatabase(String dbName) {
+        return "CREATE DATABASE " + dbName;
     }
 
     /**

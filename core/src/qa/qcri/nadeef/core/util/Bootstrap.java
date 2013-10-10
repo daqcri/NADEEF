@@ -17,8 +17,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileNotFoundException;
@@ -29,7 +27,6 @@ import java.nio.file.Path;
  * Bootstrapping prepares runtime environment for NADEEF. It is invoked before NADEEF starts
  * and also after NADEEF exits.
  *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class Bootstrap {
     private static boolean isStarted;
@@ -42,7 +39,6 @@ public class Bootstrap {
      */
     public static synchronized void shutdown() {
         if (isStarted) {
-            DBConnectionFactory.shutdown();
             NodeCacheManager cacheManager = NodeCacheManager.getInstance();
             cacheManager.clear();
             // try to collect the resources if possible
@@ -80,26 +76,6 @@ public class Bootstrap {
             Tracer.setLoggingDir(outputPath.toString());
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
-
-            DBConnectionFactory.initializeNadeefConnectionPool();
-
-            String violationTableName = NadeefConfiguration.getViolationTableName();
-            String repairTableName = NadeefConfiguration.getRepairTableName();
-            String auditTableName = NadeefConfiguration.getAuditTableName();
-
-            if (DBInstaller.isInstalled(violationTableName)) {
-                DBInstaller.uninstall(violationTableName);
-            }
-
-            if (DBInstaller.isInstalled(repairTableName)) {
-                DBInstaller.uninstall(repairTableName);
-            }
-
-            if (DBInstaller.isInstalled(auditTableName)) {
-                DBInstaller.uninstall(auditTableName);
-            }
-
-            DBInstaller.install(violationTableName, repairTableName, auditTableName);
         } catch (FileNotFoundException ex) {
             System.err.println("Nadeef configuration is not found.");
             ex.printStackTrace();

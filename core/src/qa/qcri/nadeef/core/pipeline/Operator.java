@@ -23,7 +23,6 @@ import java.lang.reflect.Type;
 /**
  * Abstract class for an Operator.
  *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public abstract class Operator<TInput, TOutput> {
     private double percentage;

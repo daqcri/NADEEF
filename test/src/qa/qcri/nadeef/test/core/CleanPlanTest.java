@@ -18,12 +18,11 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
@@ -31,9 +30,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -50,13 +47,11 @@ public class CleanPlanTest extends NadeefTestBase {
     @Before
     public void setup() {
         Assume.assumeTrue(testConfig.contains("derby"));
-        Connection conn = null;
         try {
             Bootstrap.start(testConfig);
             Tracer.setVerbose(true);
-            conn = DBConnectionFactory.getNadeefConnection();
             CSVTools.dump(
-                conn,
+                NadeefConfiguration.getDbConfig(),
                 SQLDialectFactory.getNadeefDialectManagerInstance(),
                 TestDataRepository.getLocationData1(),
                 "LOCATION",
@@ -65,14 +60,6 @@ public class CleanPlanTest extends NadeefTestBase {
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
-                }
-            }
         }
     }
 
@@ -86,7 +73,8 @@ public class CleanPlanTest extends NadeefTestBase {
         try {
             List<CleanPlan> cleanPlans =
                 CleanPlan.createCleanPlanFromJSON(
-                    new FileReader(TestDataRepository.getTestFile1())
+                    new FileReader(TestDataRepository.getTestFile1()),
+                    NadeefConfiguration.getDbConfig()
                 );
 
             Assert.assertEquals(1, cleanPlans.size());
@@ -110,13 +98,10 @@ public class CleanPlanTest extends NadeefTestBase {
         thrown.expect(IllegalArgumentException.class);
         try {
             CleanPlan.createCleanPlanFromJSON(
-                new FileReader(TestDataRepository.getFailurePlanFile1())
+                new FileReader(TestDataRepository.getFailurePlanFile1()),
+                NadeefConfiguration.getDbConfig()
             );
-        } catch (InvalidCleanPlanException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (InvalidRuleException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -126,13 +111,10 @@ public class CleanPlanTest extends NadeefTestBase {
         thrown.expect(InvalidRuleException.class);
         try {
             CleanPlan.createCleanPlanFromJSON(
-                new FileReader(TestDataRepository.getFailurePlanFile2())
+                new FileReader(TestDataRepository.getFailurePlanFile2()),
+                NadeefConfiguration.getDbConfig()
             );
-        } catch (InvalidCleanPlanException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (InvalidRuleException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

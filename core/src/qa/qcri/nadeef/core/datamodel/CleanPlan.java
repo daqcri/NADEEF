@@ -25,7 +25,6 @@ import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
 import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
@@ -37,16 +36,12 @@ import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 import java.io.File;
 import java.io.Reader;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 /**
- * Nadeef cleaning plan.
- *
- * @author Si Yin <siyin@qf.org.qa>
+ * NADEEF cleaning plan.
  */
 public class CleanPlan {
     private DBConfig source;
@@ -63,26 +58,37 @@ public class CleanPlan {
     }
 
     // </editor-fold>
-
     /**
      * Creates a {@link CleanPlan} from JSON string.
      *
-     * @param reader JSON string reader.
+     * @param reader JSON object string reader.
      * @return <code>CleanPlan</code> object.
      */
     @SuppressWarnings("unchecked")
-    public static List<CleanPlan> createCleanPlanFromJSON(Reader reader)
+    public static List<CleanPlan> createCleanPlanFromJSON(Reader reader, DBConfig dbConfig)
             throws InvalidRuleException, InvalidCleanPlanException {
-        Preconditions.checkNotNull(reader);
-        JSONObject jsonObject = (JSONObject) JSONValue.parse(reader);
+        return createCleanPlanFromJSON((JSONObject)JSONValue.parse(reader), dbConfig);
+    };
+
+    /**
+     * Creates a {@link CleanPlan} from JSON object.
+     *
+     * @param jsonObject JSON object.
+     * @param nadeefDbConfig Nadeef DB config.
+     * @return <code>CleanPlan</code> object.
+     */
+    @SuppressWarnings("unchecked")
+    public static List<CleanPlan> createCleanPlanFromJSON(
+        JSONObject jsonObject,
+        DBConfig nadeefDbConfig
+    ) throws InvalidRuleException, InvalidCleanPlanException {
+        Preconditions.checkNotNull(jsonObject);
 
         // a set which prevents generating new tables whenever encounters among
         // multiple rules.
         List<CleanPlan> result = Lists.newArrayList();
         boolean isCSV = false;
         List<Schema> schemas = Lists.newArrayList();
-
-        Connection conn = null;
         SQLDialectBase dialectManager = null;
         try {
             // ----------------------------------------
@@ -131,8 +137,6 @@ public class CleanPlan {
             // ----------------------------------------
             // parsing the rules
             // ----------------------------------------
-            // TODO: use token.matches("^\\s*(\\w+\\.?){0,3}\\w\\s*$") to match
-            // the table pattern.
             JSONArray ruleArray = (JSONArray) jsonObject.get("rule");
             ArrayList<Rule> rules = Lists.newArrayList();
             List<String> targetTableNames;
@@ -187,7 +191,6 @@ public class CleanPlan {
                     targetTableNames = toUppercase(targetTableNames);
 
                     // source is a CSV file, dump it to NADEEF database.
-                    conn = DBConnectionFactory.getNadeefConnection();
                     // This hashset is to prevent that tables are dumped for multiple times.
                     for (int j = 0; j < targetTableNames.size(); j++) {
                         File file = CommonTools.getFile(fullFileNames.get(j));
@@ -195,7 +198,7 @@ public class CleanPlan {
                         if (!copiedTables.contains(targetTableNames.get(j))) {
                             String tableName =
                                 CSVTools.dump(
-                                    conn,
+                                    nadeefDbConfig,
                                     dialectManager,
                                     file,
                                     targetTableNames.get(j),
@@ -302,8 +305,8 @@ public class CleanPlan {
                 }
             }
 
-            for (int i = 0; i < rules.size(); i++) {
-                result.add(new CleanPlan(dbConfig, rules.get(i)));
+            for (Rule rule_ : rules) {
+                result.add(new CleanPlan(dbConfig, rule_));
             }
             return result;
         } catch (Exception ex) {
@@ -311,14 +314,6 @@ public class CleanPlan {
                 throw (InvalidRuleException) ex;
             }
             throw new InvalidCleanPlanException(ex);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException ex) {
-                    // ignore;
-                }
-            }
         }
     }
 

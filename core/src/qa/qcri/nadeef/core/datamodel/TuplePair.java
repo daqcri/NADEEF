@@ -17,7 +17,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Tuple Pair represents a pair of tuples.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 public class TuplePair {
     private Tuple left;

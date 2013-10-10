@@ -19,7 +19,7 @@ import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -36,17 +36,21 @@ import java.util.List;
  */
 public class Fixes {
     /**
-     * Generates fix id from database.
-     * TODO: This doesn't promise that you will always get the right id in
-     * concurrency mode, design a better way of generating it.
+     * Generates fix id from database. This methods does not close the connection.
+     * @param connectionPool ConnectionPool.
      * @return id.
      */
-    public static int generateFixId() {
+    // TODO:
+    // This doesn't promise that you will always get the right id in
+    // concurrency mode, design a better way of generating it.
+    public static int generateFixId(DBConnectionPool connectionPool) {
         Tracer tracer = Tracer.getTracer(Fix.class);
+        Connection conn = null;
+        Statement stat = null;
         try {
             String tableName = NadeefConfiguration.getRepairTableName();
-            Connection conn = DBConnectionFactory.getNadeefConnection();
-            Statement stat = conn.createStatement();
+            conn = connectionPool.getNadeefConnection();
+            stat = conn.createStatement();
             ResultSet resultSet =
                 stat.executeQuery("SELECT MAX(id) + 1 as id from " + tableName);
             conn.commit();
@@ -55,10 +59,19 @@ public class Fixes {
                 result = resultSet.getInt("id");
             }
             stat.close();
-            conn.close();
             return result;
         } catch (Exception ex) {
             tracer.err("Unable to generate Fix id.", ex);
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+
+                if (stat != null) {
+                    stat.close();
+                }
+            } catch (SQLException ex) {}
         }
         return 0;
     }

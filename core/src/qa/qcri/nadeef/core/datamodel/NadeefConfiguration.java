@@ -32,8 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Nadeef configuration class.
- * @author Si Yin <siyin@qf.org.qa>
+ * NADEEF configuration class.
  */
 public class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
@@ -52,13 +51,12 @@ public class NadeefConfiguration {
     //<editor-fold desc="Public methods">
 
     /**
-     * Initialize configuration from string.
-     * @param reader configuration string.
+     * Initialize NADEEF with JSON object.
+     * @param jsonObject json input.
      */
     @SuppressWarnings("unchecked")
-    public synchronized static void initialize(Reader reader) throws Exception {
-        Preconditions.checkNotNull(reader);
-        JSONObject jsonObject = (JSONObject)JSONValue.parse(reader);
+    public synchronized static void initialize(JSONObject jsonObject) throws Exception {
+        Preconditions.checkNotNull(jsonObject);
         JSONObject database = (JSONObject)jsonObject.get("database");
         String url = (String)database.get("url");
         String username = "";
@@ -121,7 +119,7 @@ public class NadeefConfiguration {
                 outputPathString = System.getProperty("user.dir");
                 tracer.info(
                     "Cannot find directory " + outputPathString +
-                    ", we change to working directory " + outputPathString
+                        ", we change to working directory " + outputPathString
                 );
 
                 outputPath = new File(outputPathString).toPath();
@@ -142,6 +140,16 @@ public class NadeefConfiguration {
             serverUrl = (String)thrift.get("url");
             serverPort = ((Long)thrift.get("port")).intValue();
         }
+    }
+
+    /**
+     * Initialize configuration from string.
+     * @param reader configuration string.
+     */
+    @SuppressWarnings("unchecked")
+    public synchronized static void initialize(Reader reader) throws Exception {
+        Preconditions.checkNotNull(reader);
+        initialize((JSONObject)JSONValue.parse(reader));
     }
 
     /**
@@ -175,6 +183,15 @@ public class NadeefConfiguration {
     public static void setAlwaysOverride(boolean isAlwaysOverride) {
         alwaysOverrideTable = isAlwaysOverride;
     }
+
+    /**
+     * Sets MaxIterationNumber.
+     * @param maxIterationNumber_ Max iteration number.
+     */
+    public static void setMaxIterationNumber(int maxIterationNumber_) {
+        maxIterationNumber = maxIterationNumber_;
+    }
+
     /**
      * Is Nadeef running in TestMode.
      * @return True when Nadeef is running in test mode.
@@ -219,15 +236,6 @@ public class NadeefConfiguration {
      */
     public static int getMaxIterationNumber() {
         return maxIterationNumber;
-    }
-
-    /**
-     * Gets the Nadeef installed schema name.
-     * @return Nadeef DB schema name.
-     */
-    public static String getSchemaName() {
-        String schemaName = "public";
-        return schemaName;
     }
 
     /**

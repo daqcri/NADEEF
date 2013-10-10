@@ -23,13 +23,12 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -43,8 +42,7 @@ import java.util.concurrent.TimeUnit;
 @RunWith(Parameterized.class)
 public class SQLTableTest extends NadeefTestBase {
     private String tableName;
-    private DBConfig dbconfig;
-    private DBConnectionFactory connectionFactory;
+    private DBConnectionPool connectionFactory;
 
     public SQLTableTest(String config_) {
         super(config_);
@@ -52,31 +50,17 @@ public class SQLTableTest extends NadeefTestBase {
 
     @Before
     public void setup() {
-        Connection conn = null;
         try {
             Bootstrap.start(testConfig);
-            dbconfig =
-                new DBConfig.Builder()
-                    .dialect(SQLDialect.DERBYMEMORY)
-                    .url("memory:test;create=true")
-                    .build();
+            DBConfig dbConfig = NadeefConfiguration.getDbConfig();
             SQLDialectBase dialectManager =
-                    SQLDialectFactory.getDialectManagerInstance(dbconfig.getDialect());
-            conn = DBConnectionFactory.createConnection(dbconfig);
+                    SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
             tableName =
-                CSVTools.dump(conn, dialectManager, TestDataRepository.getDumpTestCSVFile());
-            connectionFactory = DBConnectionFactory.createDBConnectionFactory(dbconfig);
+                CSVTools.dump(dbConfig, dialectManager, TestDataRepository.getDumpTestCSVFile());
+            connectionFactory = DBConnectionPool.createDBConnectionPool(dbConfig, dbConfig);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
-                }
-            }
         }
     }
 

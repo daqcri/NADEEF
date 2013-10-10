@@ -22,18 +22,16 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.service.NadeefJobScheduler;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TJobStatusType;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.net.InetAddress;
-import java.sql.Connection;
 
 /**
  * JobScheduler test.
@@ -47,14 +45,12 @@ public class NadeefJobSchedulerTest extends NadeefTestBase{
 
     @Before
     public void setup() {
-        Connection conn = null;
         try {
             Bootstrap.start(testConfig);
             Tracer.setVerbose(true);
             NadeefConfiguration.setAlwaysOverride(true);
-            conn = DBConnectionFactory.getNadeefConnection();
             CSVTools.dump(
-                conn,
+                NadeefConfiguration.getDbConfig(),
                 SQLDialectFactory.getNadeefDialectManagerInstance(),
                 TestDataRepository.getLocationData1(),
                 "location",
@@ -63,14 +59,6 @@ public class NadeefJobSchedulerTest extends NadeefTestBase{
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
-                }
-            }
         }
     }
 

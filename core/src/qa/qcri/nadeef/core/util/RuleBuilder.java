@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * Abstract class RuleBuilder represents the extension point of writing new
  * abstract rules (e.g. FD).
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public abstract class RuleBuilder {
     // <editor-fold desc="Private fields">

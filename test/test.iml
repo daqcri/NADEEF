@@ -30,15 +30,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/guava-14.0.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module" module-name="service" />
     <orderEntry type="module-library">
@@ -50,6 +41,16 @@
         <SOURCES>
           <root url="file://$MODULE_DIR$/../out/test" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="com.google.guava:guava:14.0.1" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../vendors/json-simple-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>

@@ -13,11 +13,12 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.Fixes;
-import qa.qcri.nadeef.core.util.sql.DBConnectionFactory;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -27,9 +28,15 @@ import java.util.Collection;
 
 /**
  * Imports the fix data from database.
- * @author Si Yin <siyin@qf.org.qa>
+ *
  */
 class FixImport extends Operator<Rule, Collection<Fix>> {
+    private DBConnectionPool connectionPool;
+
+    public FixImport(DBConnectionPool connectionPool_) {
+        connectionPool = Preconditions.checkNotNull(connectionPool_);
+    }
+
     @Override
     public Collection<Fix> execute(Rule rule) throws Exception {
         Connection conn = null;
@@ -37,7 +44,7 @@ class FixImport extends Operator<Rule, Collection<Fix>> {
         ResultSet resultSet = null;
         Collection<Fix> result = null;
         try {
-            conn = DBConnectionFactory.getNadeefConnection();
+            conn = connectionPool.getNadeefConnection();
             stat = conn.createStatement();
             resultSet =
                 stat.executeQuery(
