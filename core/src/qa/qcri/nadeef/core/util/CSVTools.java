@@ -125,9 +125,11 @@ public class CSVTools {
                 try {
                     conn = DBConnectionPool.createConnection(dbConfig, true);
                     stat = conn.createStatement();
-                    sql = dialectManager.dropTable(fullTableName);
-                    tracer.verbose(sql);
-                    stat.execute(sql);
+                    if (hasTableExist) {
+                        sql = dialectManager.dropTable(fullTableName);
+                        tracer.verbose(sql);
+                        stat.execute(sql);
+                    }
 
                     reader = new BufferedReader(new FileReader(file));
                     // TODO: check whether the header exists.
@@ -148,9 +150,15 @@ public class CSVTools {
                 }
 
                 // load the data
-                int lineCount = 0;
+                int size = 0;
                 if (dialectManager.supportBulkLoad()) {
-                    lineCount = dialectManager.bulkLoad(dbConfig, fullTableName, file, true);
+                    size =
+                        dialectManager.bulkLoad(
+                            dbConfig,
+                            fullTableName,
+                            file.toPath(),
+                            true
+                        );
                 } else {
                     try {
                         conn = DBConnectionPool.createConnection(dbConfig, false);
@@ -158,6 +166,7 @@ public class CSVTools {
                         ResultSet rs = stat.executeQuery(dialectManager.selectAll(fullTableName));
                         ResultSetMetaData metaData = rs.getMetaData();
                         String line;
+                        int lineCount = 0;
                         // Batch load the data
                         while ((line = reader.readLine()) != null) {
                             if (Strings.isNullOrEmpty(line)) {
@@ -165,6 +174,7 @@ public class CSVTools {
                             }
 
                             lineCount ++;
+                            size += line.toCharArray().length;
                             sql = dialectManager.importFromCSV(metaData, fullTableName, line);
                             stat.addBatch(sql);
 
@@ -187,7 +197,7 @@ public class CSVTools {
                 }
 
                 tracer.info(
-                    "Dumped " + lineCount + " rows in " +
+                    "Dumped " + size / 1024 + " KB in " +
                     stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
                 );
                 stopwatch.stop();

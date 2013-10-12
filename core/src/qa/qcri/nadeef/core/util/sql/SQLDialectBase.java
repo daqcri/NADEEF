@@ -21,7 +21,7 @@ import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -57,7 +57,9 @@ public abstract class SQLDialectBase {
      * Returns True when bulk loading is supported.
      * @return True when bulk loading is supported.
      */
-    public abstract boolean supportBulkLoad();
+    public boolean supportBulkLoad() {
+        return false;
+    }
 
     /**
      * Bulk load CSV file.
@@ -67,12 +69,14 @@ public abstract class SQLDialectBase {
      * @param hasHeader has header.
      * @return line of rows loaded.
      */
-    public abstract int bulkLoad(
+    public int bulkLoad(
         DBConfig dbConfig,
         String tableName,
-        File file,
+        Path file,
         boolean hasHeader
-    );
+    ) {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
 
     /**
      * Gets the template file.

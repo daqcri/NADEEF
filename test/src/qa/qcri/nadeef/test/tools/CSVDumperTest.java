@@ -28,6 +28,7 @@ import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -51,10 +52,11 @@ public class CSVDumperTest extends NadeefTestBase {
     @Before
     public void setUp() {
         try {
-           Bootstrap.start(testConfig);
-           dbConfig = NadeefConfiguration.getDbConfig();
-           dialectManager =
-               SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
+            Bootstrap.start(testConfig);
+            Tracer.setInfo(true);
+            dbConfig = NadeefConfiguration.getDbConfig();
+            dialectManager =
+                SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }

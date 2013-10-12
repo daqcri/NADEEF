@@ -91,7 +91,7 @@ public class StressDetectionTest extends NadeefTestBase {
     @Test
     public void cleanExecutorTest30k() {
         Tracer.setVerbose(false);
-        Tracer.setInfo(false);
+        Tracer.setInfo(true);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan30k();
             List<String> tableNames = cleanPlan.getRule().getTableNames();
@@ -115,7 +115,7 @@ public class StressDetectionTest extends NadeefTestBase {
     @Test
     public void cleanExecutorTest40k() {
         Tracer.setVerbose(false);
-        Tracer.setInfo(false);
+        Tracer.setInfo(true);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
             List<String> tableNames = cleanPlan.getRule().getTableNames();
@@ -138,7 +138,7 @@ public class StressDetectionTest extends NadeefTestBase {
     @Test
     public void cleanExecutorTest80k() {
         Tracer.setVerbose(false);
-        Tracer.setInfo(false);
+        Tracer.setInfo(true);
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan80k();
             List<String> tableNames = cleanPlan.getRule().getTableNames();
