@@ -270,6 +270,10 @@ public class DerbySQLDialect extends SQLDialectBase {
             writePosition += n;
             raf.seek(readPosition);
         }
+
+        // TODO: deal with non-eol?
+        // String eol = System.lineSeparator();
+        // raf.writeChars(eol);
         raf.setLength(writePosition);
         raf.close();
         return size;

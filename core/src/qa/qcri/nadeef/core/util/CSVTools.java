@@ -197,7 +197,7 @@ public class CSVTools {
                 }
 
                 tracer.info(
-                    "Dumped " + size / 1024 + " KB in " +
+                    "Dumped " + size + " bytes in " +
                     stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
                 );
                 stopwatch.stop();
