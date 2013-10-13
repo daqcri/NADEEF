@@ -49,10 +49,11 @@ public class SQLManagerTest extends NadeefTestBase {
     @Before
     public void setup() {
         Connection conn = null;
+        Statement stat = null;
         try {
             Bootstrap.start(testConfig);
             conn = DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
-            Statement stat = conn.createStatement();
+            stat = conn.createStatement();
 
             BufferedReader reader = new BufferedReader(new FileReader(testFile));
             String line = reader.readLine();
@@ -76,13 +77,14 @@ public class SQLManagerTest extends NadeefTestBase {
             e.printStackTrace();
             Assert.fail(e.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
+            try {
+                if (stat != null) {
+                    stat.close();
                 }
-            }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {}
         }
     }
 
@@ -139,13 +141,21 @@ public class SQLManagerTest extends NadeefTestBase {
     }
 
     private int getMaxTid(Statement stat, String tableName) throws Exception {
-        ResultSet rs = stat.executeQuery("SELECT * FROM " + tableName);
+        ResultSet rs = null;
         int c = 0;
         int p = 0;
-        while (rs.next()) {
-            c = rs.getInt("tid");
-            Assert.assertTrue(c - p == 1);
-            p = c;
+        try {
+            rs = stat.executeQuery("SELECT * FROM " + tableName);
+
+            while (rs.next()) {
+                c = rs.getInt("tid");
+                Assert.assertTrue(c - p == 1);
+                p = c;
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
         }
         return c;
     }
