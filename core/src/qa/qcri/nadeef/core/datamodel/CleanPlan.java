@@ -62,7 +62,8 @@ public class CleanPlan {
      * Creates a {@link CleanPlan} from JSON string.
      *
      * @param reader JSON object string reader.
-     * @return <code>CleanPlan</code> object.
+     * @param dbConfig Nadeef DB config.
+     * @return instance.
      */
     @SuppressWarnings("unchecked")
     public static List<CleanPlan> createCleanPlanFromJSON(Reader reader, DBConfig dbConfig)
@@ -75,7 +76,7 @@ public class CleanPlan {
      *
      * @param jsonObject JSON object.
      * @param nadeefDbConfig Nadeef DB config.
-     * @return <code>CleanPlan</code> object.
+     * @return instance.
      */
     @SuppressWarnings("unchecked")
     public static List<CleanPlan> createCleanPlanFromJSON(

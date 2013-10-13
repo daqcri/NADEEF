@@ -30,7 +30,9 @@ import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.util.List;
 
@@ -51,9 +53,15 @@ public class DetectionTest extends NadeefTestBase{
             Tracer.setVerbose(true);
             NadeefConfiguration.setMaxIterationNumber(1);
             NadeefConfiguration.setAlwaysOverride(true);
+            DBConfig dbConfig = new DBConfig.Builder()
+                .url("memory:nadeefdb;create=true")
+                .dialect(SQLDialect.DERBYMEMORY)
+                .username("nadeefdb")
+                .password("nadeefdb")
+                .build();
             CSVTools.dump(
-                NadeefConfiguration.getDbConfig(),
-                SQLDialectFactory.getNadeefDialectManagerInstance(),
+                dbConfig,
+                SQLDialectFactory.getDialectManagerInstance(SQLDialect.DERBYMEMORY),
                 TestDataRepository.getLocationData1(),
                 "LOCATION",
                 true

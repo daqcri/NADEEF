@@ -24,6 +24,7 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.Tracer;
@@ -44,6 +45,8 @@ public class PairTableDetectionTest extends NadeefTestBase {
             NadeefConfiguration.setAlwaysOverride(true);
             Tracer.setVerbose(true);
             Tracer.setInfo(true);
+
+            DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

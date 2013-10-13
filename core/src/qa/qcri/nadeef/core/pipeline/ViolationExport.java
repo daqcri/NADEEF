@@ -60,12 +60,12 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         Statement stat = null;
         int count = 0;
         try {
-            conn = connectionPool.getNadeefConnection();
-            stat = conn.createStatement();
-            SQLDialectBase dialectManager =
-                SQLDialectFactory.getNadeefDialectManagerInstance();
-
             synchronized (ViolationExport.class) {
+                conn = connectionPool.getNadeefConnection();
+                stat = conn.createStatement();
+                SQLDialectBase dialectManager =
+                    SQLDialectFactory.getNadeefDialectManagerInstance();
+
                 // TODO: this is not out-of-process safe.
                 int vid = Violations.generateViolationId(connectionPool);
                 for (Violation violation : violations) {

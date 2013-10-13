@@ -36,12 +36,12 @@ public class DBConnectionPool {
     private DBConfig sourceConfig;
     private DBConfig nadeefConfig;
 
-    private DBConnectionPool(DBConfig nadeefConfig_, DBConfig sourceConfig_) {
-        sourceConfig = Preconditions.checkNotNull(sourceConfig_);
-        nadeefConfig = Preconditions.checkNotNull(nadeefConfig_);
+    private DBConnectionPool(DBConfig sourceConfig, DBConfig nadeefConfig) {
+        this.sourceConfig = Preconditions.checkNotNull(sourceConfig);
+        this.nadeefConfig = Preconditions.checkNotNull(nadeefConfig);
 
-        nadeefPool = createConnectionPool(nadeefConfig_);
-        sourcePool = createConnectionPool(sourceConfig_);
+        nadeefPool = createConnectionPool(nadeefConfig);
+        sourcePool = createConnectionPool(sourceConfig);
     }
 
     // <editor-fold desc="Public methods">

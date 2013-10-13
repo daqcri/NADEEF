@@ -49,7 +49,7 @@ public class CleanExecutor {
      * @param cleanPlan input {@link CleanPlan}.
      */
     public CleanExecutor(CleanPlan cleanPlan) throws Exception {
-        this(cleanPlan, cleanPlan.getSourceDBConfig());
+        this(cleanPlan, NadeefConfiguration.getDbConfig());
     }
 
     /**
