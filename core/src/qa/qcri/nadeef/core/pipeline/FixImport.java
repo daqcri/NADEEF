@@ -13,13 +13,14 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.Fixes;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,36 +31,25 @@ import java.util.Collection;
  * Imports the fix data from database.
  *
  */
-class FixImport extends Operator<Rule, Collection<Fix>> {
-    private DBConnectionPool connectionPool;
-
-    public FixImport(DBConnectionPool connectionPool_) {
-        connectionPool = Preconditions.checkNotNull(connectionPool_);
-    }
-
+class FixImport extends Operator<DBConfig, Collection<Fix>> {
     @Override
-    public Collection<Fix> execute(Rule rule) throws Exception {
+    public Collection<Fix> execute(DBConfig dbConfig) throws Exception {
         Connection conn = null;
         Statement stat = null;
+
         ResultSet resultSet = null;
+        SQLDialect dialect = dbConfig.getDialect();
+        SQLDialectBase dialectBase =
+            SQLDialectBase.createDialectBaseInstance(dialect);
         Collection<Fix> result = null;
         try {
-            conn = connectionPool.getNadeefConnection();
+            conn = DBConnectionPool.createConnection(dbConfig);
             stat = conn.createStatement();
-            resultSet =
-                stat.executeQuery(
-                    "select r.* from " +
-                    NadeefConfiguration.getRepairTableName() +
-                    " r where r.vid in (select vid from " +
-                    NadeefConfiguration.getViolationTableName() +
-                    " where rid = '" +
-                    rule.getRuleName() +
-                    "') order by r.vid"
-                );
-
-
+            String sql =
+                dialectBase.selectAll(NadeefConfiguration.getRepairTableName());
+            resultSet = stat.executeQuery(sql);
             result = Fixes.fromQuery(resultSet);
-            Tracer.putStatsEntry(Tracer.StatType.FixDeserialize, result.size());
+            Tracer.putStatsEntry(Tracer.StatType.FixImport, result.size());
         } finally {
             if (resultSet != null) {
                 resultSet.close();

@@ -13,7 +13,6 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
@@ -26,7 +25,6 @@ import java.util.List;
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
  * drives the cleaning execution.
- *
  */
 public class CleanExecutor {
 
@@ -37,8 +35,6 @@ public class CleanExecutor {
     private Flow queryFlow;
     private Flow detectFlow;
     private Flow repairFlow;
-    private Flow updateFlow;
-    private int currentIterationNumber;
     private DBConnectionPool connectionPool;
     //</editor-fold>
 
@@ -76,8 +72,7 @@ public class CleanExecutor {
     public synchronized boolean isRunning() {
         return detectFlow.isRunning() ||
                queryFlow.isRunning() ||
-               repairFlow.isRunning() ||
-               updateFlow.isRunning();
+               repairFlow.isRunning();
     }
 
     /**
@@ -94,10 +89,6 @@ public class CleanExecutor {
 
         if (repairFlow != null && repairFlow.isRunning()) {
             repairFlow.forceStop();
-        }
-
-        if (updateFlow != null && updateFlow.isRunning()) {
-            updateFlow.forceStop();
         }
 
         if (connectionPool != null) {
@@ -140,15 +131,6 @@ public class CleanExecutor {
      */
     public Object getRepairOutput() {
         String key = repairFlow.getCurrentOutputKey();
-        return cacheManager.get(key);
-    }
-
-    /**
-     * Gets the output from Update.
-     * @return output object from update.
-     */
-    public Object getUpdateOutput() {
-        String key = updateFlow.getCurrentOutputKey();
         return cacheManager.get(key);
     }
 
@@ -230,17 +212,11 @@ public class CleanExecutor {
      */
     public CleanExecutor repair() {
         repairFlow.reset();
-        updateFlow.reset();
 
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
         Tracer.putStatsEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
-
-        updateFlow.start();
-        updateFlow.waitUntilFinish();
-
-        Tracer.putStatsEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
 
         System.gc();
         return this;
@@ -249,24 +225,9 @@ public class CleanExecutor {
     /**
      * Runs both the detection and repair.
      */
-    public CleanExecutor run() {
-        int changedCells;
-        currentIterationNumber = 0;
-
-        do {
-            synchronized (this) {
-                tracer.verbose("Running iteration " + currentIterationNumber);
-                if (currentIterationNumber == NadeefConfiguration.getMaxIterationNumber()) {
-                    break;
-                }
-                currentIterationNumber ++;
-            }
-
-            detect();
-            repair();
-
-            changedCells = ((Integer)getUpdateOutput()).intValue();
-        } while (changedCells != 0);
+    public synchronized CleanExecutor run() {
+        detect();
+        repair();
         return this;
     }
     //</editor-fold>
@@ -318,32 +279,6 @@ public class CleanExecutor {
                 .addNode(new ViolationDeserializer(connectionPool))
                 .addNode(new ViolationRepair(rule), 6)
                 .addNode(new FixExport(cleanPlan, connectionPool));
-
-            // assemble the updater flow
-            updateFlow = new Flow("update");
-            Optional<Class> eqClass = NadeefConfiguration.getDecisionMakerClass();
-            // check whether user provides a customized DecisionMaker class, if so, replace it
-            // with default EQ class.
-            FixDecisionMaker fixDecisionMaker = null;
-            if (eqClass.isPresent()) {
-                Class customizedClass = eqClass.get();
-                if (!FixDecisionMaker.class.isAssignableFrom(customizedClass)) {
-                    throw
-                        new IllegalArgumentException(
-                            "FixDecisionMaker class is not a class inherit from FixDecisionMaker"
-                        );
-                }
-
-                fixDecisionMaker =
-                    (FixDecisionMaker)customizedClass.getConstructor().newInstance();
-            } else {
-                fixDecisionMaker = new EquivalentClass();
-            }
-
-            updateFlow.setInputKey(inputKey)
-                .addNode(new FixImport(connectionPool))
-                .addNode(fixDecisionMaker, 6)
-                .addNode(new Updater(cleanPlan.getSourceDBConfig()));
 
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline ", ex);

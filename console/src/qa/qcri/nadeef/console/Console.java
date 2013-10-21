@@ -18,10 +18,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
-import qa.qcri.nadeef.core.datamodel.*;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -31,14 +33,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * User interactive console.
  *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class Console {
 
@@ -57,7 +57,7 @@ public class Console {
     private static final String prompt = ":> ";
 
     private static final String[] commands =
-        { "load", "run", "repair", "detect", "help", "set", "exit", "schema", "fd" };
+        { "load", "run", "repair", "detect", "help", "set", "exit", "schema"};
     private static ConsoleReader console;
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
@@ -210,8 +210,6 @@ public class Console {
                         run(line);
                     } else if (tokens[0].equalsIgnoreCase("set")) {
                         set(line);
-                    } else if (tokens[0].equalsIgnoreCase("fd")) {
-                        fd(line);
                     } else if (tokens[0].equalsIgnoreCase("schema")) {
                         schema(line);
                     } else if (!Strings.isNullOrEmpty(tokens[0])) {
@@ -271,35 +269,6 @@ public class Console {
         }
     }
     //</editor-fold>
-
-    // TODO: remove FD specification, and make it generic
-    private static void fd(String cmdLine) throws Exception {
-        if (cleanPlans.size() == 0) {
-            console.println("There is no rule loaded.");
-            return;
-        }
-
-        int index = cmdLine.indexOf("fd") + 2;
-        String value = cmdLine.substring(index);
-        RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder("fd");
-        // TODO: only the first table is chosen.
-        String tableName = (String) cleanPlans.get(0).getRule().getTableNames().get(0);
-        DBConfig dbConfig = cleanPlans.get(0).getSourceDBConfig();
-        Schema schema = DBMetaDataTool.getSchema(cleanPlans.get(0).getSourceDBConfig(),tableName);
-        Collection<Rule> rules =
-            ruleBuilder
-                .name("UserRule" + CommonTools.toHashCode(value))
-                .table(tableName)
-                .schema(schema)
-                .value(value)
-                .build();
-
-        for (Rule rule : rules) {
-            CleanPlan cleanPlan = new CleanPlan(dbConfig, rule);
-            cleanPlans.add(cleanPlan);
-            executors.add(new CleanExecutor(cleanPlan, NadeefConfiguration.getDbConfig()));
-        }
-    }
 
     private static void load(String cmdLine) throws IOException {
         Stopwatch stopwatch = new Stopwatch().start();
@@ -522,9 +491,6 @@ public class Console {
                 " |\n" +
                 " |schema [table name]: \n" +
                 " |    list the table schema from the data source. \n" +
-                " |\n" +
-                " |fd [table name] [fd rule value]: \n" +
-                " |    create FD rule with specified table name on the source data. \n" +
                 " |\n" +
                 " |exit :\n" +
                 " |    exit the console.\n";
