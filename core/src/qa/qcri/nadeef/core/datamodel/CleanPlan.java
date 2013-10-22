@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import org.json.simple.JSONArray;
@@ -37,6 +38,7 @@ import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 import java.io.File;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -142,7 +144,7 @@ public class CleanPlan {
             ArrayList<Rule> rules = Lists.newArrayList();
             List<String> targetTableNames;
             List<String> fileNames = Lists.newArrayList();
-            HashSet<String> copiedTables = Sets.newHashSet();
+            HashMap<String, String> copiedTables = Maps.newHashMap();
 
             for (int i = 0; i < ruleArray.size(); i++) {
                 schemas.clear();
@@ -195,20 +197,23 @@ public class CleanPlan {
                     // This hashset is to prevent that tables are dumped for multiple times.
                     for (int j = 0; j < targetTableNames.size(); j++) {
                         File file = CommonTools.getFile(fullFileNames.get(j));
-                        // target table name already exists in the hashset.
-                        if (!copiedTables.contains(targetTableNames.get(j))) {
+                        String targetTable = targetTableNames.get(j);
+
+                        // target table name already exists in the map.
+                        if (!copiedTables.containsKey(targetTable)) {
                             String tableName =
                                 CSVTools.dump(
                                     nadeefDbConfig,
                                     dialectManager,
                                     file,
-                                    targetTableNames.get(j),
+                                    targetTable,
                                     NadeefConfiguration.getAlwaysOverrideTable()
                                 );
-                            copiedTables.add(targetTableNames.get(j));
-                            targetTableNames.set(j, tableName);
-                            schemas.add(DBMetaDataTool.getSchema(dbConfig,tableName));
+                            copiedTables.put(targetTable, tableName);
                         }
+                        targetTable = copiedTables.get(targetTable);
+                        targetTableNames.set(j, targetTable);
+                        schemas.add(DBMetaDataTool.getSchema(dbConfig, targetTable));
                     }
                 } else {
                     // working with database
@@ -247,18 +252,19 @@ public class CleanPlan {
                         "Invalid Rule property, rule needs to have one or two tables.");
 
                     for (int j = 0; j < sourceTableNames.size(); j++) {
-                        if (!copiedTables.contains(targetTableNames.get(j))) {
+                        String sourceTable = sourceTableNames.get(j);
+                        if (!copiedTables.containsKey(sourceTable)) {
                             DBMetaDataTool.copy(
                                 dbConfig,
                                 dialectManager,
                                 sourceTableNames.get(j),
                                 targetTableNames.get(j)
                             );
-
-                            schemas.add(
-                                DBMetaDataTool.getSchema(dbConfig, targetTableNames.get(j))
-                            );
-                            copiedTables.add(targetTableNames.get(j));
+                            copiedTables.put(sourceTable, sourceTable);
+                            schemas.add(DBMetaDataTool.getSchema(
+                                dbConfig,
+                                targetTableNames.get(j)
+                            ));
                         }
                     }
                 }

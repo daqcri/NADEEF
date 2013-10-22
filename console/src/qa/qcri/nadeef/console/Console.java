@@ -23,6 +23,7 @@ import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
+import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -57,7 +58,7 @@ public class Console {
     private static final String prompt = ":> ";
 
     private static final String[] commands =
-        { "load", "run", "repair", "detect", "help", "set", "exit", "schema"};
+        { "load", "run", "repair", "detect", "help", "set", "exit"};
     private static ConsoleReader console;
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
@@ -80,7 +81,6 @@ public class Console {
         @Override
         public void run() {
             executor.detect();
-            executor.shutdown();
         }
     }
     //</editor-fold>
@@ -92,7 +92,6 @@ public class Console {
      */
     private static class RepairRunnable implements Runnable {
         private CleanExecutor executor;
-
         public RepairRunnable(CleanExecutor cleanExecutor) {
             this.executor = cleanExecutor;
         }
@@ -100,7 +99,6 @@ public class Console {
         @Override
         public void run() {
             executor.repair();
-            executor.shutdown();
         }
     }
 
@@ -120,7 +118,6 @@ public class Console {
         @Override
         public void run() {
             executor.run();
-            executor.shutdown();
         }
     }
 
@@ -210,8 +207,6 @@ public class Console {
                         run(line);
                     } else if (tokens[0].equalsIgnoreCase("set")) {
                         set(line);
-                    } else if (tokens[0].equalsIgnoreCase("schema")) {
-                        schema(line);
                     } else if (!Strings.isNullOrEmpty(tokens[0])) {
                         console.println("I don't know this command.");
                     }
@@ -234,42 +229,6 @@ public class Console {
         System.exit(0);
     }
 
-    //<editor-fold desc="Schema command">
-    private static void schema(String cmdLine) throws Exception {
-        String[] splits = cmdLine.split("\\s");
-        if (splits.length != 2) {
-            console.println(
-                "Invalid schema command. Please try to use schema [table name]."
-            );
-            return;
-        }
-
-        if (cleanPlans == null) {
-            console.println(
-                "There is no CleanPlan loaded."
-            );
-            return;
-        }
-
-        String tableName = splits[1];
-
-        DBConfig dbconfig = cleanPlans.get(0).getSourceDBConfig();
-        if (!DBMetaDataTool.isTableExist(dbconfig, tableName)) {
-            console.println("Unknown table names.");
-            return;
-        }
-
-        Schema schema = DBMetaDataTool.getSchema(dbconfig, tableName);
-        Column[] columns = schema.getColumns();
-        for (Column column : columns) {
-            if (column.getColumnName().equals("tid")) {
-                continue;
-            }
-            console.println(String.format("\t%s", column.getColumnName()));
-        }
-    }
-    //</editor-fold>
-
     private static void load(String cmdLine) throws IOException {
         Stopwatch stopwatch = new Stopwatch().start();
         String[] splits = cmdLine.split("\\s");
@@ -279,6 +238,12 @@ public class Console {
         }
         String fileName = splits[1];
         File file = CommonTools.getFile(fileName);
+
+        // shutdown existing executors
+        for (CleanExecutor executor : executors) {
+            executor.shutdown();
+        }
+        executors.clear();
         try {
             DBConfig dbConfig = NadeefConfiguration.getDbConfig();
             cleanPlans =
@@ -286,7 +251,6 @@ public class Console {
                     new FileReader(file),
                     dbConfig
                 );
-            executors.clear();
             for (CleanPlan cleanPlan : cleanPlans) {
                 executors.add(new CleanExecutor(cleanPlan, dbConfig));
             }
@@ -379,6 +343,9 @@ public class Console {
             }
         }
 
+        DBConfig sourceDbConfig = executors.get(0).getConnectionPool().getSourceDBConfig();
+        UpdateExecutor updateExecutor = new UpdateExecutor(sourceDbConfig);
+
         for (int i = 0; i < executors.size(); i ++) {
             if (index != -1 && index != i) {
                 continue;
@@ -402,49 +369,15 @@ public class Console {
             console.flush();
             Tracer.printRepairSummary(ruleName);
         }
+
+        // do the final holistic update
+        updateExecutor.run();
+        Tracer.printUpdateSummary();
     }
 
     private static void run(String cmd) throws IOException, InterruptedException {
-        String[] tokens = cmd.split("\\s");
-        if (tokens.length > 2) {
-            console.println(
-                "Wrong command. Run run [id number] instead."
-            );
-        }
-
-        int index = -1;
-        if (tokens.length == 2) {
-            index = Integer.valueOf(tokens[1]);
-            if (index < 0 || index >= cleanPlans.size()) {
-                console.println("Out of rule index.");
-                return;
-            }
-        }
-
-        for (int i = 0; i < executors.size(); i ++) {
-            if (index != -1 && i != index) {
-                continue;
-            }
-
-            CleanExecutor executor = executors.get(i);
-            Thread thread = new Thread(new CleanRunnable(executor));
-            thread.start();
-
-            do {
-                Thread.sleep(500);
-                double percentage = executor.getRunPercentage();
-                printProgress(percentage, "CLEAN");
-            } while (thread.isAlive());
-
-            // print out the final result.
-            String ruleName = executor.getCleanPlan().getRule().getRuleName();
-            double percentage = executor.getRunPercentage();
-            printProgress(percentage, "CLEAN");
-            console.println();
-            console.flush();
-            Tracer.printDetectSummary(ruleName);
-            Tracer.printRepairSummary(ruleName);
-        }
+        detect(cmd);
+        repair(cmd);
     }
 
     private static void set(String cmd) throws IOException {
@@ -487,7 +420,7 @@ public class Console {
                 " |    repair the data source with a given rule id number.\n" +
                 " |\n" +
                 " |run [rule id]:\n" +
-                " |    run both detect and clean with a given rule id number. \n" +
+                " |    run both detect and repair with a given rule id number. \n" +
                 " |\n" +
                 " |schema [table name]: \n" +
                 " |    list the table schema from the data source. \n" +

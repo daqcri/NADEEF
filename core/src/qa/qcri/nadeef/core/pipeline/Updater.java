@@ -29,6 +29,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Updater fixes the source data and exports it in the database.
@@ -39,7 +40,8 @@ import java.util.HashMap;
  */
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
-    private static HashMap<Cell, String> updateHistory = Maps.newHashMap();
+    private static ConcurrentMap<Cell, String> updateHistory = Maps.newConcurrentMap();
+    private static ConcurrentMap<Cell, Boolean> unknownTag = Maps.newConcurrentMap();
     private DBConfig dbConfig;
 
     /**
@@ -77,6 +79,12 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 Cell cell = fix.getLeft();
                 oldValue = cell.getValue().toString();
 
+                // this cell has already been changed to unknown
+                if (unknownTag.containsKey(cell)) {
+                    continue;
+                }
+
+                // check whether this cell has been changed before
                 if (updateHistory.containsKey(cell)) {
                     String value = updateHistory.get(cell);
                     if (value.equals(fix.getRightValue())) {
@@ -84,7 +92,8 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     }
                     // when a cell is set twice with different value,
                     // we set it to null for ambiguous value.
-                    rightValue = "?";
+                    unknownTag.put(cell, true);
+                    rightValue = null;
                 } else {
                     rightValue = fix.getRightValue();
                     updateHistory.put(cell, rightValue);
@@ -123,18 +132,23 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
             stat.executeBatch();
             auditInsertStat.executeBatch();
             conn.commit();
+
+            // TODO: to do refactor.
+            stat.execute("DELETE FROM " + NadeefConfiguration.getViolationTableName());
+            stat.execute("DELETE FROM " + NadeefConfiguration.getRepairTableName());
+            conn.commit();
             Tracer.putStatsEntry(Tracer.StatType.UpdatedCellNumber, count);
         } finally {
-            if (conn != null) {
-                conn.close();
-            }
-
             if (auditInsertStat != null) {
                 auditInsertStat.close();
             }
 
             if (stat != null) {
                 stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
             }
         }
         return Integer.valueOf(count);

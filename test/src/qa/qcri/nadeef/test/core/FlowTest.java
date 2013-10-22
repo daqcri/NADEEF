@@ -61,6 +61,6 @@ public class FlowTest extends NadeefTestBase {
         Integer result = (Integer)cacheManager.get(resultKey);
 
         Assert.assertEquals("Result is not correct", result.longValue(), 5);
-        Assert.assertEquals("Cache is not clean", cacheManager.getSize(), 0);
+        Assert.assertEquals("Cache is not clean", cacheManager.getSize(), 1);
     }
 }

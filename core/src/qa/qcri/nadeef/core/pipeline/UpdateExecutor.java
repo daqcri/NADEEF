@@ -6,7 +6,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 /**
- * Update Flow executor.
+ * Updater flow executor.
  */
 public class UpdateExecutor {
     private Flow updateFlow;
@@ -38,10 +38,10 @@ public class UpdateExecutor {
     public int getUpdateCellCount() {
         String key = updateFlow.getCurrentOutputKey();
         Object output = cacheManager.get(key);
-        return ((Integer)output).intValue();
+        return (Integer) output;
     }
 
-    public void update() {
+    public void run() {
         updateFlow.reset();
         updateFlow.start();
         updateFlow.waitUntilFinish();
@@ -52,8 +52,6 @@ public class UpdateExecutor {
     @SuppressWarnings("unchecked")
     private void assembleFlow(DBConfig dbConfig) {
         try {
-            String inputKey = cacheManager.put(dbConfig);
-
             // assemble the updater flow
             updateFlow = new Flow("update");
             Optional<Class> eqClass = NadeefConfiguration.getDecisionMakerClass();
@@ -75,8 +73,8 @@ public class UpdateExecutor {
                 fixDecisionMaker = new EquivalentClass();
             }
 
-            updateFlow.setInputKey(inputKey)
-                .addNode(new FixImport())
+            updateFlow.setInputKey(cacheManager.getDummyKey())
+                .addNode(new FixImport(dbConfig))
                 .addNode(fixDecisionMaker, 6)
                 .addNode(new Updater(dbConfig));
         } catch (Exception ex) {

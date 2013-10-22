@@ -111,7 +111,7 @@ public class FDRuleBuilder extends RuleBuilder {
         String newColumnName = null;
         Column[] columnSet = schemas.get(0).getColumns();
         for (int i = 0; i < lhsSplits.length; i ++) {
-            token = lhsSplits[i].trim().toLowerCase();
+            token = lhsSplits[i].trim();
             if (Strings.isNullOrEmpty(token)) {
                 throw new IllegalArgumentException("Invalid rule description " + line);
             }
@@ -149,7 +149,7 @@ public class FDRuleBuilder extends RuleBuilder {
         // parse the RHS
         String[] rhsSplits = tokens[1].trim().split(",");
         for (int i = 0; i < rhsSplits.length; i ++) {
-            token = rhsSplits[i].trim().toLowerCase();
+            token = rhsSplits[i].trim();
             if (token.isEmpty()) {
                 throw new IllegalArgumentException("Invalid rule description " + line);
             }

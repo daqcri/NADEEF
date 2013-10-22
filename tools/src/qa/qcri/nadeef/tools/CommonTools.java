@@ -99,6 +99,9 @@ public final class CommonTools {
      * @return <code>True</code> when the given string is a numerical string.
      */
     public static boolean isNumericalString(String string) {
+        if (string == null) {
+            return false;
+        }
         return string.matches("-?\\d+(\\.\\d+)?");
     }
 

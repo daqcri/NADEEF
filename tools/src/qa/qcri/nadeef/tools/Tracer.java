@@ -100,7 +100,7 @@ public class Tracer {
         // Candidate fix export count
         FixExport,
         // Candidate fix export time
-        FixDeserialize,
+        FixImport,
         // Update cell number
         UpdatedCellNumber,
     }
@@ -301,6 +301,27 @@ public class Tracer {
     }
 
     /**
+     * Print Update summary.
+     */
+    public static void printUpdateSummary() {
+        Tracer tracer = getTracer(Tracer.class);
+        tracer.info("Update summary:");
+        tracer.info("----------------------------------------------------------------");
+        tracer.info(formatEntry(StatType.EQTime, "EQ time", "ms"));
+        tracer.info("----------------------------------------------------------------");
+
+        Collection<Long> totalChangedCells = stats.get(StatType.UpdatedCellNumber);
+
+        Long totalChangedCell = 0l;
+        for (Long tmp : totalChangedCells) {
+            totalChangedCell += tmp;
+        }
+        console.println(
+            "Update finished with " + totalChangedCell + " cells changed.\n"
+        );
+    }
+
+    /**
      * Print Repair summary.
      * @param ruleName rule name.
      */
@@ -310,25 +331,20 @@ public class Tracer {
         tracer.info("Rule: " + ruleName);
         tracer.info("----------------------------------------------------------------");
         tracer.info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"));
+        tracer.info(formatEntry(StatType.FixExport, "New Candidate Fix", ""));
+        tracer.info(formatEntry(StatType.FixImport, "Effective Candidate Fix", ""));
         tracer.info(formatEntry(StatType.EQTime, "EQ time", "ms"));
-        tracer.info(formatEntry(StatType.UpdatedCellNumber, "Cell updated", ""));
         tracer.info("----------------------------------------------------------------");
 
         Collection<Long> totalTimes = stats.get(StatType.RepairTime);
-        Collection<Long> totalChangedCells = stats.get(StatType.UpdatedCellNumber);
 
         Long totalTime = 0l;
-        Long totalChangedCell = 0l;
         for (Long tmp : totalTimes) {
             totalTime += tmp;
         }
 
-        for (Long tmp : totalChangedCells) {
-            totalChangedCell += tmp;
-        }
         console.println(
-            "Repair finished in " + totalTime + " ms " +
-                "with " + totalChangedCell + " cells changed.\n"
+            "Repair finished in " + totalTime + " ms "
         );
     }
 

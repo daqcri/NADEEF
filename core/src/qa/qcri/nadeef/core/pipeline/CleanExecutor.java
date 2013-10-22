@@ -83,13 +83,19 @@ public class CleanExecutor {
             queryFlow.forceStop();
         }
 
+        cacheManager.remove(queryFlow.getInputKey());
+
         if (detectFlow != null && detectFlow.isRunning()) {
             detectFlow.forceStop();
         }
 
+        cacheManager.remove(detectFlow.getInputKey());
+
         if (repairFlow != null && repairFlow.isRunning()) {
             repairFlow.forceStop();
         }
+
+        cacheManager.remove(repairFlow.getInputKey());
 
         if (connectionPool != null) {
             connectionPool.shutdown();
@@ -276,7 +282,7 @@ public class CleanExecutor {
             // assemble the repair flow
             repairFlow = new Flow("repair");
             repairFlow.setInputKey(inputKey)
-                .addNode(new ViolationDeserializer(connectionPool))
+                .addNode(new ViolationImport(connectionPool))
                 .addNode(new ViolationRepair(rule), 6)
                 .addNode(new FixExport(cleanPlan, connectionPool));
 

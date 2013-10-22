@@ -119,6 +119,11 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getHolisticPlan1File() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*HolisticTestPlan1.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static File getStressPlan10kFile() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan10k.json";
         return new File(filePath.replace('*', File.separatorChar));
@@ -147,6 +152,15 @@ public class TestDataRepository {
     public static File getStressPlan100kFile() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan100k.json";
         return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static List<CleanPlan> getHolisticTestPlan1()
+        throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException {
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getHolisticPlan1File()), NadeefConfiguration.getDbConfig());
     }
 
     public static CleanPlan getCleanPlan()

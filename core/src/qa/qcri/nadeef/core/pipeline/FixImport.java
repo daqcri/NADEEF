@@ -31,9 +31,14 @@ import java.util.Collection;
  * Imports the fix data from database.
  *
  */
-class FixImport extends Operator<DBConfig, Collection<Fix>> {
+class FixImport extends Operator<Integer, Collection<Fix>> {
+    private DBConfig dbConfig;
+    public FixImport(DBConfig dbConfig) {
+        this.dbConfig = dbConfig;
+    }
+
     @Override
-    public Collection<Fix> execute(DBConfig dbConfig) throws Exception {
+    public Collection<Fix> execute(Integer dummy) throws Exception {
         Connection conn = null;
         Statement stat = null;
 
@@ -43,7 +48,7 @@ class FixImport extends Operator<DBConfig, Collection<Fix>> {
             SQLDialectBase.createDialectBaseInstance(dialect);
         Collection<Fix> result = null;
         try {
-            conn = DBConnectionPool.createConnection(dbConfig);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             String sql =
                 dialectBase.selectAll(NadeefConfiguration.getRepairTableName());

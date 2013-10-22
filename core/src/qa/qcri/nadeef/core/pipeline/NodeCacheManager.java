@@ -15,25 +15,26 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.collect.Maps;
 
-import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Node Cache manager manages the input/output of the node execution.
  * It is basically a pair-value container.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class NodeCacheManager {
-    private static HashMap<String, Object> cachePool;
-    private static HashMap<String, Integer> refPool;
+    private static ConcurrentMap<String, Object> cachePool;
+    private static ConcurrentMap<String, Integer> refPool;
+    private static String dummyKey;
 
     //<editor-fold desc="Singleton">
     private static final NodeCacheManager instance = new NodeCacheManager();
 
     private NodeCacheManager() {
-        cachePool = Maps.newHashMap();
-        refPool = Maps.newHashMap();
+        cachePool = Maps.newConcurrentMap();
+        refPool = Maps.newConcurrentMap();
+        dummyKey = put(0, Integer.MAX_VALUE);
     }
 
     /**
@@ -44,12 +45,25 @@ public class NodeCacheManager {
     }
     //</editor-fold>
 
+    public String getDummyKey() {
+        return dummyKey;
+    }
+
+    public boolean hasKey(String key) {
+        return cachePool.containsKey(key);
+    }
+
+    public void remove(String key) {
+        cachePool.remove(key);
+        refPool.remove(key);
+    }
+
     /**
      * Add key-value pair in the container.
      * @param key value key.
      * @param value value.
      */
-    public synchronized void put(String key, Object value) {
+    public void put(String key, Object value) {
         if (cachePool.containsKey(key)) {
             throw new IllegalStateException("Invalid key, key already existed in the cache.");
         }
@@ -63,7 +77,7 @@ public class NodeCacheManager {
      * @param value new object.
      * @return generated key.
      */
-    public synchronized String put(Object value) {
+    public String put(Object value) {
         UUID uuId = UUID.randomUUID();
         String key = uuId.toString();
         put(key, value);
@@ -76,7 +90,7 @@ public class NodeCacheManager {
      * @param lifeCount life count.
      * @return generated key.
      */
-    public synchronized String put(Object value, int lifeCount) {
+    public String put(Object value, int lifeCount) {
         UUID uuId = UUID.randomUUID();
         String key = uuId.toString();
         put(key, value, lifeCount);
@@ -89,7 +103,7 @@ public class NodeCacheManager {
      * @param value value.
      * @param lifeCount life time of the value.
      */
-    public synchronized void put(String key, Object value, int lifeCount) {
+    public void put(String key, Object value, int lifeCount) {
         if (cachePool.containsKey(key)) {
             throw new IllegalStateException("Invalid key, key already existed in the cache.");
         }
@@ -103,7 +117,7 @@ public class NodeCacheManager {
      * @param key
      * @return value.
      */
-    public synchronized Object tease(String key) {
+    public Object tease(String key) {
         if (!cachePool.containsKey(key)) {
             throw new IllegalStateException("Invalid key, key doesn't exist in the cache.");
         }
@@ -117,7 +131,7 @@ public class NodeCacheManager {
      * @param key value key.
      * @return value.
      */
-    public synchronized Object get(String key) {
+    public Object get(String key) {
         Object result = tease(key);
 
         // clean the cache once the life is finished, to prevent memory leaking.
@@ -144,7 +158,12 @@ public class NodeCacheManager {
      * Clear all the resources in the cache.
      */
     public void clear() {
-        cachePool.clear();
-        refPool.clear();
+        Set<String> keys = cachePool.keySet();
+        for (String key : keys) {
+            if (!key.equalsIgnoreCase(dummyKey)) {
+                cachePool.remove(key);
+                refPool.remove(key);
+            }
+        }
     }
 }
