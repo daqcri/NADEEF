@@ -220,6 +220,10 @@ public abstract class SQLDialectBase {
         return "SELECT * FROM " + tableName;
     }
 
+    public String deleteAll(String tableName) {
+        return "DELETE FROM " + tableName;
+    }
+
     /**
      * Count the number of rows in the table.
      * @param tableName table name.

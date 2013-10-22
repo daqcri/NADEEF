@@ -31,8 +31,6 @@ import java.util.Map;
 
 /**
  * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 // TODO: Make statistic summary generic
 public class Tracer {
@@ -333,7 +331,6 @@ public class Tracer {
         tracer.info(formatEntry(StatType.RepairCallTime, "Repair perCall time", "ms"));
         tracer.info(formatEntry(StatType.FixExport, "New Candidate Fix", ""));
         tracer.info(formatEntry(StatType.FixImport, "Effective Candidate Fix", ""));
-        tracer.info(formatEntry(StatType.EQTime, "EQ time", "ms"));
         tracer.info("----------------------------------------------------------------");
 
         Collection<Long> totalTimes = stats.get(StatType.RepairTime);
@@ -343,9 +340,7 @@ public class Tracer {
             totalTime += tmp;
         }
 
-        console.println(
-            "Repair finished in " + totalTime + " ms "
-        );
+        console.println("Repair finished in " + totalTime + " ms ");
     }
 
     public static void printDetectSummary(String ruleName) {

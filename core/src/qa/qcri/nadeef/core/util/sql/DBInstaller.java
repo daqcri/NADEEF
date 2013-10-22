@@ -28,6 +28,43 @@ public final class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
 
     /**
+     * Delete all the existing data from Violation, Repair table.
+     * @param dbConfig db config.
+     */
+    public static void cleanExecutionDB(DBConfig dbConfig) throws Exception {
+        Connection conn = null;
+        Statement stat = null;
+        SQLDialect dialect = dbConfig.getDialect();
+        SQLDialectBase dialectManager =
+            SQLDialectFactory.getDialectManagerInstance(dialect);
+        String violationTableName = NadeefConfiguration.getViolationTableName();
+        String repairTableName = NadeefConfiguration.getRepairTableName();
+        try {
+            conn = DBConnectionPool.createConnection(dbConfig, true);
+            stat = conn.createStatement();
+            if (!DBMetaDataTool.isTableExist(dbConfig, violationTableName)) {
+                tracer.verbose("Violation is not yet installed.");
+            } else {
+                stat.execute(dialectManager.deleteAll(violationTableName));
+            }
+
+            if (!DBMetaDataTool.isTableExist(dbConfig, repairTableName)) {
+                tracer.verbose("Repair is not yet installed.");
+            } else {
+                stat.execute(dialectManager.deleteAll(repairTableName));
+            }
+        } finally {
+            if (stat != null) {
+                stat.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+
+    /**
      * Install NADEEF on the target database.
      * @param dbConfig Connection pool dbconfig.
      */

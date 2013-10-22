@@ -19,13 +19,11 @@ import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
-import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -45,13 +43,13 @@ public class Console {
 
     //<editor-fold desc="Private fields">
     private static final String logo =
-            "   _  __        __        _____\n" +
-            "  / |/ /__ ____/ /__ ___ /   _/\n" +
-            " /    / _ `/ _  / -_) -_)   _/\n" +
-            "/_/|_/\\_,_/\\_,_/\\__/\\__/ __/\n" +
-            "Data Cleaning solution (Build " + System.getenv("BuildVersion")  +
-            ", using Java " + System.getProperty("java.version") + ").\n" +
-            "Copyright (C) Qatar Computing Research Institute, 2013 - Present (http://da.qcri.org).";
+        "   _  __        __        _____\n" +
+        "  / |/ /__ ____/ /__ ___ /   _/\n" +
+        " /    / _ `/ _  / -_) -_)   _/\n" +
+        "/_/|_/\\_,_/\\_,_/\\__/\\__/ __/\n" +
+        "Data Cleaning solution (Build " + System.getenv("BuildVersion")  +
+        ", using Java " + System.getProperty("java.version") + ").\n" +
+        "Copyright (C) Qatar Computing Research Institute, 2013 - Present (http://da.qcri.org).";
 
     private static final String helpInfo = "Type 'help' to see what commands we have.";
 
@@ -104,25 +102,25 @@ public class Console {
 
     //</editor-fold>
 
-    //<editor-fold desc="Clean thread">
+    //<editor-fold desc="Clean Thread class">
+
     /**
-     * Clean thread class.
+     * Repair thread class.
      */
     private static class CleanRunnable implements Runnable {
         private CleanExecutor executor;
-
         public CleanRunnable(CleanExecutor cleanExecutor) {
             this.executor = cleanExecutor;
         }
 
         @Override
         public void run() {
-            executor.run();
+            executor.detect();
+            executor.repair();
         }
     }
 
     //</editor-fold>
-
     /**
      * Start of Console.
      * @param args user input.
@@ -188,7 +186,6 @@ public class Console {
                 }
 
                 // clear the statistics for every run.
-                // TODO: move inside the executor.
                 Tracer.clearStats();
                 try {
                     if (tokens[0].equalsIgnoreCase("exit")) {
@@ -343,9 +340,6 @@ public class Console {
             }
         }
 
-        DBConfig sourceDbConfig = executors.get(0).getConnectionPool().getSourceDBConfig();
-        UpdateExecutor updateExecutor = new UpdateExecutor(sourceDbConfig);
-
         for (int i = 0; i < executors.size(); i ++) {
             if (index != -1 && index != i) {
                 continue;
@@ -369,15 +363,84 @@ public class Console {
             console.flush();
             Tracer.printRepairSummary(ruleName);
         }
-
-        // do the final holistic update
-        updateExecutor.run();
-        Tracer.printUpdateSummary();
     }
 
-    private static void run(String cmd) throws IOException, InterruptedException {
-        detect(cmd);
-        repair(cmd);
+    private static void run(String cmd)
+        throws IOException, InterruptedException {
+        String[] tokens = cmd.split("\\s");
+        if (tokens.length > 2) {
+            console.println("Wrong repair command. Run repair [id number] instead.");
+        }
+
+        if (executors == null || executors.size() == 0) {
+            console.println("There is no rule loaded.");
+            return;
+        }
+
+        int index = -1;
+        if (tokens.length == 2) {
+            index = Integer.valueOf(tokens[1]);
+            if (index < 0 && index >= cleanPlans.size()) {
+                console.println("Out of index.");
+                return;
+            }
+        }
+
+        // clean the database first before start another iterations of clean.
+        try {
+            DBInstaller.cleanExecutionDB(NadeefConfiguration.getDbConfig());
+        } catch (Exception ex) {
+            tracer.err("Clean existing data failed.", ex);
+        }
+
+        DBConfig sourceDbConfig = executors.get(0).getConnectionPool().getSourceDBConfig();
+        UpdateExecutor updateExecutor = new UpdateExecutor(sourceDbConfig);
+        int updatedCell = 0;
+        int maxIterationNumber = 0;
+        do {
+            for (int i = 0; i < executors.size(); i ++) {
+                if (index != -1 && index != i) {
+                    continue;
+                }
+
+                CleanExecutor executor = executors.get(i);
+                Thread thread = new Thread(new CleanRunnable(executor));
+                thread.start();
+
+                do {
+                    Thread.sleep(1000);
+                    double percentage = executor.getRepairProgress();
+                    printProgress(percentage, "CLEAN");
+                } while (thread.isAlive());
+
+                // print out the final result.
+                double percentage = executor.getRepairProgress();
+                printProgress(percentage, "CLEAN");
+                console.println();
+                console.flush();
+            }
+
+            // do the final holistic update
+            updateExecutor.run();
+            updatedCell = updateExecutor.getUpdateCellCount();
+            maxIterationNumber ++;
+        } while (
+            updatedCell != 0 &&
+            maxIterationNumber <= NadeefConfiguration.getMaxIterationNumber()
+        );
+
+        // Print overall statistics
+        for (int i = 0; i < executors.size(); i ++) {
+            if (index != -1 && index != i) {
+                continue;
+            }
+            CleanExecutor executor = executors.get(i);
+            String ruleName = executor.getCleanPlan().getRule().getRuleName();
+            Tracer.printDetectSummary(ruleName);
+            Tracer.printRepairSummary(ruleName);
+        }
+        console.println();
+        Tracer.printUpdateSummary();
     }
 
     private static void set(String cmd) throws IOException {
