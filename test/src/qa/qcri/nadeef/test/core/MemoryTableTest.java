@@ -22,9 +22,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
@@ -98,7 +98,7 @@ public class MemoryTableTest extends NadeefTestBase {
     public void testFilter() {
         MemoryTable table = MemoryTable.of(testTuples);
         table.filter(
-            SimpleExpression.newEqual(new Column("test", "C"), "c1")
+            SimpleExpression.createEq(new Column("test", "C"), "c1")
         ).project(new Column("test", "C"));
         Assert.assertEquals(7, table.size());
         Tuple tuple = table.get(0);

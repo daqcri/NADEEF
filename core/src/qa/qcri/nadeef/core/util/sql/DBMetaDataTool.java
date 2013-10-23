@@ -15,6 +15,7 @@ package qa.qcri.nadeef.core.util.sql;
 
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.DataType;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -101,10 +102,10 @@ public final class DBMetaDataTool {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
             Column[] columns = new Column[count];
-            int[] types = new int[count];
+            DataType[] types = new DataType[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
-                types[i - 1] = metaData.getColumnType(i);
+                types[i - 1] = DataType.getDataType(metaData.getColumnType(i));
                 columns[i - 1] = new Column(tableName, attributeName);
             }
 

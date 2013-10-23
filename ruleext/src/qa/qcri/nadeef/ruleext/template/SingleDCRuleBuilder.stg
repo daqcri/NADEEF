@@ -1,0 +1,83 @@
+dcTemplate(DCName, template) ::= <<
+/*
+ * QCRI, NADEEF LICENSE
+ * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+ * NADEEF means "Clean" in Arabic.
+ *
+ * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+ * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+ * Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+ *
+ * NADEEF has patent pending nevertheless the following is granted.
+ * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+ */
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import qa.qcri.nadeef.core.datamodel.Cell;
+import qa.qcri.nadeef.core.datamodel.Fix;
+import qa.qcri.nadeef.core.datamodel.Predicate;
+import qa.qcri.nadeef.core.datamodel.SingleTupleRule;
+import qa.qcri.nadeef.core.datamodel.Tuple;
+import qa.qcri.nadeef.core.datamodel.Violation;
+
+public class $DCName$ extends SingleTupleRule {
+    private List<Predicate> predicates;
+
+    private String predicatesInJSON;
+
+    public $DCName$() throws ParseException{
+        predicates = new ArrayList<Predicate>();
+        predicatesInJSON = "$template$";
+        JSONParser parser=new JSONParser();
+        JSONArray array = (JSONArray)parser.parse(predicatesInJSON);
+        for (Object object : array){
+                JSONObject jsonObject = (JSONObject) object;
+                Predicate predicate = new Predicate();
+                predicate.fromJSON(jsonObject);
+                predicates.add(predicate);
+        }
+    }
+
+    @Override
+    public Collection<Violation> detect(Tuple tuple) {
+        boolean isValid = true;
+        List<Violation> result = new ArrayList<Violation>();
+        Set<Cell> infectedCells = new HashSet<Cell>();
+        for (Predicate predicate : predicates){
+                isValid = isValid & Predicate.checkIfValid(predicate, tuple);
+                Cell leftCell = tuple.getCell(predicate.getLeft());
+                infectedCells.add(leftCell);
+                if (!predicate.isRightConstant()){
+                        Cell rightCell = tuple.getCell(predicate.getRight());
+                        infectedCells.add(rightCell);
+                }
+        }
+        // all the predicates are valid, then the DC is violated
+        if (isValid == true){
+                Violation violation = new Violation(ruleName);
+                for (Cell cell : infectedCells){
+                        violation.addCell(cell);
+                }
+        //violation.addCell(cell);
+        result.add(violation);
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<Fix> repair(Violation violation) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+}
+>>

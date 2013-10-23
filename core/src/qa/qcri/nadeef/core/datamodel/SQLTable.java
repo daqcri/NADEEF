@@ -202,7 +202,11 @@ public class SQLTable extends Table {
                     stringValue = '\'' + value.toString() + '\'';
                 }
                 SimpleExpression columnFilter =
-                    SimpleExpression.newEqual(column, stringValue);
+                    new SimpleExpression.SimpleExpressionBuilder()
+                        .left(column)
+                        .isSingle()
+                        .constant(stringValue)
+                        .op(Operation.EQ).build();
 
                 SQLTable newTable =
                     new SQLTable(tableName, connectionFactory);
@@ -310,11 +314,11 @@ public class SQLTable extends Table {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
             Column[] columns = new Column[count];
-            int[] types = new int[count];
+            DataType[] types = new DataType[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
                 columns[i - 1] = new Column(tableName, attributeName);
-                types[i - 1] = metaData.getColumnType(i);
+                types[i - 1] = DataType.getDataType(metaData.getColumnType(i));
             }
 
             schema = new Schema(tableName, columns, types);
@@ -368,11 +372,11 @@ public class SQLTable extends Table {
             int count = metaData.getColumnCount();
             int tidIndex = 0;
             Column[] columns = new Column[count];
-            int[] types = new int[count];
+            DataType[] types = new DataType[count];
             for (int i = 1; i <= count; i ++) {
                 String columnName = metaData.getColumnName(i);
                 columns[i - 1] = new Column(tableName, columnName);
-                types[i - 1] = metaData.getColumnType(i);
+                types[i - 1] = DataType.getDataType(metaData.getColumnType(i));
                 if (tidIndex == 0 && columnName.equalsIgnoreCase("tid")) {
                     tidIndex = i;
                 }

@@ -17,15 +17,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
-import qa.qcri.nadeef.tools.CommonTools;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Expression class describes a simple expression used in the scope.
  * An expression contains a left operator and a assigned value.
- *
  */
 public class SimpleExpression {
 
@@ -47,72 +47,71 @@ public class SimpleExpression {
 
     private Operation operation;
     private Column left;
-    private String value;
+    private Column right;
+    private Object value;
+    private boolean isSingle;
 
-    /**
-     * Constructor.
-     * @param operation operation.
-     * @param left left column.
-     * @param value right value.
-     */
-    public SimpleExpression(
-        Operation operation,
-        Column left,
-        String value
-    ) {
-        Preconditions.checkNotNull(operation);
-        Preconditions.checkNotNull(left);
-        Preconditions.checkNotNull(value);
-        this.operation = operation;
-        this.left = left;
-        this.value = value;
-    }
+    public static class SimpleExpressionBuilder {
+        private Operation operation;
+        private Column left;
+        private Column right;
+        private Object value;
+        private boolean isSingle = false;
 
-    /**
-     * Creates a <code>SimpleExpression</code> from string.
-     * @param input string.
-     * @param defaultTableName default table name.
-     * @return <code>SimpleExpression</code> based on the input.
-     */
-    public static SimpleExpression fromString(String input, String defaultTableName) {
-        String[] splits = input.split("\\s");
-        if (splits.length != 3) {
-            throw new IllegalArgumentException("Invalid expression string " + input);
+        public SimpleExpressionBuilder left(Column column) {
+            Preconditions.checkNotNull(column);
+            left = column;
+            return this;
         }
 
-        Column column;
-        if (!CommonTools.isValidColumnName(splits[0])) {
-            column = new Column(defaultTableName, splits[0]);
-        } else {
-            column = new Column(splits[0]);
+        public SimpleExpressionBuilder isSingle() {
+            isSingle = true;
+            return this;
         }
 
-        Operation operation = operationMap.inverse().get(splits[1]);
-        return new SimpleExpression(operation, column, splits[2]);
+        public SimpleExpressionBuilder right(Column column) {
+            Preconditions.checkNotNull(column);
+            right = column;
+            return this;
+        }
+
+        public SimpleExpressionBuilder op(Operation operation) {
+            this.operation = operation;
+            return this;
+        }
+
+        public SimpleExpressionBuilder op(String operation) {
+            this.operation = operationMap.inverse().get(operation);
+            return this;
+        }
+
+        public SimpleExpressionBuilder constant(Object value) {
+            this.value = value;
+            return this;
+        }
+
+        public SimpleExpression build() {
+            SimpleExpression exp = new SimpleExpression();
+            exp.left = left;
+            exp.right = right;
+            exp.value = value;
+            exp.operation = operation;
+            exp.isSingle = isSingle;
+            return exp;
+        }
     }
 
-    /**
-     * Create a <code>SimpleExpression</code> with <code>Equal</code> operation.
-     * @param column column name.
-     * @param value value of the column.
-     * @return An Equal expression.
-     */
-    public static SimpleExpression newEqual(Column column, String value) {
-        return new SimpleExpression(Operation.EQ, column, value);
-    }
+    private SimpleExpression() {}
 
     /**
-     * Returns the expression in SQL String.
+     * Returns the expression in string.
      * @return SQL String.
      */
-    // TODO: currently for numerical value we do a simple regex to check,
-    // but it is not 100% correct since numerical value can also be used
-    // as string in SQL.
     public String toString() {
         StringBuilder builder = new StringBuilder(left.getFullColumnName());
         builder.append(operationMap.get(operation));
-        if (value.matches("^[0-9]+$") || value.contains("'") || value.contains("\"")) {
-            builder.append(value);
+        if (!(value instanceof String)) {
+            builder.append(value.toString());
         } else {
             builder.append("'");
             builder.append(value);
@@ -121,17 +120,131 @@ public class SimpleExpression {
         return builder.toString();
     }
 
-    /**
-     * Returns <code>True</code> when the tuple matches the given expression.
-     * @param tuple tuple.
-     * @return <code>True</code> when the tuple matches the given expression.
-     */
-    public boolean match(Tuple tuple) {
-        Object value = tuple.get(left);
-        if (value.equals(this.value)) {
-            return true;
+    public static SimpleExpression createEq(Column leftColumn, Object constant) {
+        return new SimpleExpressionBuilder()
+            .left(leftColumn)
+            .constant(constant)
+            .op(Operation.EQ)
+            .isSingle()
+            .build();
+    }
+
+    public static SimpleExpression valueOf(String value, String tableName) {
+        final String patternRegx = "([^>=<!]+)(>|>=|=|<=|<|!=)([^>=<!]+)";
+        final Pattern pattern = Pattern.compile(patternRegx);
+        SimpleExpression result;
+        Matcher m = pattern.matcher(value);
+        if (m.find()) {
+            String leftHandSide = m.group(1);
+            String operationStr = m.group(2);
+            String rightHandSide = m.group(3);
+            String leftColumnName = null;
+            String rightColumnName = null;
+            Pattern leftPattern = Pattern.compile("t1\\.(.*)");
+            Matcher mLeft = leftPattern.matcher(leftHandSide);
+            if (mLeft.find()) {
+                leftColumnName = mLeft.group(1);
+            } else {
+                throw new IllegalArgumentException("illegal syntax" + leftHandSide);
+            }
+
+            Pattern singleRightPattern = Pattern.compile("t1\\.(.*)");
+            Matcher mSingleRightMatcher = singleRightPattern.matcher(rightHandSide);
+            Pattern doubleRightPattern = Pattern.compile("t2\\.(.*)");
+            Matcher mDoubleRightMatcher = doubleRightPattern.matcher(rightHandSide);
+            boolean isRightConstant = false;
+            boolean isSingle = false;
+            if (mSingleRightMatcher.find()) {
+                rightColumnName = mSingleRightMatcher.group(1);
+                isSingle = true;
+                isRightConstant = false;
+            } else if (mDoubleRightMatcher.find()) {
+                rightColumnName = mDoubleRightMatcher.group(1);
+                isSingle = false;
+                isRightConstant = false;
+            } else {
+                rightColumnName = rightHandSide;
+                isRightConstant = true;
+                isSingle = true;
+            }
+
+            if (isRightConstant) {
+                result =
+                    new SimpleExpression.SimpleExpressionBuilder()
+                        .left(new Column(tableName, leftColumnName))
+                        .op(operationStr)
+                        .constant(rightColumnName)
+                        .isSingle()
+                        .build();
+            } else if (isSingle) {
+                result =
+                    new SimpleExpression.SimpleExpressionBuilder()
+                        .left(new Column(tableName, leftColumnName))
+                        .right(new Column(tableName, rightColumnName))
+                        .isSingle()
+                        .op(operationStr)
+                        .build();
+            } else {
+                result =
+                    new SimpleExpression.SimpleExpressionBuilder()
+                        .left(new Column(tableName, leftColumnName))
+                        .right(new Column(tableName, rightColumnName))
+                        .op(operationStr)
+                        .build();
+            }
+        } else {
+            throw new IllegalArgumentException("illegal expression " + value);
         }
-        return false;
+        return result;
+    }
+
+    /**
+     * Returns <code>True</code> when the tuple matches the given predicate.
+     * @param tuple tuple.
+     * @return <code>True</code> when the tuple matches the given predicate.
+     */
+    public boolean isValid(Tuple tuple) {
+        Preconditions.checkArgument(isRightConstant() || isSingle());
+        Object value = tuple.get(left);
+        return value.equals(this.value);
+    }
+
+    /**
+     * Returns <code>True</code> when the tuple matches the given predicate.
+     * @param tupleLeft left tuple.
+     * @param tupleRight right tuple.
+     * @return <code>True</code> when the tuple matches the given predicate.
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isValid(Tuple tupleLeft, Tuple tupleRight) {
+        Preconditions.checkArgument(!isRightConstant() && !isSingle());
+        Object leftValue = tupleLeft.get(left);
+        Object rightValue = tupleRight.get(right);
+        int compareResult = ((Comparable)leftValue).compareTo(rightValue);
+        boolean result;
+        switch (operation){
+            case EQ:
+                result = compareResult == 0;
+                break;
+            case GT:
+                result = compareResult > 0;
+                break;
+            case GTE:
+                result = compareResult >= 0;
+                break;
+            case NEQ:
+                result = compareResult != 0;
+                break;
+            case LT:
+                result = compareResult < 0;
+                break;
+            case LTE:
+                result = compareResult <= 0;
+                break;
+            default:
+                throw new UnsupportedOperationException("unsupported operation: " + operation);
+        }
+        return result;
     }
 
     /**
@@ -150,11 +263,23 @@ public class SimpleExpression {
         return left;
     }
 
-    /**
-     * Gets the value of the operator.
-     * @return the value of the operator.
-     */
-    public String getValue() {
+    public Object getValue() {
         return value;
+    }
+
+    /**
+     * Gets the right operator column.
+     * @return right operator column.
+     */
+    public Column getRight() {
+        return right;
+    }
+
+    public boolean isRightConstant() {
+        return value != null;
+    }
+
+    public boolean isSingle() {
+        return isSingle;
     }
 }

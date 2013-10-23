@@ -16,18 +16,16 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 
 import java.util.List;
 
 /**
  * Schema class provides a mapping between column and value for a table.
- *
  */
 public class Schema {
     private String tableName;
     private Column[] columns;
-    private int[] types;
+    private DataType[] types;
 
     //<editor-fold desc="Builder">
     /**
@@ -36,7 +34,7 @@ public class Schema {
     public static class Builder {
         private String tableName;
         List<Column> columns;
-        List<Integer> types;
+        List<DataType> types;
 
         public Builder() {
             columns = Lists.newArrayList();
@@ -48,23 +46,30 @@ public class Schema {
             return this;
         }
 
-        public Builder column(Column column, int type) {
-            columns.add(column);
+        public Builder column(Column columnName, DataType type) {
+            columns.add(columnName);
             types.add(type);
             return this;
         }
 
-        public Builder column(String columnName, int type) {
+        public Builder column(String columnName, int value) {
+            columns.add(new Column(tableName, columnName));
+            types.add(DataType.getDataType(value));
+            return this;
+        }
+
+        public Builder column(String columnName, DataType type) {
             columns.add(new Column(tableName, columnName));
             types.add(type);
             return this;
         }
 
         public Schema build() {
-            Column[] result = new Column[columns.size()];
-            columns.toArray(result);
-
-            return new Schema(tableName, result, Ints.toArray(types));
+            Column[] columns_ = new Column[columns.size()];
+            DataType[] types_ = new DataType[types.size()];
+            columns.toArray(columns_);
+            types.toArray(types_);
+            return new Schema(tableName, columns_, types_);
         }
     }
     //</editor-fold>
@@ -74,7 +79,7 @@ public class Schema {
      * @param tableName table name.
      * @param columns column array.
      */
-    public Schema(String tableName, Column[] columns, int[] types) {
+    public Schema(String tableName, Column[] columns, DataType[] types) {
         this.tableName = Preconditions.checkNotNull(tableName);
         Preconditions.checkArgument(columns != null && columns.length > 0);
         this.columns = columns;
@@ -82,18 +87,14 @@ public class Schema {
     }
 
     /**
-     * Copy consturctor.
+     * Copy constructor.
      * @param schema input schema.
      */
     public Schema(Schema schema) {
         Preconditions.checkNotNull(schema);
         this.tableName = schema.tableName;
-        this.columns = new Column[schema.columns.length];
-        this.types = new int[schema.columns.length];
-        for (int i = 0; i < schema.columns.length; i++) {
-            this.columns[i] = schema.columns[i];
-            this.types[i] = schema.types[i];
-        }
+        this.columns = schema.getColumns().clone();
+        this.types = schema.getTypes().clone();
     }
 
     /**
@@ -138,7 +139,7 @@ public class Schema {
      * Gets the column type collection.
      * @return column type collection.
      */
-    public int[] getTypes() {
+    public DataType[] getTypes() {
         return types;
     }
 

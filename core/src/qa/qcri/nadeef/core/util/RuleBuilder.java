@@ -52,8 +52,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the rule value.
      * 
-     * @param value
-     *            rule value.
+     * @param value rule value.
      */
     public RuleBuilder value(String value) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
@@ -65,8 +64,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the source of the Rule.
      * 
-     * @param schemas
-     *            input schemas.
+     * @param schemas input schemas.
      */
     public RuleBuilder schema(List<Schema> schemas) {
         this.schemas = Preconditions.checkNotNull(schemas);
@@ -76,8 +74,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the source of the Rule.
      * 
-     * @param schema
-     *            input schemas.
+     * @param schema input schemas.
      */
     public RuleBuilder schema(Schema schema) {
         Preconditions.checkNotNull(schema);
@@ -88,8 +85,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the rule value.
      * 
-     * @param values
-     *            rule value.
+     * @param values rule value.
      */
     public RuleBuilder value(List<String> values) {
         this.value = Preconditions.checkNotNull(values);
@@ -100,8 +96,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the table names.
      * 
-     * @param tableNames
-     *            table name.
+     * @param tableNames table name.
      */
     public RuleBuilder table(List<String> tableNames) {
         Preconditions.checkArgument(tableNames != null && tableNames.size() > 0);
@@ -112,8 +107,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the table names.
      * 
-     * @param table
-     *            table name.
+     * @param table table name.
      */
     public RuleBuilder table(String table) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(table));
@@ -124,8 +118,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the output path.
      * 
-     * @param outputPath
-     *            output path.
+     * @param outputPath output path.
      */
     public RuleBuilder out(File outputPath) {
         Preconditions.checkArgument(outputPath != null && outputPath.isDirectory());
@@ -136,8 +129,7 @@ public abstract class RuleBuilder {
     /**
      * Sets the rule name.
      * 
-     * @param ruleName
-     *            rule name.
+     * @param ruleName rule name.
      */
     public RuleBuilder name(String ruleName) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleName));
