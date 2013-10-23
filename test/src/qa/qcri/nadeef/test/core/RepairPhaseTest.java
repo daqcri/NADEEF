@@ -23,16 +23,18 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
+import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,6 +43,7 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class RepairPhaseTest extends NadeefTestBase {
     private NodeCacheManager cacheManager;
+    private DBConfig sourceConfig;
 
     public RepairPhaseTest(String config_) {
         super(config_);
@@ -54,9 +57,16 @@ public class RepairPhaseTest extends NadeefTestBase {
             Tracer.setVerbose(true);
             NadeefConfiguration.setAlwaysOverride(true);
 
+            sourceConfig =
+                new DBConfig.Builder()
+                    .url("memory:nadeefdb;create=true")
+                    .dialect(SQLDialect.DERBYMEMORY)
+                    .username("nadeefdb")
+                    .build();
+
             CSVTools.dump(
-                NadeefConfiguration.getDbConfig(),
-                SQLDialectFactory.getNadeefDialectManagerInstance(),
+                sourceConfig,
+                SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect()),
                 TestDataRepository.getLocationData1(),
                 "LOCATION",
                 true
@@ -76,9 +86,10 @@ public class RepairPhaseTest extends NadeefTestBase {
     @Test
     public void test1() {
         try {
+            DBInstaller.cleanExecutionDB();
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            UpdateExecutor updateExecutor = new UpdateExecutor(NadeefConfiguration.getDbConfig());
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan.getSourceDBConfig());
             Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(1, count.intValue());
 
@@ -99,9 +110,10 @@ public class RepairPhaseTest extends NadeefTestBase {
     @Test
     public void test2() {
         try {
+            DBInstaller.cleanExecutionDB();
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            UpdateExecutor updateExecutor = new UpdateExecutor(NadeefConfiguration.getDbConfig());
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan.getSourceDBConfig());
             Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(2, count.intValue());
 
@@ -132,9 +144,10 @@ public class RepairPhaseTest extends NadeefTestBase {
                 executors.add(new CleanExecutor(cleanPlan));
             }
 
-            UpdateExecutor updateExecutor = new UpdateExecutor(NadeefConfiguration.getDbConfig());
+            UpdateExecutor updateExecutor = new UpdateExecutor(sourceConfig);
             int changedCell = 0;
             do {
+                DBInstaller.cleanExecutionDB();
                 for (CleanExecutor executor : executors) {
                     executor.run();
                     executor.getRepairOutput();

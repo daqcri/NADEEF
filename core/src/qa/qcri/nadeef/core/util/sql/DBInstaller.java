@@ -29,11 +29,11 @@ public final class DBInstaller {
 
     /**
      * Delete all the existing data from Violation, Repair table.
-     * @param dbConfig db config.
      */
-    public static void cleanExecutionDB(DBConfig dbConfig) throws Exception {
+    public static void cleanExecutionDB() throws Exception {
         Connection conn = null;
         Statement stat = null;
+        DBConfig dbConfig = NadeefConfiguration.getDbConfig();
         SQLDialect dialect = dbConfig.getDialect();
         SQLDialectBase dialectManager =
             SQLDialectFactory.getDialectManagerInstance(dialect);

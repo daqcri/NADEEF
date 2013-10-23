@@ -37,7 +37,7 @@ public class TestDataRepository {
 
     public static String MySQLConfig =
             "test*src*qa*qcri*nadeef*test*input*config*mysqlConfig.conf".replace(
-                    '*', File.separatorChar);
+                '*', File.separatorChar);
 
     public static File getDumpTestCSVFile() {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*dumptest.csv";

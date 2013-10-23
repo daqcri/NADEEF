@@ -386,18 +386,17 @@ public class Console {
             }
         }
 
-        // clean the database first before start another iterations of clean.
-        try {
-            DBInstaller.cleanExecutionDB(NadeefConfiguration.getDbConfig());
-        } catch (Exception ex) {
-            tracer.err("Clean existing data failed.", ex);
-        }
-
         DBConfig sourceDbConfig = executors.get(0).getConnectionPool().getSourceDBConfig();
         UpdateExecutor updateExecutor = new UpdateExecutor(sourceDbConfig);
         int updatedCell = 0;
         int maxIterationNumber = 0;
+
         do {
+            try {
+                DBInstaller.cleanExecutionDB();
+            } catch (Exception ex) {
+                tracer.err("Cleaning database failed.", ex);
+            }
             for (int i = 0; i < executors.size(); i ++) {
                 if (index != -1 && index != i) {
                     continue;

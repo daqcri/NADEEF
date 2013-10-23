@@ -28,28 +28,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * Updater fixes the source data and exports it in the database.
  * It returns <code>True</code> when there is no Cell changed in
  * the pipeline. In this case the pipeline will stop.
- *
- *
  */
 public class Updater extends Operator<Collection<Fix>, Integer> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
-    private static ConcurrentMap<Cell, String> updateHistory = Maps.newConcurrentMap();
-    private static ConcurrentMap<Cell, Boolean> unknownTag = Maps.newConcurrentMap();
-    private DBConfig dbConfig;
+    private ConcurrentMap<Cell, String> updateHistory;
+    private ConcurrentMap<Cell, Boolean> unknownTag;
+    private DBConfig sourceConfig;
+    private DBConfig nadeefConfig;
 
     /**
      * Constructor.
      */
-    public Updater(DBConfig dbConfig) {
-        this.dbConfig = Preconditions.checkNotNull(dbConfig);
-        updateHistory.clear();
+    public Updater(DBConfig sourceConfig, DBConfig nadeefConfig) {
+        this.sourceConfig= Preconditions.checkNotNull(sourceConfig);
+        this.nadeefConfig = Preconditions.checkNotNull(nadeefConfig);
+        updateHistory = Maps.newConcurrentMap();
+        unknownTag = Maps.newConcurrentMap();
     }
 
     /**
@@ -61,18 +61,20 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
     @Override
     public Integer execute(Collection<Fix> fixes) throws Exception {
         int count = 0;
-        Connection conn = null;
-        Statement stat = null;
-        PreparedStatement auditInsertStat = null;
+        Connection sourceConn = null;
+        Connection nadeefConn = null;
+        Statement sourceStat = null;
+        PreparedStatement auditStat = null;
         String auditTableName = NadeefConfiguration.getAuditTableName();
         String rightValue;
         String oldValue;
 
         try {
-            conn = DBConnectionPool.createConnection(dbConfig);
-            stat = conn.createStatement();
-            auditInsertStat =
-                conn.prepareStatement(
+            nadeefConn = DBConnectionPool.createConnection(nadeefConfig);
+            sourceConn = DBConnectionPool.createConnection(sourceConfig);
+            sourceStat = sourceConn.createStatement();
+            auditStat =
+                nadeefConn.prepareStatement(
                     "INSERT INTO " + auditTableName +
                     " VALUES (default, ?, ?, ?, ?, ?, ?, current_timestamp)");
             for (Fix fix : fixes) {
@@ -93,7 +95,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     // when a cell is set twice with different value,
                     // we set it to null for ambiguous value.
                     unknownTag.put(cell, true);
-                    rightValue = null;
+                    rightValue = "?";
                 } else {
                     rightValue = fix.getRightValue();
                     updateHistory.put(cell, rightValue);
@@ -115,42 +117,45 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     " SET " + column.getColumnName() + " = " + rightValue +
                     " WHERE tid = " + cell.getTupleId();
                 tracer.verbose(updateSql);
-                stat.addBatch(updateSql);
-                auditInsertStat.setInt(1, fix.getVid());
-                auditInsertStat.setInt(2, cell.getTupleId());
-                auditInsertStat.setString(3, column.getTableName());
-                auditInsertStat.setString(4, column.getColumnName());
-                auditInsertStat.setString(5, oldValue);
-                auditInsertStat.setString(6, rightValue);
-                auditInsertStat.addBatch();
-                if (count % 1024 == 0) {
-                    auditInsertStat.executeBatch();
+                sourceStat.addBatch(updateSql);
+                auditStat.setInt(1, fix.getVid());
+                auditStat.setInt(2, cell.getTupleId());
+                auditStat.setString(3, column.getTableName());
+                auditStat.setString(4, column.getColumnName());
+                auditStat.setString(5, oldValue);
+                auditStat.setString(6, rightValue);
+                auditStat.addBatch();
+                if (count % 4096 == 0) {
+                    auditStat.executeBatch();
+                    nadeefConn.commit();
+                    sourceStat.executeBatch();
+                    sourceConn.commit();
                 }
                 count ++;
                 setPercentage(count / fixes.size());
             }
-            stat.executeBatch();
-            auditInsertStat.executeBatch();
-            conn.commit();
-
-            // TODO: to do refactor.
-            stat.execute("DELETE FROM " + NadeefConfiguration.getViolationTableName());
-            stat.execute("DELETE FROM " + NadeefConfiguration.getRepairTableName());
-            conn.commit();
+            sourceStat.executeBatch();
+            auditStat.executeBatch();
+            sourceConn.commit();
+            nadeefConn.commit();
             Tracer.putStatsEntry(Tracer.StatType.UpdatedCellNumber, count);
         } finally {
-            if (auditInsertStat != null) {
-                auditInsertStat.close();
+            if (auditStat != null) {
+                auditStat.close();
             }
 
-            if (stat != null) {
-                stat.close();
+            if (sourceStat != null) {
+                sourceStat.close();
             }
 
-            if (conn != null) {
-                conn.close();
+            if (nadeefConn != null) {
+                nadeefConn.close();
+            }
+
+            if (sourceConn != null) {
+                sourceConn.close();
             }
         }
-        return Integer.valueOf(count);
+        return count;
     }
 }
