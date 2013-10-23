@@ -247,7 +247,12 @@ public class NadeefJobScheduler {
                 break;
             }
         }
-        NadeefJob job = new NadeefJob(key, new CleanExecutor(cleanPlan), type);
+        NadeefJob job =
+            new NadeefJob(
+                key,
+                new CleanExecutor(cleanPlan, cleanPlan.getSourceDBConfig()),
+                type
+            );
 
         keys.add(key);
         runningCleaner.put(key, job);
