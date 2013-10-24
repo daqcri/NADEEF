@@ -22,7 +22,6 @@ import java.util.List;
 
 /**
  * MemoryTable represents a table which resides in memory.
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class MemoryTable extends Table {
     private List<Tuple> tuples;

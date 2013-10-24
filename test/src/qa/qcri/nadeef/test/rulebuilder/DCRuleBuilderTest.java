@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.DCRuleBuilder;
 
@@ -17,7 +18,6 @@ import java.util.List;
 
 @RunWith(JUnit4.class)
 public class DCRuleBuilderTest {
-
     private static File workingDirectory;
 
     @Before
@@ -64,6 +64,13 @@ public class DCRuleBuilderTest {
         }
     }
 
+    @Parameterized.Parameters
+    public static String[] invalidDcs() {
+        return new String[] {
+            "not(C=C", "not(t1.C)", "not(t1.C!t2.C", "not(t1.C!t2.C", "()"
+        };
+    }
+
     @Test
     public void testInvalidParser() throws Exception {
         List<String> values = new ArrayList<>();
@@ -87,7 +94,9 @@ public class DCRuleBuilderTest {
                 System.out.println("Write file in " + output.getAbsolutePath());
             }
         } catch (Exception ex) {
-            Assert.fail(ex.getMessage());
+            if (!(ex instanceof IllegalArgumentException)) {
+                Assert.fail(ex.getMessage());
+            }
         }
 
     }

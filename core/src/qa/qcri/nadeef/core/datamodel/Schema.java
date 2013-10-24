@@ -144,6 +144,19 @@ public class Schema {
     }
 
     /**
+     * Gets the column type collection.
+     * @return column type collection.
+     */
+    public DataType getType(Column column) {
+        for (int i = 0; i < columns.length; i ++) {
+            if (columns[i].equals(column)) {
+                return types[i];
+            }
+        }
+        throw new IllegalArgumentException("Cannot find the column.");
+    }
+
+    /**
      * Gets the index from the column.
      * @param column input column.
      * @return Get the index from column.

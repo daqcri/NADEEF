@@ -198,9 +198,6 @@ public class SQLTable extends Table {
             while (distinctResult.next()) {
                 Object value = distinctResult.getObject(1);
                 String stringValue = value.toString();
-                if (value instanceof String) {
-                    stringValue = '\'' + value.toString() + '\'';
-                }
                 SimpleExpression columnFilter =
                     new SimpleExpression.SimpleExpressionBuilder()
                         .left(column)
@@ -318,7 +315,7 @@ public class SQLTable extends Table {
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
                 columns[i - 1] = new Column(tableName, attributeName);
-                types[i - 1] = DataType.getDataType(metaData.getColumnType(i));
+                types[i - 1] = DataType.getDataType(metaData.getColumnTypeName(i));
             }
 
             schema = new Schema(tableName, columns, types);
@@ -376,7 +373,7 @@ public class SQLTable extends Table {
             for (int i = 1; i <= count; i ++) {
                 String columnName = metaData.getColumnName(i);
                 columns[i - 1] = new Column(tableName, columnName);
-                types[i - 1] = DataType.getDataType(metaData.getColumnType(i));
+                types[i - 1] = DataType.getDataType(metaData.getColumnTypeName(i));
                 if (tidIndex == 0 && columnName.equalsIgnoreCase("tid")) {
                     tidIndex = i;
                 }
@@ -405,25 +402,19 @@ public class SQLTable extends Table {
         } catch (Exception ex) {
             tracer.err("Synchronization failed.", ex);
         } finally {
-            if (resultSet != null) {
-                try {
+            try {
+                if (resultSet != null) {
                     resultSet.close();
-                } catch (Exception ex) {}
-            }
-
-            if (stat != null) {
-                try {
-                    stat.close();
-                } catch (Exception ex) {};
-            }
-
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
                 }
-            }
+
+                if (stat != null) {
+                    stat.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {}
         }
 
         Tracer.addStatsEntry(

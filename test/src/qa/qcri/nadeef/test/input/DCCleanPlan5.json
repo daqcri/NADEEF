@@ -5,9 +5,8 @@
     },
     "rule" : [
         {
-            "name" : "myDC2",
-            "type" : "dc",
-            "value" : ["not(t1.C=t2.C&t1.A!=t2.A)"]
+            "type" : "udf",
+            "value" : ["qa.qcri.nadeef.test.udf.MyRule7"]
         }
     ]
 }

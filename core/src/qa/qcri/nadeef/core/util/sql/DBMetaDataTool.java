@@ -105,7 +105,7 @@ public final class DBMetaDataTool {
             DataType[] types = new DataType[count];
             for (int i = 1; i <= count; i ++) {
                 String attributeName = metaData.getColumnName(i);
-                types[i - 1] = DataType.getDataType(metaData.getColumnType(i));
+                types[i - 1] = DataType.getDataType(metaData.getColumnTypeName(i));
                 columns[i - 1] = new Column(tableName, attributeName);
             }
 

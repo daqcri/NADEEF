@@ -22,7 +22,6 @@ public class DCRuleBuilder extends RuleBuilder {
     private String[] predicates;
 
     protected STGroupFile singleSTGroup;
-
     protected STGroupFile pairSTGroup;
 
     public DCRuleBuilder() {
@@ -66,6 +65,7 @@ public class DCRuleBuilder extends RuleBuilder {
 
         st.add("DCName", ruleName);
         st.add("template", predicates);
+        st.add("tableName", tableNames.get(0));
         List<File> result = Lists.newArrayList();
         File outputFile = getOutputFile();
         st.write(outputFile, null);
@@ -90,7 +90,9 @@ public class DCRuleBuilder extends RuleBuilder {
         if (value == null || value.size() > 1){
             throw new IllegalArgumentException("DC must be formalized in single line");
         }
-        String line = value.get(0);
+
+        // TODO: change to regx.
+        String line = value.get(0).trim();
         if (!line.startsWith("not(")){
             throw new IllegalArgumentException("illegal header:" + line);
         }
@@ -98,7 +100,7 @@ public class DCRuleBuilder extends RuleBuilder {
             throw new IllegalArgumentException("illegal footer:" + line);
         }
         String predicatesStr =
-            line.substring(line.indexOf("not(") + 1, line.indexOf(")"));
+            line.substring(line.indexOf("not(") + 4, line.indexOf(")")).trim();
         predicates = predicatesStr.split("&");
         String tableName = tableNames.get(0);
         for (int i = 0; i < predicates.length; i++) {

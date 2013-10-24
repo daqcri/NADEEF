@@ -40,7 +40,7 @@ InstallAuditTable(auditTableName) ::= <<
 
 CreateTableFromCSV(tableName, content) ::= <<
     CREATE TABLE $tableName$ (
-        tid serial,
+        tid int not null auto_increment primary key,
         $content$
     )
 >>

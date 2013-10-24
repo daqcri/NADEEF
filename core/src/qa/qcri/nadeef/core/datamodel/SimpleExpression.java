@@ -132,6 +132,7 @@ public class SimpleExpression {
     public static SimpleExpression valueOf(String value, String tableName) {
         final String patternRegx = "([^>=<!]+)(>|>=|=|<=|<|!=)([^>=<!]+)";
         final Pattern pattern = Pattern.compile(patternRegx);
+
         SimpleExpression result;
         Matcher m = pattern.matcher(value);
         if (m.find()) {
@@ -203,10 +204,41 @@ public class SimpleExpression {
      * @param tuple tuple.
      * @return <code>True</code> when the tuple matches the given predicate.
      */
+    @SuppressWarnings("unchecked")
     public boolean isValid(Tuple tuple) {
-        Preconditions.checkArgument(isRightConstant() || isSingle());
-        Object value = tuple.get(left);
-        return value.equals(this.value);
+        Preconditions.checkArgument(isSingle());
+        Object leftValue = tuple.get(left);
+        Comparable leftComparable = (Comparable)leftValue;
+        int compareResult;
+        if (!isRightConstant()) {
+            Object rightValue = tuple.get(right);
+            compareResult = leftComparable.compareTo(rightValue);
+        } else {
+            DataType type = tuple.getSchema().getType(left);
+            // TODO: should move during parsing?
+            switch (type) {
+                case INTEGER:
+                    compareResult =
+                        leftComparable.compareTo(Integer.parseInt((String)value));
+                    break;
+                case FLOAT:
+                    // special case for postgres when reading real is always DOUBLE.
+                    if (leftValue instanceof Double) {
+                        compareResult =
+                            leftComparable.compareTo(Double.parseDouble((String) value));
+                    } else {
+                        compareResult =
+                            leftComparable.compareTo(Float.parseFloat((String)value));
+                    }
+                    break;
+                case DOUBLE:
+                    compareResult = leftComparable.compareTo(Double.parseDouble((String)value));
+                    break;
+                default:
+                    compareResult = leftComparable.compareTo(value);
+            }
+        }
+        return validResult(compareResult);
     }
 
     /**
@@ -217,34 +249,33 @@ public class SimpleExpression {
      */
     @SuppressWarnings("unchecked")
     public boolean isValid(Tuple tupleLeft, Tuple tupleRight) {
-        Preconditions.checkArgument(!isRightConstant() && !isSingle());
         Object leftValue = tupleLeft.get(left);
-        Object rightValue = tupleRight.get(right);
-        int compareResult = ((Comparable)leftValue).compareTo(rightValue);
-        boolean result;
-        switch (operation){
-            case EQ:
-                result = compareResult == 0;
-                break;
-            case GT:
-                result = compareResult > 0;
-                break;
-            case GTE:
-                result = compareResult >= 0;
-                break;
-            case NEQ:
-                result = compareResult != 0;
-                break;
-            case LT:
-                result = compareResult < 0;
-                break;
-            case LTE:
-                result = compareResult <= 0;
-                break;
-            default:
-                throw new UnsupportedOperationException("unsupported operation: " + operation);
+        Comparable leftComparable = (Comparable)leftValue;
+        int compareResult;
+        if (isRightConstant()) {
+            DataType type = tupleLeft.getSchema().getType(left);
+            // TODO: should move during parsing?
+            switch (type) {
+                case INTEGER:
+                    compareResult =
+                        leftComparable.compareTo(Integer.parseInt((String)value));
+                    break;
+                case FLOAT:
+                    compareResult =
+                        leftComparable.compareTo(Float.parseFloat((String)value));
+                    break;
+                case DOUBLE:
+                    compareResult =
+                        leftComparable.compareTo(Double.parseDouble((String)value));
+                    break;
+                default:
+                    compareResult = leftComparable.compareTo(value);
+            }
+        } else {
+            Object rightValue = tupleRight.get(right);
+            compareResult = ((Comparable)leftValue).compareTo(rightValue);
         }
-        return result;
+        return validResult(compareResult);
     }
 
     /**
@@ -281,5 +312,32 @@ public class SimpleExpression {
 
     public boolean isSingle() {
         return isSingle;
+    }
+
+    private boolean validResult(int compareResult) {
+        boolean result;
+        switch (operation){
+            case EQ:
+                result = compareResult == 0;
+                break;
+            case GT:
+                result = compareResult > 0;
+                break;
+            case GTE:
+                result = compareResult >= 0;
+                break;
+            case NEQ:
+                result = compareResult != 0;
+                break;
+            case LT:
+                result = compareResult < 0;
+                break;
+            case LTE:
+                result = compareResult <= 0;
+                break;
+            default:
+                throw new UnsupportedOperationException("unsupported operation: " + operation);
+        }
+        return result;
     }
 }

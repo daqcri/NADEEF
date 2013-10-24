@@ -3,11 +3,11 @@ leftItem(columnName) ::= <% lhs.add(new Column("$columnName$")); $\n$%>
 rightItem(columnName) ::= <% rhs.add(new Column("$columnName$")); $\n$%>
 
 lExpressionItem(columnName, value) ::= <<
-leftFilterExpressions.add(SimpleExpression.newEqual(new Column("$columnName$"), "$value$"));$\n$
+leftFilterExpressions.add(SimpleExpression.createEq(new Column("$columnName$"), "$value$"));$\n$
 >>
 
 rExpressionItem(columnName, value) ::= <<
-rightFilterExpressions.add(SimpleExpression.newEqual(new Column("$columnName$"), "$value$"));$\n$
+rightFilterExpressions.add(SimpleExpression.createEq(new Column("$columnName$"), "$value$"));$\n$
 >>
 
 cfdTemplate(CFDName, leftHandSide, rightHandSide, lExpression, rExpression) ::= <<
@@ -134,7 +134,7 @@ public class $CFDName$ extends SingleTupleRule {
 
     private static boolean matches(List<SimpleExpression> expressions, Tuple tuple) {
         for (SimpleExpression exp : expressions) {
-            if (!exp.match(tuple)) {
+            if (!exp.isValid(tuple)) {
                 return false;
             }
         }

@@ -40,7 +40,7 @@ import java.util.List;
  * Tests for CleanExecutor.
  */
 @RunWith(Parameterized.class)
-public class DetectionTest extends NadeefTestBase{
+public class DetectionTest extends NadeefTestBase {
     private CleanExecutor executor;
     public DetectionTest(String testConfig_) {
         super(testConfig_);

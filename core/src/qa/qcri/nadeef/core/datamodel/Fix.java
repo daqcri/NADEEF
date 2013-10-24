@@ -72,6 +72,13 @@ public class Fix {
             return this;
         }
 
+        public Builder right(Object right) {
+            Preconditions.checkNotNull(right);
+            this.rightValue = right.toString();
+            this.right = null;
+            return this;
+        }
+
         public Builder op(Operation operation) {
             this.operation = Optional.of(operation);
             return this;
