@@ -22,7 +22,6 @@ import java.util.List;
 
 /**
  * MemoryTable represents a table which resides in memory.
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class MemoryTable extends Table {
     private List<Tuple> tuples;
@@ -105,13 +104,12 @@ public class MemoryTable extends Table {
     /**
      * {@inheritDoc}
      */
-    // TODO: currently only equalization is supported.
     @Override
     public Table filter(List<SimpleExpression> expressions) {
         List<Tuple> filtered = Lists.newArrayList();
         for (SimpleExpression expression : expressions) {
             Column column = expression.getLeft();
-            String value = expression.getValue();
+            Object value = expression.getValue();
             for (Tuple tuple : tuples) {
                 String v = tuple.get(column).toString();
                 if (!v.equals(value)) {

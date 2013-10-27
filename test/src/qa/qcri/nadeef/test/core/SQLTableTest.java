@@ -105,7 +105,7 @@ public class SQLTableTest extends NadeefTestBase {
     @Test
     public void testFilter() {
         SQLTable collection = new SQLTable(tableName, connectionFactory);
-        collection.filter(SimpleExpression.newEqual(new Column(tableName, "c"), "c1"))
+        collection.filter(SimpleExpression.createEq(new Column(tableName, "c"), "c1"))
                 .project(new Column(tableName, "c"));
         Assert.assertEquals(7, collection.size());
         Tuple tuple = collection.get(0);

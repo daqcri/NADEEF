@@ -163,6 +163,31 @@ public class TestDataRepository {
             new FileReader(getHolisticPlan1File()), NadeefConfiguration.getDbConfig());
     }
 
+    public static File getDCTestFile(){
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan3.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getConstantDCTestFile(){
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan2.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getSingleTupleDCTestFile(){
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan1.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getFloatDCTestFile(){
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan4.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getDCGeneratedFile(){
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan5.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
         throws
             InvalidRuleException,
@@ -244,11 +269,7 @@ public class TestDataRepository {
             new FileReader(getCleanPlan9File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
-    public static CleanPlan getStressPlan10k()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+    public static CleanPlan getStressPlan10k() throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getStressPlan10kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
@@ -296,5 +317,48 @@ public class TestDataRepository {
             InvalidCleanPlanException {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getPairCleanPlanFile1()), NadeefConfiguration.getDbConfig()).get(0);
+    }
+
+    public static CleanPlan getDCTestPlan()
+      throws
+            InvalidRuleException,
+            FileNotFoundException,
+            InvalidCleanPlanException {
+      return CleanPlan.createCleanPlanFromJSON(
+          new FileReader(getDCTestFile()),
+          NadeefConfiguration.getDbConfig()
+      ).get(0);
+    }
+
+    public static CleanPlan getConstantDCTestPlan()
+      throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException{
+      return CleanPlan.createCleanPlanFromJSON(
+          new FileReader(getConstantDCTestFile()),
+          NadeefConfiguration.getDbConfig()).get(0);
+    }
+
+    public static CleanPlan getSingleTupleDCTestPlan()
+      throws
+        InvalidRuleException,
+        FileNotFoundException,
+        InvalidCleanPlanException{
+      return CleanPlan.createCleanPlanFromJSON(
+          new FileReader(getSingleTupleDCTestFile()),
+          NadeefConfiguration.getDbConfig()).get(0);
+    }
+
+    public static CleanPlan getFloatDCTestPlan() throws Exception {
+      return CleanPlan.createCleanPlanFromJSON(
+          new FileReader(getFloatDCTestFile()),
+          NadeefConfiguration.getDbConfig()).get(0);
+    }
+
+    public static CleanPlan getDCGeneratedCleanPlan() throws Exception {
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getDCGeneratedFile()),
+            NadeefConfiguration.getDbConfig()).get(0);
     }
 }

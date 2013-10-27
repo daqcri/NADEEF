@@ -46,10 +46,10 @@ public class AdultRule3 extends SingleTupleRule {
         rhs.add(new Column("CSV_ADULT_1K.sex"));
 
         leftFilterExpressions.add(
-                SimpleExpression.newEqual(new Column("CSV_ADULT_1K.relationship"), "Wife"));
+                SimpleExpression.createEq(new Column("CSV_ADULT_1K.relationship"), "Wife"));
 
         rightFilterExpressions.add(
-                SimpleExpression.newEqual(new Column("CSV_ADULT_1K.sex"), "Female"));
+                SimpleExpression.createEq(new Column("CSV_ADULT_1K.sex"), "Female"));
         /*
         leftFilterExpressions.add(
                 SimpleExpression.newEqual(new Column("csv_adult_1k.relationship"), "Wife"));
@@ -133,7 +133,7 @@ public class AdultRule3 extends SingleTupleRule {
 
     private static boolean matches(List<SimpleExpression> expressions, Tuple tuple) {
         for (SimpleExpression exp : expressions) {
-            if (!exp.match(tuple)) {
+            if (!exp.isValid(tuple)) {
                 return false;
             }
         }

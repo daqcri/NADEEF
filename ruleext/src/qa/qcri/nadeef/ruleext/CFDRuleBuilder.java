@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.Operation;
 import qa.qcri.nadeef.core.datamodel.SimpleExpression;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
@@ -64,7 +65,7 @@ public class CFDRuleBuilder extends RuleBuilder {
             // Pass over items of lhs
             for (int j = 0; j < lhs.size(); j++) {
                 SimpleExpression expression = filters.get(j);
-                String eValue = expression.getValue();
+                String eValue = (String)expression.getValue();
                 if (!eValue.equals("_")) {
                     leftExpressionST.add("columnName", expression.getLeft()
                             .getFullColumnName());
@@ -80,7 +81,7 @@ public class CFDRuleBuilder extends RuleBuilder {
                 String rhsCol = rhs.get(j);
 
                 SimpleExpression expression = filters.get(j + lhs.size());
-                String eValue = expression.getValue();
+                String eValue = (String)expression.getValue();
                 if (!eValue.equals("_")) {
                     ST rightExpressionST = singleSTGroup.getInstanceOf("rExpressionItem");
                     rightExpressionST.add("columnName", expression.getLeft().getFullColumnName());
@@ -234,8 +235,13 @@ public class CFDRuleBuilder extends RuleBuilder {
                             "Invalid rule description " + line);
                 }
 
-                SimpleExpression newFilter = SimpleExpression.newEqual(
-                        new Column(curColumn), split);
+                SimpleExpression newFilter =
+                    new SimpleExpression.SimpleExpressionBuilder()
+                        .left(new Column(curColumn))
+                        .isSingle()
+                        .op(Operation.EQ)
+                        .constant(split)
+                        .build();
                 filter.add(newFilter);
             }
             filterExpressions.add(filter);

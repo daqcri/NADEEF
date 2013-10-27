@@ -21,7 +21,6 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.nio.charset.Charset;
-import java.sql.Types;
 import java.util.List;
 
 /**
@@ -72,16 +71,14 @@ public class Tuple {
      * @param key The attribute key
      * @return Output Value
      */
-    // TODO: why use string instead of byte array or object?
     public Object get(Column key) {
         int index = schema.get(key);
         byte[] bytes = values.get(index);
-        int type = schema.getTypes()[index];
+        DataType type = schema.getTypes()[index];
         Object result = null;
 
         switch (type) {
-            case Types.VARCHAR:
-            case Types.CHAR:
+            case STRING:
                 result = new String(bytes, Charset.forName("UTF-8"));
                 break;
             default:

@@ -21,15 +21,15 @@ import qa.qcri.nadeef.tools.CommonTools;
  */
 public class Column {
     private String tableName;
-    private String attributeName;
+    private String columnName;
     private String schemaName;
 
     //<editor-fold desc="Constructors">
     /**
      * Constructor.
      */
-    public Column(String tableName, String attributeName) {
-        this("public", tableName, attributeName);
+    public Column(String tableName, String columnName) {
+        this("public", tableName, columnName);
     }
 
     /**
@@ -44,22 +44,22 @@ public class Column {
 
         schemaName = "public";
         tableName = splits[0];
-        attributeName = splits[1];
+        columnName = splits[1];
     }
 
     /**
      * Constructor.
      * @param schemaName schema.
      * @param tableName table.
-     * @param attributeName attribute.
+     * @param columnName attribute.
      */
-    public Column(String schemaName, String tableName, String attributeName) {
-        if (attributeName == null || tableName == null || schemaName == null) {
+    public Column(String schemaName, String tableName, String columnName) {
+        if (columnName == null || tableName == null || schemaName == null) {
             throw new IllegalArgumentException("Attribute name cannot be null.");
         }
         this.schemaName = schemaName;
         this.tableName = tableName;
-        this.attributeName = attributeName;
+        this.columnName = columnName;
     }
     //</editor-fold>
 
@@ -93,14 +93,14 @@ public class Column {
      * @return column name.
      */
     public String getColumnName() {
-        return attributeName;
+        return columnName;
     }
 
     /**
-     * Gets a string with format of 'tableName'.'attributeName'.
+     * Gets a string with format of 'tableName'.'columnName'.
      */
     public String getFullColumnName() {
-        return getTableName() + "." + attributeName;
+        return getTableName() + "." + columnName;
     }
 
     //<editor-fold desc="Custom equal / hashcode">
@@ -124,7 +124,7 @@ public class Column {
         final int root = 109;
         return
             root * getTableName().toLowerCase().hashCode() *
-                attributeName.toLowerCase().hashCode() *
+                columnName.toLowerCase().hashCode() *
                 schemaName.toLowerCase().hashCode();
     }
     //</editor-fold>
