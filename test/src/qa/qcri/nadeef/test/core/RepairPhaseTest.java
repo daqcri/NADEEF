@@ -144,7 +144,7 @@ public class RepairPhaseTest extends NadeefTestBase {
                 executors.add(new CleanExecutor(cleanPlan));
             }
 
-            UpdateExecutor updateExecutor = new UpdateExecutor(sourceConfig);
+            UpdateExecutor updateExecutor = new UpdateExecutor(NadeefConfiguration.getDbConfig());
             int changedCell = 0;
             do {
                 DBInstaller.cleanExecutionDB();

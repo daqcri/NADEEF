@@ -54,6 +54,7 @@ public class StressDetectionTest extends NadeefTestBase {
             Tracer.setVerbose(true);
             Tracer.setInfo(true);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
+            Tracer.clearStats();
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
@@ -68,9 +69,10 @@ public class StressDetectionTest extends NadeefTestBase {
     @Test
     public void cleanExecutorTest10k() {
         Tracer.setVerbose(false);
+        CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan10k();
-            CleanExecutor executor =
+            executor =
                 new CleanExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
             List<String> tableNames = cleanPlan.getRule().getTableNames();
             int correctResult =
@@ -85,6 +87,8 @@ public class StressDetectionTest extends NadeefTestBase {
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
+        } finally {
+            executor.shutdown();
         }
     }
 
@@ -92,23 +96,18 @@ public class StressDetectionTest extends NadeefTestBase {
     public void cleanExecutorTest30k() {
         Tracer.setVerbose(false);
         Tracer.setInfo(true);
+        CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan30k();
-            List<String> tableNames = cleanPlan.getRule().getTableNames();
-            int correctResult =
-                getViolationCount(
-                    cleanPlan.getSourceDBConfig(),
-                    tableNames.get(0),
-                    "zipcode",
-                    "city"
-                );
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(correctResult, executor.getConnectionPool());
+            verifyViolationResult(16164, executor.getConnectionPool());
             Tracer.printDetectSummary("");
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
+        } finally {
+            executor.shutdown();
         }
     }
 
@@ -116,22 +115,17 @@ public class StressDetectionTest extends NadeefTestBase {
     public void cleanExecutorTest40k() {
         Tracer.setVerbose(false);
         Tracer.setInfo(true);
+        CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
-            List<String> tableNames = cleanPlan.getRule().getTableNames();
-            int correctResult =
-                getViolationCount(
-                    cleanPlan.getSourceDBConfig(),
-                    tableNames.get(0),
-                    "zipcode",
-                    "city"
-                );
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(correctResult, executor.getConnectionPool());
+            verifyViolationResult(31752, executor.getConnectionPool());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
+        } finally {
+            executor.shutdown();
         }
     }
 
@@ -139,22 +133,17 @@ public class StressDetectionTest extends NadeefTestBase {
     public void cleanExecutorTest80k() {
         Tracer.setVerbose(false);
         Tracer.setInfo(true);
+        CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan80k();
-            List<String> tableNames = cleanPlan.getRule().getTableNames();
-            int correctResult =
-                getViolationCount(
-                    cleanPlan.getSourceDBConfig(),
-                    tableNames.get(0),
-                    "zipcode",
-                    "city"
-                );
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(correctResult, executor.getConnectionPool());
+            verifyViolationResult(58912, executor.getConnectionPool());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
+        } finally {
+            executor.shutdown();
         }
     }
 
