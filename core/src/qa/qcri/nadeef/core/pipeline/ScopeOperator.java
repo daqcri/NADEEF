@@ -53,14 +53,14 @@ public class ScopeOperator<E>
         setPercentage(0.5f);
         long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         long currentTime;
-        Tracer.putStatsEntry(Tracer.StatType.HScopeTime, time);
+        Tracer.appendMetric(Tracer.Metric.HScopeTime, time);
 
         Collection<Table> verticalScopeResult =
             rule.verticalScope(horizontalScopeResult);
 
         currentTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.putStatsEntry(Tracer.StatType.VScopeTime, currentTime - time);
-        Tracer.putStatsEntry(Tracer.StatType.AfterScopeTuple, verticalScopeResult.size());
+        Tracer.appendMetric(Tracer.Metric.VScopeTime, currentTime - time);
+        Tracer.appendMetric(Tracer.Metric.AfterScopeTuple, verticalScopeResult.size());
 
         Collection<Table> result = verticalScopeResult;
 
@@ -68,7 +68,7 @@ public class ScopeOperator<E>
         // ignore the block function.
         if (!rule.supportTwoTables()) {
             result = rule.block(verticalScopeResult);
-            Tracer.putStatsEntry(Tracer.StatType.Blocks, result.size());
+            Tracer.appendMetric(Tracer.Metric.Blocks, result.size());
         }
 
         stopwatch.stop();

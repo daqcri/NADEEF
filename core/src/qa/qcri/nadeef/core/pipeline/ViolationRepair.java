@@ -62,7 +62,7 @@ public class ViolationRepair
         } else {
             elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         }
-        Tracer.putStatsEntry(Tracer.StatType.RepairCallTime, elapseTime);
+        Tracer.appendMetric(Tracer.Metric.RepairCallTime, elapseTime);
         stopwatch.stop();
         return result;
     }

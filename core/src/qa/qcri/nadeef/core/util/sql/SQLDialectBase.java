@@ -16,8 +16,6 @@ package qa.qcri.nadeef.core.util.sql;
 import com.google.common.base.Preconditions;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
-import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
@@ -130,40 +128,6 @@ public abstract class SQLDialectBase {
         ST st = template.getInstanceOf("NextVid");
         st.add("tableName", tableName.toUpperCase());
         return st.render();
-    }
-
-    /**
-     * Inserts a violation.
-     * @param ruleId rule id.
-     * @param vid violation id.
-     * @param cell violated cell.
-     * @return SQL statement.
-     */
-    // TODO: change to use ST
-    public String insertViolation(String ruleId, int vid, Cell cell) {
-        StringBuilder sqlBuilder = new StringBuilder(1024);
-        Column column = cell.getColumn();
-        sqlBuilder
-            .append("INSERT INTO VIOLATION VALUES (")
-            .append(vid)
-            .append(",\'")
-            .append(ruleId)
-            .append("\',\'")
-            .append(column.getTableName())
-            .append("\',")
-            .append(cell.getTupleId())
-            .append(",\'")
-            .append(column.getColumnName())
-            .append("\', \'");
-
-        Object value = cell.getValue();
-        if (value == null) {
-            sqlBuilder.append("null");
-        } else {
-            sqlBuilder.append(value.toString());
-        }
-        sqlBuilder.append("\')");
-        return sqlBuilder.toString();
     }
 
     /**

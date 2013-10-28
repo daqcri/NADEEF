@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.*;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper class for executing the violation detection.
@@ -143,6 +145,7 @@ public class ViolationDetector<T>
         List<Object> tupleList;
         long elapsedTime = 0l;
         detectCount = 0;
+        Stopwatch stopwatch = new Stopwatch().start();
         List<ListenableFuture<Integer>> futures = Lists.newArrayList();
         while (true) {
             tupleList = iteratorStream.poll();
@@ -160,10 +163,11 @@ public class ViolationDetector<T>
         for (ListenableFuture<Integer> future : futures) {
             future.get();
         }
-
-        Tracer.putStatsEntry(Tracer.StatType.DetectCallTime, elapsedTime);
-        Tracer.putStatsEntry(Tracer.StatType.DetectCount, detectCount);
-        Tracer.putStatsEntry(Tracer.StatType.DetectThreadCount, totalThreadCount);
+        long detectTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        Tracer.appendMetric(Tracer.Metric.DetectTime, detectTime);
+        Tracer.appendMetric(Tracer.Metric.DetectCallTime, elapsedTime);
+        Tracer.appendMetric(Tracer.Metric.DetectCount, detectCount);
+        Tracer.appendMetric(Tracer.Metric.DetectThreadCount, totalThreadCount);
 
         return resultCollection;
     }

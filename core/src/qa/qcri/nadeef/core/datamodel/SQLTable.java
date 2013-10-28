@@ -46,7 +46,6 @@ public class SQLTable extends Table {
     private long changeTimestamp = System.currentTimeMillis();
 
     private static Tracer tracer = Tracer.getTracer(SQLTable.class);
-    private static Object indexLock = new Object();
 
     //<editor-fold desc="Constructor">
     /**
@@ -171,26 +170,13 @@ public class SQLTable extends Table {
         Connection conn = null;
         Statement stat = null;
         ResultSet distinctResult = null;
-        String indexName = null;
 
         try {
+            connectionFactory.createIndexIfNotExist(tableName, column.getColumnName());
             conn = connectionFactory.getSourceConnection();
             // create index ad-hoc.
             stat = conn.createStatement();
             stat.setFetchSize(4096);
-
-            synchronized (indexLock) {
-                indexName =
-                    "IDX_" + tableName + "_" + column.getColumnName();
-
-                // create the index.
-                String indexSQL =
-                    "CREATE INDEX " + indexName + " ON " +
-                    tableName + " (" + column.getColumnName() + ")";
-                stat.executeUpdate(indexSQL);
-                conn.commit();
-            }
-
             String sql =
                 "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
             distinctResult = stat.executeQuery(sql);
@@ -220,16 +206,6 @@ public class SQLTable extends Table {
                 try {
                     distinctResult.close();
                 } catch (Exception ex) {}
-            }
-
-            if (indexName != null) {
-                try {
-                    stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
-                    conn.commit();
-                } catch (Exception ex) {
-                    tracer.err("drop index " + indexName + " failed.", ex);
-                    // ignore;
-                }
             }
 
             if (stat != null) {
@@ -417,8 +393,8 @@ public class SQLTable extends Table {
             } catch (Exception ex) {}
         }
 
-        Tracer.addStatsEntry(
-            Tracer.StatType.DBLoadTime,
+        Tracer.addMetric(
+            Tracer.Metric.DBLoadTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
         stopwatch.stop();

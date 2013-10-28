@@ -71,7 +71,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             setPercentage(0.5f);
             stat.executeBatch();
             conn.commit();
-            Tracer.putStatsEntry(Tracer.StatType.FixExport, count);
+            Tracer.appendMetric(Tracer.Metric.FixExport, count);
         } catch (Exception ex) {
             tracer.err("Exporting Fixes failed", ex);
         } finally {

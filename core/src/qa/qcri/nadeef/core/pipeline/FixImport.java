@@ -54,7 +54,7 @@ class FixImport extends Operator<Integer, Collection<Fix>> {
                 dialectBase.selectAll(NadeefConfiguration.getRepairTableName());
             resultSet = stat.executeQuery(sql);
             result = Fixes.fromQuery(resultSet);
-            Tracer.putStatsEntry(Tracer.StatType.FixImport, result.size());
+            Tracer.appendMetric(Tracer.Metric.FixImport, result.size());
         } finally {
             if (resultSet != null) {
                 resultSet.close();

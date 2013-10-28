@@ -22,7 +22,7 @@ import qa.qcri.nadeef.tools.Tracer;
 public class TracerTest {
     @Test
     public void test() {
-        Tracer.putStatsEntry(Tracer.StatType.DetectTime, 1);
+        Tracer.appendMetric(Tracer.Metric.DetectTime, 1);
         Tracer.printDetectSummary("");
     }
 }

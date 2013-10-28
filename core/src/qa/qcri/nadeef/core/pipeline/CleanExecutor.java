@@ -79,27 +79,34 @@ public class CleanExecutor {
      * Shutdown the CleanExecutor.
      */
     public void shutdown() {
-        if (queryFlow != null && queryFlow.isRunning()) {
-            queryFlow.forceStop();
+        if (queryFlow != null) {
+            if (queryFlow.isRunning()) {
+                queryFlow.forceStop();
+            }
+            cacheManager.remove(queryFlow.getInputKey());
         }
 
-        cacheManager.remove(queryFlow.getInputKey());
+        queryFlow = null;
 
-        if (detectFlow != null && detectFlow.isRunning()) {
-            detectFlow.forceStop();
+        if (detectFlow != null) {
+            if (detectFlow.isRunning()) {
+                detectFlow.forceStop();
+            }
+            cacheManager.remove(detectFlow.getInputKey());
         }
+        detectFlow = null;
 
-        cacheManager.remove(detectFlow.getInputKey());
-
-        if (repairFlow != null && repairFlow.isRunning()) {
-            repairFlow.forceStop();
+        if (repairFlow != null) {
+            if (repairFlow.isRunning()) {
+                repairFlow.forceStop();
+            }
+            cacheManager.remove(repairFlow.getInputKey());
         }
-
-        cacheManager.remove(repairFlow.getInputKey());
 
         if (connectionPool != null) {
             connectionPool.shutdown();
         }
+        connectionPool = null;
     }
 
     /**
@@ -196,8 +203,8 @@ public class CleanExecutor {
         queryFlow.waitUntilFinish();
         detectFlow.waitUntilFinish();
 
-        Tracer.putStatsEntry(
-            Tracer.StatType.DetectTime,
+        Tracer.appendMetric(
+            Tracer.Metric.DetectPipelineTime,
             queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
         );
 
@@ -222,7 +229,7 @@ public class CleanExecutor {
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
-        Tracer.putStatsEntry(Tracer.StatType.RepairTime, repairFlow.getElapsedTime());
+        Tracer.appendMetric(Tracer.Metric.RepairTime, repairFlow.getElapsedTime());
 
         System.gc();
         return this;

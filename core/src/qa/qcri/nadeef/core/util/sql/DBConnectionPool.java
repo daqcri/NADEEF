@@ -15,6 +15,8 @@ package qa.qcri.nadeef.core.util.sql;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.commons.dbcp.BasicDataSource;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -23,6 +25,9 @@ import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Database JDBC Connection Factory class.
@@ -35,6 +40,10 @@ public class DBConnectionPool {
     private BasicDataSource sourcePool;
     private DBConfig sourceConfig;
     private DBConfig nadeefConfig;
+    private HashSet<String> localCache;
+    private static HashMap<String, String> indexCache = Maps.newHashMap();
+    private static HashMap<String, Integer> indexCount = Maps.newHashMap();
+    private static Object indexLockObject = new Object();
 
     private DBConnectionPool(DBConfig sourceConfig, DBConfig nadeefConfig) {
         this.sourceConfig = Preconditions.checkNotNull(sourceConfig);
@@ -42,6 +51,7 @@ public class DBConnectionPool {
 
         nadeefPool = createConnectionPool(nadeefConfig);
         sourcePool = createConnectionPool(sourceConfig);
+        localCache = Sets.newHashSet();
     }
 
     // <editor-fold desc="Public methods">
@@ -91,6 +101,47 @@ public class DBConnectionPool {
      * Shutdown the connection pool.
      */
     public void shutdown() {
+        // drop all the indexes.
+        Connection conn = null;
+        Statement stat = null;
+        try {
+            conn = sourcePool.getConnection();
+            stat = conn.createStatement();
+
+            synchronized (indexLockObject) {
+                for (String indexName : localCache) {
+                    int count = indexCount.get(indexName) - 1;
+
+                    // remove index when count goes to 0.
+                    if (count == 0) {
+                        String tableName = indexCache.get(indexName);
+                        SQLDialectBase dialectManager =
+                            SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect());
+                        stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
+                        indexCache.remove(indexName);
+                        indexCount.remove(indexName);
+                    } else {
+                        indexCount.put(indexName, count);
+                    }
+                }
+
+                conn.commit();
+                localCache.clear();
+            }
+        } catch (Exception ex) {
+            tracer.err("Exceptions happen when closing the connection pool.", ex);
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+
+                if (stat != null) {
+                    stat.close();
+                }
+            } catch (Exception ex) {}
+        }
+
         try {
             if (nadeefPool != null) {
                 nadeefPool.close();
@@ -138,6 +189,51 @@ public class DBConnectionPool {
         return nadeefConfig;
     }
 
+    public void createIndexIfNotExist(String tableName, String fullColumnName) {
+        synchronized (indexLockObject) {
+            String indexName = "IDX_" + tableName + "_" + fullColumnName;
+
+            // make sure a pool only counts one for the index.
+            if (localCache.contains(indexName)) {
+                return;
+            }
+
+            localCache.add(indexName);
+            if (!indexCache.containsKey(indexName)) {
+                Connection conn = null;
+                Statement stat = null;
+
+                try {
+                    conn = sourcePool.getConnection();
+                    stat = conn.createStatement();
+                    // create the index.
+                    String indexSQL =
+                        "CREATE INDEX " + indexName + " ON " +
+                            tableName + " (" + fullColumnName + ")";
+                    stat.executeUpdate(indexSQL);
+                    conn.commit();
+                    indexCache.put(indexName, tableName);
+                    indexCount.put(indexName, 1);
+                } catch (Exception ex) {
+                    tracer.err("Creating index " + indexName + " failed.", ex);
+                } finally {
+                    try {
+                        if (conn != null) {
+                            conn.close();
+                        }
+
+                        if (stat != null) {
+                            stat.close();
+                        }
+                    } catch (Exception ex) {}
+                }
+            } else {
+                int count = indexCount.get(indexName);
+                indexCount.put(indexName, count + 1);
+            }
+        }
+    }
+
     /**
      * Gets the JDBC connection based on the dialect.
      * @param dbConfig dbconfig.
@@ -175,5 +271,6 @@ public class DBConnectionPool {
             InstantiationException {
         return createConnection(dbConfig, false);
     }
+
     //</editor-fold>
 }

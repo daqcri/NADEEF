@@ -59,7 +59,7 @@ public class UpdateExecutor {
         updateFlow.start();
         updateFlow.waitUntilFinish();
 
-        Tracer.putStatsEntry(Tracer.StatType.EQTime, updateFlow.getElapsedTime());
+        Tracer.appendMetric(Tracer.Metric.EQTime, updateFlow.getElapsedTime());
     }
 
     @SuppressWarnings("unchecked")

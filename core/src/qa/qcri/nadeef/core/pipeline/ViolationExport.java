@@ -15,20 +15,16 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,32 +51,40 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     @Override
     public Integer execute(Collection<Violation> violations) throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
-        String sql;
         Connection conn = null;
-        Statement stat = null;
+        PreparedStatement stat = null;
         int count = 0;
         try {
             synchronized (ViolationExport.class) {
-                conn = connectionPool.getNadeefConnection();
-                stat = conn.createStatement();
-                SQLDialectBase dialectManager =
-                    SQLDialectFactory.getNadeefDialectManagerInstance();
-
                 // TODO: this is not out-of-process safe.
                 int vid = Violations.generateViolationId(connectionPool);
+
+                conn = connectionPool.getNadeefConnection();
+                stat = conn.prepareStatement("INSERT INTO VIOLATION VALUES (?, ?, ?, ?, ?, ?)");
+
                 for (Violation violation : violations) {
                     count ++;
-                    List<Cell> cells = Lists.newArrayList(violation.getCells());
+                    Collection<Cell> cells = violation.getCells();
                     for (Cell cell : cells) {
                         // skip the tuple id
                         if (cell.hasColumnName("tid")) {
                             continue;
                         }
-                        sql = dialectManager.insertViolation(violation.getRuleId(), vid, cell);
-                        stat.addBatch(sql);
+                        stat.setInt(1, vid);
+                        stat.setString(2, violation.getRuleId());
+                        stat.setString(3, cell.getColumn().getTableName());
+                        stat.setInt(4, cell.getTupleId());
+                        stat.setString(5, cell.getColumn().getColumnName());
+                        Object value = cell.getValue();
+                        if (value == null) {
+                            stat.setString(6, null);
+                        } else {
+                            stat.setString(6, value.toString());
+                        }
+                        stat.addBatch();
                     }
 
-                    if (count % 10240 == 0) {
+                    if (count % 4096 == 0) {
                         stat.executeBatch();
                     }
                     vid ++;
@@ -90,11 +94,11 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 conn.commit();
             }
 
-            Tracer.putStatsEntry(
-                Tracer.StatType.ViolationExportTime,
+            Tracer.appendMetric(
+                Tracer.Metric.ViolationExportTime,
                 stopwatch.elapsed(TimeUnit.MILLISECONDS)
             );
-            Tracer.putStatsEntry(Tracer.StatType.ViolationExport, count);
+            Tracer.appendMetric(Tracer.Metric.ViolationExport, count);
         } finally {
             if (stat != null) {
                 stat.close();

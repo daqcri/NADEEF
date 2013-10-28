@@ -167,12 +167,12 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             executor.shutdown();
         }
 
-        Tracer.putStatsEntry(
-            Tracer.StatType.IteratorTime,
+        Tracer.appendMetric(
+            Tracer.Metric.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.putStatsEntry(Tracer.StatType.IterationCount, totalBlockSize);
+        Tracer.appendMetric(Tracer.Metric.IterationCount, totalBlockSize);
         stopwatch.stop();
         return true;
     }
