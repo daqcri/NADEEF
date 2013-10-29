@@ -3,11 +3,11 @@ leftItem(columnName) ::= <% lhs.add(new Column("$columnName$")); $\n$%>
 rightItem(columnName) ::= <% rhs.add(new Column("$columnName$")); $\n$%>
 
 lExpressionItem(columnName, value) ::= <<
-leftFilterExpressions.add(SimpleExpression.createEq(new Column("$columnName$"), "$value$"));$\n$
+leftFilterExpressions.add(Predicate.createEq(new Column("$columnName$"), "$value$"));$\n$
 >>
 
 rExpressionItem(columnName, value) ::= <<
-rightFilterExpressions.add(SimpleExpression.createEq(new Column("$columnName$"), "$value$"));$\n$
+rightFilterExpressions.add(Predicate.createEq(new Column("$columnName$"), "$value$"));$\n$
 >>
 
 cfdTemplate(CFDName, leftHandSide, rightHandSide, lExpression, rExpression) ::= <<
@@ -38,9 +38,9 @@ import java.util.List;
 public class $CFDName$ extends SingleTupleRule {
     protected List<Column> lhs;
     protected List<Column> rhs;
-    protected List<SimpleExpression> leftFilterExpressions;
-    protected List<SimpleExpression> rightFilterExpressions;
-    protected HashMap<Column, SimpleExpression> filterCache;
+    protected List<Predicate> leftFilterExpressions;
+    protected List<Predicate> rightFilterExpressions;
+    protected HashMap<Column, Predicate> filterCache;
 
     public $CFDName$() {}
 
@@ -50,9 +50,9 @@ public class $CFDName$ extends SingleTupleRule {
 
         lhs = new ArrayList<Column>();
         rhs = new ArrayList<Column>();
-        leftFilterExpressions = new ArrayList<SimpleExpression>();
-        rightFilterExpressions = new ArrayList<SimpleExpression>();
-        filterCache = new HashMap<Column, SimpleExpression>();
+        leftFilterExpressions = new ArrayList<Predicate>();
+        rightFilterExpressions = new ArrayList<Predicate>();
+        filterCache = new HashMap<Column, Predicate>();
 
         $leftHandSide:leftItem()$
         $rightHandSide:rightItem()$
@@ -132,8 +132,8 @@ public class $CFDName$ extends SingleTupleRule {
         return result;
     }
 
-    private static boolean matches(List<SimpleExpression> expressions, Tuple tuple) {
-        for (SimpleExpression exp : expressions) {
+    private static boolean matches(List<Predicate> expressions, Tuple tuple) {
+        for (Predicate exp : expressions) {
             if (!exp.isValid(tuple)) {
                 return false;
             }

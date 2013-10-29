@@ -18,7 +18,7 @@ import qa.qcri.nadeef.core.datamodel.*;
 import java.util.*;
 
 public class MyRule7 extends SingleTupleRule {
-    private List<SimpleExpression> predicates;
+    private List<Predicate> predicates;
 
     public MyRule7() throws ParseException{
         predicates = new ArrayList<>();
@@ -27,11 +27,11 @@ public class MyRule7 extends SingleTupleRule {
     @Override
     public Collection<Violation> detect(Tuple tuple) {
         String tableName = tableNames.get(0);
-        predicates.add(SimpleExpression.valueOf("t1.B!=b1", tableName));
+        predicates.add(Predicate.valueOf("t1.B!=b1", tableName));
         boolean isValid = true;
         List<Violation> result = new ArrayList<>();
         Set<Cell> infectedCells = new HashSet<>();
-        for (SimpleExpression predicate : predicates){
+        for (Predicate predicate : predicates){
             if (!predicate.isValid(tuple)) {
                 isValid = false;
                 break;

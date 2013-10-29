@@ -98,7 +98,7 @@ public class MemoryTableTest extends NadeefTestBase {
     public void testFilter() {
         MemoryTable table = MemoryTable.of(testTuples);
         table.filter(
-            SimpleExpression.createEq(new Column("test", "C"), "c1")
+            Predicate.createEq(new Column("test", "C"), "c1")
         ).project(new Column("test", "C"));
         Assert.assertEquals(7, table.size());
         Tuple tuple = table.get(0);

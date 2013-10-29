@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.datamodel.SimpleExpression;
+import qa.qcri.nadeef.core.datamodel.Predicate;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.ruleext.CFDRuleBuilder;
 
@@ -67,7 +67,7 @@ public class CFDRuleBuilderTest {
             Assert.assertEquals(5, ruleBuilder.getLhs().size());
             Assert.assertEquals(4, ruleBuilder.getRhs().size());
             Assert.assertEquals(2, ruleBuilder.getFilterExpressions().size());
-            List<SimpleExpression> filter = ruleBuilder.getFilterExpressions().get(0);
+            List<Predicate> filter = ruleBuilder.getFilterExpressions().get(0);
             Assert.assertEquals(9, filter.size());
             filter = ruleBuilder.getFilterExpressions().get(1);
             Assert.assertEquals(9, filter.size());

@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.datamodel.SimpleExpression;
+import qa.qcri.nadeef.core.datamodel.Predicate;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * Template engine for DC rule.
  */
 public class DCRuleBuilder extends RuleBuilder {
-    private List<SimpleExpression> predicateList;
+    private List<Predicate> predicateList;
     private String[] predicates;
 
     protected STGroupFile singleSTGroup;
@@ -75,7 +75,7 @@ public class DCRuleBuilder extends RuleBuilder {
 
     private boolean isSingle() {
         boolean isSingle = true;
-        for (SimpleExpression predicate : predicateList) {
+        for (Predicate predicate : predicateList) {
             if (!predicate.isSingle()) {
                 isSingle = false;
                 break;
@@ -104,7 +104,7 @@ public class DCRuleBuilder extends RuleBuilder {
         predicates = predicatesStr.split("&");
         String tableName = tableNames.get(0);
         for (int i = 0; i < predicates.length; i++) {
-             predicateList.add(SimpleExpression.valueOf(predicates[i], tableName));
+             predicateList.add(Predicate.valueOf(predicates[i], tableName));
         }
     }
 }

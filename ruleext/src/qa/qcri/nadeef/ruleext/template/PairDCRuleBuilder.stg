@@ -1,5 +1,5 @@
 addPredicate(template) ::= <<
-predicates.add(SimpleExpression.valueOf("$template$", tableName)); $\n$
+predicates.add(Predicate.valueOf("$template$", tableName)); $\n$
 >>
 
 dcTemplate(DCName, template, tableName) ::= <<
@@ -15,13 +15,13 @@ import java.util.Set;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.PairTupleRule;
-import qa.qcri.nadeef.core.datamodel.SimpleExpression;
+import qa.qcri.nadeef.core.datamodel.Predicate;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.TuplePair;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 public class $DCName$ extends PairTupleRule{
-    private List<SimpleExpression> predicates;
+    private List<Predicate> predicates;
 
     public $DCName$() {
         String tableName = "$tableName$";
@@ -34,7 +34,7 @@ public class $DCName$ extends PairTupleRule{
         List<Violation> result = new ArrayList<>();
         Set<Cell> infectedCells = new HashSet<>();
         boolean isValid = true;
-        for (SimpleExpression predicate : predicates) {
+        for (Predicate predicate : predicates) {
             if (!predicate.isValid(tuplePair.getLeft(), tuplePair.getRight())) {
                 isValid = false;
                 break;

@@ -19,7 +19,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Operation;
-import qa.qcri.nadeef.core.datamodel.SimpleExpression;
+import qa.qcri.nadeef.core.datamodel.Predicate;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 
@@ -33,7 +33,7 @@ import java.util.List;
 public class CFDRuleBuilder extends RuleBuilder {
     protected List<String>                 lhs;
     protected List<String>                 rhs;
-    protected List<List<SimpleExpression>> filterExpressions;
+    protected List<List<Predicate>> filterExpressions;
     protected STGroupFile                  singleSTGroup;
     protected STGroupFile                  pairSTGroup;
 
@@ -58,13 +58,13 @@ public class CFDRuleBuilder extends RuleBuilder {
         pst.add("leftHandSide", lhs);
 
         for (int i = 0; i < filterExpressions.size(); i++) {
-            List<SimpleExpression> filters = filterExpressions.get(i);
+            List<Predicate> filters = filterExpressions.get(i);
             ST leftExpressionST = singleSTGroup.getInstanceOf("lExpressionItem");
             List<String> leftExpressions = Lists.newArrayList();
 
             // Pass over items of lhs
             for (int j = 0; j < lhs.size(); j++) {
-                SimpleExpression expression = filters.get(j);
+                Predicate expression = filters.get(j);
                 String eValue = (String)expression.getValue();
                 if (!eValue.equals("_")) {
                     leftExpressionST.add("columnName", expression.getLeft()
@@ -80,7 +80,7 @@ public class CFDRuleBuilder extends RuleBuilder {
             for (int j = 0; j < rhs.size(); j++) {
                 String rhsCol = rhs.get(j);
 
-                SimpleExpression expression = filters.get(j + lhs.size());
+                Predicate expression = filters.get(j + lhs.size());
                 String eValue = (String)expression.getValue();
                 if (!eValue.equals("_")) {
                     ST rightExpressionST = singleSTGroup.getInstanceOf("rExpressionItem");
@@ -209,7 +209,7 @@ public class CFDRuleBuilder extends RuleBuilder {
         // TODO: currently we recreate a new FDRule per condition line, but
         // it would have more optimizations based on a buck of lines.
         for (int i = 1; i < value.size(); i++) {
-            List<SimpleExpression> filter = Lists.newArrayList();
+            List<Predicate> filter = Lists.newArrayList();
             String line = value.get(i);
             if (Strings.isNullOrEmpty(line)) {
                 continue;
@@ -235,8 +235,8 @@ public class CFDRuleBuilder extends RuleBuilder {
                             "Invalid rule description " + line);
                 }
 
-                SimpleExpression newFilter =
-                    new SimpleExpression.SimpleExpressionBuilder()
+                Predicate newFilter =
+                    new Predicate.PredicateBuilder()
                         .left(new Column(curColumn))
                         .isSingle()
                         .op(Operation.EQ)
@@ -271,7 +271,7 @@ public class CFDRuleBuilder extends RuleBuilder {
      * 
      * @return filter expressions.
      */
-    public List<List<SimpleExpression>> getFilterExpressions() {
+    public List<List<Predicate>> getFilterExpressions() {
         return filterExpressions;
     }
 }

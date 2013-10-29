@@ -27,9 +27,9 @@ import java.util.List;
 public class AdultRule3 extends SingleTupleRule {
     protected List<Column> lhs;
     protected List<Column> rhs;
-    protected List<SimpleExpression> leftFilterExpressions;
-    protected List<SimpleExpression> rightFilterExpressions;
-    protected HashMap<Column, SimpleExpression> filterCache;
+    protected List<Predicate> leftFilterExpressions;
+    protected List<Predicate> rightFilterExpressions;
+    protected HashMap<Column, Predicate> filterCache;
 
     @Override
     public void initialize(String id, List<String> tableNames) {
@@ -46,16 +46,16 @@ public class AdultRule3 extends SingleTupleRule {
         rhs.add(new Column("CSV_ADULT_1K.sex"));
 
         leftFilterExpressions.add(
-                SimpleExpression.createEq(new Column("CSV_ADULT_1K.relationship"), "Wife"));
+                Predicate.createEq(new Column("CSV_ADULT_1K.relationship"), "Wife"));
 
         rightFilterExpressions.add(
-                SimpleExpression.createEq(new Column("CSV_ADULT_1K.sex"), "Female"));
+                Predicate.createEq(new Column("CSV_ADULT_1K.sex"), "Female"));
         /*
         leftFilterExpressions.add(
-                SimpleExpression.newEqual(new Column("csv_adult_1k.relationship"), "Wife"));
+                Predicate.newEqual(new Column("csv_adult_1k.relationship"), "Wife"));
 
         rightFilterExpressions.add(
-                SimpleExpression.newEqual(new Column("csv_adult_1k.sex"), "Female"));
+                Predicate.newEqual(new Column("csv_adult_1k.sex"), "Female"));
         */
     }
 
@@ -131,8 +131,8 @@ public class AdultRule3 extends SingleTupleRule {
         return result;
     }
 
-    private static boolean matches(List<SimpleExpression> expressions, Tuple tuple) {
-        for (SimpleExpression exp : expressions) {
+    private static boolean matches(List<Predicate> expressions, Tuple tuple) {
+        for (Predicate exp : expressions) {
             if (!exp.isValid(tuple)) {
                 return false;
             }

@@ -247,6 +247,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="unittest" depends="jar">
         <mkdir dir="${build.root}/testresult" />
+        <mkdir dir="${build.root}/testresult/testreports" />
         <junit printsummary="yes" haltonfailure="no" showoutput="no">
             <classpath refid="test.classpath" />
             <formatter type="plain" />

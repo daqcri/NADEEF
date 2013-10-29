@@ -126,20 +126,20 @@ public abstract class Table {
     public abstract Table orderBy(List<Column> columns);
 
     /**
-     * Filter the table based on a {@link SimpleExpression}.
+     * Filter the table based on a {@link Predicate}.
      * @param expression expression class.
      * @return filtered table.
      */
-    public Table filter(SimpleExpression expression) {
+    public Table filter(Predicate expression) {
         return filter(Lists.newArrayList(expression));
     }
 
     /**
-     * Filter the table based on a list of {@link SimpleExpression}.
+     * Filter the table based on a list of {@link Predicate}.
      * @param expressions a list of expressions.
      * @return filtered table.
      */
-    public abstract Table filter(List<SimpleExpression> expressions);
+    public abstract Table filter(List<Predicate> expressions);
 
     /**
      * Partition the Table into multiple tuple Table based on a list of columns.

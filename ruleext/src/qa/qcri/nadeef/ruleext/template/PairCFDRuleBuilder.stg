@@ -29,8 +29,8 @@ import java.util.List;
 public class $CFDName$ extends PairTupleRule {
     protected List<Column> lhs;
     protected List<Column> rhs;
-    protected List<SimpleExpression> leftFilterExpressions;
-    protected HashMap<Column, SimpleExpression> filterCache;
+    protected List<Predicate> leftFilterExpressions;
+    protected HashMap<Column, Predicate> filterCache;
 
     public $CFDName$() {}
 
@@ -40,8 +40,8 @@ public class $CFDName$ extends PairTupleRule {
 
         lhs = new ArrayList<Column>();
         rhs = new ArrayList<Column>();
-        leftFilterExpressions = new ArrayList<SimpleExpression>();
-        filterCache = new HashMap<Column, SimpleExpression>();
+        leftFilterExpressions = new ArrayList<Predicate>();
+        filterCache = new HashMap<Column, Predicate>();
 
         $leftHandSide:leftItem()$
         $rightHandSide:rightItem()$
@@ -165,7 +165,7 @@ public class $CFDName$ extends PairTupleRule {
             if (rhs.contains(column)) {
                 if (filterCache.containsKey(column)) {
                     // if the right hand is in the filter expression, we assign it a constant.
-                    SimpleExpression filter = filterCache.get(column);
+                    Predicate filter = filterCache.get(column);
                     fix = builder.left(cell).right(filter.getValue()).build();
                     result.add(fix);
                 } else if (candidates.containsKey(column)) {

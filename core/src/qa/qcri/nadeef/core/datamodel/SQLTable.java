@@ -134,8 +134,8 @@ public class SQLTable extends Table {
      * {@inheritDoc}
      */
     @Override
-    public Table filter(List<SimpleExpression> expressions) {
-        for (SimpleExpression expression : expressions) {
+    public Table filter(List<Predicate> expressions) {
+        for (Predicate expression : expressions) {
             sqlQuery.addWhere(expression.toString());
         }
         synchronized (this) {
@@ -184,8 +184,8 @@ public class SQLTable extends Table {
             while (distinctResult.next()) {
                 Object value = distinctResult.getObject(1);
                 String stringValue = value.toString();
-                SimpleExpression columnFilter =
-                    new SimpleExpression.SimpleExpressionBuilder()
+                Predicate columnFilter =
+                    new Predicate.PredicateBuilder()
                         .left(column)
                         .isSingle()
                         .constant(stringValue)

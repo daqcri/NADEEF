@@ -1,5 +1,5 @@
 addPredicate(template) ::= <<
-predicates.add(SimpleExpression.valueOf("$template$", tableName)); $\n$
+predicates.add(Predicate.valueOf("$template$", tableName)); $\n$
 >>
 
 dcTemplate(DCName, template, tableName) ::= <<
@@ -19,13 +19,13 @@ import org.json.simple.parser.ParseException;
 
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
-import qa.qcri.nadeef.core.datamodel.SimpleExpression;
+import qa.qcri.nadeef.core.datamodel.Predicate;
 import qa.qcri.nadeef.core.datamodel.SingleTupleRule;
 import qa.qcri.nadeef.core.datamodel.Tuple;
 import qa.qcri.nadeef.core.datamodel.Violation;
 
 public class $DCName$ extends SingleTupleRule {
-    private List<SimpleExpression> predicates;
+    private List<Predicate> predicates;
 
     public $DCName$() throws ParseException{
         String tableName = "$tableName$";
@@ -39,7 +39,7 @@ public class $DCName$ extends SingleTupleRule {
         boolean isValid = true;
         List<Violation> result = new ArrayList<Violation>();
         Set<Cell> infectedCells = new HashSet<Cell>();
-        for (SimpleExpression predicate : predicates) {
+        for (Predicate predicate : predicates) {
             if (!predicate.isValid(tuple)) {
                 isValid = false;
                 break;

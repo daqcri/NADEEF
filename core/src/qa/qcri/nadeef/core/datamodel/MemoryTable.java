@@ -105,9 +105,9 @@ public class MemoryTable extends Table {
      * {@inheritDoc}
      */
     @Override
-    public Table filter(List<SimpleExpression> expressions) {
+    public Table filter(List<Predicate> expressions) {
         List<Tuple> filtered = Lists.newArrayList();
-        for (SimpleExpression expression : expressions) {
+        for (Predicate expression : expressions) {
             Column column = expression.getLeft();
             Object value = expression.getValue();
             for (Tuple tuple : tuples) {

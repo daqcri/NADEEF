@@ -62,7 +62,7 @@ public class MyRule2 extends PairTupleRule {
         Table collection = tables.iterator().next();
         String tableName = tableNames.get(0);
         collection.filter(
-            new SimpleExpression.SimpleExpressionBuilder()
+            new Predicate.PredicateBuilder()
                 .left(new Column(tableName, "zip"))
                 .isSingle()
                 .constant("1183JV")
