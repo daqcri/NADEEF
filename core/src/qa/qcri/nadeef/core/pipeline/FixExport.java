@@ -15,7 +15,6 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Fixes;
@@ -36,10 +35,8 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     private DBConnectionPool connectionPool;
     /**
      * Constructor.
-     * @param plan clean plan.
      */
-    public FixExport(CleanPlan plan, DBConnectionPool connectionPool_) {
-        super(plan);
+    public FixExport(DBConnectionPool connectionPool_) {
         connectionPool = Preconditions.checkNotNull(connectionPool_);
     }
 

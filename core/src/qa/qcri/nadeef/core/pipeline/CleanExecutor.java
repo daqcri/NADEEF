@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
@@ -36,6 +37,7 @@ public class CleanExecutor {
     private Flow detectFlow;
     private Flow repairFlow;
     private DBConnectionPool connectionPool;
+    private CleanExecutorContext context;
     //</editor-fold>
 
     //<editor-fold desc="Constructor / Deconstructor">
@@ -183,14 +185,6 @@ public class CleanExecutor {
     }
 
     /**
-     * Gets the current percentage of Run.
-     * @return current percentage of Run.
-     */
-    public double getRunPercentage() {
-        return getDetectProgress() * 0.5 + getRepairProgress() * 0.5;
-    }
-
-    /**
      * Runs the violation detection.
      */
     public CleanExecutor detect() {
@@ -211,6 +205,8 @@ public class CleanExecutor {
         System.gc();
         return this;
     }
+
+
 
     /**
      * Gets the CleanPlan.
@@ -254,44 +250,44 @@ public class CleanExecutor {
         Rule rule = cleanPlan.getRule();
 
         try {
-            String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
+            String inputKey = cacheManager.put(Optional.absent());
             // assemble the query flow.
             queryFlow = new Flow("query");
             queryFlow
                 .setInputKey(inputKey)
-                .addNode(new SourceDeserializer(cleanPlan, connectionPool));
+                .addNode(new SourceImport());
 
-            if (rule.supportOneInput()) {
+            if (rule.supportOneTuple()) {
                 queryFlow
-                    .addNode(new ScopeOperator<Tuple>(rule))
-                    .addNode(new Iterator<Tuple>(rule), 6);
-            } else if (rule.supportTwoInputs()) {
+                    .addNode(new ScopeOperator<Tuple>())
+                    .addNode(new Iterator<Tuple>(), 6);
+            } else if (rule.supportTwoTuples()) {
                 // the case where the rule is working on multiple tables (2).
                 queryFlow
-                    .addNode(new ScopeOperator<TuplePair>(rule))
-                    .addNode(new Iterator<TuplePair>(rule), 6);
+                    .addNode(new ScopeOperator<TuplePair>())
+                    .addNode(new Iterator<TuplePair>(), 6);
             } else {
                 queryFlow
-                    .addNode(new ScopeOperator<Tuple>(rule))
-                    .addNode(new Iterator<Table>(rule), 6);
+                    .addNode(new ScopeOperator<Tuple>())
+                    .addNode(new Iterator<Table>(), 6);
             }
 
             // assemble the detect flow
             detectFlow = new Flow("detect");
             detectFlow.setInputKey(inputKey);
-            if (rule.supportTwoInputs()) {
-                detectFlow.addNode(new ViolationDetector<TuplePair>(rule), 6);
+            if (rule.supportTwoTuples()) {
+                detectFlow.addNode(new ViolationDetector<TuplePair>(), 6);
             } else {
-                detectFlow.addNode(new ViolationDetector<Table>(rule), 6);
+                detectFlow.addNode(new ViolationDetector<Table>(), 6);
             }
-            detectFlow.addNode(new ViolationExport(cleanPlan, connectionPool));
+            detectFlow.addNode(new ViolationExport());
 
             // assemble the repair flow
             repairFlow = new Flow("repair");
             repairFlow.setInputKey(inputKey)
-                .addNode(new ViolationImport(connectionPool))
+                .addNode(new ViolationImport())
                 .addNode(new ViolationRepair(rule), 6)
-                .addNode(new FixExport(cleanPlan, connectionPool));
+                .addNode(new FixExport());
 
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline ", ex);

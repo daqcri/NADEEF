@@ -108,26 +108,26 @@ public abstract class Rule<E> {
     public abstract Collection<Table> horizontalScope(Collection<Table> table);
 
     /**
-     * Returns <code>True</code> when the rule implements one tuple input.
-     * @return <code>True</code> when the rule implements one tuple inputs.
+     * Returns <code>True</code> when the rule implements one tuple.
+     * @return <code>True</code> when the rule implements one tuples.
      */
-    public boolean supportOneInput() {
+    public boolean supportOneTuple() {
         return this instanceof SingleTupleRule;
     }
 
     /**
-     * Returns <code>True</code> when the rule implements two tuple inputs.
-     * @return <code>True</code> when the rule implements two tuple inputs.
+     * Returns <code>True</code> when the rule implements two tuples.
+     * @return <code>True</code> when the rule implements two tuples.
      */
-    public boolean supportTwoInputs() {
+    public boolean supportTwoTuples() {
         return this instanceof PairTupleRule;
     }
 
     /**
-     * Returns <code>True</code> when the rule implements multiple tuple inputs.
-     * @return <code>True</code> when the rule implements multiple tuple inputs.
+     * Returns <code>True</code> when the rule implements multiple tuples.
+     * @return <code>True</code> when the rule implements multiple tuples.
      */
-    public boolean supportManyInputs() {
+    public boolean supportManyTuple() {
         return this instanceof SingleTupleRule;
     }
 

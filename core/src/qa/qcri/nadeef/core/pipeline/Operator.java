@@ -15,34 +15,22 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
  * Abstract class for an Operator.
- *
  */
 public abstract class Operator<TInput, TOutput> {
     private double percentage;
     private TypeToken typeToken;
-    protected CleanPlan cleanPlan;
 
     /**
      * Constructor.
      */
     public Operator() {
         this.typeToken = new TypeToken<TInput>(getClass()){};
-    }
-
-    /**
-     * Constructor.
-     * @param plan Clean plan.
-     */
-    public Operator(CleanPlan plan) {
-        super();
-        this.cleanPlan = plan;
     }
 
     /**

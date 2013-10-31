@@ -16,6 +16,8 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -75,6 +77,47 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
                 for (int j = 0; j < right.size(); j ++) {
                     TuplePair pair = new TuplePair(left.get(i), right.get(j));
                     iteratorStream.put(pair);
+                }
+            }
+        }
+    }
+
+    /**
+     * Incremental iterator interface.
+     * @param tables blocks.
+     * @param newTuples new tuples comes in.
+     * @param iteratorStream output stream.
+     */
+    public void iterator(
+        Collection<Table> tables,
+        HashMap<String, HashSet<Integer>> newTuples,
+        IteratorStream<TuplePair> iteratorStream
+    ) {
+        // one block a time.
+        Table table = tables.iterator().next();
+
+        String tableName = table.getSchema().getTableName();
+        if (newTuples.containsKey(tableName)) {
+            HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
+
+            // iterating all the tuples
+            for (int i = 0; i < table.size(); i++) {
+                Tuple tuple1 = table.get(i);
+                if (newTuplesIDs.contains(tuple1.getTid())) {
+                    for (int j = 0; j < table.size(); j++) {
+                        if (j != i) {
+                            Tuple tuple2 = table.get(j);
+                            if (newTuplesIDs.contains(tuple2.getTid())) {
+                                // Both are new tuples, check once
+                                if (j > i) {
+                                    iteratorStream.put(new TuplePair(tuple1, tuple2));
+                                }
+                            } else {
+                                // Compare with old tuples
+                                iteratorStream.put(new TuplePair(tuple1, tuple2));
+                            }
+                        }
+                    }
                 }
             }
         }

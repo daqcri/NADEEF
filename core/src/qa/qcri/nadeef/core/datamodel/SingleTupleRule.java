@@ -14,6 +14,8 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -69,6 +71,20 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
     }
 
     /**
+     * Incremental Block operator.
+     *
+     * @param table a collection of blocks.
+     * @param newTuples new tuples generated from last iteration.
+     * @return a collection of blocked tables.
+     */
+    public Collection<Table> block(
+        Collection<Table> table,
+        HashMap<String, HashSet<Integer>> newTuples
+    ) {
+        return table;
+    }
+
+    /**
      * Default iterator operation.
      * @param tables input table collection.
      */
@@ -80,4 +96,29 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
         }
     }
 
+    /**
+     * Incremental iterator interface.
+     * @param tables blocks.
+     * @param newTuples new tuples comes in.
+     * @param iteratorStream output stream.
+     */
+    public void iterator(
+        Collection<Table> tables,
+        HashMap<String, HashSet<Integer>> newTuples,
+        IteratorStream<Tuple> iteratorStream
+    ) {
+        Table table = tables.iterator().next();
+        String tableName = table.getSchema().getTableName();
+
+        if (newTuples.containsKey(tableName)) {
+            HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
+            // iterating all the tuples
+            for (int i = 0; i < table.size(); i++) {
+                Tuple tuple1 = table.get(i);
+                if (newTuplesIDs.contains(tuple1.getTid())) {
+                    iteratorStream.put(tuple1);
+                }
+            }
+        }
+    }
 }

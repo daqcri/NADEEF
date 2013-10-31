@@ -16,7 +16,6 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
@@ -35,10 +34,8 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
 
     /**
      * Constructor.
-     * @param plan clean plan.
      */
-    public ViolationExport(CleanPlan plan, DBConnectionPool connectionPool_) {
-        super(plan);
+    public ViolationExport(DBConnectionPool connectionPool_) {
         connectionPool = Preconditions.checkNotNull(connectionPool_);
     }
 
@@ -99,6 +96,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 stopwatch.elapsed(TimeUnit.MILLISECONDS)
             );
             Tracer.appendMetric(Tracer.Metric.ViolationExport, count);
+            stopwatch.stop();
         } finally {
             if (stat != null) {
                 stat.close();

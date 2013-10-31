@@ -20,7 +20,6 @@ import java.util.UUID;
 
 /**
  * A component runs in the pipeline.
- *
  */
 public class Node {
 

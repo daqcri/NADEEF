@@ -36,7 +36,6 @@ public class ViolationDetector<T>
     extends Operator<Rule, Collection<Violation>> {
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
 
-    private Rule rule;
     private Collection<Violation> resultCollection;
     private ListeningExecutorService service;
 
@@ -46,10 +45,8 @@ public class ViolationDetector<T>
 
     /**
      * Violation detector constructor.
-     * @param rule rule.
      */
-    public ViolationDetector(Rule rule) {
-        Preconditions.checkNotNull(rule);
+    public ViolationDetector() {
         resultCollection = Lists.newArrayList();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
         service =
@@ -78,9 +75,11 @@ public class ViolationDetector<T>
      */
     class Detector implements Callable<Integer> {
         private List<Object> tupleList;
+        private Rule rule;
 
-        public Detector(List<Object> tupleList) {
-            this.tupleList = tupleList;
+        public Detector(List<Object> tupleList, Rule rule) {
+            this.tupleList = Preconditions.checkNotNull(tupleList);
+            this.rule = Preconditions.checkNotNull(rule);
         }
 
         /**
@@ -104,13 +103,13 @@ public class ViolationDetector<T>
 
                 count ++;
                 Collection<Violation> violations = null;
-                if (rule.supportOneInput()) {
+                if (rule.supportOneTuple()) {
                     Tuple tuple = (Tuple)item;
                     violations = rule.detect(tuple);
-                } else if (rule.supportTwoInputs()) {
+                } else if (rule.supportTwoTuples()) {
                     TuplePair pair = (TuplePair)item;
                     violations = rule.detect(pair);
-                } else if (rule.supportManyInputs()) {
+                } else if (rule.supportManyTuple()) {
                     Table collection = (Table)item;
                     violations = rule.detect(collection);
                 }
@@ -139,7 +138,6 @@ public class ViolationDetector<T>
     @Override
     @SuppressWarnings("unchecked")
     public Collection<Violation> execute(Rule rule) throws Exception {
-        this.rule = rule;
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
         List<Object> tupleList;
@@ -154,7 +152,7 @@ public class ViolationDetector<T>
             }
 
             totalThreadCount ++;
-            ListenableFuture<Integer> future = service.submit(new Detector(tupleList));
+            ListenableFuture<Integer> future = service.submit(new Detector(tupleList, rule));
             futures.add(future);
             Futures.addCallback(future, new DetectorCallback());
         }

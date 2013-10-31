@@ -90,6 +90,7 @@ public class UpdateExecutor {
                 .addNode(new FixImport(NadeefConfiguration.getDbConfig()))
                 .addNode(fixDecisionMaker, 6)
                 .addNode(new Updater(dbConfig, NadeefConfiguration.getDbConfig()));
+                // .addNode(new IncrementalUpdate(NadeefConfiguration.getDbConfig()));
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the update flow.", ex);
         }

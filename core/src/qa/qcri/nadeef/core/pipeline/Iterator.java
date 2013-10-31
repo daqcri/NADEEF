@@ -151,7 +151,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             while (!service.awaitTermination(10l, TimeUnit.MINUTES));
 
             // recycle the collection when dealing with pairs. This is mainly used to remove refs.
-            if (rule.supportTwoInputs()) {
+            if (rule.supportTwoTuples()) {
                 for (Table table : tables) {
                     table.recycle();
                 }

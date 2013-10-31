@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentMap;
  * It returns <code>True</code> when there is no Cell changed in
  * the pipeline. In this case the pipeline will stop.
  */
-public class Updater extends Operator<Collection<Fix>, Integer> {
+public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
     private ConcurrentMap<Cell, String> updateHistory;
     private ConcurrentMap<Cell, Boolean> unknownTag;
@@ -59,7 +59,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
      * @return output object.
      */
     @Override
-    public Integer execute(Collection<Fix> fixes) throws Exception {
+    public Collection<Fix> execute(Collection<Fix> fixes) throws Exception {
         int count = 0;
         Connection sourceConn = null;
         Connection nadeefConn = null;
@@ -156,6 +156,6 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 sourceConn.close();
             }
         }
-        return count;
+        return fixes;
     }
 }
