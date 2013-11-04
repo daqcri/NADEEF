@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -29,11 +30,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper class for executing the violation detection.
- *
- *
  */
 public class ViolationDetector<T>
-    extends Operator<Rule, Collection<Violation>> {
+    extends Operator<Optional, Collection<Violation>> {
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
 
     private Collection<Violation> resultCollection;
@@ -46,7 +45,8 @@ public class ViolationDetector<T>
     /**
      * Violation detector constructor.
      */
-    public ViolationDetector() {
+    public ViolationDetector(ExecutorContext context) {
+        super(context);
         resultCollection = Lists.newArrayList();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
         service =
@@ -130,14 +130,12 @@ public class ViolationDetector<T>
     }
 
     /**
-     * Execute the operator.
-     *
-     * @param rule rule.
-     * @return list of violations.
+     * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<Violation> execute(Rule rule) throws Exception {
+    public Collection<Violation> execute(Optional emptyInput) throws Exception {
+        Rule rule = getCurrentContext().getRule();
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
         List<Object> tupleList;

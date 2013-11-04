@@ -13,7 +13,6 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Fix;
@@ -30,10 +29,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class ViolationRepair
     extends Operator<Collection<Violation>, Collection<Collection<Fix>>> {
-    private Rule rule;
 
-    public ViolationRepair(Rule rule) {
-        this.rule = Preconditions.checkNotNull(rule);
+    public ViolationRepair(ExecutorContext context) {
+        super(context);
     }
 
     /**
@@ -47,6 +45,7 @@ public class ViolationRepair
     public Collection<Collection<Fix>> execute(Collection<Violation> violations)
         throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
+        Rule rule = getCurrentContext().getRule();
         List<Collection<Fix>> result = Lists.newArrayList();
         int count = 0;
         for (Violation violation : violations) {

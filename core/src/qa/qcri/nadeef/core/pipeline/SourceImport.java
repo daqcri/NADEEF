@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Optional;
+import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Table;
 
@@ -26,21 +27,28 @@ import java.util.List;
  */
 public class SourceImport extends Operator<Optional, Collection<Table>> {
     /**
-     * Execute the operator.
-     *
-     * @param rule input rule.
-     * @return output object.
+     * Constructor.
+     */
+    public SourceImport(ExecutorContext context) {
+        super(context);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Collection<Table> execute(Optional emptyInput) {
+        ExecutorContext context = getCurrentContext();
+        Rule rule = context.getRule();
+
         @SuppressWarnings("unchecked")
         List<String> tableNames = rule.getTableNames();
         List<Table> collections = new ArrayList<>();
         if (tableNames.size() == 2) {
-            collections.add(new SQLTable(tableNames.get(0), connectionPool));
-            collections.add(new SQLTable(tableNames.get(1), connectionPool));
+            collections.add(new SQLTable(tableNames.get(0), context.getConnectionPool()));
+            collections.add(new SQLTable(tableNames.get(1), context.getConnectionPool()));
         } else {
-            collections.add(new SQLTable(tableNames.get(0), connectionPool));
+            collections.add(new SQLTable(tableNames.get(0), context.getConnectionPool()));
         }
 
         return collections;

@@ -386,8 +386,14 @@ public class Console {
             }
         }
 
-        DBConfig sourceDbConfig = executors.get(0).getConnectionPool().getSourceDBConfig();
-        UpdateExecutor updateExecutor = new UpdateExecutor(sourceDbConfig);
+        // TODO: Here the updater only has one source connection, it is wrong since
+        // a update can be in multiple sources from different DB. Think about a pattern
+        // to fix it.
+        UpdateExecutor updateExecutor =
+            new UpdateExecutor(
+                cleanPlans.get(0),
+                NadeefConfiguration.getDbConfig()
+            );
         int updatedCell = 0;
         int maxIterationNumber = 0;
 

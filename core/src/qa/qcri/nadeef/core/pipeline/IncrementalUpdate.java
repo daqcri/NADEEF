@@ -28,10 +28,9 @@ import java.util.Collection;
  * incremental detection algorithm (for performance reason).
  */
 public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
-    private DBConfig dbConfig;
 
-    public IncrementalUpdate(DBConfig dbConfig) {
-        this.dbConfig = dbConfig;
+    public IncrementalUpdate(ExecutorContext context) {
+        super(context);
     }
 
     /**
@@ -39,12 +38,13 @@ public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
      */
     @Override
     protected int[] execute(Collection<Fix> fixes) throws Exception {
+        DBConfig nadeefConfig = getCurrentContext().getConnectionPool().getNadeefConfig();
         Connection conn = null;
         PreparedStatement stat = null;
         int[] newTuples = new int[fixes.size()];
         Tracer tracer = Tracer.getTracer(IncrementalUpdate.class);
         try {
-            conn = DBConnectionPool.createConnection(dbConfig, false);
+            conn = DBConnectionPool.createConnection(nadeefConfig, false);
             stat = conn.prepareStatement("DELETE FROM "
                 + NadeefConfiguration.getViolationTableName()
                 + " WHERE vid IN (SELECT DISTINCT(vid) FROM "

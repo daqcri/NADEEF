@@ -89,7 +89,11 @@ public class RepairPhaseTest extends NadeefTestBase {
             DBInstaller.cleanExecutionDB();
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan.getSourceDBConfig());
+            UpdateExecutor updateExecutor =
+                new UpdateExecutor(
+                    cleanPlan,
+                    NadeefConfiguration.getDbConfig()
+                );
             Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(1, count.intValue());
 
@@ -113,7 +117,8 @@ public class RepairPhaseTest extends NadeefTestBase {
             DBInstaller.cleanExecutionDB();
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             CleanExecutor executor = new CleanExecutor(cleanPlan);
-            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan.getSourceDBConfig());
+            UpdateExecutor updateExecutor =
+                new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
             Integer count = (Integer)executor.detect().getDetectOutput();
             Assert.assertEquals(2, count.intValue());
 
@@ -144,7 +149,8 @@ public class RepairPhaseTest extends NadeefTestBase {
                 executors.add(new CleanExecutor(cleanPlan));
             }
 
-            UpdateExecutor updateExecutor = new UpdateExecutor(NadeefConfiguration.getDbConfig());
+            UpdateExecutor updateExecutor =
+                new UpdateExecutor(cleanPlans.get(0), NadeefConfiguration.getDbConfig());
             int changedCell = 0;
             do {
                 DBInstaller.cleanExecutionDB();

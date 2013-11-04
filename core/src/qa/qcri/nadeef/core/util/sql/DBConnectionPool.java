@@ -54,6 +54,12 @@ public class DBConnectionPool {
         localCache = Sets.newHashSet();
     }
 
+    private DBConnectionPool(DBConfig nadeefConfig) {
+        this.nadeefConfig = Preconditions.checkNotNull(nadeefConfig);
+        nadeefPool = createConnectionPool(nadeefConfig);
+        localCache = Sets.newHashSet();
+    }
+
     // <editor-fold desc="Public methods">
 
     /**
@@ -104,42 +110,44 @@ public class DBConnectionPool {
         // drop all the indexes.
         Connection conn = null;
         Statement stat = null;
-        try {
-            conn = sourcePool.getConnection();
-            stat = conn.createStatement();
-
-            synchronized (indexLockObject) {
-                for (String indexName : localCache) {
-                    int count = indexCount.get(indexName) - 1;
-
-                    // remove index when count goes to 0.
-                    if (count == 0) {
-                        String tableName = indexCache.get(indexName);
-                        SQLDialectBase dialectManager =
-                            SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect());
-                        stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
-                        indexCache.remove(indexName);
-                        indexCount.remove(indexName);
-                    } else {
-                        indexCount.put(indexName, count);
-                    }
-                }
-
-                conn.commit();
-                localCache.clear();
-            }
-        } catch (Exception ex) {
-            tracer.err("Exceptions happen when closing the connection pool.", ex);
-        } finally {
+        if (sourcePool != null) {
             try {
-                if (conn != null) {
-                    conn.close();
-                }
+                conn = sourcePool.getConnection();
+                stat = conn.createStatement();
 
-                if (stat != null) {
-                    stat.close();
+                synchronized (indexLockObject) {
+                    for (String indexName : localCache) {
+                        int count = indexCount.get(indexName) - 1;
+
+                        // remove index when count goes to 0.
+                        if (count == 0) {
+                            String tableName = indexCache.get(indexName);
+                            SQLDialectBase dialectManager =
+                                SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect());
+                            stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
+                            indexCache.remove(indexName);
+                            indexCount.remove(indexName);
+                        } else {
+                            indexCount.put(indexName, count);
+                        }
+                    }
+
+                    conn.commit();
+                    localCache.clear();
                 }
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                tracer.err("Exceptions happen when closing the connection pool.", ex);
+            } finally {
+                try {
+                    if (conn != null) {
+                        conn.close();
+                    }
+
+                    if (stat != null) {
+                        stat.close();
+                    }
+                } catch (Exception ex) {}
+            }
         }
 
         try {

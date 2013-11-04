@@ -13,23 +13,39 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class CleanExecutorContext {
+public class ExecutorContext {
+
+    private HashMap<String, HashSet<Integer>> newTuples;
+    private DBConnectionPool connectionPool;
+    private Rule rule;
+
     public HashMap<String, HashSet<Integer>> getNewTuples() {
         return newTuples;
     }
 
-    public DBConnectionPool getConnectionPool() {
-        return connectionPool;
+    public boolean hasNewTuples() {
+        return newTuples == null || newTuples.size() == 0;
     }
 
     public Rule getRule() {
+        if (rule == null) {
+            throw new RuntimeException("Rule in the context is not initialized.");
+        }
         return rule;
+    }
+
+    DBConnectionPool getConnectionPool() {
+        if (connectionPool== null) {
+            throw new RuntimeException("Connection pool in the context is not initialized.");
+        }
+        return connectionPool;
     }
 
     void setNewTuples(HashMap<String, HashSet<Integer>> newTuples) {
@@ -37,14 +53,16 @@ public class CleanExecutorContext {
     }
 
     void setConnectionPool(DBConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
+        this.connectionPool = Preconditions.checkNotNull(connectionPool);
     }
 
     void setRule(Rule rule) {
-        this.rule = rule;
+        this.rule = Preconditions.checkNotNull(rule);
     }
 
-    private HashMap<String, HashSet<Integer>> newTuples;
-    private DBConnectionPool connectionPool;
-    private Rule rule;
+    private ExecutorContext() {}
+
+    static ExecutorContext createExecutorContext() {
+        return new ExecutorContext();
+    }
 }

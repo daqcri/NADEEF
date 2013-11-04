@@ -32,14 +32,13 @@ import java.util.concurrent.*;
 public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
-    private Rule rule;
     private int totalBlockSize;
     private int blockCount;
 
     //</editor-fold>
 
-    public Iterator(Rule rule) {
-        this.rule = rule;
+    public Iterator(ExecutorContext context) {
+        super(context);
     }
 
     //<editor-fold desc="IteratorCallable and Callback Class">
@@ -72,10 +71,12 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     class IteratorCallable<T> implements Callable<Integer> {
         private IteratorStream<E> iteratorStream;
         private WeakReference<T> ref;
+        private Rule rule;
 
-        IteratorCallable(T tables) {
+        IteratorCallable(T tables, Rule rule) {
             ref = new WeakReference<>(tables);
             iteratorStream = new IteratorStream<>();
+            this.rule = rule;
         }
 
         /**
@@ -130,10 +131,13 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         totalBlockSize = 0;
         blockCount = 0;
 
+        ExecutorContext context = getCurrentContext();
+        Rule rule = context.getRule();
         try {
             if (rule.supportTwoTables()) {
                 // Rule runs on two tables.
-                ListenableFuture<Integer> future = service.submit(new IteratorCallable(tables));
+                ListenableFuture<Integer> future =
+                    service.submit(new IteratorCallable(tables, rule));
                 totalBlockSize = future.get();
                 blockCount ++;
                 setPercentage(1.0f);
@@ -141,7 +145,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
                 // Rule runs on each table.
                 for (Table table : tables) {
                     ListenableFuture<Integer> future =
-                        service.submit(new IteratorCallable(table));
+                        service.submit(new IteratorCallable(table, rule));
                     Futures.addCallback(future, new IteratorCallback(tables.size()));
                 }
             }

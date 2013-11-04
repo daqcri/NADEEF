@@ -60,7 +60,7 @@ public class FixDecisionMakerTest {
     public void test1() {
         try {
             List<Fix> fixes = loadFix(TestDataRepository.getFixTestData1());
-            FixDecisionMaker eq = new EquivalentClass();
+            FixDecisionMaker eq = new EquivalentClass(null);
             Collection<Fix> result = eq.decide(fixes);
             Assert.assertEquals(3, result.size());
             for (Fix fix : result) {

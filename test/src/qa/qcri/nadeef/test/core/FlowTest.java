@@ -45,7 +45,7 @@ public class FlowTest extends NadeefTestBase {
     @Test
     public void SimpleFlowTest() {
         NodeCacheManager cacheManager = NodeCacheManager.getInstance();
-        CountOperator countOperator = new CountOperator();
+        CountOperator countOperator = new CountOperator(null);
         cacheManager.put("Input", Integer.valueOf(0));
 
         Flow flow = new Flow("test");

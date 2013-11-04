@@ -27,28 +27,22 @@ import java.util.concurrent.TimeUnit;
  */
 public class ScopeOperator<E>
     extends Operator<Collection<Table>, Collection<Table>> {
-    private Rule<E> rule;
 
-    /**
-     * Constructor.
-     * @param rule
-     */
-    public ScopeOperator(Rule<E> rule) {
-        this.rule = rule;
+    public ScopeOperator(ExecutorContext context) {
+        super(context);
     }
 
     /**
-     * Execute the operator.
-     *
-     * @param tables a collection of <code>Table</code> (tables).
-     * @return output object.
+     * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<Table> execute(Collection<Table> tables)
         throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
+        Rule rule = getCurrentContext().getRule();
         // Here the horizontalScope needs to be called before vertical Scope since
-        // it may needs the attributes which are going to be removed from verticals scope.
+        // it may needs the attributes which are gm oing to be removed from verticals scope.
         Collection<Table> horizontalScopeResult = rule.horizontalScope(tables);
         setPercentage(0.5f);
         long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);

@@ -13,7 +13,6 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -30,13 +29,12 @@ import java.util.concurrent.TimeUnit;
  * Export violations into the target place.
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
-    private DBConnectionPool connectionPool;
 
     /**
      * Constructor.
      */
-    public ViolationExport(DBConnectionPool connectionPool_) {
-        connectionPool = Preconditions.checkNotNull(connectionPool_);
+    public ViolationExport(ExecutorContext context) {
+        super(context);
     }
 
     /**
@@ -50,6 +48,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         PreparedStatement stat = null;
+        DBConnectionPool connectionPool = getCurrentContext().getConnectionPool();
         int count = 0;
         try {
             synchronized (ViolationExport.class) {

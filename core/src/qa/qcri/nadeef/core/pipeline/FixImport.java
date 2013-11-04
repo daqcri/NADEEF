@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Optional;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Fixes;
@@ -31,14 +32,14 @@ import java.util.Collection;
  * Imports the fix data from database.
  *
  */
-class FixImport extends Operator<Integer, Collection<Fix>> {
-    private DBConfig dbConfig;
-    public FixImport(DBConfig dbConfig) {
-        this.dbConfig = dbConfig;
+class FixImport extends Operator<Optional, Collection<Fix>> {
+    public FixImport(ExecutorContext context) {
+        super(context);
     }
 
     @Override
-    public Collection<Fix> execute(Integer dummy) throws Exception {
+    public Collection<Fix> execute(Optional dummy) throws Exception {
+        DBConfig dbConfig = getCurrentContext().getConnectionPool().getNadeefConfig();
         Connection conn = null;
         Statement stat = null;
 

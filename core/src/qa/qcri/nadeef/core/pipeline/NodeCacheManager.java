@@ -28,14 +28,13 @@ public class NodeCacheManager {
     private static ConcurrentMap<String, Object> cachePool;
     private static ConcurrentMap<String, Integer> refPool;
     private static String absentKey;
-
+    private static NodeCacheManager instance;
     //<editor-fold desc="Singleton">
-    private static final NodeCacheManager instance = new NodeCacheManager();
-
-    private NodeCacheManager() {
+    static {
         cachePool = Maps.newConcurrentMap();
         refPool = Maps.newConcurrentMap();
-        absentKey = put(Optional.absent(), Integer.MAX_VALUE);
+        instance = new NodeCacheManager();
+        absentKey = instance.put(Optional.absent(), Integer.MAX_VALUE);
     }
 
     /**
@@ -52,11 +51,6 @@ public class NodeCacheManager {
      */
     public String getKeyForNothing() {
         return absentKey;
-    }
-
-    public void remove(String key) {
-        cachePool.remove(key);
-        refPool.remove(key);
     }
 
     /**

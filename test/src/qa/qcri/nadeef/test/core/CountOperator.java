@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.test.core;
 
+import qa.qcri.nadeef.core.pipeline.ExecutorContext;
 import qa.qcri.nadeef.core.pipeline.Operator;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -23,7 +24,8 @@ public class CountOperator extends Operator<Integer, Integer> {
 
     private static Tracer tracer = Tracer.getTracer(CountOperator.class);
 
-    public CountOperator() {
+    public CountOperator(ExecutorContext context) {
+        super(context);
     }
 
 
