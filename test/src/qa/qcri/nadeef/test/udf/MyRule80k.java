@@ -11,11 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.test.udf;/*
- * Copyright (C) Qatar Computing Research Institute, 2013.
- * All rights reserved.
- */
-
+package qa.qcri.nadeef.test.udf;
 import qa.qcri.nadeef.core.datamodel.*;
 
 import java.util.ArrayList;
@@ -23,10 +19,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class MyRule80k extends PairTupleRule {
-    protected List<Column> leftHandSide = new ArrayList();
-    protected List<Column> rightHandSide = new ArrayList();
+    protected List<Column> leftHandSide = new ArrayList<>();
+    protected List<Column> rightHandSide = new ArrayList<>();
 
     public MyRule80k() {}
 
@@ -108,8 +103,8 @@ public class MyRule80k extends PairTupleRule {
     public Collection<Violation> detect(TuplePair tuplePair) {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        List<Violation> result = new ArrayList();
-        Violation violation = new Violation(ruleName);
+        List<Violation> result = new ArrayList<>();
+        Violation violation = new Violation(getRuleName());
         violation.addTuple(left);
         violation.addTuple(right);
         result.add(violation);
@@ -124,10 +119,9 @@ public class MyRule80k extends PairTupleRule {
      */
     @Override
     public Collection<Fix> repair(Violation violation) {
-        List<Fix> result = new ArrayList();
+        List<Fix> result = new ArrayList<>();
         Collection<Cell> cells = violation.getCells();
-        HashMap<Column, Cell> candidates = new HashMap<Column, Cell>();
-        int vid = violation.getVid();
+        HashMap<Column, Cell> candidates = new HashMap<>();
         Fix fix;
         Fix.Builder builder = new Fix.Builder(violation);
         for (Cell cell : cells) {

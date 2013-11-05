@@ -85,8 +85,11 @@ public class SQLTable extends Table {
      * @return the schema.
      */
     @Override
-    public Schema getSchema() {
-        syncSchemaIfNeeded();
+    public synchronized Schema getSchema() {
+        if (schema == null) {
+            syncSchema();
+        }
+
         return schema;
     }
 
@@ -399,16 +402,6 @@ public class SQLTable extends Table {
         );
         stopwatch.stop();
         return true;
-    }
-
-    /**
-     * Synchronize the schema and data if needed.
-     */
-    private synchronized void syncSchemaIfNeeded() {
-        if (updateTimestamp < changeTimestamp) {
-            syncSchema();
-            updateTimestamp = changeTimestamp;
-        }
     }
 
     private synchronized void syncDataIfNeeded() {

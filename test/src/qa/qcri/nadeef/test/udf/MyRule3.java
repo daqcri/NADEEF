@@ -23,8 +23,8 @@ import java.util.List;
 
 
 public class MyRule3 extends PairTupleRule {
-    protected List<Column> leftHandSide = new ArrayList();
-    protected List<Column> rightHandSide = new ArrayList();
+    protected List<Column> leftHandSide = new ArrayList<>();
+    protected List<Column> rightHandSide = new ArrayList<>();
 
     public MyRule3() {}
 
@@ -105,7 +105,7 @@ public class MyRule3 extends PairTupleRule {
     public Collection<Violation> detect(TuplePair tuplePair) {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(ruleName);
+        Violation violation = new Violation(getRuleName());
         violation.addTuple(left);
         violation.addTuple(right);
         return Lists.newArrayList(violation);

@@ -43,7 +43,7 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
     /**
      * Constructor.
      */
-    public Updater(ExecutorContext context) {
+    public Updater(ExecutionContext context) {
         super(context);
         updateHistory = Maps.newConcurrentMap();
         unknownTag = Maps.newConcurrentMap();
@@ -65,7 +65,7 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
         String auditTableName = NadeefConfiguration.getAuditTableName();
         String rightValue;
         String oldValue;
-        ExecutorContext context = getCurrentContext();
+        ExecutionContext context = getCurrentContext();
         DBConnectionPool connectionPool = context.getConnectionPool();
         List<Fix> realFixes = Lists.newArrayList();
         try {

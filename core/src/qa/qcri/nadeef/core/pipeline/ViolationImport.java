@@ -29,7 +29,7 @@ import java.util.Collection;
  * Import violations from violation table.
  */
 public class ViolationImport extends Operator<Optional, Collection<Violation>> {
-    ViolationImport(ExecutorContext context) {
+    ViolationImport(ExecutionContext context) {
         super(context);
     }
 

@@ -50,7 +50,7 @@ public class MyRule5 extends PairTupleRule {
             bankTuple.get("city").equals(tranTuple.get("city")) &&
             !bankTuple.get("tel").equals(tranTuple.get("phn"))
         ) {
-            Violation violation = new Violation(ruleName);
+            Violation violation = new Violation(getRuleName());
             violation.addCell(bankTuple.getCell("FN"));
             violation.addCell(bankTuple.getCell("LN"));
             violation.addCell(bankTuple.getCell("ST"));

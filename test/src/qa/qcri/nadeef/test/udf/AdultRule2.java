@@ -46,7 +46,7 @@ public class AdultRule2 extends PairTupleRule {
         IteratorStream<TuplePair> iteratorStream
     ) {
         Table table = tables.iterator().next();
-        ArrayList<TuplePair> result = new ArrayList();
+        ArrayList<TuplePair> result = new ArrayList<>();
         for (int i = 0; i < table.size(); i ++) {
             for (int j = i + 1; j < table.size(); j ++) {
                 Tuple left = table.get(i);
@@ -70,7 +70,7 @@ public class AdultRule2 extends PairTupleRule {
             int wgt1 = (Integer)t1.get("fnlwgt");
             int wgt2 = (Integer)t2.get("fnlwgt");
             if (Math.abs(wgt1 - wgt2) <= wgt1 * 0.5) {
-                Violation violation = new Violation(this.ruleName);
+                Violation violation = new Violation(getRuleName());
                 violation.addCell(t1.getCell("race"));
                 violation.addCell(t2.getCell("race"));
                 result.add(violation);

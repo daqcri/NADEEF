@@ -50,7 +50,7 @@ public class $DCName$ extends PairTupleRule{
 
         // all the predicates are valid, then the DC is violated
         if (isValid) {
-            Violation violation = new Violation(ruleName);
+            Violation violation = new Violation(getRuleName());
             for (Cell cell : infectedCells) {
                 violation.addCell(cell);
             }

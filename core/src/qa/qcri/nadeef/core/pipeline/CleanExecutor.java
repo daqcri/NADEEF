@@ -20,6 +20,7 @@ import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public class CleanExecutor {
     private Flow detectFlow;
     private Flow repairFlow;
     private DBConnectionPool connectionPool;
-    private ExecutorContext context;
+    private ExecutionContext context;
     //</editor-fold>
 
     //<editor-fold desc="Constructor / Deconstructor">
@@ -64,11 +65,20 @@ public class CleanExecutor {
             );
         DBInstaller.install(dbConfig);
 
-        context = ExecutorContext.createExecutorContext();
+        context = ExecutionContext.createExecutorContext();
         context.setConnectionPool(this.connectionPool);
         context.setRule(cleanPlan.getRule());
         assembleFlow();
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Incremental methods">
+    public void incrementalAppend(String tableName, HashSet<Integer> newTuples) {
+        context.addNewTuples(tableName, newTuples);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Public methods">
 
     /**
      * Returns <code>True</code> when the clean executor is running.
@@ -119,17 +129,14 @@ public class CleanExecutor {
         shutdown();
         super.finalize();
     }
-    //</editor-fold>
-
-    //<editor-fold desc="Public methods">
 
     /**
      * Gets the output from Detect.
      * @return output object from Detect.
      */
-    public Object getDetectOutput() {
+    public int getDetectViolationCount() {
         String key = detectFlow.getCurrentOutputKey();
-        return cacheManager.get(key);
+        return (Integer)cacheManager.get(key);
     }
 
     /**
@@ -189,6 +196,9 @@ public class CleanExecutor {
         queryFlow.waitUntilFinish();
         detectFlow.waitUntilFinish();
 
+        // clear the new tuples after every run.
+        context.clearNewTuples();
+
         Tracer.appendMetric(
             Tracer.Metric.DetectPipelineTime,
             queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
@@ -215,6 +225,7 @@ public class CleanExecutor {
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
+        context.clearNewTuples();
         Tracer.appendMetric(Tracer.Metric.RepairTime, repairFlow.getElapsedTime());
 
         System.gc();
@@ -246,25 +257,25 @@ public class CleanExecutor {
                 .setInputKey(cacheManager.getKeyForNothing())
                 .addNode(new SourceImport(context));
 
-            if (rule.supportOneTuple()) {
+            if (rule instanceof SingleTupleRule) {
                 queryFlow
-                    .addNode(new ScopeOperator<Tuple>(context))
+                    .addNode(new ScopeOperator(context))
                     .addNode(new Iterator<Tuple>(context), 6);
-            } else if (rule.supportTwoTuples()) {
+            } else if (rule instanceof PairTupleRule) {
                 // the case where the rule is working on multiple tables (2).
                 queryFlow
-                    .addNode(new ScopeOperator<TuplePair>(context))
+                    .addNode(new ScopeOperator(context))
                     .addNode(new Iterator<TuplePair>(context), 6);
             } else {
                 queryFlow
-                    .addNode(new ScopeOperator<Tuple>(context))
+                    .addNode(new ScopeOperator(context))
                     .addNode(new Iterator<Table>(context), 6);
             }
 
             // assemble the detect flow
             detectFlow = new Flow("detect");
             detectFlow.setInputKey(cacheManager.getKeyForNothing());
-            if (rule.supportTwoTuples()) {
+            if (rule instanceof PairTupleRule) {
                 detectFlow.addNode(new ViolationDetector<TuplePair>(context), 6);
             } else {
                 detectFlow.addNode(new ViolationDetector<Table>(context), 6);

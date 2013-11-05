@@ -20,7 +20,6 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
@@ -108,7 +107,7 @@ public class CleanPlanTest extends NadeefTestBase {
 
     @Test
     public void createFromJSONTest3() {
-        thrown.expect(InvalidRuleException.class);
+        thrown.expect(IllegalArgumentException.class);
         try {
             CleanPlan.createCleanPlanFromJSON(
                 new FileReader(TestDataRepository.getFailurePlanFile2()),

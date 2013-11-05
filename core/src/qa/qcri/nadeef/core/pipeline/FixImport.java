@@ -33,7 +33,7 @@ import java.util.Collection;
  *
  */
 class FixImport extends Operator<Optional, Collection<Fix>> {
-    public FixImport(ExecutorContext context) {
+    public FixImport(ExecutionContext context) {
         super(context);
     }
 

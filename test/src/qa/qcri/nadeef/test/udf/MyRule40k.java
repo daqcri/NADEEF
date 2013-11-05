@@ -25,8 +25,8 @@ import java.util.List;
 
 
 public class MyRule40k extends PairTupleRule {
-    protected List<Column> leftHandSide = new ArrayList();
-    protected List<Column> rightHandSide = new ArrayList();
+    protected List<Column> leftHandSide = new ArrayList<>();
+    protected List<Column> rightHandSide = new ArrayList<>();
 
     public MyRule40k() {}
 
@@ -72,7 +72,7 @@ public class MyRule40k extends PairTupleRule {
     @Override
     public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
         Table table = tables.iterator().next();
-        ArrayList<TuplePair> result = new ArrayList();
+        ArrayList<TuplePair> result = new ArrayList<>();
         table.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
         boolean findViolation = false;
@@ -110,10 +110,10 @@ public class MyRule40k extends PairTupleRule {
      */
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
-        List<Violation> result = new ArrayList();
+        List<Violation> result = new ArrayList<>();
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(ruleName);
+        Violation violation = new Violation(getRuleName());
         violation.addTuple(left);
         violation.addTuple(right);
         result.add(violation);
@@ -128,9 +128,9 @@ public class MyRule40k extends PairTupleRule {
      */
     @Override
     public Collection<Fix> repair(Violation violation) {
-        List<Fix> result = new ArrayList();
+        List<Fix> result = new ArrayList<>();
         Collection<Cell> cells = violation.getCells();
-        HashMap<Column, Cell> candidates = new HashMap<Column, Cell>();
+        HashMap<Column, Cell> candidates = new HashMap<>();
         int vid = violation.getVid();
         Fix fix;
         Fix.Builder builder = new Fix.Builder(violation);

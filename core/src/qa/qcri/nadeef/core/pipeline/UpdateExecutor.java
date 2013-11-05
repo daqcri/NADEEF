@@ -30,7 +30,7 @@ public class UpdateExecutor {
     private NodeCacheManager cacheManager;
     private Tracer tracer;
     private DBConnectionPool connectionPool;
-    private ExecutorContext context;
+    private ExecutionContext context;
 
     public UpdateExecutor(CleanPlan cleanPlan, DBConfig nadeefConfig) {
         cacheManager = NodeCacheManager.getInstance();
@@ -41,7 +41,7 @@ public class UpdateExecutor {
                 nadeefConfig
             );
 
-        context = ExecutorContext.createExecutorContext();
+        context = ExecutionContext.createExecutorContext();
         context.setConnectionPool(connectionPool);
         context.setRule(cleanPlan.getRule());
         assembleFlow();

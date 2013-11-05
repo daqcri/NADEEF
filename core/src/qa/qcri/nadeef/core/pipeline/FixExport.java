@@ -35,7 +35,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     /**
      * Constructor.
      */
-    public FixExport(ExecutorContext context) {
+    public FixExport(ExecutionContext context) {
         super(context);
     }
 

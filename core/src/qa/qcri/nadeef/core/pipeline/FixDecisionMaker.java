@@ -26,7 +26,7 @@ public abstract class FixDecisionMaker extends Operator<Collection<Fix>, Collect
     /**
      * Constructor.
      */
-    public FixDecisionMaker(ExecutorContext context) {
+    public FixDecisionMaker(ExecutionContext context) {
         super(context);
     }
 

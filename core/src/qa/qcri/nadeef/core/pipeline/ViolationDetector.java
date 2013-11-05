@@ -45,7 +45,7 @@ public class ViolationDetector<T>
     /**
      * Violation detector constructor.
      */
-    public ViolationDetector(ExecutorContext context) {
+    public ViolationDetector(ExecutionContext context) {
         super(context);
         resultCollection = Lists.newArrayList();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
@@ -103,13 +103,13 @@ public class ViolationDetector<T>
 
                 count ++;
                 Collection<Violation> violations = null;
-                if (rule.supportOneTuple()) {
+                if (rule instanceof SingleTupleRule) {
                     Tuple tuple = (Tuple)item;
                     violations = rule.detect(tuple);
-                } else if (rule.supportTwoTuples()) {
+                } else if (rule instanceof PairTupleRule) {
                     TuplePair pair = (TuplePair)item;
                     violations = rule.detect(pair);
-                } else if (rule.supportManyTuple()) {
+                } else {
                     Table collection = (Table)item;
                     violations = rule.detect(collection);
                 }

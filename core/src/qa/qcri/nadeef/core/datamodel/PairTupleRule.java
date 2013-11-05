@@ -16,25 +16,15 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * PairTupleRule represents a rule which deals with pair of tuples.
  *
  */
 public abstract class PairTupleRule extends Rule<TuplePair> {
-    //<editor-fold desc="Constructor">
-    public PairTupleRule() {
-        super();
-    }
-
-    public PairTupleRule(String id, List<String> tableNames) {
-        super(id, tableNames);
-    }
-    //</editor-fold>
-
     /**
      * Detect rule with pair tuple.
      *
@@ -84,29 +74,29 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
 
     /**
      * Incremental iterator interface.
-     * @param tables blocks.
+     * @param blocks blocks.
      * @param newTuples new tuples comes in.
      * @param iteratorStream output stream.
      */
-    public void iterator(
-        Collection<Table> tables,
-        HashMap<String, HashSet<Integer>> newTuples,
+    public final void iterator(
+        Collection<Table> blocks,
+        ConcurrentMap<String, HashSet<Integer>> newTuples,
         IteratorStream<TuplePair> iteratorStream
     ) {
         // one block a time.
-        Table table = tables.iterator().next();
+        Table block = blocks.iterator().next();
 
-        String tableName = table.getSchema().getTableName();
+        String tableName = block.getSchema().getTableName();
         if (newTuples.containsKey(tableName)) {
             HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
 
             // iterating all the tuples
-            for (int i = 0; i < table.size(); i++) {
-                Tuple tuple1 = table.get(i);
+            for (int i = 0; i < block.size(); i++) {
+                Tuple tuple1 = block.get(i);
                 if (newTuplesIDs.contains(tuple1.getTid())) {
-                    for (int j = 0; j < table.size(); j++) {
+                    for (int j = 0; j < block.size(); j++) {
                         if (j != i) {
-                            Tuple tuple2 = table.get(j);
+                            Tuple tuple2 = block.get(j);
                             if (newTuplesIDs.contains(tuple2.getTid())) {
                                 // Both are new tuples, check once
                                 if (j > i) {
@@ -129,9 +119,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<Table> horizontalScope(
-        Collection<Table> table
-    ) {
+    public Collection<Table> horizontalScope(Collection<Table> table) {
         return table;
     }
 
@@ -141,9 +129,24 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<Table> verticalScope(
-        Collection<Table> table
-    ) {
+    public Collection<Table> verticalScope(Collection<Table> table) {
         return table;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasOwnIterator() {
+        boolean result = false;
+        try {
+            String declareClassName =
+                getClass().getMethod(
+                    "iterator",
+                    new Class[] { Collection.class, IteratorStream.class }
+                ).getDeclaringClass().getSimpleName();
+            result = !declareClassName.equalsIgnoreCase("PairTupleRule");
+        } catch (Exception ex) {}
+        return result;
     }
 }

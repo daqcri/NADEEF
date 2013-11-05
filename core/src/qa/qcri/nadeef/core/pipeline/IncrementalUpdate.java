@@ -29,7 +29,7 @@ import java.util.Collection;
  */
 public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
 
-    public IncrementalUpdate(ExecutorContext context) {
+    public IncrementalUpdate(ExecutionContext context) {
         super(context);
     }
 

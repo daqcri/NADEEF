@@ -20,10 +20,14 @@ import jline.console.ConsoleReader;
 import jline.console.completer.*;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
@@ -32,6 +36,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -56,13 +61,14 @@ public class Console {
     private static final String prompt = ":> ";
 
     private static final String[] commands =
-        { "load", "run", "repair", "detect", "help", "set", "exit"};
+        { "load", "run", "repair", "detect", "help", "set", "exit", "append" };
     private static ConsoleReader console;
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
     private static Tracer tracer = Tracer.getTracer(Console.class);
     private static Process derbyProcess;
     private static final int DERBY_PORT = 1527;
+    private static int lastExecutorIndex = -1;
 
     //</editor-fold>
 
@@ -202,6 +208,8 @@ public class Console {
                         repair(line);
                     } else if (tokens[0].equalsIgnoreCase("run")) {
                         run(line);
+                    } else if (tokens[0].equalsIgnoreCase("append")) {
+                        append(line);
                     } else if (tokens[0].equalsIgnoreCase("set")) {
                         set(line);
                     } else if (!Strings.isNullOrEmpty(tokens[0])) {
@@ -260,6 +268,46 @@ public class Console {
                 + " rules loaded in "
                 + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
         );
+        stopwatch.stop();
+    }
+
+    private static void append(String cmdLine) throws Exception {
+        Stopwatch stopwatch = new Stopwatch().start();
+        String[] splits = cmdLine.split("\\s");
+        int defaultTableIndex = 0;
+        if (splits.length != 2 && splits.length != 3) {
+            console.println("Invalid append command. Run append <new data file> [table index].");
+            return;
+        }
+
+        if (lastExecutorIndex == -1) {
+            console.println("There is no detection just executed.");
+            return;
+        }
+
+        if (splits.length == 3) {
+            defaultTableIndex = Integer.parseInt(splits[2]);
+        }
+
+        String fileName = splits[1];
+        File file = CommonTools.getFile(fileName);
+        CleanPlan cleanPlan = cleanPlans.get(lastExecutorIndex);
+        DBConfig dbConfig = cleanPlan.getSourceDBConfig();
+        Rule rule = cleanPlan.getRule();
+        String tableName = (String)rule.getTableNames().get(defaultTableIndex);
+        SQLDialectBase dialectManager =
+            SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
+
+        HashSet<Integer> newTuples = CSVTools.append(dbConfig, dialectManager, tableName, file);
+        executors.get(lastExecutorIndex).incrementalAppend(tableName, newTuples);
+
+        console.println(
+            newTuples.size() +
+            " tuples appended in " +
+            stopwatch.elapsed(TimeUnit.MILLISECONDS) +
+            " ms."
+        );
+        stopwatch.stop();
     }
 
     private static void list() throws IOException {
@@ -471,7 +519,7 @@ public class Console {
 
     private static void printHelp() throws IOException {
         String help =
-                " |Nadeef console usage:\n" +
+                " |NADEEF console usage:\n" +
                 " |----------------------------------\n" +
                 " |help : Print out this help information.\n" +
                 " |\n" +
@@ -490,14 +538,13 @@ public class Console {
                 " |run [rule id]:\n" +
                 " |    run both detect and repair with a given rule id number. \n" +
                 " |\n" +
-                " |schema [table name]: \n" +
-                " |    list the table schema from the data source. \n" +
+                " |append <new data file> [table index]:\n" +
+                " |    appending new data into the source from the last detection. \n" +
                 " |\n" +
                 " |exit :\n" +
                 " |    exit the console.\n";
         console.println(help);
     }
-
 
     //<editor-fold desc="Private helpers">
     private static void printProgress(double percentage, String title) throws IOException {
@@ -516,7 +563,7 @@ public class Console {
             }
         }
         stringBuilder.append("]");
-        stringBuilder.append(Math.round(Double.valueOf(percentage) * 100));
+        stringBuilder.append(Math.round(percentage * 100));
         stringBuilder.append(" %");
         console.print(stringBuilder.toString());
         console.flush();

@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class ViolationRepair
     extends Operator<Collection<Violation>, Collection<Collection<Fix>>> {
 
-    public ViolationRepair(ExecutorContext context) {
+    public ViolationRepair(ExecutionContext context) {
         super(context);
     }
 

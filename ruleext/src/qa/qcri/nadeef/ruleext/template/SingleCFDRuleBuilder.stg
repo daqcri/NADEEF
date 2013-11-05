@@ -112,7 +112,7 @@ public class $CFDName$ extends SingleTupleRule {
 
     	if(matches(leftFilterExpressions, tuple)) {
     		if(!matches(rightFilterExpressions, tuple)) {
-    			Violation violation = new Violation(ruleName);
+    			Violation violation = new Violation(getRuleName());
 	        	violation.addTuple(tuple);
     	    	result.add(violation);
     		}

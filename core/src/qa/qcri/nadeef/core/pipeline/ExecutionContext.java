@@ -14,31 +14,52 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentMap;
 
-public class ExecutorContext {
-
-    private HashMap<String, HashSet<Integer>> newTuples;
+/**
+ * Execution context class which contains the shared variables during detection / repairing.
+ */
+public class ExecutionContext {
+    private ConcurrentMap<String, HashSet<Integer>> newTuples;
     private DBConnectionPool connectionPool;
     private Rule rule;
 
-    public HashMap<String, HashSet<Integer>> getNewTuples() {
+    private ExecutionContext() {
+        newTuples = Maps.newConcurrentMap();
+    }
+
+    static ExecutionContext createExecutorContext() {
+        return new ExecutionContext();
+    }
+
+    //<editor-fold desc="Incremental new tuple methods">
+    void clearNewTuples() {
+        newTuples.clear();
+    }
+
+    public ConcurrentMap<String, HashSet<Integer>> getNewTuples() {
         return newTuples;
     }
 
-    public boolean hasNewTuples() {
-        return newTuples == null || newTuples.size() == 0;
+    void addNewTuples(String tableName, HashSet<Integer> newTupleIds) {
+        newTuples.put(tableName, newTupleIds);
     }
+    //</editor-fold>
 
     public Rule getRule() {
         if (rule == null) {
             throw new RuntimeException("Rule in the context is not initialized.");
         }
         return rule;
+    }
+
+    void setRule(Rule rule) {
+        this.rule = Preconditions.checkNotNull(rule);
     }
 
     DBConnectionPool getConnectionPool() {
@@ -48,21 +69,11 @@ public class ExecutorContext {
         return connectionPool;
     }
 
-    void setNewTuples(HashMap<String, HashSet<Integer>> newTuples) {
+    void setNewTuples(ConcurrentMap<String, HashSet<Integer>> newTuples) {
         this.newTuples = newTuples;
     }
 
     void setConnectionPool(DBConnectionPool connectionPool) {
         this.connectionPool = Preconditions.checkNotNull(connectionPool);
-    }
-
-    void setRule(Rule rule) {
-        this.rule = Preconditions.checkNotNull(rule);
-    }
-
-    private ExecutorContext() {}
-
-    static ExecutorContext createExecutorContext() {
-        return new ExecutorContext();
     }
 }

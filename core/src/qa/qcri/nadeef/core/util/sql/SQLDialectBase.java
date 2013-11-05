@@ -184,6 +184,10 @@ public abstract class SQLDialectBase {
         return "SELECT * FROM " + tableName;
     }
 
+    public String selectMaxTid(String tableName) {
+        return "SELECT MAX(TID) FROM " + tableName;
+    }
+
     public String deleteAll(String tableName) {
         return "DELETE FROM " + tableName;
     }

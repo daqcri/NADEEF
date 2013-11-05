@@ -46,17 +46,10 @@ public class AdultRule3 extends SingleTupleRule {
         rhs.add(new Column("CSV_ADULT_1K.sex"));
 
         leftFilterExpressions.add(
-                Predicate.createEq(new Column("CSV_ADULT_1K.relationship"), "Wife"));
+            Predicate.createEq(new Column("CSV_ADULT_1K.relationship"), "Wife"));
 
         rightFilterExpressions.add(
-                Predicate.createEq(new Column("CSV_ADULT_1K.sex"), "Female"));
-        /*
-        leftFilterExpressions.add(
-                Predicate.newEqual(new Column("csv_adult_1k.relationship"), "Wife"));
-
-        rightFilterExpressions.add(
-                Predicate.newEqual(new Column("csv_adult_1k.sex"), "Female"));
-        */
+            Predicate.createEq(new Column("CSV_ADULT_1K.sex"), "Female"));
     }
 
     /**
@@ -84,12 +77,12 @@ public class AdultRule3 extends SingleTupleRule {
     /**
      * Default iterator operation.
      *
-     * @param tables input table
+     * @param blocks input table
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<Tuple> output) {
-        Table table = tables.iterator().next();
-        ArrayList<Tuple> result = new ArrayList();
+    public void iterator(Collection<Table> blocks, IteratorStream<Tuple> output) {
+        Table table = blocks.iterator().next();
+        ArrayList<Tuple> result = new ArrayList<>();
         int pos = 0;
         while (pos < table.size()) {
             Tuple t = table.get(pos++);
@@ -105,13 +98,13 @@ public class AdultRule3 extends SingleTupleRule {
      */
     @Override
     public Collection<Violation> detect(Tuple tuple) {
-        List<Violation> result = new ArrayList();
+        List<Violation> result = new ArrayList<>();
         // Matching with lhs is redundant, but needed for correctness of detect function,
         // when used in incremental detection.
 
         if(matches(leftFilterExpressions, tuple)) {
             if(!matches(rightFilterExpressions, tuple)) {
-                Violation violation = new Violation(ruleName);
+                Violation violation = new Violation(getRuleName());
                 violation.addTuple(tuple);
                 result.add(violation);
             }
@@ -127,8 +120,7 @@ public class AdultRule3 extends SingleTupleRule {
      */
     @Override
     public Collection<Fix> repair(Violation violation) {
-        List<Fix> result = new ArrayList();
-        return result;
+        return new ArrayList<>();
     }
 
     private static boolean matches(List<Predicate> expressions, Tuple tuple) {

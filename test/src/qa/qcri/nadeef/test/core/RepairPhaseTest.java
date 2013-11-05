@@ -94,17 +94,17 @@ public class RepairPhaseTest extends NadeefTestBase {
                     cleanPlan,
                     NadeefConfiguration.getDbConfig()
                 );
-            Integer count = (Integer)executor.detect().getDetectOutput();
-            Assert.assertEquals(1, count.intValue());
+            int count = executor.detect().getDetectViolationCount();
+            Assert.assertEquals(1, count);
 
             count = (Integer)executor.repair().getRepairOutput();
-            Assert.assertEquals(1, count.intValue());
+            Assert.assertEquals(1, count);
 
             executor.shutdown();
             updateExecutor.run();
 
             count = updateExecutor.getUpdateCellCount();
-            Assert.assertEquals(1, count.intValue());
+            Assert.assertEquals(1, count);
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail("exceptions : " + ex.getMessage());
@@ -119,17 +119,17 @@ public class RepairPhaseTest extends NadeefTestBase {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             UpdateExecutor updateExecutor =
                 new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
-            Integer count = (Integer)executor.detect().getDetectOutput();
-            Assert.assertEquals(2, count.intValue());
+            int count = executor.detect().getDetectViolationCount();
+            Assert.assertEquals(2, count);
 
             count = (Integer)executor.repair().getRepairOutput();
-            Assert.assertEquals(4, count.intValue());
+            Assert.assertEquals(4, count);
 
             executor.shutdown();
             updateExecutor.run();
 
             count = updateExecutor.getUpdateCellCount();
-            Assert.assertEquals(2, count.intValue());
+            Assert.assertEquals(2, count);
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail("exceptions : " + ex.getMessage());

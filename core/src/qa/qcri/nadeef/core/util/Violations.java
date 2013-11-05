@@ -68,9 +68,7 @@ public class Violations {
         try {
             result = generateViolationId(conn);
         } finally {
-            if (conn != null) {
-                conn.close();
-            }
+            conn.close();
         }
         return result;
     }

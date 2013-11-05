@@ -25,12 +25,12 @@ import java.lang.reflect.Type;
 public abstract class Operator<TInput, TOutput> {
     private double percentage;
     private TypeToken typeToken;
-    private ExecutorContext context;
+    private ExecutionContext context;
 
     /**
      * Constructor.
      */
-    public Operator(ExecutorContext context) {
+    public Operator(ExecutionContext context) {
         this.typeToken = new TypeToken<TInput>(getClass()){};
         this.context = context;
     }
@@ -59,7 +59,7 @@ public abstract class Operator<TInput, TOutput> {
         throw new IllegalStateException("Input type is not identified.");
     }
 
-    protected ExecutorContext getCurrentContext() {
+    protected ExecutionContext getCurrentContext() {
         return context;
     }
 

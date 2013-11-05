@@ -28,7 +28,7 @@ public class EquivalentClass extends FixDecisionMaker {
     /**
      * Constructor.
      */
-    public EquivalentClass(ExecutorContext context) {
+    public EquivalentClass(ExecutionContext context) {
         super(context);
     }
 

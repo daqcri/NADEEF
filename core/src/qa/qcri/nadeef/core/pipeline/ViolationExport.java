@@ -33,7 +33,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
     /**
      * Constructor.
      */
-    public ViolationExport(ExecutorContext context) {
+    public ViolationExport(ExecutionContext context) {
         super(context);
     }
 

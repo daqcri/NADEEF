@@ -14,20 +14,14 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * SingleTupleRule rule is an abstract class for rule which has detection based on one tuple.
- *
  */
 public abstract class SingleTupleRule extends Rule<Tuple> {
-    /**
-     * Default constructor.
-     */
-    public SingleTupleRule() {}
-
     /**
      * Internal method to initialize a rule.
      * @param name Rule name.
@@ -71,26 +65,12 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
     }
 
     /**
-     * Incremental Block operator.
-     *
-     * @param table a collection of blocks.
-     * @param newTuples new tuples generated from last iteration.
-     * @return a collection of blocked tables.
-     */
-    public Collection<Table> block(
-        Collection<Table> table,
-        HashMap<String, HashSet<Integer>> newTuples
-    ) {
-        return table;
-    }
-
-    /**
      * Default iterator operation.
-     * @param tables input table collection.
+     * @param blocks input table collection.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<Tuple> iteratorStream) {
-        Table table = tables.iterator().next();
+    public void iterator(Collection<Table> blocks, IteratorStream<Tuple> iteratorStream) {
+        Table table = blocks.iterator().next();
         for (int i = 0; i < table.size(); i ++) {
             iteratorStream.put(table.get(i));
         }
@@ -102,9 +82,9 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
      * @param newTuples new tuples comes in.
      * @param iteratorStream output stream.
      */
-    public void iterator(
+    public final void iterator(
         Collection<Table> tables,
-        HashMap<String, HashSet<Integer>> newTuples,
+        ConcurrentMap<String, HashSet<Integer>> newTuples,
         IteratorStream<Tuple> iteratorStream
     ) {
         Table table = tables.iterator().next();
@@ -120,5 +100,22 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasOwnIterator() {
+        boolean result = false;
+        try {
+            String declareClassName =
+                getClass().getMethod(
+                    "iterator",
+                    new Class[] { Collection.class, IteratorStream.class }
+                ).getDeclaringClass().getSimpleName();
+            result = !declareClassName.equalsIgnoreCase("SingleTupleRule");
+        } catch (Exception ex) {}
+        return result;
     }
 }

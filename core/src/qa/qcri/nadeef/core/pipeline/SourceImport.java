@@ -29,7 +29,7 @@ public class SourceImport extends Operator<Optional, Collection<Table>> {
     /**
      * Constructor.
      */
-    public SourceImport(ExecutorContext context) {
+    public SourceImport(ExecutionContext context) {
         super(context);
     }
 
@@ -38,7 +38,7 @@ public class SourceImport extends Operator<Optional, Collection<Table>> {
      */
     @Override
     public Collection<Table> execute(Optional emptyInput) {
-        ExecutorContext context = getCurrentContext();
+        ExecutionContext context = getCurrentContext();
         Rule rule = context.getRule();
 
         @SuppressWarnings("unchecked")

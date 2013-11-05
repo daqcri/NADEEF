@@ -17,15 +17,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Abstract rule.
  *
  */
 public abstract class Rule<E> {
-    protected String ruleName;
-    protected List<String> tableNames;
+    private String ruleName;
+    private List<String> tableNames;
 
     //<editor-fold desc="Constructor">
     /**
@@ -94,6 +96,25 @@ public abstract class Rule<E> {
     );
 
     /**
+     * Iterator operator.
+     * @param tables a collection of tables.
+     * @param newTuples new tuples.
+     * @param iteratorStream Iterator output object.
+     */
+    public abstract void iterator(
+        Collection<Table> tables,
+        ConcurrentMap<String, HashSet<Integer>> newTuples,
+        IteratorStream<E> iteratorStream
+    );
+
+
+    /**
+     * Returns True when user overrides the iterator.
+     * @return Returns True when user overrides the iterator.
+     */
+    public abstract boolean hasOwnIterator();
+
+    /**
      * Vertical scope operator.
      * @param table input tables.
      * @return scoped tables.
@@ -106,30 +127,6 @@ public abstract class Rule<E> {
      * @return scoped tables.
      */
     public abstract Collection<Table> horizontalScope(Collection<Table> table);
-
-    /**
-     * Returns <code>True</code> when the rule implements one tuple.
-     * @return <code>True</code> when the rule implements one tuples.
-     */
-    public boolean supportOneTuple() {
-        return this instanceof SingleTupleRule;
-    }
-
-    /**
-     * Returns <code>True</code> when the rule implements two tuples.
-     * @return <code>True</code> when the rule implements two tuples.
-     */
-    public boolean supportTwoTuples() {
-        return this instanceof PairTupleRule;
-    }
-
-    /**
-     * Returns <code>True</code> when the rule implements multiple tuples.
-     * @return <code>True</code> when the rule implements multiple tuples.
-     */
-    public boolean supportManyTuple() {
-        return this instanceof SingleTupleRule;
-    }
 
     /**
      * Returns <code>True</code> when the rule has two tables supported.
