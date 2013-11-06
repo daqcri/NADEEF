@@ -105,4 +105,60 @@ public class IncrementalTest extends NadeefTestBase {
             }
         }
     }
+
+    @Test
+    public void testIncPair2() {
+        CleanExecutor executor = null;
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getIncCleanPlan2();
+            executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            int count = executor.getDetectViolationCount();
+            Assert.assertEquals(8, count);
+
+            DBConfig dbConfig = cleanPlan.getSourceDBConfig();
+            Rule rule = cleanPlan.getRule();
+            String bankTableName = (String)rule.getTableNames().get(0);
+            String transTableName = (String)rule.getTableNames().get(1);
+
+            // append data into two tables
+            SQLDialectBase dialectManager =
+                SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
+            File incFile = new File("test/src/qa/qcri/nadeef/test/input/bank1_inc1.csv");
+            HashSet<Integer> newTuples =
+                CSVTools.append(dbConfig, dialectManager, bankTableName, incFile);
+            executor.incrementalAppend(bankTableName, newTuples);
+            File tranFile = new File("test/src/qa/qcri/nadeef/test/input/tran1_inc1.csv");
+            HashSet<Integer> newTuples2 =
+                CSVTools.append(dbConfig, dialectManager, transTableName, tranFile);
+            executor.incrementalAppend(transTableName, newTuples2);
+
+            executor.detect();
+
+            count = executor.getDetectViolationCount();
+            Assert.assertEquals(40, count);
+
+            // append data into two tables
+            incFile = new File("test/src/qa/qcri/nadeef/test/input/bank1_inc2.csv");
+            HashSet<Integer> newTuples3 =
+                CSVTools.append(dbConfig, dialectManager, bankTableName, incFile);
+            executor.incrementalAppend(bankTableName, newTuples3);
+            tranFile = new File("test/src/qa/qcri/nadeef/test/input/tran1_inc2.csv");
+            HashSet<Integer> newTuples4 =
+                CSVTools.append(dbConfig, dialectManager, transTableName, tranFile);
+            executor.incrementalAppend(transTableName, newTuples4);
+
+            executor.detect();
+
+            count = executor.getDetectViolationCount();
+            Assert.assertEquals(72, count);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
+        }
+    }
 }

@@ -86,8 +86,6 @@ public class CSVTools {
 
         Tracer tracer = Tracer.getTracer(CSVTools.class);
         Stopwatch stopwatch = new Stopwatch().start();
-        String sql;
-        BufferedReader reader = null;
         HashSet<Integer> result = Sets.newHashSet();
         try {
             boolean hasTableExist = DBMetaDataTool.isTableExist(dbConfig, tableName);
@@ -102,6 +100,7 @@ public class CSVTools {
 
             // load the data
             int size = 0;
+
             if (dialectManager.supportBulkLoad()) {
                 size =
                     dialectManager.bulkLoad(
@@ -113,7 +112,7 @@ public class CSVTools {
             } else {
                 Connection conn = null;
                 Statement stat = null;
-
+                BufferedReader reader = null;
                 try {
                     conn = DBConnectionPool.createConnection(dbConfig, false);
                     stat = conn.createStatement();
@@ -122,6 +121,9 @@ public class CSVTools {
                     String line;
                     int lineCount = 0;
                     // Batch load the data
+                    reader = new BufferedReader(new FileReader(file));
+                    // skip the header
+                    reader.readLine();
                     while ((line = reader.readLine()) != null) {
                         if (Strings.isNullOrEmpty(line)) {
                             continue;
@@ -129,7 +131,7 @@ public class CSVTools {
 
                         lineCount ++;
                         size += line.toCharArray().length;
-                        sql = dialectManager.importFromCSV(metaData, tableName, line);
+                        String sql = dialectManager.importFromCSV(metaData, tableName, line);
                         stat.addBatch(sql);
 
                         if (lineCount % 10240 == 0) {
@@ -146,6 +148,10 @@ public class CSVTools {
 
                     if (conn != null) {
                         conn.close();
+                    }
+
+                    if (reader != null) {
+                        reader.close();
                     }
                 }
             }
@@ -164,14 +170,6 @@ public class CSVTools {
 
         } catch (Exception ex) {
             tracer.err("Cannot load file " + file.getName(), ex);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (Exception ex) {
-                // ignore
-            }
         }
         return result;
     }

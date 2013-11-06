@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
@@ -83,28 +84,59 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
         ConcurrentMap<String, HashSet<Integer>> newTuples,
         IteratorStream<TuplePair> iteratorStream
     ) {
-        // one block a time.
-        Table block = blocks.iterator().next();
+        // We are dealing with two table rule.
+        if (blocks.size() > 1) {
+            Iterator<Table> iterator = blocks.iterator();
+            Table table1 = iterator.next();
+            Table table2 = iterator.next();
+            String tableName1 = table1.getSchema().getTableName();
+            String tableName2 = table2.getSchema().getTableName();
+            HashSet<Integer> tableSet1 = newTuples.get(tableName1);
+            HashSet<Integer> tableSet2 = newTuples.get(tableName2);
+            for (int i = 0; i < table1.size(); i ++) {
+                Tuple tuple1 = table1.get(i);
+                if (!tableSet1.contains(tuple1.getTid()))
+                    continue;
+                for (int j = 0; j < table2.size(); j ++) {
+                    Tuple tuple2 = table2.get(j);
+                    iteratorStream.put(new TuplePair(tuple1, tuple2));
+                }
+            }
 
-        String tableName = block.getSchema().getTableName();
-        if (newTuples.containsKey(tableName)) {
-            HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
+            for (int i = 0; i < table2.size(); i ++) {
+                Tuple tuple2 = table2.get(i);
+                if (!tableSet2.contains(tuple2.getTid()))
+                    continue;
+                for (int j = 0; j < table1.size(); j ++) {
+                    Tuple tuple1 = table1.get(j);
+                    if (tableSet1.contains(tuple1.getTid()))
+                        continue;
+                    iteratorStream.put(new TuplePair(tuple1, tuple2));
+                }
+            }
+        } else {
+            // One table rule
+            Table block = blocks.iterator().next();
+            String tableName = block.getSchema().getTableName();
+            if (newTuples.containsKey(tableName)) {
+                HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
 
-            // iterating all the tuples
-            for (int i = 0; i < block.size(); i++) {
-                Tuple tuple1 = block.get(i);
-                if (newTuplesIDs.contains(tuple1.getTid())) {
-                    for (int j = 0; j < block.size(); j++) {
-                        if (j != i) {
-                            Tuple tuple2 = block.get(j);
-                            if (newTuplesIDs.contains(tuple2.getTid())) {
-                                // Both are new tuples, check once
-                                if (j > i) {
+                // iterating all the tuples
+                for (int i = 0; i < block.size(); i++) {
+                    Tuple tuple1 = block.get(i);
+                    if (newTuplesIDs.contains(tuple1.getTid())) {
+                        for (int j = 0; j < block.size(); j++) {
+                            if (j != i) {
+                                Tuple tuple2 = block.get(j);
+                                if (newTuplesIDs.contains(tuple2.getTid())) {
+                                    // Both are new tuples, check once
+                                    if (j > i) {
+                                        iteratorStream.put(new TuplePair(tuple1, tuple2));
+                                    }
+                                } else {
+                                    // Compare with old tuples
                                     iteratorStream.put(new TuplePair(tuple1, tuple2));
                                 }
-                            } else {
-                                // Compare with old tuples
-                                iteratorStream.put(new TuplePair(tuple1, tuple2));
                             }
                         }
                     }

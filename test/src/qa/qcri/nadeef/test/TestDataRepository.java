@@ -187,6 +187,11 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getIncCleanPlanFile2() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*IncCleanPlan2.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
         throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
@@ -328,4 +333,11 @@ public class TestDataRepository {
             new FileReader(getIncCleanPlanFile()),
             NadeefConfiguration.getDbConfig()).get(0);
     }
+
+    public static CleanPlan getIncCleanPlan2() throws Exception {
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getIncCleanPlanFile2()),
+            NadeefConfiguration.getDbConfig()).get(0);
+    }
 }
+

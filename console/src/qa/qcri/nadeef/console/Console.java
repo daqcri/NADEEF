@@ -272,7 +272,6 @@ public class Console {
     }
 
     private static void append(String cmdLine) throws Exception {
-        Stopwatch stopwatch = new Stopwatch().start();
         String[] splits = cmdLine.split("\\s");
         int defaultTableIndex = 0;
         if (splits.length != 2 && splits.length != 3) {
@@ -300,14 +299,6 @@ public class Console {
 
         HashSet<Integer> newTuples = CSVTools.append(dbConfig, dialectManager, tableName, file);
         executors.get(lastExecutorIndex).incrementalAppend(tableName, newTuples);
-
-        console.println(
-            newTuples.size() +
-            " tuples appended in " +
-            stopwatch.elapsed(TimeUnit.MILLISECONDS) +
-            " ms."
-        );
-        stopwatch.stop();
     }
 
     private static void list() throws IOException {
@@ -335,12 +326,18 @@ public class Console {
         }
 
         int index = -1;
+        lastExecutorIndex = -1;
         if (tokens.length == 2) {
             index = Integer.valueOf(tokens[1]);
             if (index < 0 || index >= cleanPlans.size()) {
                 console.println("Out of index.");
                 return;
             }
+            lastExecutorIndex = index;
+        }
+
+        if (executors.size() == 1) {
+            lastExecutorIndex = 0;
         }
 
         for (int i = 0; i < executors.size(); i ++) {

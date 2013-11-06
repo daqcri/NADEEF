@@ -135,12 +135,14 @@ public class ViolationDetector<T>
     @Override
     @SuppressWarnings("unchecked")
     public Collection<Violation> execute(Optional emptyInput) throws Exception {
+        detectCount = 0;
+        totalThreadCount = 0;
+        finishedThreadCount = 0;
+
         Rule rule = getCurrentContext().getRule();
         IteratorStream iteratorStream = new IteratorStream<T>();
         resultCollection.clear();
         List<Object> tupleList;
-        long elapsedTime = 0l;
-        detectCount = 0;
         Stopwatch stopwatch = new Stopwatch().start();
         List<ListenableFuture<Integer>> futures = Lists.newArrayList();
         while (true) {
@@ -159,9 +161,7 @@ public class ViolationDetector<T>
         for (ListenableFuture<Integer> future : futures) {
             future.get();
         }
-        long detectTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.appendMetric(Tracer.Metric.DetectTime, detectTime);
-        Tracer.appendMetric(Tracer.Metric.DetectCallTime, elapsedTime);
+        Tracer.appendMetric(Tracer.Metric.DetectTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         Tracer.appendMetric(Tracer.Metric.DetectCount, detectCount);
         Tracer.appendMetric(Tracer.Metric.DetectThreadCount, totalThreadCount);
 
