@@ -23,11 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Streaming output (Bounded Queued Buffer).
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 // TODO: make it a generic data structure.
-public class IteratorStream<E> {
+public class IteratorStream {
     private static final long TIMEOUT;
     private static final int BUFFER_BOUNDARY;
     private static final int MAX_QUEUE_BOUNDARY;
@@ -55,7 +53,6 @@ public class IteratorStream<E> {
      * Gets a buffer of objects from the queue.
      * @return a list of objects from the queue.
      */
-    @SuppressWarnings("unchecked")
     public List<Object> poll() {
         List<Object> item = null;
         try {
@@ -82,7 +79,6 @@ public class IteratorStream<E> {
      * Puts the item in the buffer.
      * @param item item.
      */
-    @SuppressWarnings("unchecked")
     public void put(Object item) {
         if (buffer.size() == BUFFER_BOUNDARY) {
             try {

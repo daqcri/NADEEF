@@ -140,7 +140,7 @@ public final class DBMetaDataTool {
         ResultSet rs = null;
         List<String> tables = Lists.newArrayList();
         try {
-            conn = DBConnectionPool.createConnection(dbConfig);
+            conn = DBConnectionPool.createConnection(dbConfig, true);
             DatabaseMetaData metaData = conn.getMetaData();
             SQLDialect dialect = dbConfig.getDialect();
 
@@ -205,5 +205,52 @@ public final class DBMetaDataTool {
                 conn.close();
             }
         }
+    }
+
+    /**
+     * Returns <code>True</code> when the given table exists in the connection.
+     * @param tableName table name.
+     * @return <code>True</code> when the given table exists in the connection.
+     */
+    public static int getMaxTid(DBConfig dbConfig, String tableName)
+        throws
+        SQLException,
+        IllegalAccessException,
+        InstantiationException,
+        ClassNotFoundException {
+        SQLDialectBase dialectManager =
+            SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
+        Tracer tracer = Tracer.getTracer(DBMetaDataTool.class);
+        Connection conn = null;
+        Statement stat = null;
+        ResultSet resultSet = null;
+        int result = 0;
+        try {
+
+            conn = DBConnectionPool.createConnection(dbConfig, true);
+            stat = conn.createStatement();
+
+            resultSet = stat.executeQuery(dialectManager.selectMaxTid(tableName));
+            if (resultSet.next()) {
+                result = resultSet.getInt(1);
+            }
+        } catch (Exception ex) {
+            tracer.err("Cannot get valid schema.", ex);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+
+                if (stat != null) {
+                    stat.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {}
+        }
+        return result;
     }
 }

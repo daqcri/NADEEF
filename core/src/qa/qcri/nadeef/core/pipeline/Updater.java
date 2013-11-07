@@ -13,7 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
@@ -21,13 +21,14 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -35,19 +36,16 @@ import java.util.concurrent.ConcurrentMap;
  * It returns <code>True</code> when there is no Cell changed in
  * the pipeline. In this case the pipeline will stop.
  */
-public class Updater extends Operator<Collection<Fix>, Integer> {
+public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
     private ConcurrentMap<Cell, String> updateHistory;
     private ConcurrentMap<Cell, Boolean> unknownTag;
-    private DBConfig sourceConfig;
-    private DBConfig nadeefConfig;
 
     /**
      * Constructor.
      */
-    public Updater(DBConfig sourceConfig, DBConfig nadeefConfig) {
-        this.sourceConfig= Preconditions.checkNotNull(sourceConfig);
-        this.nadeefConfig = Preconditions.checkNotNull(nadeefConfig);
+    public Updater(ExecutionContext context) {
+        super(context);
         updateHistory = Maps.newConcurrentMap();
         unknownTag = Maps.newConcurrentMap();
     }
@@ -59,7 +57,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
      * @return output object.
      */
     @Override
-    public Integer execute(Collection<Fix> fixes) throws Exception {
+    public Collection<Fix> execute(Collection<Fix> fixes) throws Exception {
         int count = 0;
         Connection sourceConn = null;
         Connection nadeefConn = null;
@@ -68,10 +66,12 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
         String auditTableName = NadeefConfiguration.getAuditTableName();
         String rightValue;
         String oldValue;
-
+        ExecutionContext context = getCurrentContext();
+        DBConnectionPool connectionPool = context.getConnectionPool();
+        List<Fix> realFixes = Lists.newArrayList();
         try {
-            nadeefConn = DBConnectionPool.createConnection(nadeefConfig);
-            sourceConn = DBConnectionPool.createConnection(sourceConfig);
+            nadeefConn = connectionPool.getNadeefConnection();
+            sourceConn = connectionPool.getSourceConnection();
             sourceStat = sourceConn.createStatement();
             auditStat =
                 nadeefConn.prepareStatement(
@@ -86,6 +86,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                     continue;
                 }
 
+                realFixes.add(fix);
                 // check whether this cell has been changed before
                 if (updateHistory.containsKey(cell)) {
                     String value = updateHistory.get(cell);
@@ -115,11 +116,11 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 String updateSql =
                     "UPDATE " + tableName +
                     " SET " + column.getColumnName() + " = " + rightValue +
-                    " WHERE tid = " + cell.getTupleId();
+                    " WHERE tid = " + cell.getTid();
                 tracer.verbose(updateSql);
                 sourceStat.addBatch(updateSql);
                 auditStat.setInt(1, fix.getVid());
-                auditStat.setInt(2, cell.getTupleId());
+                auditStat.setInt(2, cell.getTid());
                 auditStat.setString(3, column.getTableName());
                 auditStat.setString(4, column.getColumnName());
                 auditStat.setString(5, oldValue);
@@ -138,7 +139,7 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
             auditStat.executeBatch();
             sourceConn.commit();
             nadeefConn.commit();
-            Tracer.appendMetric(Tracer.Metric.UpdatedCellNumber, count);
+            PerfReport.appendMetric(PerfReport.Metric.UpdatedCellNumber, count);
         } finally {
             if (auditStat != null) {
                 auditStat.close();
@@ -156,6 +157,6 @@ public class Updater extends Operator<Collection<Fix>, Integer> {
                 sourceConn.close();
             }
         }
-        return count;
+        return realFixes;
     }
 }

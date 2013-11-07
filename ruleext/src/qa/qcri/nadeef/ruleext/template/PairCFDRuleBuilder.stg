@@ -89,7 +89,7 @@ public class $CFDName$ extends PairTupleRule {
      * @return a group of tables.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> output) {
+    public void iterator(Collection<Table> tables, IteratorStream output) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
         table.orderBy(rhs);
@@ -137,7 +137,7 @@ public class $CFDName$ extends PairTupleRule {
         // Comparing tuples is redundant, but needed for correctness of detect function,
 		// when used in incremental detection
 		if(!left.hasSameValue(right)){
-			Violation violation = new Violation(ruleName);
+			Violation violation = new Violation(getRuleName());
 	        violation.addTuple(left);
 	        violation.addTuple(right);
 	        result.add(violation);	

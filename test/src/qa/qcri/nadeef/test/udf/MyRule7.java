@@ -1,7 +1,7 @@
 /*
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means "Clean" in Arabic.
+ * NADEEF means "Clean" in Arabic
  *
  * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
  * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
@@ -26,7 +26,7 @@ public class MyRule7 extends SingleTupleRule {
 
     @Override
     public Collection<Violation> detect(Tuple tuple) {
-        String tableName = tableNames.get(0);
+        String tableName = getTableNames().get(0);
         predicates.add(Predicate.valueOf("t1.B!=b1", tableName));
         boolean isValid = true;
         List<Violation> result = new ArrayList<>();
@@ -46,7 +46,7 @@ public class MyRule7 extends SingleTupleRule {
         }
         // all the predicates are valid, then the DC is violated
         if (isValid){
-            Violation violation = new Violation(ruleName);
+            Violation violation = new Violation(getRuleName());
             for (Cell cell : infectedCells){
                 violation.addCell(cell);
             }

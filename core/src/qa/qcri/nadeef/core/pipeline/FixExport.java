@@ -13,13 +13,12 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
 import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Fixes;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -33,14 +32,12 @@ import java.util.Collection;
  */
 class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     private static Tracer tracer = Tracer.getTracer(FixExport.class);
-    private DBConnectionPool connectionPool;
+
     /**
      * Constructor.
-     * @param plan clean plan.
      */
-    public FixExport(CleanPlan plan, DBConnectionPool connectionPool_) {
-        super(plan);
-        connectionPool = Preconditions.checkNotNull(connectionPool_);
+    public FixExport(ExecutionContext context) {
+        super(context);
     }
 
     /**
@@ -53,6 +50,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
     @Override
     public synchronized Integer execute(Collection<Collection<Fix>> fixCollection)
         throws SQLException {
+        DBConnectionPool connectionPool = getCurrentContext().getConnectionPool();
         Connection conn = null;
         Statement stat = null;
         int count = 0;
@@ -71,7 +69,11 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             setPercentage(0.5f);
             stat.executeBatch();
             conn.commit();
-            Tracer.appendMetric(Tracer.Metric.FixExport, count);
+
+            PerfReport.appendMetric(
+                PerfReport.Metric.FixExport,
+                count
+            );
         } catch (Exception ex) {
             tracer.err("Exporting Fixes failed", ex);
         } finally {
@@ -102,7 +104,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             .append(',');
 
         Cell cell = fix.getLeft();
-        sqlBuilder.append(cell.getTupleId());
+        sqlBuilder.append(cell.getTid());
         sqlBuilder.append(',');
         sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
         sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");
@@ -112,7 +114,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         sqlBuilder.append(',');
         if (!fix.isConstantAssign()) {
             cell = fix.getRight();
-            sqlBuilder.append(cell.getTupleId());
+            sqlBuilder.append(cell.getTid());
             sqlBuilder.append(',');
             sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
             sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");

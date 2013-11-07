@@ -14,13 +14,19 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
-import qa.qcri.nadeef.core.datamodel.*;
+import com.google.common.base.Stopwatch;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
@@ -36,6 +42,7 @@ public class CleanExecutor {
     private Flow detectFlow;
     private Flow repairFlow;
     private DBConnectionPool connectionPool;
+    private ExecutionContext context;
     //</editor-fold>
 
     //<editor-fold desc="Constructor / Deconstructor">
@@ -62,8 +69,21 @@ public class CleanExecutor {
                 dbConfig
             );
         DBInstaller.install(dbConfig);
+
+        context = ExecutionContext.createExecutorContext();
+        context.setConnectionPool(this.connectionPool);
+        context.setRule(cleanPlan.getRule());
         assembleFlow();
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Incremental methods">
+    public void incrementalAppend(String tableName, HashSet<Integer> newTuples) {
+        context.addNewTuples(tableName, newTuples);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Public methods">
 
     /**
      * Returns <code>True</code> when the clean executor is running.
@@ -83,7 +103,6 @@ public class CleanExecutor {
             if (queryFlow.isRunning()) {
                 queryFlow.forceStop();
             }
-            cacheManager.remove(queryFlow.getInputKey());
         }
 
         queryFlow = null;
@@ -92,7 +111,6 @@ public class CleanExecutor {
             if (detectFlow.isRunning()) {
                 detectFlow.forceStop();
             }
-            cacheManager.remove(detectFlow.getInputKey());
         }
         detectFlow = null;
 
@@ -100,7 +118,6 @@ public class CleanExecutor {
             if (repairFlow.isRunning()) {
                 repairFlow.forceStop();
             }
-            cacheManager.remove(repairFlow.getInputKey());
         }
 
         if (connectionPool != null) {
@@ -117,25 +134,14 @@ public class CleanExecutor {
         shutdown();
         super.finalize();
     }
-    //</editor-fold>
-
-    //<editor-fold desc="Public methods">
-
-    /**
-     * Gets the connection pool.
-     * @return connection pool.
-     */
-    public DBConnectionPool getConnectionPool() {
-        return connectionPool;
-    }
 
     /**
      * Gets the output from Detect.
      * @return output object from Detect.
      */
-    public Object getDetectOutput() {
+    public int getDetectViolationCount() {
         String key = detectFlow.getCurrentOutputKey();
-        return cacheManager.get(key);
+        return (Integer)cacheManager.get(key);
     }
 
     /**
@@ -183,17 +189,11 @@ public class CleanExecutor {
     }
 
     /**
-     * Gets the current percentage of Run.
-     * @return current percentage of Run.
-     */
-    public double getRunPercentage() {
-        return getDetectProgress() * 0.5 + getRepairProgress() * 0.5;
-    }
-
-    /**
      * Runs the violation detection.
      */
     public CleanExecutor detect() {
+        Stopwatch sw = new Stopwatch().start();
+
         queryFlow.reset();
         detectFlow.reset();
 
@@ -203,11 +203,15 @@ public class CleanExecutor {
         queryFlow.waitUntilFinish();
         detectFlow.waitUntilFinish();
 
-        Tracer.appendMetric(
-            Tracer.Metric.DetectPipelineTime,
-            queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
+        // clear the new tuples after every run.
+        context.clearNewTuples();
+
+        PerfReport.appendMetric(
+            PerfReport.Metric.DetectTime,
+            sw.elapsed(TimeUnit.MILLISECONDS)
         );
 
+        // TODO: remove it.
         System.gc();
         return this;
     }
@@ -224,13 +228,20 @@ public class CleanExecutor {
      * Runs the violation repair.
      */
     public CleanExecutor repair() {
+        Stopwatch sw = new Stopwatch().start();
         repairFlow.reset();
 
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
-        Tracer.appendMetric(Tracer.Metric.RepairTime, repairFlow.getElapsedTime());
+        context.clearNewTuples();
 
+        PerfReport.appendMetric(
+            PerfReport.Metric.RepairTime,
+            sw.elapsed(TimeUnit.MILLISECONDS)
+        );
+        sw.stop();
+        // TODO: remove it.
         System.gc();
         return this;
     }
@@ -251,47 +262,28 @@ public class CleanExecutor {
      */
     @SuppressWarnings("unchecked")
     private void assembleFlow() {
-        Rule rule = cleanPlan.getRule();
-
         try {
-            String inputKey = cacheManager.put(rule, Integer.MAX_VALUE);
             // assemble the query flow.
             queryFlow = new Flow("query");
             queryFlow
-                .setInputKey(inputKey)
-                .addNode(new SourceDeserializer(cleanPlan, connectionPool));
-
-            if (rule.supportOneInput()) {
-                queryFlow
-                    .addNode(new ScopeOperator<Tuple>(rule))
-                    .addNode(new Iterator<Tuple>(rule), 6);
-            } else if (rule.supportTwoInputs()) {
-                // the case where the rule is working on multiple tables (2).
-                queryFlow
-                    .addNode(new ScopeOperator<TuplePair>(rule))
-                    .addNode(new Iterator<TuplePair>(rule), 6);
-            } else {
-                queryFlow
-                    .addNode(new ScopeOperator<Tuple>(rule))
-                    .addNode(new Iterator<Table>(rule), 6);
-            }
+                .setInputKey(cacheManager.getKeyForNothing())
+                .addNode(new SourceImport(context))
+                .addNode(new ScopeOperator(context))
+                .addNode(new Iterator(context), 6);
 
             // assemble the detect flow
             detectFlow = new Flow("detect");
-            detectFlow.setInputKey(inputKey);
-            if (rule.supportTwoInputs()) {
-                detectFlow.addNode(new ViolationDetector<TuplePair>(rule), 6);
-            } else {
-                detectFlow.addNode(new ViolationDetector<Table>(rule), 6);
-            }
-            detectFlow.addNode(new ViolationExport(cleanPlan, connectionPool));
+            detectFlow
+                .setInputKey(cacheManager.getKeyForNothing())
+                .addNode(new ViolationDetector(context), 6)
+                .addNode(new ViolationExport(context));
 
             // assemble the repair flow
             repairFlow = new Flow("repair");
-            repairFlow.setInputKey(inputKey)
-                .addNode(new ViolationImport(connectionPool))
-                .addNode(new ViolationRepair(rule), 6)
-                .addNode(new FixExport(cleanPlan, connectionPool));
+            repairFlow.setInputKey(cacheManager.getKeyForNothing())
+                .addNode(new ViolationImport(context))
+                .addNode(new ViolationRepair(context), 6)
+                .addNode(new FixExport(context));
 
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the pipeline ", ex);

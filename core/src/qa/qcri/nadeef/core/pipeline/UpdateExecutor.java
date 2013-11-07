@@ -14,9 +14,16 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Stopwatch;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Updater flow executor.
@@ -25,17 +32,37 @@ public class UpdateExecutor {
     private Flow updateFlow;
     private NodeCacheManager cacheManager;
     private Tracer tracer;
+    private DBConnectionPool connectionPool;
+    private ExecutionContext context;
 
-    public UpdateExecutor(DBConfig dbConfig) {
+    public UpdateExecutor(CleanPlan cleanPlan, DBConfig nadeefConfig) {
         cacheManager = NodeCacheManager.getInstance();
         tracer = Tracer.getTracer(UpdateExecutor.class);
-        assembleFlow(dbConfig);
+        this.connectionPool =
+            DBConnectionPool.createDBConnectionPool(
+                cleanPlan.getSourceDBConfig(),
+                nadeefConfig
+            );
+
+        context = ExecutionContext.createExecutorContext();
+        context.setConnectionPool(connectionPool);
+        context.setRule(cleanPlan.getRule());
+        assembleFlow();
     }
 
     public void shutdown() {
-        if (updateFlow != null && updateFlow.isRunning()) {
-            updateFlow.forceStop();
+        if (updateFlow != null) {
+            if (updateFlow.isRunning()) {
+                updateFlow.forceStop();
+            }
         }
+
+        updateFlow = null;
+
+        if (connectionPool != null) {
+            connectionPool.shutdown();
+        }
+        connectionPool = null;
     }
 
     @Override
@@ -51,19 +78,21 @@ public class UpdateExecutor {
     public int getUpdateCellCount() {
         String key = updateFlow.getCurrentOutputKey();
         Object output = cacheManager.get(key);
-        return (Integer) output;
+        return ((ArrayList) output).size();
     }
 
     public void run() {
+        Stopwatch sw = new Stopwatch().start();
         updateFlow.reset();
         updateFlow.start();
         updateFlow.waitUntilFinish();
 
-        Tracer.appendMetric(Tracer.Metric.EQTime, updateFlow.getElapsedTime());
+        PerfReport.appendMetric(PerfReport.Metric.EQTime, sw.elapsed(TimeUnit.MILLISECONDS));
+        sw.stop();
     }
 
     @SuppressWarnings("unchecked")
-    private void assembleFlow(DBConfig dbConfig) {
+    private void assembleFlow() {
         try {
             // assemble the updater flow
             updateFlow = new Flow("update");
@@ -81,15 +110,16 @@ public class UpdateExecutor {
                 }
 
                 fixDecisionMaker =
-                    (FixDecisionMaker)customizedClass.getConstructor().newInstance();
+                    (FixDecisionMaker)customizedClass.getConstructor().newInstance(context);
             } else {
-                fixDecisionMaker = new EquivalentClass();
+                fixDecisionMaker = new EquivalentClass(context);
             }
 
-            updateFlow.setInputKey(cacheManager.getDummyKey())
-                .addNode(new FixImport(NadeefConfiguration.getDbConfig()))
+            updateFlow.setInputKey(cacheManager.getKeyForNothing())
+                .addNode(new FixImport(context))
                 .addNode(fixDecisionMaker, 6)
-                .addNode(new Updater(dbConfig, NadeefConfiguration.getDbConfig()));
+                .addNode(new Updater(context));
+                // .addNode(new IncrementalUpdate(NadeefConfiguration.getDbConfig()));
         } catch (Exception ex) {
             tracer.err("Exception happens during assembling the update flow.", ex);
         }

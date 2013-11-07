@@ -32,12 +32,12 @@ public class MyRule1 extends SingleTupleRule {
      */
     @Override
     public Collection<Violation> detect(Tuple tuple) {
-        List<Violation> result = new ArrayList();
+        List<Violation> result = new ArrayList<>();
         String city = (String)tuple.get("city");
         String zip = (String)tuple.get("zip");
         if (zip.equalsIgnoreCase("1183JV")) {
             if (!city.equalsIgnoreCase("amsterdam")) {
-                Violation newViolation = new Violation(this.ruleName);
+                Violation newViolation = new Violation(getRuleName());
                 newViolation.addCell(tuple.getCell("city"));
                 newViolation.addCell(tuple.getCell("zip"));
                 result.add(newViolation);

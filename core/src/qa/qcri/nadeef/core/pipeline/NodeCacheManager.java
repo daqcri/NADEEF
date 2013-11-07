@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import java.util.Set;
@@ -26,15 +27,14 @@ import java.util.concurrent.ConcurrentMap;
 public class NodeCacheManager {
     private static ConcurrentMap<String, Object> cachePool;
     private static ConcurrentMap<String, Integer> refPool;
-    private static String dummyKey;
-
+    private static String absentKey;
+    private static NodeCacheManager instance;
     //<editor-fold desc="Singleton">
-    private static final NodeCacheManager instance = new NodeCacheManager();
-
-    private NodeCacheManager() {
+    static {
         cachePool = Maps.newConcurrentMap();
         refPool = Maps.newConcurrentMap();
-        dummyKey = put(0, Integer.MAX_VALUE);
+        instance = new NodeCacheManager();
+        absentKey = instance.put(Optional.absent(), Integer.MAX_VALUE);
     }
 
     /**
@@ -45,17 +45,12 @@ public class NodeCacheManager {
     }
     //</editor-fold>
 
-    public String getDummyKey() {
-        return dummyKey;
-    }
-
-    public boolean hasKey(String key) {
-        return cachePool.containsKey(key);
-    }
-
-    public void remove(String key) {
-        cachePool.remove(key);
-        refPool.remove(key);
+    /**
+     * Returns a key which refers to an absent value. It is used to feed
+     * operator which needs no input from upper stream (e.g. start operator).
+     */
+    public String getKeyForNothing() {
+        return absentKey;
     }
 
     /**
@@ -160,7 +155,7 @@ public class NodeCacheManager {
     public void clear() {
         Set<String> keys = cachePool.keySet();
         for (String key : keys) {
-            if (!key.equalsIgnoreCase(dummyKey)) {
+            if (!key.equalsIgnoreCase(absentKey)) {
                 cachePool.remove(key);
                 refPool.remove(key);
             }

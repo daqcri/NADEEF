@@ -23,8 +23,8 @@ import java.util.List;
 
 
 public class MyRule3 extends PairTupleRule {
-    protected List<Column> leftHandSide = new ArrayList();
-    protected List<Column> rightHandSide = new ArrayList();
+    protected List<Column> leftHandSide = new ArrayList<>();
+    protected List<Column> rightHandSide = new ArrayList<>();
 
     public MyRule3() {}
 
@@ -66,7 +66,7 @@ public class MyRule3 extends PairTupleRule {
      * @param tables input tables.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
         Table table = tables.iterator().next();
         table.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
@@ -105,7 +105,7 @@ public class MyRule3 extends PairTupleRule {
     public Collection<Violation> detect(TuplePair tuplePair) {
         Tuple left = tuplePair.getLeft();
         Tuple right = tuplePair.getRight();
-        Violation violation = new Violation(ruleName);
+        Violation violation = new Violation(getRuleName());
         violation.addTuple(left);
         violation.addTuple(right);
         return Lists.newArrayList(violation);

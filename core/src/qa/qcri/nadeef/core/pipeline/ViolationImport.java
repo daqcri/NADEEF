@@ -13,7 +13,7 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Optional;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -28,25 +28,22 @@ import java.util.Collection;
 /**
  * Import violations from violation table.
  */
-public class ViolationImport extends Operator<Rule, Collection<Violation>> {
-    private DBConnectionPool connectionPool;
-
-    ViolationImport(DBConnectionPool connectionPool) {
-        this.connectionPool = Preconditions.checkNotNull(connectionPool);
+public class ViolationImport extends Operator<Optional, Collection<Violation>> {
+    ViolationImport(ExecutionContext context) {
+        super(context);
     }
 
     /**
-     * Execute the operator.
-     *
-     * @param rule input rule.
-     * @return output violations from database.
+     * {@inheritDoc}
      */
     @Override
-    public Collection<Violation> execute(Rule rule) throws Exception {
+    public Collection<Violation> execute(Optional empty) throws Exception {
         Connection conn = null;
         Statement stat = null;
         ResultSet resultSet = null;
         Collection<Violation> result = null;
+        DBConnectionPool connectionPool = getCurrentContext().getConnectionPool();
+        Rule rule = getCurrentContext().getRule();
         try {
             conn = connectionPool.getNadeefConnection();
             conn.setAutoCommit(true);

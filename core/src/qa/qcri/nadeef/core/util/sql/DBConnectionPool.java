@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.dbcp.BasicDataSource;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
@@ -104,42 +105,44 @@ public class DBConnectionPool {
         // drop all the indexes.
         Connection conn = null;
         Statement stat = null;
-        try {
-            conn = sourcePool.getConnection();
-            stat = conn.createStatement();
-
-            synchronized (indexLockObject) {
-                for (String indexName : localCache) {
-                    int count = indexCount.get(indexName) - 1;
-
-                    // remove index when count goes to 0.
-                    if (count == 0) {
-                        String tableName = indexCache.get(indexName);
-                        SQLDialectBase dialectManager =
-                            SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect());
-                        stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
-                        indexCache.remove(indexName);
-                        indexCount.remove(indexName);
-                    } else {
-                        indexCount.put(indexName, count);
-                    }
-                }
-
-                conn.commit();
-                localCache.clear();
-            }
-        } catch (Exception ex) {
-            tracer.err("Exceptions happen when closing the connection pool.", ex);
-        } finally {
+        if (sourcePool != null) {
             try {
-                if (conn != null) {
-                    conn.close();
-                }
+                conn = sourcePool.getConnection();
+                stat = conn.createStatement();
 
-                if (stat != null) {
-                    stat.close();
+                synchronized (indexLockObject) {
+                    for (String indexName : localCache) {
+                        int count = indexCount.get(indexName) - 1;
+
+                        // remove index when count goes to 0.
+                        if (count == 0) {
+                            String tableName = indexCache.get(indexName);
+                            SQLDialectBase dialectManager =
+                                SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect());
+                            stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
+                            indexCache.remove(indexName);
+                            indexCount.remove(indexName);
+                        } else {
+                            indexCount.put(indexName, count);
+                        }
+                    }
+
+                    conn.commit();
+                    localCache.clear();
                 }
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                tracer.err("Exceptions happen when closing the connection pool.", ex);
+            } finally {
+                try {
+                    if (conn != null) {
+                        conn.close();
+                    }
+
+                    if (stat != null) {
+                        stat.close();
+                    }
+                } catch (Exception ex) {}
+            }
         }
 
         try {
@@ -162,6 +165,7 @@ public class DBConnectionPool {
      * @return new JDBC connection.
      */
     public Connection getNadeefConnection() throws SQLException {
+        PerfReport.addMetric(PerfReport.Metric.NadeefDBConnectionCount, 1);
         return nadeefPool.getConnection();
     }
 
@@ -170,6 +174,7 @@ public class DBConnectionPool {
      * @return new JDBC connection.
      */
     public Connection getSourceConnection() throws SQLException {
+        PerfReport.addMetric(PerfReport.Metric.SourceDBConnectionCount, 1);
         return sourcePool.getConnection();
     }
 
@@ -214,6 +219,8 @@ public class DBConnectionPool {
                     conn.commit();
                     indexCache.put(indexName, tableName);
                     indexCount.put(indexName, 1);
+
+                    PerfReport.addMetric(PerfReport.Metric.SourceIndexCreationCount, 1);
                 } catch (Exception ex) {
                     tracer.err("Creating index " + indexName + " failed.", ex);
                 } finally {
@@ -246,6 +253,7 @@ public class DBConnectionPool {
             SQLException,
             IllegalAccessException,
             InstantiationException {
+        PerfReport.addMetric(PerfReport.Metric.DBConnectionCount, 1);
         String driverName = SQLDialectTools.getDriverName(dbConfig.getDialect());
         Class.forName(driverName).newInstance();
         Connection conn =

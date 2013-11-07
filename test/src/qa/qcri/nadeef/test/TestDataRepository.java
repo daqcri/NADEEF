@@ -15,11 +15,8 @@ package qa.qcri.nadeef.test;
 
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.exception.InvalidCleanPlanException;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
 
@@ -155,10 +152,7 @@ public class TestDataRepository {
     }
 
     public static List<CleanPlan> getHolisticTestPlan1()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getHolisticPlan1File()), NadeefConfiguration.getDbConfig());
     }
@@ -188,83 +182,71 @@ public class TestDataRepository {
         return new File(filePath.replace('*', File.separatorChar));
     }
 
+    public static File getIncCleanPlanFile() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*IncCleanPlan1.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
+    public static File getIncCleanPlanFile2() {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*IncCleanPlan2.json";
+        return new File(filePath.replace('*', File.separatorChar));
+    }
+
     public static CleanPlan getCleanPlan()
-        throws
-            InvalidRuleException,
-            FileNotFoundException,
-            InvalidCleanPlanException {
+        throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getTestFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan2()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getTestFile2()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan3()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getTestFile3()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan4()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getTestFile4()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static List<CleanPlan> getCleanPlan5()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getTestFile5()), NadeefConfiguration.getDbConfig());
     }
 
     public static CleanPlan getCleanPlan6()
-        throws
-            InvalidRuleException,
-            FileNotFoundException,
-            InvalidCleanPlanException {
+        throws Exception {
+
             return CleanPlan.createCleanPlanFromJSON(
                 new FileReader(getCleanPlan6File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan7()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getCleanPlan7File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan8()
-            throws
-            InvalidRuleException,
-            FileNotFoundException,
-            InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getCleanPlan8File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan9()
-            throws
-            InvalidRuleException,
-            FileNotFoundException,
-            InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getCleanPlan9File()), NadeefConfiguration.getDbConfig()).get(0);
     }
@@ -275,55 +257,43 @@ public class TestDataRepository {
     }
 
     public static CleanPlan getStressPlan30k()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getStressPlan30kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan40k()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getStressPlan40kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan80k()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getStressPlan80kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan90k()
-        throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getStressPlan90kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getPairCleanPlan1()
-        throws
-            InvalidRuleException,
-            FileNotFoundException,
-            InvalidCleanPlanException {
+        throws Exception {
+
         return CleanPlan.createCleanPlanFromJSON(
             new FileReader(getPairCleanPlanFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getDCTestPlan()
-      throws
-            InvalidRuleException,
-            FileNotFoundException,
-            InvalidCleanPlanException {
+        throws Exception {
+
       return CleanPlan.createCleanPlanFromJSON(
           new FileReader(getDCTestFile()),
           NadeefConfiguration.getDbConfig()
@@ -331,20 +301,16 @@ public class TestDataRepository {
     }
 
     public static CleanPlan getConstantDCTestPlan()
-      throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException{
+        throws Exception {
+
       return CleanPlan.createCleanPlanFromJSON(
           new FileReader(getConstantDCTestFile()),
           NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getSingleTupleDCTestPlan()
-      throws
-        InvalidRuleException,
-        FileNotFoundException,
-        InvalidCleanPlanException{
+        throws Exception {
+
       return CleanPlan.createCleanPlanFromJSON(
           new FileReader(getSingleTupleDCTestFile()),
           NadeefConfiguration.getDbConfig()).get(0);
@@ -361,4 +327,25 @@ public class TestDataRepository {
             new FileReader(getDCGeneratedFile()),
             NadeefConfiguration.getDbConfig()).get(0);
     }
+
+    public static CleanPlan getIncCleanPlan1() throws Exception {
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getIncCleanPlanFile()),
+            NadeefConfiguration.getDbConfig()).get(0);
+    }
+
+    public static CleanPlan getIncCleanPlan2() throws Exception {
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(getIncCleanPlanFile2()),
+            NadeefConfiguration.getDbConfig()).get(0);
+    }
+
+    public static List<CleanPlan> getPlan(String relativeFileName) throws Exception {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*" + relativeFileName;
+        File inputFile = new File(filePath.replace('*', File.separatorChar));
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(inputFile),
+            NadeefConfiguration.getDbConfig());
+    }
 }
+

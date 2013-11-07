@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * SourceDeserializer Test.
+ * SourceImport Test.
  */
 @RunWith(Parameterized.class)
 public class SQLTableTest extends NadeefTestBase {

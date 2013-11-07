@@ -17,15 +17,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Abstract rule.
  *
  */
 public abstract class Rule<E> {
-    protected String ruleName;
-    protected List<String> tableNames;
+    private String ruleName;
+    private List<String> tableNames;
 
     //<editor-fold desc="Constructor">
     /**
@@ -90,8 +92,27 @@ public abstract class Rule<E> {
      */
     public abstract void iterator(
         Collection<Table> tables,
-        IteratorStream<E> iteratorStream
+        IteratorStream iteratorStream
     );
+
+    /**
+     * Iterator operator.
+     * @param tables a collection of tables.
+     * @param newTuples new tuples.
+     * @param iteratorStream Iterator output object.
+     */
+    public abstract void iterator(
+        Collection<Table> tables,
+        ConcurrentMap<String, HashSet<Integer>> newTuples,
+        IteratorStream iteratorStream
+    );
+
+
+    /**
+     * Returns True when user overrides the iterator.
+     * @return Returns True when user overrides the iterator.
+     */
+    public abstract boolean hasOwnIterator();
 
     /**
      * Vertical scope operator.
@@ -106,30 +127,6 @@ public abstract class Rule<E> {
      * @return scoped tables.
      */
     public abstract Collection<Table> horizontalScope(Collection<Table> table);
-
-    /**
-     * Returns <code>True</code> when the rule implements one tuple input.
-     * @return <code>True</code> when the rule implements one tuple inputs.
-     */
-    public boolean supportOneInput() {
-        return this instanceof SingleTupleRule;
-    }
-
-    /**
-     * Returns <code>True</code> when the rule implements two tuple inputs.
-     * @return <code>True</code> when the rule implements two tuple inputs.
-     */
-    public boolean supportTwoInputs() {
-        return this instanceof PairTupleRule;
-    }
-
-    /**
-     * Returns <code>True</code> when the rule implements multiple tuple inputs.
-     * @return <code>True</code> when the rule implements multiple tuple inputs.
-     */
-    public boolean supportManyInputs() {
-        return this instanceof SingleTupleRule;
-    }
 
     /**
      * Returns <code>True</code> when the rule has two tables supported.

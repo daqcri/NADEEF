@@ -20,7 +20,6 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
-import qa.qcri.nadeef.core.exception.InvalidRuleException;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.service.thrift.*;
@@ -159,7 +158,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             if (type.equalsIgnoreCase("udf")) {
                 Class udfClass = CommonTools.loadClass(name);
                 if (!Rule.class.isAssignableFrom(udfClass)) {
-                    throw new InvalidRuleException("The specified class is not a Rule class.");
+                    throw new IllegalArgumentException("The specified class is not a Rule class.");
                 }
 
                 ruleInstance = (Rule) udfClass.newInstance();
@@ -179,12 +178,6 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
 
             return key;
 
-        } catch (InvalidRuleException ex) {
-            tracer.err("Exception in detect", ex);
-            TNadeefRemoteException re = new TNadeefRemoteException();
-            re.setType(TNadeefExceptionType.INVALID_RULE);
-            re.setMessage(ex.getMessage());
-            throw re;
         } catch (Exception ex) {
             tracer.err("Exception in detect", ex);
             TNadeefRemoteException re = new TNadeefRemoteException();
@@ -220,7 +213,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             String name = rule.getName();
             Class udfClass = CommonTools.loadClass(name);
             if (!Rule.class.isAssignableFrom(udfClass)) {
-                throw new InvalidRuleException("The specified class is not a Rule class.");
+                throw new IllegalArgumentException("The specified class is not a Rule class.");
             }
 
             Rule ruleInstance = (Rule) udfClass.newInstance();
@@ -237,12 +230,6 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
             String key = scheduler.submitRepairJob(new CleanPlan(config, ruleInstance));
             return key;
-        } catch (InvalidRuleException ex) {
-            tracer.err("Exception in detect", ex);
-            TNadeefRemoteException re = new TNadeefRemoteException();
-            re.setType(TNadeefExceptionType.INVALID_RULE);
-            re.setMessage(ex.getMessage());
-            throw re;
         } catch (Exception ex) {
             tracer.err("Exception in detect", ex);
             TNadeefRemoteException re = new TNadeefRemoteException();

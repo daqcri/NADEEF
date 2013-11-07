@@ -21,6 +21,7 @@ import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.core.util.sql.SQLQueryBuilder;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.ByteArrayOutputStream;
@@ -34,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * SQLTable represents a {@link Table} which resides in a database.
- *
  */
 public class SQLTable extends Table {
     private DBConnectionPool connectionFactory;
@@ -85,8 +85,11 @@ public class SQLTable extends Table {
      * @return the schema.
      */
     @Override
-    public Schema getSchema() {
-        syncSchemaIfNeeded();
+    public synchronized Schema getSchema() {
+        if (schema == null) {
+            syncSchema();
+        }
+
         return schema;
     }
 
@@ -393,22 +396,12 @@ public class SQLTable extends Table {
             } catch (Exception ex) {}
         }
 
-        Tracer.addMetric(
-            Tracer.Metric.DBLoadTime,
+        PerfReport.addMetric(
+            PerfReport.Metric.DBLoadTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
         stopwatch.stop();
         return true;
-    }
-
-    /**
-     * Synchronize the schema and data if needed.
-     */
-    private synchronized void syncSchemaIfNeeded() {
-        if (updateTimestamp < changeTimestamp) {
-            syncSchema();
-            updateTimestamp = changeTimestamp;
-        }
     }
 
     private synchronized void syncDataIfNeeded() {

@@ -14,13 +14,11 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Flow state.
@@ -50,7 +48,6 @@ public class Flow {
     private String inputKey;
     private Thread thread;
     private boolean forceStop = false;
-    private long elapsedTime;
     //</editor-fold>
 
     //<editor-fold desc="Constructor">
@@ -82,14 +79,6 @@ public class Flow {
         for (int i = 0; i < nodeList.size(); i ++) {
             nodeList.get(i).reset();
         }
-    }
-
-    /**
-     * Gets the input key of the flow.
-     * @return input key.
-     */
-    public String getInputKey() {
-        return inputKey;
     }
 
     /**
@@ -169,9 +158,7 @@ public class Flow {
         state = FlowState.Running;
         thread = new Thread() {
             public void run() {
-                Stopwatch stopwatch = null;
                 try {
-                    stopwatch = new Stopwatch().start();
                     String inputKey_ = inputKey;
                     for (int i = currentFlowPosition; i < nodeList.size(); i ++) {
                         if (i != 0) {
@@ -202,7 +189,6 @@ public class Flow {
                     tracer.err("Flow stops at node " + curNode.getName(), ex);
                     state = FlowState.StoppedWithException;
                 } finally {
-                    elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
                     for (int i = 0; i < nodeList.size(); i ++) {
                         nodeList.get(i).interrupt();
                     }
@@ -249,14 +235,6 @@ public class Flow {
      */
     public boolean isRunning() {
         return state == FlowState.Running;
-    }
-
-    /**
-     * Gets elapsed time for this flow.
-     * @return elapsed time.
-     */
-    public long getElapsedTime() {
-        return elapsedTime;
     }
 
     /**

@@ -16,23 +16,16 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * PairTupleRule represents a rule which deals with pair of tuples.
  *
  */
 public abstract class PairTupleRule extends Rule<TuplePair> {
-    //<editor-fold desc="Constructor">
-    public PairTupleRule() {
-        super();
-    }
-
-    public PairTupleRule(String id, List<String> tableNames) {
-        super(id, tableNames);
-    }
-    //</editor-fold>
-
     /**
      * Detect rule with pair tuple.
      *
@@ -57,7 +50,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @param tables input tuple
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
         List<Table> collectionList = Lists.newArrayList(tables);
 
         if (collectionList.size() == 1) {
@@ -81,14 +74,84 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
     }
 
     /**
+     * Incremental iterator interface.
+     * @param blocks blocks.
+     * @param newTuples new tuples comes in.
+     * @param iteratorStream output stream.
+     */
+    public final void iterator(
+        Collection<Table> blocks,
+        ConcurrentMap<String, HashSet<Integer>> newTuples,
+        IteratorStream iteratorStream
+    ) {
+        // We are dealing with two table rule.
+        if (blocks.size() > 1) {
+            Iterator<Table> iterator = blocks.iterator();
+            Table table1 = iterator.next();
+            Table table2 = iterator.next();
+            String tableName1 = table1.getSchema().getTableName();
+            String tableName2 = table2.getSchema().getTableName();
+            HashSet<Integer> tableSet1 = newTuples.get(tableName1);
+            HashSet<Integer> tableSet2 = newTuples.get(tableName2);
+            for (int i = 0; i < table1.size(); i ++) {
+                Tuple tuple1 = table1.get(i);
+                if (!tableSet1.contains(tuple1.getTid()))
+                    continue;
+                for (int j = 0; j < table2.size(); j ++) {
+                    Tuple tuple2 = table2.get(j);
+                    iteratorStream.put(new TuplePair(tuple1, tuple2));
+                }
+            }
+
+            for (int i = 0; i < table2.size(); i ++) {
+                Tuple tuple2 = table2.get(i);
+                if (!tableSet2.contains(tuple2.getTid()))
+                    continue;
+                for (int j = 0; j < table1.size(); j ++) {
+                    Tuple tuple1 = table1.get(j);
+                    if (tableSet1.contains(tuple1.getTid()))
+                        continue;
+                    iteratorStream.put(new TuplePair(tuple1, tuple2));
+                }
+            }
+        } else {
+            // One table rule
+            Table block = blocks.iterator().next();
+            String tableName = block.getSchema().getTableName();
+            if (newTuples.containsKey(tableName)) {
+                HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
+
+                // iterating all the tuples
+                for (int i = 0; i < block.size(); i++) {
+                    Tuple tuple1 = block.get(i);
+                    if (newTuplesIDs.contains(tuple1.getTid())) {
+                        for (int j = 0; j < block.size(); j++) {
+                            if (j != i) {
+                                Tuple tuple2 = block.get(j);
+                                if (newTuplesIDs.contains(tuple2.getTid())) {
+                                    // Both are new tuples, check once
+                                    if (j > i) {
+                                        iteratorStream.put(new TuplePair(tuple1, tuple2));
+                                    }
+                                } else {
+                                    // Compare with old tuples
+                                    iteratorStream.put(new TuplePair(tuple1, tuple2));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Default scope operation.
      * @param table input tuple collections.
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<Table> horizontalScope(
-        Collection<Table> table
-    ) {
+    public Collection<Table> horizontalScope(Collection<Table> table) {
         return table;
     }
 
@@ -98,9 +161,24 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @return filtered tuple collection.
      */
     @Override
-    public Collection<Table> verticalScope(
-        Collection<Table> table
-    ) {
+    public Collection<Table> verticalScope(Collection<Table> table) {
         return table;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasOwnIterator() {
+        boolean result = false;
+        try {
+            String declareClassName =
+                getClass().getMethod(
+                    "iterator",
+                    new Class[] { Collection.class, IteratorStream.class }
+                ).getDeclaringClass().getSimpleName();
+            result = !declareClassName.equalsIgnoreCase("PairTupleRule");
+        } catch (Exception ex) {}
+        return result;
     }
 }

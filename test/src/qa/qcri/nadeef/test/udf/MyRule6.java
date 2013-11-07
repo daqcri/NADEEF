@@ -37,7 +37,7 @@ public class MyRule6 extends SingleTupleRule {
                 !tuple.getCell("country").getValue().equals("Holland"))
             )
         {
-            Violation violation = new Violation(ruleName);
+            Violation violation = new Violation(getRuleName());
             violation.addCell(tuple.getCell("cc"));
             violation.addCell(tuple.getCell("country"));
             result.add(violation);

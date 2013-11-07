@@ -25,7 +25,6 @@ import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
@@ -85,7 +84,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(12, executor.getConnectionPool());
+            verifyViolationResult(12);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -98,7 +97,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(84, executor.getConnectionPool());
+            verifyViolationResult(84);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -111,7 +110,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan3();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(2, executor.getConnectionPool());
+            verifyViolationResult(2);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -124,7 +123,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan4();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(8, executor.getConnectionPool());
+            verifyViolationResult(8);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -142,7 +141,7 @@ public class DetectionTest extends NadeefTestBase {
             }
 
             if (executor != null) {
-                verifyViolationResult(104, executor.getConnectionPool());
+                verifyViolationResult(104);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,7 +155,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan6();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(4, executor.getConnectionPool());
+            verifyViolationResult(4);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -169,7 +168,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan7();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(974, executor.getConnectionPool());
+            verifyViolationResult(974);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -182,7 +181,7 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan8();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(0, executor.getConnectionPool());
+            verifyViolationResult(0);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -195,16 +194,16 @@ public class DetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getCleanPlan9();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(4, executor.getConnectionPool());
+            verifyViolationResult(4);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
         }
     }
 
-    private void verifyViolationResult(int expectRow, DBConnectionPool pool)
+    private void verifyViolationResult(int expectRow)
         throws Exception {
-        int rowCount = Violations.getViolationRowCount(pool);
+        int rowCount = Violations.getViolationRowCount(NadeefConfiguration.getDbConfig());
         Assert.assertEquals(expectRow, rowCount);
     }
 }

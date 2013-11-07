@@ -13,14 +13,12 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,15 +29,12 @@ import java.util.concurrent.TimeUnit;
  * Export violations into the target place.
  */
 public class ViolationExport extends Operator<Collection<Violation>, Integer> {
-    private DBConnectionPool connectionPool;
 
     /**
      * Constructor.
-     * @param plan clean plan.
      */
-    public ViolationExport(CleanPlan plan, DBConnectionPool connectionPool_) {
-        super(plan);
-        connectionPool = Preconditions.checkNotNull(connectionPool_);
+    public ViolationExport(ExecutionContext context) {
+        super(context);
     }
 
     /**
@@ -53,6 +48,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         PreparedStatement stat = null;
+        DBConnectionPool connectionPool = getCurrentContext().getConnectionPool();
         int count = 0;
         try {
             synchronized (ViolationExport.class) {
@@ -73,7 +69,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                         stat.setInt(1, vid);
                         stat.setString(2, violation.getRuleId());
                         stat.setString(3, cell.getColumn().getTableName());
-                        stat.setInt(4, cell.getTupleId());
+                        stat.setInt(4, cell.getTid());
                         stat.setString(5, cell.getColumn().getColumnName());
                         Object value = cell.getValue();
                         if (value == null) {
@@ -94,11 +90,16 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 conn.commit();
             }
 
-            Tracer.appendMetric(
-                Tracer.Metric.ViolationExportTime,
+            PerfReport.appendMetric(
+                PerfReport.Metric.ViolationExportTime,
                 stopwatch.elapsed(TimeUnit.MILLISECONDS)
             );
-            Tracer.appendMetric(Tracer.Metric.ViolationExport, count);
+
+            PerfReport.appendMetric(
+                PerfReport.Metric.ViolationExport,
+                count
+            );
+            stopwatch.stop();
         } finally {
             if (stat != null) {
                 stat.close();

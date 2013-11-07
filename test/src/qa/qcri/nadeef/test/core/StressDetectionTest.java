@@ -30,6 +30,7 @@ import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -54,7 +55,7 @@ public class StressDetectionTest extends NadeefTestBase {
             Tracer.setVerbose(true);
             Tracer.setInfo(true);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
-            Tracer.clearStats();
+            PerfReport.clear();
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
@@ -62,7 +63,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @After
     public void teardown() {
-        Tracer.printDetectSummary("");
         Bootstrap.shutdown();
     }
 
@@ -83,7 +83,7 @@ public class StressDetectionTest extends NadeefTestBase {
                     "city"
                 );
             executor.detect();
-            verifyViolationResult(correctResult, executor.getConnectionPool());
+            verifyViolationResult(correctResult);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -101,8 +101,7 @@ public class StressDetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan30k();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(16164, executor.getConnectionPool());
-            Tracer.printDetectSummary("");
+            verifyViolationResult(16164);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -120,7 +119,7 @@ public class StressDetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(31752, executor.getConnectionPool());
+            verifyViolationResult(31752);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -138,7 +137,7 @@ public class StressDetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan80k();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(58912, executor.getConnectionPool());
+            verifyViolationResult(58912);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -230,8 +229,8 @@ public class StressDetectionTest extends NadeefTestBase {
         return totalViolation * 4;
     }
 
-    private void verifyViolationResult(int expectRow, DBConnectionPool pool) throws Exception {
-        int rowCount = Violations.getViolationRowCount(pool);
+    private void verifyViolationResult(int expectRow) throws Exception {
+        int rowCount = Violations.getViolationRowCount(NadeefConfiguration.getDbConfig());
         Assert.assertEquals(expectRow, rowCount);
     }
 }

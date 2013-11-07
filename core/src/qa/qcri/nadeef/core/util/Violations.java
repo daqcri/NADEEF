@@ -22,6 +22,7 @@ import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.*;
@@ -40,31 +41,68 @@ public class Violations {
 
     /**
      * Generates violation row number from the database.
-     * @param pool connection pool
      * @return new unique violation id.
      */
-    public static int getViolationRowCount(DBConnectionPool pool) throws Exception {
+    public static int getViolationRowCount(DBConfig nadeefConfig) throws Exception {
         Connection conn = null;
+        int result = 0;
+        try {
+            conn = DBConnectionPool.createConnection(nadeefConfig, true);
+            result = getViolationRowCount(conn);
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Generates violation id from the database.
+     * @return new unique violation id.
+     */
+    public static int generateViolationId(DBConnectionPool pool) throws Exception {
+        Connection conn = pool.getNadeefConnection();
+        conn.setAutoCommit(true);
+        int result = -1;
+        try {
+            result = generateViolationId(conn);
+        } finally {
+            conn.close();
+        }
+        return result;
+    }
+
+    /**
+     * Generates violation id from the database.
+     * @return new unique violation id.
+     */
+    public static int generateViolationId(DBConfig dbConfig) throws Exception {
+        Connection conn = DBConnectionPool.createConnection(dbConfig);
+        int result = -1;
+        try {
+            result = generateViolationId(conn);
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return result;
+    }
+
+    private static int generateViolationId(Connection conn) throws Exception {
         Statement stat = null;
         ResultSet rs = null;
         int result = -1;
         try {
-            conn = pool.getNadeefConnection();
-            SQLDialectBase dialectManager =
-                    SQLDialectFactory.getNadeefDialectManagerInstance();
-            String tableName = NadeefConfiguration.getViolationTableName();
-
             stat = conn.createStatement();
-            String sql = dialectManager.countTable(tableName);
-            rs = stat.executeQuery(sql);
-            tracer.verbose(sql);
+            String tableName = NadeefConfiguration.getViolationTableName();
+            SQLDialectBase dialectManager =
+                SQLDialectFactory.getNadeefDialectManagerInstance();
+            rs = stat.executeQuery(dialectManager.nextVid(tableName));
             if (rs.next()) {
-                result = rs.getInt(1);
-            } else {
-                result = 0;
+                result = rs.getInt("vid");
             }
-        } catch (SQLException ex) {
-            tracer.err("Violation counts failed.", ex);
         } finally {
             if (rs != null) {
                 rs.close();
@@ -81,25 +119,27 @@ public class Violations {
         return result;
     }
 
-    /**
-     * Generates violation id from the database.
-     * @return new unique violation id.
-     */
-    public static int generateViolationId(DBConnectionPool pool) throws Exception {
-        Connection conn = null;
+    private static int getViolationRowCount(Connection conn) throws Exception {
         Statement stat = null;
         ResultSet rs = null;
         int result = -1;
         try {
-            conn = pool.getNadeefConnection();
-            stat = conn.createStatement();
-            String tableName = NadeefConfiguration.getViolationTableName();
             SQLDialectBase dialectManager =
-                    SQLDialectFactory.getNadeefDialectManagerInstance();
-            rs = stat.executeQuery(dialectManager.nextVid(tableName));
+                SQLDialectFactory.getNadeefDialectManagerInstance();
+            String tableName = NadeefConfiguration.getViolationTableName();
+
+            stat = conn.createStatement();
+            String sql = dialectManager.countTable(tableName);
+            rs = stat.executeQuery(sql);
+            tracer.verbose(sql);
             if (rs.next()) {
-                result = rs.getInt("vid");
+                result = rs.getInt(1);
+            } else {
+                result = 0;
             }
+            conn.commit();
+        } catch (SQLException ex) {
+            tracer.err("Violation counts failed.", ex);
         } finally {
             if (rs != null) {
                 rs.close();
@@ -107,10 +147,6 @@ public class Violations {
 
             if (stat != null) {
                 stat.close();
-            }
-
-            if (conn != null) {
-                conn.close();
             }
         }
         return result;

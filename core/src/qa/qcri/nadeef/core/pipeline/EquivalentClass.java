@@ -26,6 +26,13 @@ import java.util.*;
  */
 public class EquivalentClass extends FixDecisionMaker {
     /**
+     * Constructor.
+     */
+    public EquivalentClass(ExecutionContext context) {
+        super(context);
+    }
+
+    /**
      * Decides which fixes are right given a collection of candidate fixes.
      *
      * @param fixes candidate fixes.

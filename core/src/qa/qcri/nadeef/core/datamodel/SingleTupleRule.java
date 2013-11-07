@@ -14,18 +14,14 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * SingleTupleRule rule is an abstract class for rule which has detection based on one tuple.
- *
  */
 public abstract class SingleTupleRule extends Rule<Tuple> {
-    /**
-     * Default constructor.
-     */
-    public SingleTupleRule() {}
-
     /**
      * Internal method to initialize a rule.
      * @param name Rule name.
@@ -70,14 +66,56 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
 
     /**
      * Default iterator operation.
-     * @param tables input table collection.
+     * @param blocks input table collection.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<Tuple> iteratorStream) {
-        Table table = tables.iterator().next();
+    public void iterator(Collection<Table> blocks, IteratorStream iteratorStream) {
+        Table table = blocks.iterator().next();
         for (int i = 0; i < table.size(); i ++) {
             iteratorStream.put(table.get(i));
         }
     }
 
+    /**
+     * Incremental iterator interface.
+     * @param tables blocks.
+     * @param newTuples new tuples comes in.
+     * @param iteratorStream output stream.
+     */
+    public final void iterator(
+        Collection<Table> tables,
+        ConcurrentMap<String, HashSet<Integer>> newTuples,
+        IteratorStream iteratorStream
+    ) {
+        Table table = tables.iterator().next();
+        String tableName = table.getSchema().getTableName();
+
+        if (newTuples.containsKey(tableName)) {
+            HashSet<Integer> newTuplesIDs = newTuples.get(tableName);
+            // iterating all the tuples
+            for (int i = 0; i < table.size(); i++) {
+                Tuple tuple1 = table.get(i);
+                if (newTuplesIDs.contains(tuple1.getTid())) {
+                    iteratorStream.put(tuple1);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasOwnIterator() {
+        boolean result = false;
+        try {
+            String declareClassName =
+                getClass().getMethod(
+                    "iterator",
+                    new Class[] { Collection.class, IteratorStream.class }
+                ).getDeclaringClass().getSimpleName();
+            result = !declareClassName.equalsIgnoreCase("SingleTupleRule");
+        } catch (Exception ex) {}
+        return result;
+    }
 }

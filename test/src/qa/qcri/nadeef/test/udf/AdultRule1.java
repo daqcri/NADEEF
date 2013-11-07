@@ -43,7 +43,7 @@ public class AdultRule1 extends SingleTupleRule {
                 relationship.equalsIgnoreCase("husband") ||
                 relationship.equalsIgnoreCase("wife")
             ) {
-                Violation violation = new Violation(this.ruleName);
+                Violation violation = new Violation(getRuleName());
                 violation.addCell(tuple.getCell("martialstatus"));
                 violation.addCell(tuple.getCell("relationship"));
                 result.add(violation);

@@ -64,7 +64,7 @@ public class PairTableDetectionTest extends NadeefTestBase {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             int rowCount =
-                Violations.getViolationRowCount(executor.getConnectionPool());
+                Violations.getViolationRowCount(NadeefConfiguration.getDbConfig());
             Assert.assertEquals(10, rowCount);
         } catch (Exception e) {
             e.printStackTrace();

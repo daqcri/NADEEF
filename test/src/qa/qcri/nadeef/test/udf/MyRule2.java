@@ -33,9 +33,9 @@ public class MyRule2 extends PairTupleRule {
         Tuple left = tuples.getLeft();
         Tuple right = tuples.getRight();
 
-        Column city = new Column(tableNames.get(0), "city");
+        Column city = new Column(getTableNames().get(0), "city");
 
-        Violation violation = new Violation(ruleName);
+        Violation violation = new Violation(getRuleName());
         if (!left.get(city).equals(right.get(city))) {
             violation.addTuple(left);
 			violation.addTuple(right);
@@ -60,7 +60,7 @@ public class MyRule2 extends PairTupleRule {
         Collection<Table> tables
     ) {
         Table collection = tables.iterator().next();
-        String tableName = tableNames.get(0);
+        String tableName = getTableNames().get(0);
         collection.filter(
             new Predicate.PredicateBuilder()
                 .left(new Column(tableName, "zip"))

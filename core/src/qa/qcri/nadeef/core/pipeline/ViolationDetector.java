@@ -13,12 +13,13 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,14 +30,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper class for executing the violation detection.
- *
- *
  */
-public class ViolationDetector<T>
-    extends Operator<Rule, Collection<Violation>> {
+public class ViolationDetector
+    extends Operator<Optional, Collection<Violation>> {
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
 
-    private Rule rule;
     private Collection<Violation> resultCollection;
     private ListeningExecutorService service;
 
@@ -46,14 +44,15 @@ public class ViolationDetector<T>
 
     /**
      * Violation detector constructor.
-     * @param rule rule.
      */
-    public ViolationDetector(Rule rule) {
-        Preconditions.checkNotNull(rule);
+    public ViolationDetector(ExecutionContext context) {
+        super(context);
         resultCollection = Lists.newArrayList();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
         service =
-            MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(MAX_THREAD_NUM, factory));
+            MoreExecutors.listeningDecorator(
+                Executors.newFixedThreadPool(MAX_THREAD_NUM, factory)
+            );
     }
 
     /**
@@ -78,9 +77,11 @@ public class ViolationDetector<T>
      */
     class Detector implements Callable<Integer> {
         private List<Object> tupleList;
+        private Rule rule;
 
-        public Detector(List<Object> tupleList) {
-            this.tupleList = tupleList;
+        public Detector(List<Object> tupleList, Rule rule) {
+            this.tupleList = Preconditions.checkNotNull(tupleList);
+            this.rule = Preconditions.checkNotNull(rule);
         }
 
         /**
@@ -104,13 +105,13 @@ public class ViolationDetector<T>
 
                 count ++;
                 Collection<Violation> violations = null;
-                if (rule.supportOneInput()) {
+                if (rule instanceof SingleTupleRule) {
                     Tuple tuple = (Tuple)item;
                     violations = rule.detect(tuple);
-                } else if (rule.supportTwoInputs()) {
+                } else if (rule instanceof PairTupleRule) {
                     TuplePair pair = (TuplePair)item;
                     violations = rule.detect(pair);
-                } else if (rule.supportManyInputs()) {
+                } else {
                     Table collection = (Table)item;
                     violations = rule.detect(collection);
                 }
@@ -131,20 +132,19 @@ public class ViolationDetector<T>
     }
 
     /**
-     * Execute the operator.
-     *
-     * @param rule rule.
-     * @return list of violations.
+     * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<Violation> execute(Rule rule) throws Exception {
-        this.rule = rule;
-        IteratorStream iteratorStream = new IteratorStream<T>();
+    public Collection<Violation> execute(Optional emptyInput) throws Exception {
+        detectCount = 0;
+        totalThreadCount = 0;
+        finishedThreadCount = 0;
+
+        Rule rule = getCurrentContext().getRule();
+        IteratorStream iteratorStream = new IteratorStream();
         resultCollection.clear();
         List<Object> tupleList;
-        long elapsedTime = 0l;
-        detectCount = 0;
         Stopwatch stopwatch = new Stopwatch().start();
         List<ListenableFuture<Integer>> futures = Lists.newArrayList();
         while (true) {
@@ -154,7 +154,7 @@ public class ViolationDetector<T>
             }
 
             totalThreadCount ++;
-            ListenableFuture<Integer> future = service.submit(new Detector(tupleList));
+            ListenableFuture<Integer> future = service.submit(new Detector(tupleList, rule));
             futures.add(future);
             Futures.addCallback(future, new DetectorCallback());
         }
@@ -163,12 +163,14 @@ public class ViolationDetector<T>
         for (ListenableFuture<Integer> future : futures) {
             future.get();
         }
-        long detectTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.appendMetric(Tracer.Metric.DetectTime, detectTime);
-        Tracer.appendMetric(Tracer.Metric.DetectCallTime, elapsedTime);
-        Tracer.appendMetric(Tracer.Metric.DetectCount, detectCount);
-        Tracer.appendMetric(Tracer.Metric.DetectThreadCount, totalThreadCount);
 
+        PerfReport.appendMetric(
+            PerfReport.Metric.DetectTimeOnly,
+            stopwatch.elapsed(TimeUnit.MILLISECONDS)
+        );
+        PerfReport.appendMetric(PerfReport.Metric.DetectCount, detectCount);
+        PerfReport.appendMetric(PerfReport.Metric.DetectThreadCount, totalThreadCount);
+        stopwatch.stop();
         return resultCollection;
     }
 

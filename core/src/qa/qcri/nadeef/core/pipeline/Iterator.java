@@ -17,29 +17,29 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.IteratorStream;
+import qa.qcri.nadeef.core.datamodel.PairTupleRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.*;
 
 /**
  * Iterator.
- *
  */
-public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
+public class Iterator extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
-    private Rule rule;
-    private int totalBlockSize;
     private int blockCount;
 
     //</editor-fold>
 
-    public Iterator(Rule rule) {
-        this.rule = rule;
+    public Iterator(ExecutionContext context) {
+        super(context);
     }
 
     //<editor-fold desc="IteratorCallable and Callback Class">
@@ -56,7 +56,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         @Override
         public void onSuccess(Integer integer) {
             synchronized (Iterator.class) {
-                totalBlockSize += integer;
                 blockCount ++;
                 setPercentage(blockCount / tableSize);
             }
@@ -70,12 +69,20 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
      * IteratorCallable is a {@link Callable} class for iteration operation on each block.
      */
     class IteratorCallable<T> implements Callable<Integer> {
-        private IteratorStream<E> iteratorStream;
+        private IteratorStream iteratorStream;
         private WeakReference<T> ref;
+        private WeakReference<ConcurrentMap<String, HashSet<Integer>>> newTupleRef;
+        private Rule rule;
 
-        IteratorCallable(T tables) {
-            ref = new WeakReference<>(tables);
-            iteratorStream = new IteratorStream<>();
+        IteratorCallable(
+            T tables,
+            Rule rule,
+            ConcurrentMap<String, HashSet<Integer>> newTuples
+        ) {
+            this.newTupleRef = new WeakReference<>(newTuples);
+            this.ref = new WeakReference<>(tables);
+            this.iteratorStream = new IteratorStream();
+            this.rule = rule;
         }
 
         /**
@@ -98,7 +105,13 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             } else {
                 value = (Collection<Table>)instance;
             }
-            rule.iterator(value, iteratorStream);
+
+            ConcurrentMap<String, HashSet<Integer>> newTuples = newTupleRef.get();
+            if (newTuples == null || newTuples.size() == 0 || rule.hasOwnIterator()) {
+                rule.iterator(value, iteratorStream);
+            } else {
+                rule.iterator(value, newTuples, iteratorStream);
+            }
             iteratorStream.flush();
 
             // return the tuple total count
@@ -114,12 +127,12 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
     /**
      * Iterator operator execution.
      *
-     * @param tables input tables.
+     * @param blocks input tables.
      * @return iteration output.
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Boolean execute(Collection<Table> tables) {
+    public Boolean execute(Collection<Table> blocks) {
         Tracer tracer = Tracer.getTracer(Iterator.class);
         ThreadFactory factory =
             new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
@@ -127,22 +140,23 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         ListeningExecutorService service = MoreExecutors.listeningDecorator(executor);
 
         Stopwatch stopwatch = new Stopwatch().start();
-        totalBlockSize = 0;
         blockCount = 0;
 
+        ExecutionContext context = getCurrentContext();
+        Rule rule = context.getRule();
         try {
             if (rule.supportTwoTables()) {
                 // Rule runs on two tables.
-                ListenableFuture<Integer> future = service.submit(new IteratorCallable(tables));
-                totalBlockSize = future.get();
+                ListenableFuture<Integer> future =
+                    service.submit(new IteratorCallable(blocks, rule, context.getNewTuples()));
                 blockCount ++;
                 setPercentage(1.0f);
             } else {
                 // Rule runs on each table.
-                for (Table table : tables) {
+                for (Table table : blocks) {
                     ListenableFuture<Integer> future =
-                        service.submit(new IteratorCallable(table));
-                    Futures.addCallback(future, new IteratorCallback(tables.size()));
+                        service.submit(new IteratorCallable(table, rule, context.getNewTuples()));
+                    Futures.addCallback(future, new IteratorCallback(blocks.size()));
                 }
             }
 
@@ -151,9 +165,9 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             while (!service.awaitTermination(10l, TimeUnit.MINUTES));
 
             // recycle the collection when dealing with pairs. This is mainly used to remove refs.
-            if (rule.supportTwoInputs()) {
-                for (Table table : tables) {
-                    table.recycle();
+            if (rule instanceof PairTupleRule) {
+                for (Table block : blocks) {
+                    block.recycle();
                 }
             }
 
@@ -161,18 +175,15 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             IteratorStream.markEnd();
         } catch (InterruptedException ex) {
             tracer.err("Iterator is interrupted.", ex);
-        } catch (ExecutionException ex) {
-            tracer.err("Iterator execution failed.", ex);
         } finally {
             executor.shutdown();
         }
 
-        Tracer.appendMetric(
-            Tracer.Metric.IteratorTime,
+        PerfReport.appendMetric(
+            PerfReport.Metric.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.appendMetric(Tracer.Metric.IterationCount, totalBlockSize);
         stopwatch.stop();
         return true;
     }
