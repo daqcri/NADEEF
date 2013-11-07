@@ -96,7 +96,7 @@ public class Cell {
      * Gets Tuple Id.
      * @return tuple id.
      */
-    public int getTupleId() {
+    public int getTid() {
         return tid;
     }
 

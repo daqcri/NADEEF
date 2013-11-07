@@ -140,7 +140,7 @@ public class ViolationDetector<T>
         finishedThreadCount = 0;
 
         Rule rule = getCurrentContext().getRule();
-        IteratorStream iteratorStream = new IteratorStream<T>();
+        IteratorStream iteratorStream = new IteratorStream();
         resultCollection.clear();
         List<Object> tupleList;
         Stopwatch stopwatch = new Stopwatch().start();

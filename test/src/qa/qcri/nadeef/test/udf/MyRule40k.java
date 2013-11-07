@@ -70,7 +70,7 @@ public class MyRule40k extends PairTupleRule {
      * @param tables input table.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList<>();
         table.orderBy(rightHandSide);
@@ -81,7 +81,6 @@ public class MyRule40k extends PairTupleRule {
         // two pointer loop via the block. Linear scan
         // ---------------------------------------------------
         while (pos1 < table.size()) {
-            findViolation = false;
             for (pos2 = pos1 + 1; pos2 < table.size(); pos2 ++) {
                 Tuple left = table.get(pos1);
                 Tuple right = table.get(pos2);

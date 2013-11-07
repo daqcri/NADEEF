@@ -150,7 +150,9 @@ public class Console {
                 }
             });
             derbyProcess =
-                Runtime.getRuntime().exec("java -d64 -jar out/bin/derbyrun.jar server start");
+                Runtime.getRuntime().exec(
+                    "java -d64 -Dderby.storage.pageSize=8192 -jar out/bin/derbyrun.jar server start"
+                );
             if (!CommonTools.waitForService(DERBY_PORT)) {
                 System.out.println("FAILED");
                 System.exit(1);

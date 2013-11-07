@@ -69,7 +69,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                         stat.setInt(1, vid);
                         stat.setString(2, violation.getRuleId());
                         stat.setString(3, cell.getColumn().getTableName());
-                        stat.setInt(4, cell.getTupleId());
+                        stat.setInt(4, cell.getTid());
                         stat.setString(5, cell.getColumn().getColumnName());
                         Object value = cell.getValue();
                         if (value == null) {

@@ -99,7 +99,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             .append(',');
 
         Cell cell = fix.getLeft();
-        sqlBuilder.append(cell.getTupleId());
+        sqlBuilder.append(cell.getTid());
         sqlBuilder.append(',');
         sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
         sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");
@@ -109,7 +109,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         sqlBuilder.append(',');
         if (!fix.isConstantAssign()) {
             cell = fix.getRight();
-            sqlBuilder.append(cell.getTupleId());
+            sqlBuilder.append(cell.getTid());
             sqlBuilder.append(',');
             sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
             sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");

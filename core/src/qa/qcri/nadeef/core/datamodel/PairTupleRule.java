@@ -50,7 +50,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @param tables input tuple
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
         List<Table> collectionList = Lists.newArrayList(tables);
 
         if (collectionList.size() == 1) {
@@ -82,7 +82,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
     public final void iterator(
         Collection<Table> blocks,
         ConcurrentMap<String, HashSet<Integer>> newTuples,
-        IteratorStream<TuplePair> iteratorStream
+        IteratorStream iteratorStream
     ) {
         // We are dealing with two table rule.
         if (blocks.size() > 1) {

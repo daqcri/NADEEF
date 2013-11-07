@@ -69,7 +69,7 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
      * @param blocks input table collection.
      */
     @Override
-    public void iterator(Collection<Table> blocks, IteratorStream<Tuple> iteratorStream) {
+    public void iterator(Collection<Table> blocks, IteratorStream iteratorStream) {
         Table table = blocks.iterator().next();
         for (int i = 0; i < table.size(); i ++) {
             iteratorStream.put(table.get(i));
@@ -85,7 +85,7 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
     public final void iterator(
         Collection<Table> tables,
         ConcurrentMap<String, HashSet<Integer>> newTuples,
-        IteratorStream<Tuple> iteratorStream
+        IteratorStream iteratorStream
     ) {
         Table table = tables.iterator().next();
         String tableName = table.getSchema().getTableName();

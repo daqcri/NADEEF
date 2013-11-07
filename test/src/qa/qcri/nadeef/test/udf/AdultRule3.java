@@ -80,7 +80,7 @@ public class AdultRule3 extends SingleTupleRule {
      * @param blocks input table
      */
     @Override
-    public void iterator(Collection<Table> blocks, IteratorStream<Tuple> output) {
+    public void iterator(Collection<Table> blocks, IteratorStream output) {
         Table table = blocks.iterator().next();
         ArrayList<Tuple> result = new ArrayList<>();
         int pos = 0;

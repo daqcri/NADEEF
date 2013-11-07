@@ -43,7 +43,7 @@ public class AdultRule2 extends PairTupleRule {
     @Override
     public void iterator(
         Collection<Table> tables,
-        IteratorStream<TuplePair> iteratorStream
+        IteratorStream iteratorStream
     ) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList<>();

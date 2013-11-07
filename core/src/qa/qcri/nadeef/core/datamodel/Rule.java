@@ -92,7 +92,7 @@ public abstract class Rule<E> {
      */
     public abstract void iterator(
         Collection<Table> tables,
-        IteratorStream<E> iteratorStream
+        IteratorStream iteratorStream
     );
 
     /**
@@ -104,7 +104,7 @@ public abstract class Rule<E> {
     public abstract void iterator(
         Collection<Table> tables,
         ConcurrentMap<String, HashSet<Integer>> newTuples,
-        IteratorStream<E> iteratorStream
+        IteratorStream iteratorStream
     );
 
 

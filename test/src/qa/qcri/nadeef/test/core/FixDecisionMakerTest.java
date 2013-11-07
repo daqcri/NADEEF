@@ -66,7 +66,7 @@ public class FixDecisionMakerTest {
             for (Fix fix : result) {
                 Cell left = fix.getLeft();
                 String value = fix.getRightValue();
-                switch (left.getTupleId()) {
+                switch (left.getTid()) {
                     case 2:
                     case 1:
                         Assert.assertEquals("a3", value);

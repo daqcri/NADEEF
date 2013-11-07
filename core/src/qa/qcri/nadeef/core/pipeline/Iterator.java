@@ -71,7 +71,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
      * IteratorCallable is a {@link Callable} class for iteration operation on each block.
      */
     class IteratorCallable<T> implements Callable<Integer> {
-        private IteratorStream<E> iteratorStream;
+        private IteratorStream iteratorStream;
         private WeakReference<T> ref;
         private WeakReference<ConcurrentMap<String, HashSet<Integer>>> newTupleRef;
         private Rule rule;
@@ -83,7 +83,7 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         ) {
             this.newTupleRef = new WeakReference<>(newTuples);
             this.ref = new WeakReference<>(tables);
-            this.iteratorStream = new IteratorStream<>();
+            this.iteratorStream = new IteratorStream();
             this.rule = rule;
         }
 

@@ -67,7 +67,7 @@ public class MyRule4 extends PairTupleRule {
      * @param tables input tables
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
         Table table = tables.iterator().next();
         table.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;

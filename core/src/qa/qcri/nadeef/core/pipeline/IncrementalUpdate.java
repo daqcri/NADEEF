@@ -52,7 +52,7 @@ public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
                 + " WHERE tablename=? AND tupleid=?)");
             int count = 0;
             for (Fix fix : fixes) {
-                int tid = fix.getLeft().getTupleId();
+                int tid = fix.getLeft().getTid();
                 String tableName = fix.getLeft().getColumn().getTableName();
                 stat.setString(1, tableName);
                 stat.setInt(2, tid);
@@ -63,7 +63,7 @@ public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
                     conn.commit();
                 }
                 count ++;
-                newTuples[count] = fix.getLeft().getTupleId();
+                newTuples[count] = fix.getLeft().getTid();
             }
 
             stat.executeBatch();
