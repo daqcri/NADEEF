@@ -14,14 +14,19 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Preconditions;
-import qa.qcri.nadeef.core.datamodel.*;
+import com.google.common.base.Stopwatch;
+import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CleanPlan execution logic. It assembles the right pipeline based on the clean plan and
@@ -187,6 +192,8 @@ public class CleanExecutor {
      * Runs the violation detection.
      */
     public CleanExecutor detect() {
+        Stopwatch sw = new Stopwatch().start();
+
         queryFlow.reset();
         detectFlow.reset();
 
@@ -199,11 +206,12 @@ public class CleanExecutor {
         // clear the new tuples after every run.
         context.clearNewTuples();
 
-        Tracer.appendMetric(
-            Tracer.Metric.DetectPipelineTime,
-            queryFlow.getElapsedTime() + detectFlow.getElapsedTime()
+        PerfReport.appendMetric(
+            PerfReport.Metric.DetectTime,
+            sw.elapsed(TimeUnit.MILLISECONDS)
         );
 
+        // TODO: remove it.
         System.gc();
         return this;
     }
@@ -220,14 +228,20 @@ public class CleanExecutor {
      * Runs the violation repair.
      */
     public CleanExecutor repair() {
+        Stopwatch sw = new Stopwatch().start();
         repairFlow.reset();
 
         repairFlow.start();
         repairFlow.waitUntilFinish();
 
         context.clearNewTuples();
-        Tracer.appendMetric(Tracer.Metric.RepairTime, repairFlow.getElapsedTime());
 
+        PerfReport.appendMetric(
+            PerfReport.Metric.RepairTime,
+            sw.elapsed(TimeUnit.MILLISECONDS)
+        );
+        sw.stop();
+        // TODO: remove it.
         System.gc();
         return this;
     }
@@ -248,39 +262,21 @@ public class CleanExecutor {
      */
     @SuppressWarnings("unchecked")
     private void assembleFlow() {
-        Rule rule = cleanPlan.getRule();
-
         try {
             // assemble the query flow.
             queryFlow = new Flow("query");
             queryFlow
                 .setInputKey(cacheManager.getKeyForNothing())
-                .addNode(new SourceImport(context));
-
-            if (rule instanceof SingleTupleRule) {
-                queryFlow
-                    .addNode(new ScopeOperator(context))
-                    .addNode(new Iterator<Tuple>(context), 6);
-            } else if (rule instanceof PairTupleRule) {
-                // the case where the rule is working on multiple tables (2).
-                queryFlow
-                    .addNode(new ScopeOperator(context))
-                    .addNode(new Iterator<TuplePair>(context), 6);
-            } else {
-                queryFlow
-                    .addNode(new ScopeOperator(context))
-                    .addNode(new Iterator<Table>(context), 6);
-            }
+                .addNode(new SourceImport(context))
+                .addNode(new ScopeOperator(context))
+                .addNode(new Iterator(context), 6);
 
             // assemble the detect flow
             detectFlow = new Flow("detect");
-            detectFlow.setInputKey(cacheManager.getKeyForNothing());
-            if (rule instanceof PairTupleRule) {
-                detectFlow.addNode(new ViolationDetector<TuplePair>(context), 6);
-            } else {
-                detectFlow.addNode(new ViolationDetector<Table>(context), 6);
-            }
-            detectFlow.addNode(new ViolationExport(context));
+            detectFlow
+                .setInputKey(cacheManager.getKeyForNothing())
+                .addNode(new ViolationDetector(context), 6)
+                .addNode(new ViolationExport(context));
 
             // assemble the repair flow
             repairFlow = new Flow("repair");

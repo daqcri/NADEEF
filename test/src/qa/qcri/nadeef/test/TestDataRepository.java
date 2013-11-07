@@ -339,5 +339,13 @@ public class TestDataRepository {
             new FileReader(getIncCleanPlanFile2()),
             NadeefConfiguration.getDbConfig()).get(0);
     }
+
+    public static List<CleanPlan> getPlan(String relativeFileName) throws Exception {
+        final String filePath = "test*src*qa*qcri*nadeef*test*input*" + relativeFileName;
+        File inputFile = new File(filePath.replace('*', File.separatorChar));
+        return CleanPlan.createCleanPlanFromJSON(
+            new FileReader(inputFile),
+            NadeefConfiguration.getDbConfig());
+    }
 }
 

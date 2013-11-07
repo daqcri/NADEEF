@@ -14,13 +14,16 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Updater flow executor.
@@ -79,11 +82,13 @@ public class UpdateExecutor {
     }
 
     public void run() {
+        Stopwatch sw = new Stopwatch().start();
         updateFlow.reset();
         updateFlow.start();
         updateFlow.waitUntilFinish();
 
-        Tracer.appendMetric(Tracer.Metric.EQTime, updateFlow.getElapsedTime());
+        PerfReport.appendMetric(PerfReport.Metric.EQTime, sw.elapsed(TimeUnit.MILLISECONDS));
+        sw.stop();
     }
 
     @SuppressWarnings("unchecked")

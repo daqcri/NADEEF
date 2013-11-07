@@ -20,7 +20,7 @@ import qa.qcri.nadeef.core.util.Fixes;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
@@ -55,7 +55,11 @@ class FixImport extends Operator<Optional, Collection<Fix>> {
                 dialectBase.selectAll(NadeefConfiguration.getRepairTableName());
             resultSet = stat.executeQuery(sql);
             result = Fixes.fromQuery(resultSet);
-            Tracer.appendMetric(Tracer.Metric.FixImport, result.size());
+
+            PerfReport.appendMetric(
+                PerfReport.Metric.FixImport,
+                result.size()
+            );
         } finally {
             if (resultSet != null) {
                 resultSet.close();

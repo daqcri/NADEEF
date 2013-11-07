@@ -61,7 +61,7 @@ public class $FDName$ extends PairTupleRule {
      * @param tables input tables
      */
     @Override
-   	public void iterator(Collection<Table> tables, IteratorStream<TuplePair> output) {
+   	public void iterator(Collection<Table> tables, IteratorStream output) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
         table.orderBy(rightHandSide);

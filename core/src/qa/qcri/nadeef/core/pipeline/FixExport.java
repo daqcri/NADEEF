@@ -18,6 +18,7 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Fixes;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -68,7 +69,11 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
             setPercentage(0.5f);
             stat.executeBatch();
             conn.commit();
-            Tracer.appendMetric(Tracer.Metric.FixExport, count);
+
+            PerfReport.appendMetric(
+                PerfReport.Metric.FixExport,
+                count
+            );
         } catch (Exception ex) {
             tracer.err("Exporting Fixes failed", ex);
         } finally {

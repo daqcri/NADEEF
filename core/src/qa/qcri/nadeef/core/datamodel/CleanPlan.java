@@ -273,7 +273,7 @@ public class CleanPlan {
             if (Strings.isNullOrEmpty(ruleName)) {
                 // generate default rule name when it is not provided by the user, and
                 // distinguished by the value of the rule.
-                ruleName = "Rule" + CommonTools.toHashCode((String)value.get(0));
+                ruleName = "Rule" + CommonTools.toHashCode(value.get(0) + targetTableNames.get(0));
             }
             switch (type) {
             case "udf":

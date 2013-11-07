@@ -30,6 +30,7 @@ import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -54,7 +55,7 @@ public class StressDetectionTest extends NadeefTestBase {
             Tracer.setVerbose(true);
             Tracer.setInfo(true);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
-            Tracer.clearStats();
+            PerfReport.clear();
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
@@ -62,7 +63,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @After
     public void teardown() {
-        Tracer.printDetectSummary("");
         Bootstrap.shutdown();
     }
 
@@ -102,7 +102,6 @@ public class StressDetectionTest extends NadeefTestBase {
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(16164);
-            Tracer.printDetectSummary("");
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

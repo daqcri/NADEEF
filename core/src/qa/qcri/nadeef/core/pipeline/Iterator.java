@@ -20,6 +20,7 @@ import qa.qcri.nadeef.core.datamodel.IteratorStream;
 import qa.qcri.nadeef.core.datamodel.PairTupleRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.lang.ref.WeakReference;
@@ -29,12 +30,10 @@ import java.util.concurrent.*;
 
 /**
  * Iterator.
- *
  */
-public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
+public class Iterator extends Operator<Collection<Table>, Boolean> {
     //<editor-fold desc="Private members">
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
-    private int totalBlockSize;
     private int blockCount;
 
     //</editor-fold>
@@ -57,7 +56,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         @Override
         public void onSuccess(Integer integer) {
             synchronized (Iterator.class) {
-                totalBlockSize += integer;
                 blockCount ++;
                 setPercentage(blockCount / tableSize);
             }
@@ -142,7 +140,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
         ListeningExecutorService service = MoreExecutors.listeningDecorator(executor);
 
         Stopwatch stopwatch = new Stopwatch().start();
-        totalBlockSize = 0;
         blockCount = 0;
 
         ExecutionContext context = getCurrentContext();
@@ -152,7 +149,6 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
                 // Rule runs on two tables.
                 ListenableFuture<Integer> future =
                     service.submit(new IteratorCallable(blocks, rule, context.getNewTuples()));
-                totalBlockSize = future.get();
                 blockCount ++;
                 setPercentage(1.0f);
             } else {
@@ -179,18 +175,15 @@ public class Iterator<E> extends Operator<Collection<Table>, Boolean> {
             IteratorStream.markEnd();
         } catch (InterruptedException ex) {
             tracer.err("Iterator is interrupted.", ex);
-        } catch (ExecutionException ex) {
-            tracer.err("Iterator execution failed.", ex);
         } finally {
             executor.shutdown();
         }
 
-        Tracer.appendMetric(
-            Tracer.Metric.IteratorTime,
+        PerfReport.appendMetric(
+            PerfReport.Metric.IteratorTime,
             stopwatch.elapsed(TimeUnit.MILLISECONDS)
         );
 
-        Tracer.appendMetric(Tracer.Metric.IterationCount, totalBlockSize);
         stopwatch.stop();
         return true;
     }

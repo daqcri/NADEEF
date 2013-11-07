@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 
 import java.util.Collection;
 import java.util.List;
@@ -61,7 +61,8 @@ public class ViolationRepair
         } else {
             elapseTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         }
-        Tracer.appendMetric(Tracer.Metric.RepairCallTime, elapseTime);
+
+        PerfReport.appendMetric(PerfReport.Metric.RepairCallTime, elapseTime);
         stopwatch.stop();
         return result;
     }

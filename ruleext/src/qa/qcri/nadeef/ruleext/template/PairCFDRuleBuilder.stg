@@ -89,7 +89,7 @@ public class $CFDName$ extends PairTupleRule {
      * @return a group of tables.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream<TuplePair> output) {
+    public void iterator(Collection<Table> tables, IteratorStream output) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
         table.orderBy(rhs);

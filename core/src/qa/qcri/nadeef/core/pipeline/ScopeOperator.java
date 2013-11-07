@@ -16,7 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -53,9 +53,10 @@ public class ScopeOperator extends Operator<Collection<Table>, Collection<Table>
             rule.verticalScope(horizontalScopeResult);
 
         currentTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        Tracer.appendMetric(Tracer.Metric.HScopeTime, time);
-        Tracer.appendMetric(Tracer.Metric.VScopeTime, currentTime - time);
-        Tracer.appendMetric(Tracer.Metric.AfterScopeTuple, verticalScopeResult.size());
+
+        PerfReport.appendMetric(PerfReport.Metric.HScopeTime, time);
+        PerfReport.appendMetric(PerfReport.Metric.VScopeTime, currentTime - time);
+        PerfReport.appendMetric(PerfReport.Metric.AfterScopeTuple, verticalScopeResult.size());
 
         Collection<Table> result = verticalScopeResult;
 
@@ -64,7 +65,7 @@ public class ScopeOperator extends Operator<Collection<Table>, Collection<Table>
         // ignore the block function.
         if (!rule.supportTwoTables()) {
             result = rule.block(verticalScopeResult);
-            Tracer.appendMetric(Tracer.Metric.Blocks, result.size());
+            PerfReport.appendMetric(PerfReport.Metric.Blocks, result.size());
         }
 
         stopwatch.stop();

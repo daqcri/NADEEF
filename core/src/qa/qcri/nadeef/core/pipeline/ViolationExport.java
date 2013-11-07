@@ -18,7 +18,7 @@ import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -90,11 +90,15 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 conn.commit();
             }
 
-            Tracer.appendMetric(
-                Tracer.Metric.ViolationExportTime,
+            PerfReport.appendMetric(
+                PerfReport.Metric.ViolationExportTime,
                 stopwatch.elapsed(TimeUnit.MILLISECONDS)
             );
-            Tracer.appendMetric(Tracer.Metric.ViolationExport, count);
+
+            PerfReport.appendMetric(
+                PerfReport.Metric.ViolationExport,
+                count
+            );
             stopwatch.stop();
         } finally {
             if (stat != null) {

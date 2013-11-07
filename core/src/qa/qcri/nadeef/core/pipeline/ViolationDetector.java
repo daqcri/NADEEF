@@ -19,7 +19,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.*;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.PerfReport;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Wrapper class for executing the violation detection.
  */
-public class ViolationDetector<T>
+public class ViolationDetector
     extends Operator<Optional, Collection<Violation>> {
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
 
@@ -50,7 +50,9 @@ public class ViolationDetector<T>
         resultCollection = Lists.newArrayList();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("detect-pool-%d").build();
         service =
-            MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(MAX_THREAD_NUM, factory));
+            MoreExecutors.listeningDecorator(
+                Executors.newFixedThreadPool(MAX_THREAD_NUM, factory)
+            );
     }
 
     /**
@@ -161,10 +163,14 @@ public class ViolationDetector<T>
         for (ListenableFuture<Integer> future : futures) {
             future.get();
         }
-        Tracer.appendMetric(Tracer.Metric.DetectTime, stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        Tracer.appendMetric(Tracer.Metric.DetectCount, detectCount);
-        Tracer.appendMetric(Tracer.Metric.DetectThreadCount, totalThreadCount);
 
+        PerfReport.appendMetric(
+            PerfReport.Metric.DetectTimeOnly,
+            stopwatch.elapsed(TimeUnit.MILLISECONDS)
+        );
+        PerfReport.appendMetric(PerfReport.Metric.DetectCount, detectCount);
+        PerfReport.appendMetric(PerfReport.Metric.DetectThreadCount, totalThreadCount);
+        stopwatch.stop();
         return resultCollection;
     }
 

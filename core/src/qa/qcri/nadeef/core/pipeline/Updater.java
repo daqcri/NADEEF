@@ -21,6 +21,7 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
@@ -138,7 +139,7 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
             auditStat.executeBatch();
             sourceConn.commit();
             nadeefConn.commit();
-            Tracer.appendMetric(Tracer.Metric.UpdatedCellNumber, count);
+            PerfReport.appendMetric(PerfReport.Metric.UpdatedCellNumber, count);
         } finally {
             if (auditStat != null) {
                 auditStat.close();

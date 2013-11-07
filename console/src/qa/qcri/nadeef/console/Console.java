@@ -30,6 +30,7 @@ import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
@@ -194,7 +195,7 @@ public class Console {
                 }
 
                 // clear the statistics for every run.
-                Tracer.clearStats();
+                PerfReport.clear();
                 try {
                     if (tokens[0].equalsIgnoreCase("exit")) {
                         break;
@@ -363,7 +364,7 @@ public class Console {
             printProgress(percentage, "DETECT");
             console.println();
             console.flush();
-            Tracer.printDetectSummary(ruleName);
+            tracer.info(PerfReport.generateDetectSummary(ruleName));
         }
     }
 
@@ -408,7 +409,7 @@ public class Console {
             printProgress(percentage, "REPAIR");
             console.println();
             console.flush();
-            Tracer.printRepairSummary(ruleName);
+            tracer.info(PerfReport.generateRepairSummary(ruleName));
         }
     }
 
@@ -488,11 +489,11 @@ public class Console {
             }
             CleanExecutor executor = executors.get(i);
             String ruleName = executor.getCleanPlan().getRule().getRuleName();
-            Tracer.printDetectSummary(ruleName);
-            Tracer.printRepairSummary(ruleName);
+            tracer.info(PerfReport.generateDetectSummary(ruleName));
+            tracer.info(PerfReport.generateRepairSummary(ruleName));
         }
         console.println();
-        Tracer.printUpdateSummary();
+        tracer.info(PerfReport.generateUpdateSummary());
     }
 
     private static void set(String cmd) throws IOException {
@@ -517,7 +518,7 @@ public class Console {
     }
 
     private static void printHelp() throws IOException {
-        String help =
+        final String help =
                 " |NADEEF console usage:\n" +
                 " |----------------------------------\n" +
                 " |help : Print out this help information.\n" +

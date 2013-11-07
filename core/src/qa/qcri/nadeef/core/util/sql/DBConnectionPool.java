@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.dbcp.BasicDataSource;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
@@ -51,12 +52,6 @@ public class DBConnectionPool {
 
         nadeefPool = createConnectionPool(nadeefConfig);
         sourcePool = createConnectionPool(sourceConfig);
-        localCache = Sets.newHashSet();
-    }
-
-    private DBConnectionPool(DBConfig nadeefConfig) {
-        this.nadeefConfig = Preconditions.checkNotNull(nadeefConfig);
-        nadeefPool = createConnectionPool(nadeefConfig);
         localCache = Sets.newHashSet();
     }
 
@@ -170,6 +165,7 @@ public class DBConnectionPool {
      * @return new JDBC connection.
      */
     public Connection getNadeefConnection() throws SQLException {
+        PerfReport.addMetric(PerfReport.Metric.NadeefDBConnectionCount, 1);
         return nadeefPool.getConnection();
     }
 
@@ -178,6 +174,7 @@ public class DBConnectionPool {
      * @return new JDBC connection.
      */
     public Connection getSourceConnection() throws SQLException {
+        PerfReport.addMetric(PerfReport.Metric.SourceDBConnectionCount, 1);
         return sourcePool.getConnection();
     }
 
@@ -222,6 +219,8 @@ public class DBConnectionPool {
                     conn.commit();
                     indexCache.put(indexName, tableName);
                     indexCount.put(indexName, 1);
+
+                    PerfReport.addMetric(PerfReport.Metric.SourceIndexCreationCount, 1);
                 } catch (Exception ex) {
                     tracer.err("Creating index " + indexName + " failed.", ex);
                 } finally {
@@ -254,6 +253,7 @@ public class DBConnectionPool {
             SQLException,
             IllegalAccessException,
             InstantiationException {
+        PerfReport.addMetric(PerfReport.Metric.DBConnectionCount, 1);
         String driverName = SQLDialectTools.getDriverName(dbConfig.getDialect());
         Class.forName(driverName).newInstance();
         Connection conn =
