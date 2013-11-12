@@ -1,4 +1,4 @@
-# NADEEF <img src="https://travis-ci.org/daqcri/NADEEF.png" />
+# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" />
 
 ### What is NADEEF?
 
