@@ -203,15 +203,11 @@ public class PerfReport {
         sb.append("\n");
         sb.append(formatEntry(Metric.Blocks, "Blocks", ""));
         sb.append("\n");
-        sb.append(formatEntry(Metric.IterationCount, "Original tuple count", ""));
-        sb.append("\n");
         sb.append(formatEntry(Metric.IteratorTime, "Iterator time", "ms"));
         sb.append("\n");
         sb.append(formatEntry(Metric.DBLoadTime, "DB load time", "ms"));
         sb.append("\n");
         sb.append(formatEntry(Metric.DetectTime, "Detect time", "ms"));
-        sb.append("\n");
-        sb.append(formatEntry(Metric.DetectCallTime, "Detect call time", "ms"));
         sb.append("\n");
         sb.append(formatEntry(Metric.DetectThreadCount, "Detect thread count", ""));
         sb.append("\n");
@@ -238,7 +234,7 @@ public class PerfReport {
             }
         }
 
-        sb.append("----------------------------------------------------------------\n");
+        sb.append("\n----------------------------------------------------------------\n");
         sb.append(
             "Detection finished in " + totalTime + " ms " +
                 "and found " + totalViolation + " violations.\n"
