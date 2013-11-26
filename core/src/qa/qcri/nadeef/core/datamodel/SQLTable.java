@@ -24,9 +24,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.Collection;
@@ -414,21 +412,20 @@ public class SQLTable extends Table {
     /**
      * Serialize object to a bytes array.
      */
-    // TODO: check for UTF-16 for i18 cases.
     private static byte[] serialize(Object obj) throws IOException {
         byte[] result = null;
-        if (obj instanceof String) {
-            result = ((String)obj).getBytes(Charset.forName("UTF-8"));
-        } else {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ObjectOutputStream os = new ObjectOutputStream(out);
-            os.writeObject(obj);
-            result = out.toByteArray();
+        String stringValue;
+        if (obj != null) {
+            if (obj instanceof String) {
+                stringValue = (String)obj;
+            } else {
+                stringValue = obj.toString();
+            }
+            // TODO: We currently use hardcoded UTF-8 encoding.
+            result = stringValue.getBytes(Charset.forName("UTF-8"));
         }
-
         return result;
     }
-
     //</editor-fold>
 
     //<editor-fold desc="Finalization methods">
@@ -441,4 +438,5 @@ public class SQLTable extends Table {
     }
 
     //</editor-fold>
+
 }

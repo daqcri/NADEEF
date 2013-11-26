@@ -18,8 +18,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -74,22 +72,24 @@ public class Tuple {
     public Object get(Column key) {
         int index = schema.get(key);
         byte[] bytes = values.get(index);
-        DataType type = schema.getTypes()[index];
         Object result = null;
-
-        switch (type) {
-            case STRING:
-                result = new String(bytes, Charset.forName("UTF-8"));
-                break;
-            default:
-                try {
-                    ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-                    ObjectInputStream obj = new ObjectInputStream(bin);
-                    result = obj.readObject();
-                } catch (Exception ex) {
-                    tracer.err("Tuple deserailization failed.", ex);
-                }
-                break;
+        if (bytes != null) {
+            DataType type = schema.getTypes()[index];
+            String stringValue = new String(bytes, Charset.forName("UTF-8"));
+            switch (type) {
+                case STRING:
+                    result = stringValue;
+                    break;
+                case INTEGER:
+                    result = Integer.parseInt(stringValue);
+                    break;
+                case DOUBLE:
+                    result = Double.parseDouble(stringValue);
+                    break;
+                case FLOAT:
+                    result = Float.parseFloat(stringValue);
+                    break;
+            }
         }
         return result;
     }
