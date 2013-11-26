@@ -8,10 +8,10 @@ if ! [ -d "out" ]; then
 else
     if [ $# -eq 1 ]; then
         if [ "$1" == "console" ]; then
-            cmd='java -d64 -cp out/bin/*:examples/:out/test qa.qcri.nadeef.console.Console'
+            cmd='java -cp out/bin/*:examples/:out/test qa.qcri.nadeef.console.Console'
             exec $cmd
         elif [ "$1" == "dashboard" ]; then
-            cmd='java -d64 -cp out/bin/*:. qa.qcri.nadeef.web.NadeefStart'
+            cmd='java -cp out/bin/*:. qa.qcri.nadeef.web.NadeefStart'
             exec $cmd
         else
             echo 'Usage: nadeef.sh [OPTIONS]'
