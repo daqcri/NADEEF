@@ -142,6 +142,9 @@ public class Tracer {
     public void err(String message, Exception ex) {
         if (!Strings.isNullOrEmpty(message)) {
             console.println("Error: " + message);
+        }
+
+        if (ex != null) {
             console.println("Exception: " + ex.getClass().getName() + ": " + ex.getMessage());
         }
         logger.error(message, ex);

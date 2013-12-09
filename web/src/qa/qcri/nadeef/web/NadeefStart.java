@@ -41,7 +41,7 @@ public final class NadeefStart {
 
             System.out.print("Start embedded database...");
             derbyProcess =
-                runtime.exec("java -d64 -jar out/bin/derbyrun.jar server start");
+                runtime.exec("java -jar out/bin/derbyrun.jar server start");
             if (!CommonTools.waitForService(DERBY_PORT)) {
                 System.out.println("FAILED");
                 System.exit(1);
@@ -52,12 +52,12 @@ public final class NadeefStart {
             if (CommonTools.isLinux() || CommonTools.isMac()) {
                 thriftProcess =
                     Runtime.getRuntime().exec(
-                        "java -d64 -cp out/bin/*:. qa.qcri.nadeef.service.NadeefService"
+                        "java -cp out/bin/*:. qa.qcri.nadeef.service.NadeefService"
                     );
             } else {
                 thriftProcess =
                     Runtime.getRuntime().exec(
-                        "java -d64 -cp out/bin/*;. qa.qcri.nadeef.service.NadeefService"
+                        "java -cp out/bin/*;. qa.qcri.nadeef.service.NadeefService"
                     );
             }
 
