@@ -137,7 +137,6 @@ public class Violations {
             } else {
                 result = 0;
             }
-            conn.commit();
         } catch (SQLException ex) {
             tracer.err("Violation counts failed.", ex);
         } finally {

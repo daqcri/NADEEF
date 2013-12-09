@@ -176,7 +176,7 @@ public abstract class RuleBuilder {
     }
 
     /**
-     * Generates and compiles the rule .class file without loading it.
+     * Generates and compiles the rule to the .class file.
      * 
      * @return Output class file.
      */
