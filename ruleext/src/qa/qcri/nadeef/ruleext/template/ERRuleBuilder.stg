@@ -52,15 +52,19 @@ public class $ERName$ extends PairTupleRule {
         String result;
         if (isLeft == 0) {
             if (left.isFromTable(tableName)) {
-                result = left.get(column).toString();
+                Object obj = left.get(column);
+                result = obj != null ? obj.toString() : null;
             } else {
-                result = right.get(column).toString();
+                Object obj = right.get(column);
+                result = obj != null ? obj.toString() : null;
             }
         } else {
             if (right.isFromTable(tableName)) {
-                result = right.get(column).toString();
+                Object obj = right.get(column);
+                result = obj != null ? obj.toString() : null;
             } else {
-                result = left.get(column).toString();
+                Object obj = left.get(column);
+                result = obj != null ? obj.toString() : null;
             }
         }
         return result;

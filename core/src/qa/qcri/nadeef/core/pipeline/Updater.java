@@ -33,8 +33,6 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Updater fixes the source data and exports it in the database.
- * It returns <code>True</code> when there is no Cell changed in
- * the pipeline. In this case the pipeline will stop.
  */
 public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
     private static Tracer tracer = Tracer.getTracer(Updater.class);
@@ -51,10 +49,10 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
     }
 
     /**
-     * Apply the fixes from EQ and modify the original database.
+     * Apply the fixes from EQ and modify the original source.
      *
-     * @param fixes Fix collection.
-     * @return output object.
+     * @param fixes real fix collection.
+     * @return real fix collection.
      */
     @Override
     public Collection<Fix> execute(Collection<Fix> fixes) throws Exception {

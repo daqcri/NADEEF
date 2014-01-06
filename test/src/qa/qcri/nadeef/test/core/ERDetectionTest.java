@@ -23,11 +23,13 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
+import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 
@@ -45,6 +47,7 @@ public class ERDetectionTest extends NadeefTestBase {
             Bootstrap.start(testConfig);
             workingDirectory = Files.createTempDir();
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
+            Tracer.setVerbose(true);
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
@@ -63,6 +66,39 @@ public class ERDetectionTest extends NadeefTestBase {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(51);
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void erTest2() throws Exception {
+        try{
+            CleanPlan cleanPlan = TestDataRepository.getPlan("vehicles2.json").get(0);
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            executor.repair();
+
+            UpdateExecutor updateExecutor =
+                new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
+            updateExecutor.run();
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void erTest3() throws Exception {
+        try{
+            CleanPlan cleanPlan = TestDataRepository.getPlan("vehicles3.json").get(0);
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            executor.repair();
+            UpdateExecutor updateExecutor =
+                new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
+            updateExecutor.run();
         } catch (Exception e){
             e.printStackTrace();
             Assert.fail(e.getMessage());

@@ -20,26 +20,45 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.*;
  */
 public final class Metrics {
     public static double getEuclideanDistance(String a, String b) {
+        if (a == null || b == null) {
+            return 0.0;
+        }
+
         AbstractStringMetric metric = new EuclideanDistance();
         return metric.getSimilarity(a, b);
     }
 
     public static double getQGramsDistance(String a, String b) {
+        if (a == null || b == null) {
+            return 0.0;
+        }
+
         AbstractStringMetric metric = new QGramsDistance();
         return metric.getSimilarity(a, b);
     }
 
     public static double getSoundex(String a, String b) {
+        if (a == null || b == null) {
+            return 0.0;
+        }
+
         AbstractStringMetric metric = new Soundex();
         return metric.getSimilarity(a, b);
     }
 
     public static double getLevenshtein(String a, String b) {
+        if (a == null || b == null) {
+            return 0.0;
+        }
+
         AbstractStringMetric metric = new Levenshtein();
         return metric.getSimilarity(a, b);
     }
 
     public static double getEqual(String a, String b) {
+        if (a == null || b == null) {
+            return 0.0;
+        }
         return a.equals(b) ? 1.0f : 0.0f;
     }
 }

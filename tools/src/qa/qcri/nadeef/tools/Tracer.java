@@ -17,9 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import org.apache.log4j.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -146,6 +144,16 @@ public class Tracer {
 
         if (ex != null) {
             console.println("Exception: " + ex.getClass().getName() + ": " + ex.getMessage());
+            if (isVerboseOn()) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                ex.printStackTrace(pw);
+                console.print(sw.toString());
+                try {
+                    pw.close();
+                    sw.close();
+                } catch (Exception e) {}
+            }
         }
         logger.error(message, ex);
     }

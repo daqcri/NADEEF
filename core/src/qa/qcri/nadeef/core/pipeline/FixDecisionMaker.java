@@ -34,15 +34,12 @@ public abstract class FixDecisionMaker extends Operator<Collection<Fix>, Collect
      * Decides which fixes are right given a collection of candidate fixes.
      *
      * @param fixes candidate fixes.
-     * @return a collection of right @see Fix.
+     * @return a collection of right {@see Fix}.
      */
     public abstract Collection<Fix> decide(Collection<Fix> fixes);
 
     /**
-     * Execute the operator.
-     *
-     * @param fixes input object.
-     * @return output object.
+     * {@inheritDoc}
      */
     @Override
     protected final Collection<Fix> execute(Collection<Fix> fixes) throws Exception {

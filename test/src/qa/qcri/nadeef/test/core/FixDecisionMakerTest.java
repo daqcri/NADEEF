@@ -57,11 +57,12 @@ public class FixDecisionMakerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void test1() {
         try {
             List<Fix> fixes = loadFix(TestDataRepository.getFixTestData1());
             FixDecisionMaker eq = new EquivalentClass(null);
-            Collection<Fix> result = eq.decide(fixes);
+            Collection<Fix> result = (Collection<Fix>)eq.decide(fixes);
             Assert.assertEquals(3, result.size());
             for (Fix fix : result) {
                 Cell left = fix.getLeft();
