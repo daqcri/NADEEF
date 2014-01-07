@@ -1,5 +1,5 @@
-# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" /> 
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
+# NADEEF 
+<img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" /> [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
 [![Analytics](https://ga-beacon.appspot.com/UA-44230847-3
 /NADEEF/readme)](https://github.com/igrigorik/ga-beacon)
 
