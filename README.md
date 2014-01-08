@@ -1,7 +1,4 @@
-# NADEEF 
-<img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" /> [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
-[![Analytics](https://ga-beacon.appspot.com/UA-44230847-3
-/NADEEF/readme)](https://github.com/igrigorik/ga-beacon)
+# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" /> 
 
 ### What is NADEEF?
 
@@ -42,4 +39,5 @@ NADEEF is released under the terms of the [MIT License](http://opensource.org/li
 For any issues or enhancement please use the [issue pages](https://github.com/daqcri/NADEEF/issues) in Github, 
 or contact [siyin@qf.org.qa](mailto:siyin@qf.org.qa). We will try our best to help you sort it out.
 
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
 
