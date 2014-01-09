@@ -148,7 +148,7 @@ public class DBConfig {
             url = getHostName() + "/" + getDatabaseName() + ";user=" + databaseName;
             userName = databaseName;
         } else {
-            url = getHostName() + "/" + databaseName;
+            url = getHostName() + "/" + databaseName.toLowerCase();
         }
         return this;
     }
@@ -160,7 +160,7 @@ public class DBConfig {
     public String getDatabaseName() {
         if (url != null) {
             String[] tokens = url.split("[/;]");
-            if (tokens.length > 2) {
+            if (tokens.length >= 2) {
                 return tokens[1];
             }
         }
@@ -174,11 +174,11 @@ public class DBConfig {
     public String getHostName() {
         if (url != null) {
             String[] tokens = url.split("[/;]");
-            if (tokens.length > 2) {
+            if (tokens.length >= 2) {
                 return tokens[0];
             }
         }
-        return null;
+        return "localhost";
     }
 
     /**

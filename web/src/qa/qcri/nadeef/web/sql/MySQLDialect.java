@@ -1,6 +1,20 @@
+/*
+ * QCRI, NADEEF LICENSE
+ * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+ * NADEEF means "Clean" in Arabic
+ *
+ * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+ * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+ * Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+ *
+ * NADEEF has patent pending nevertheless the following is granted.
+ * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+ */
+
 package qa.qcri.nadeef.web.sql;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -56,9 +70,35 @@ public class MySQLDialect extends SQLDialectBase {
      * {@inheritDoc}
      */
     @Override
-    public String queryTable(String name, int start, int interval, String filter) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public String queryTable(
+        String tableName,
+        int start,
+        int interval,
+        String firstNViolation,
+        String filter
+    ) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        String result;
+        if (Strings.isNullOrEmpty(filter)) {
+            ST instance = template.getInstanceOf("QueryViolation");
+            instance.add("tablename", tableName);
+            instance.add("start", start);
+            instance.add("interval", interval);
+            instance.add("ruleFilter", filter);
+            result = instance.render();
+        } else {
+            ST instance = template.getInstanceOf("QueryViolationWithFilter");
+            instance.add("tablename", tableName);
+            instance.add("start", start);
+            instance.add("interval", interval);
+            instance.add("firstNViolation", firstNViolation);
+            instance.add("ruleFilter", filter);
+            result = instance.render();
+        }
+
+        return result;
     }
+
 
     /**
      * {@inheritDoc}
@@ -90,5 +130,10 @@ public class MySQLDialect extends SQLDialectBase {
     public String queryTopK(int k) {
         return "select tupleid, count(distinct(vid)) as count from VIOLATION group by tupleid " +
             "order by count desc LIMIT " + k;
+    }
+
+    @Override
+    public String hasDatabase(String databaseName) {
+        return null;
     }
 }

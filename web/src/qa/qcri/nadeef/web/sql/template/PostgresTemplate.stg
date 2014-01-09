@@ -9,6 +9,14 @@ create table $name$ (
    last_edit_timestamp timestamp)
 >>
 
+InstallProject(name) ::= <<
+create table $name$ (
+    id serial,
+    dbname varchar(255) NOT NULL UNIQUE,
+    name varchar(255) UNIQUE
+)
+>>
+
 InstallRuleType(name) ::= <<
 create table $name$ (
     type integer primary key not null,
@@ -20,4 +28,28 @@ InsertRule(type, code, table1, table2, name) ::= <<
 insert into RULE (name, type, code, table1, table2, last_edit_timestamp)
   select '$name$', x.type, '$code$', '$table1$', '$table2$', current_timestamp from
   ruletype x where x.name = '$type$'
+>>
+
+QueryTable(tablename, start, interval) ::= <<
+    select
+        *
+    from
+        $tablename$
+    limit $interval$ offset $start$
+>>
+
+QueryViolation(tablename, start, interval, ruleFilter) ::= <<
+    select
+        *
+    from violation
+    where rid like '$ruleFilter$'
+    limit $interval$ offset $start$
+>>
+
+QueryViolationWithFilter(tablename, start, interval, firstNViolation, ruleFilter) ::= <<
+    select
+        *
+    from violation
+    where vid < $firstNViolation$ and rid like '$ruleFilter$'
+    limit $interval$ offset $start$
 >>

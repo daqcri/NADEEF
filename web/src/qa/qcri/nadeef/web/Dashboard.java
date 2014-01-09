@@ -26,6 +26,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
+import qa.qcri.nadeef.web.sql.SQLUtil;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -83,16 +84,33 @@ public final class Dashboard {
                 try {
                     String start_ = request.queryParams("iDisplayStart");
                     String interval_ = request.queryParams("iDisplayLength");
-                    String filter = request.params("sSearch");
-                    int start =
-                        Strings.isNullOrEmpty(start_) ? 0 : Integer.parseInt(start_);
+                    String firstNViolation = request.queryParams("firstNViolation");
+                    String ruleFilter = request.queryParams("rule");
+
+                    if (!(
+                        SQLUtil.isValidInteger(start_) &&
+                        SQLUtil.isValidInteger(interval_) &&
+                        SQLUtil.isValidInteger(firstNViolation) &&
+                        SQLUtil.isValidTableName(ruleFilter)
+                    )) {
+                        return fail("Invalid Input");
+                    }
+
+                    int start = Strings.isNullOrEmpty(start_) ? 0 : Integer.parseInt(start_);
                     int interval =
                         Strings.isNullOrEmpty(interval_) ? 10 : Integer.parseInt(interval_);
+                    ruleFilter = Strings.isNullOrEmpty(ruleFilter) ? "%" : ruleFilter;
 
                     queryJson =
                         query(
                             project,
-                            dialectInstance.queryTable(tableName, start, interval, filter),
+                            dialectInstance.queryTable(
+                                tableName,
+                                start,
+                                interval,
+                                firstNViolation,
+                                ruleFilter
+                            ),
                             true
                         );
 
@@ -103,12 +121,13 @@ public final class Dashboard {
                             true
                         );
                     JSONArray dataArray = (JSONArray)countJson.get("data");
-                    Integer count = (Integer)(((JSONArray)(dataArray.get(0))).get(0));
+                    Long count = (Long)(((JSONArray)(dataArray.get(0))).get(0));
                     queryJson.put("iTotalRecords", count.toString());
                     queryJson.put("iTotalDisplayRecords", count.toString());
                     queryJson.put("sEcho", request.queryParams("sEcho"));
                     result = queryJson.toJSONString();
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     result = fail(ex.getMessage()).toJSONString();
                 }
                 return result;
@@ -420,7 +439,8 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
-                return query("nadeefdb", "SELECT * FROM PROJECT", true);
+                String dbName = NadeefConfiguration.getDbConfig().getDatabaseName();
+                return query(dbName, "SELECT * FROM PROJECT", true);
             }
         });
 
@@ -428,23 +448,26 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 String project = request.queryParams("project");
-                if (Strings.isNullOrEmpty(project)) {
+                if (Strings.isNullOrEmpty(project) || !SQLUtil.isValidTableName(project)) {
                     return fail("Invalid project name " + project);
                 }
-
-                DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
-                dbConfig.switchDatabase(project);
 
                 // create the database
                 if (dialect != SQLDialect.DERBY && dialect != SQLDialect.DERBYMEMORY) {
                     Connection conn = null;
                     Statement stat = null;
+                    ResultSet rs = null;
+                    // lower case for non-derby db.
+                    String project_ = project.toLowerCase();
                     try {
-                        DBConfig rootConfig = new DBConfig(dbConfig);
-                        rootConfig.switchDatabase("");
+                        DBConfig rootConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                        // rootConfig.switchDatabase("");)
                         conn = DBConnectionPool.createConnection(rootConfig, true);
                         stat = conn.createStatement();
-                        stat.execute(dialectInstance.createDatabase(project));
+                        rs = stat.executeQuery(dialectInstance.hasDatabase(project_));
+                        if (!rs.next()) {
+                            stat.execute(dialectInstance.createDatabase(project_));
+                        }
                     } catch (Exception ex) {
                         String err = "Creating database " + project + " failed.";
                         tracer.err(err, ex);
@@ -458,9 +481,16 @@ public final class Dashboard {
                             if (conn != null) {
                                 conn.close();
                             }
+
+                            if (rs != null) {
+                                rs.close();
+                            }
                         } catch (SQLException e) {}
                     }
                 }
+
+                DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                dbConfig.switchDatabase(project);
 
                 // install the tables
                 try {
@@ -473,8 +503,8 @@ public final class Dashboard {
 
                 // TODO: magic string, and missing transaction.
                 return update(
-                    "nadeefdb",
-                    dialectInstance.insertProject(project),
+                    NadeefConfiguration.getDbConfig().getDatabaseName(),
+                    dialectInstance.insertProject(project), // original
                     "Creating project " + project + " failed."
                 );
             }
@@ -738,6 +768,7 @@ public final class Dashboard {
             externalStaticFileLocation(rootDir);
         }
 
+        Tracer.setInfo(true);
         setupHome();
         setupRule();
         setupTable();

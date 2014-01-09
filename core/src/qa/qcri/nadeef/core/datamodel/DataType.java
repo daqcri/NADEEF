@@ -58,6 +58,8 @@ public enum DataType {
             result = DataType.DOUBLE;
         else if (sqlTypeValue.equalsIgnoreCase("bool"))
             result = DataType.BOOL;
+        else if (sqlTypeValue.equalsIgnoreCase("timestamp"))
+            result = DataType.TIMESTAMP;
         else
             throw new IllegalArgumentException("Unknown data types " + sqlTypeValue);
         return result;

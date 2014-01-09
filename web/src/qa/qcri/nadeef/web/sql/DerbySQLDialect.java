@@ -73,19 +73,28 @@ public class DerbySQLDialect extends SQLDialectBase {
      * {@inheritDoc}
      */
     @Override
-    public String queryTable(String tableName, int start, int interval, String filter) {
+    public String queryTable(
+        String tableName,
+        int start,
+        int interval,
+        String firstNViolation,
+        String filter
+    ) {
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
-        ST instance = template.getInstanceOf("QueryViolation");
-        instance.add("tablename", tableName);
-        instance.add("start", start);
-        instance.add("interval", interval);
-        if (!Strings.isNullOrEmpty(filter)) {
-            filter = "%" + filter + "%";
+        String result;
+
+        // TODO: special treat for violation table, make it generic filter
+        if (tableName.equalsIgnoreCase("violation")) {
+            result = queryViolation(start, interval, firstNViolation, filter);
         } else {
-            filter = "%";
+            ST instance = template.getInstanceOf("QueryTable");
+            instance.add("start", start);
+            instance.add("interval", interval);
+            instance.add("tablename", tableName);
+            result = instance.render();
         }
-        instance.add("filter", filter);
-        return instance.render();
+
+        return result;
     }
 
     /**
@@ -119,4 +128,35 @@ public class DerbySQLDialect extends SQLDialectBase {
         return "select tupleid, count(distinct(vid)) as count from VIOLATION group by tupleid " +
             "order by count desc FETCH FIRST " + k + " ROW ONLY";
     }
+
+    @Override
+    public String hasDatabase(String databaseName) {
+        return null;
+    }
+
+    private String queryViolation(
+        int start,
+        int interval,
+        String firstNViolation,
+        String filter
+    ) {
+        STGroupFile template = Preconditions.checkNotNull(getTemplate());
+        String result;
+        if (Strings.isNullOrEmpty(firstNViolation)) {
+            ST instance = template.getInstanceOf("QueryViolation");
+            instance.add("start", start);
+            instance.add("interval", interval);
+            instance.add("ruleFilter", filter);
+            result = instance.render();
+        } else {
+            ST instance = template.getInstanceOf("QueryViolationWithFilter");
+            instance.add("start", start);
+            instance.add("interval", interval);
+            instance.add("firstNViolation", firstNViolation);
+            instance.add("ruleFilter", filter);
+            result = instance.render();
+        }
+        return result;
+    }
+
 }
