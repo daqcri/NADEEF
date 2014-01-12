@@ -37,6 +37,11 @@ public class DCRuleBuilder extends RuleBuilder {
     protected STGroupFile singleSTGroup;
     protected STGroupFile pairSTGroup;
 
+    
+    public List<Predicate> getPredicateList(){
+    	return predicateList;
+    }
+    
     public DCRuleBuilder() {
         predicateList = Lists.newArrayList();
     }
