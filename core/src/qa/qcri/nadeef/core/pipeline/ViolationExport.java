@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Export violations into the target place.
  */
-public class ViolationExport extends Operator<Collection<Violation>, Integer> {
+public class ViolationExport extends Operator<Collection<Violation>, Collection<Violation>> {
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
      * @return whether the exporting is successful or not.
      */
     @Override
-    public Integer execute(Collection<Violation> violations) throws Exception {
+    public Collection<Violation> execute(Collection<Violation> violations) throws Exception {
         Stopwatch stopwatch = new Stopwatch().start();
         Connection conn = null;
         PreparedStatement stat = null;
@@ -108,6 +108,6 @@ public class ViolationExport extends Operator<Collection<Violation>, Integer> {
                 conn.close();
             }
         }
-        return count;
+        return violations;
     }
 }

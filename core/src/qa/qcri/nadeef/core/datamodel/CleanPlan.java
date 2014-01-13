@@ -230,8 +230,7 @@ public class CleanPlan {
                     targetTableNames = (List<String>) ruleObj.get("target");
                 } else {
                     // when user doesn't provide target tables we create a
-                    // copy for them
-                    // with default table names.
+                    // copy for them with default table names.
                     targetTableNames = Lists.newArrayList();
                     for (String sourceTableName : sourceTableNames) {
                         targetTableNames.add(sourceTableName + "_COPY");
@@ -249,7 +248,12 @@ public class CleanPlan {
 
                 for (int j = 0; j < sourceTableNames.size(); j++) {
                     String sourceTable = sourceTableNames.get(j);
-                    if (!copiedTables.containsKey(sourceTable)) {
+
+                    // when target table is as the same as the original table, skip copy
+                    if (
+                        !copiedTables.containsKey(sourceTable) &&
+                        !sourceTableNames.get(j).equalsIgnoreCase(targetTableNames.get(j))
+                    ) {
                         DBMetaDataTool.copy(
                             dbConfig,
                             dialectManager,

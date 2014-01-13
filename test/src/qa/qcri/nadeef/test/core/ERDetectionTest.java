@@ -105,6 +105,22 @@ public class ERDetectionTest extends NadeefTestBase {
         }
     }
 
+    @Test
+    public void erTest4() throws Exception {
+        try{
+            CleanPlan cleanPlan = TestDataRepository.getPlan("vehicles4.json").get(0);
+            CleanExecutor executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            // executor.repair();
+            // UpdateExecutor updateExecutor =
+            //    new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
+            // updateExecutor.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
     private void verifyViolationResult(int expectRow)
         throws Exception {
         int rowCount = Violations.getViolationRowCount(NadeefConfiguration.getDbConfig());

@@ -112,13 +112,16 @@ public class DBConnectionPool {
 
                 synchronized (indexLockObject) {
                     for (String indexName : localCache) {
-                        int count = indexCount.get(indexName) - 1;
+                        int count =
+                            indexCount.containsKey(indexName) ? indexCount.get(indexName) - 1 : 0;
 
                         // remove index when count goes to 0.
                         if (count == 0) {
                             String tableName = indexCache.get(indexName);
                             SQLDialectBase dialectManager =
-                                SQLDialectFactory.getDialectManagerInstance(sourceConfig.getDialect());
+                                SQLDialectFactory.getDialectManagerInstance(
+                                    sourceConfig.getDialect()
+                                );
                             stat.executeUpdate(dialectManager.dropIndex(indexName, tableName));
                             indexCache.remove(indexName);
                             indexCount.remove(indexName);

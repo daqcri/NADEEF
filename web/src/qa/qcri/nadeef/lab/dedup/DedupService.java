@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.service;
+package qa.qcri.nadeef.lab.dedup;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.apache.thrift.server.TServer;
@@ -20,24 +20,22 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.service.thrift.TNadeefService;
 import qa.qcri.nadeef.tools.Tracer;
 
-/**
- * Service container which starts / stops the NADEEF thrift service.
- */
-public class NadeefService extends AbstractIdleService {
+import static qa.qcri.nadeef.core.util.Bootstrap.shutdown;
+
+public class DedupService extends AbstractIdleService {
     private TServer server;
-    private static Tracer tracer = Tracer.getTracer(NadeefService.class);
+    private static Tracer tracer = Tracer.getTracer(DedupService.class);
 
     @Override
     protected void startUp() throws Exception {
         Bootstrap.start();
         int port = NadeefConfiguration.getServerPort();
 
-        NadeefServiceHandler handler = new NadeefServiceHandler();
-        TNadeefService.Processor processor =
-            new TNadeefService.Processor(handler);
+        DedupServiceHandler handler = new DedupServiceHandler();
+        TDedupService.Processor processor =
+            new TDedupService.Processor(handler);
         TServerTransport serverTransport = new TServerSocket(port);
         server =
             new TThreadPoolServer(
@@ -45,7 +43,7 @@ public class NadeefService extends AbstractIdleService {
                     .Args(serverTransport)
                     .processor(processor)
             );
-        tracer.info("Starting NADEEF server @ " + port);
+        tracer.info("Starting NADEEF Dedup server @ " + port);
         server.serve();
     }
 
@@ -54,7 +52,7 @@ public class NadeefService extends AbstractIdleService {
         if (server != null && server.isServing()) {
             server.stop();
         }
-        Bootstrap.shutdown();
+        shutdown();
     }
 
     /**
@@ -62,9 +60,9 @@ public class NadeefService extends AbstractIdleService {
      * @param args command line args.
      */
     public static void main(String[] args) {
-        NadeefService service = null;
+        DedupService service = null;
         try {
-            service = new NadeefService();
+            service = new DedupService();
             service.startAndWait();
             Thread.sleep(100);
         } catch (Exception ex) {
@@ -78,7 +76,7 @@ public class NadeefService extends AbstractIdleService {
                     // ignore
                 }
             }
-            Bootstrap.shutdown();
+            shutdown();
         }
     }
 }

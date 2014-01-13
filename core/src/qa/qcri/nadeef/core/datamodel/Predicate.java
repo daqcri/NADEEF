@@ -110,7 +110,9 @@ public class Predicate {
     public String toString() {
         StringBuilder builder = new StringBuilder(left.getFullColumnName());
         builder.append(operationMap.get(operation));
-        if (!(value instanceof String)) {
+        if (value == null) {
+            builder.append("null");
+        } else if (!(value instanceof String)) {
             builder.append(value.toString());
         } else {
             builder.append("'");
