@@ -71,7 +71,7 @@ public class IncrementalTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getIncCleanPlan1();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            int count = executor.getDetectViolationCount();
+            int count = executor.getDetectViolation().size();
             Assert.assertEquals(27, count);
 
             DBConfig dbConfig = cleanPlan.getSourceDBConfig();
@@ -85,7 +85,7 @@ public class IncrementalTest extends NadeefTestBase {
             executor.incrementalAppend(tableName, newTuples);
             executor.detect();
 
-            count = executor.getDetectViolationCount();
+            count = executor.getDetectViolation().size();
             Assert.assertEquals(12, count);
 
             incFile = new File("test/src/qa/qcri/nadeef/test/input/dumptest_inc2.csv");
@@ -94,7 +94,7 @@ public class IncrementalTest extends NadeefTestBase {
             executor.incrementalAppend(tableName, newTuples);
             executor.detect();
 
-            count = executor.getDetectViolationCount();
+            count = executor.getDetectViolation().size();
             Assert.assertEquals(14, count);
 
         } catch (Exception ex) {
@@ -113,7 +113,7 @@ public class IncrementalTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getIncCleanPlan2();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            int count = executor.getDetectViolationCount();
+            int count = executor.getDetectViolation().size();
             Assert.assertEquals(8, count);
 
             DBConfig dbConfig = cleanPlan.getSourceDBConfig();
@@ -135,7 +135,7 @@ public class IncrementalTest extends NadeefTestBase {
 
             executor.detect();
 
-            count = executor.getDetectViolationCount();
+            count = executor.getDetectViolation().size();
             Assert.assertEquals(40, count);
 
             // append data into two tables
@@ -150,7 +150,7 @@ public class IncrementalTest extends NadeefTestBase {
 
             executor.detect();
 
-            count = executor.getDetectViolationCount();
+            count = executor.getDetectViolation().size();
             Assert.assertEquals(72, count);
 
         } catch (Exception ex) {

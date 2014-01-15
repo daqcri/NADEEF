@@ -21,6 +21,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Properties;
 
 /**
  * Tracer is a logging tool which is used for debugging / profiling / benchmarking purpose.
@@ -46,7 +47,12 @@ public class Tracer {
         calendar = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("MMddHHmmss");
         logFileName = dateFormat.format(calendar.getTime()) + ".txt";
-        consoleAppender = new ConsoleAppender(new SimpleLayout());
+        consoleAppender = new ConsoleAppender(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
+
+        Properties properties = System.getProperties();
+        if (properties.containsKey("debug")) {
+            setVerbose(true);
+        }
     }
 
     //<editor-fold desc="Tracer creation">
@@ -86,7 +92,9 @@ public class Tracer {
                     new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN),
                     outputFile
                 );
-            BasicConfigurator.configure(logFile);
+            logFile.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
+            Logger.getRootLogger().addAppender(logFile);
+            // BasicConfigurator.configure(logFile);
 
         } catch (IOException e) {
             Tracer tracer = getTracer(Tracer.class);
@@ -127,7 +135,7 @@ public class Tracer {
      */
     public void verbose(String msg) {
         if (isVerboseOn()) {
-            console.println(msg);
+            // console.println(msg);
             logger.debug(msg);
         }
     }
@@ -188,10 +196,9 @@ public class Tracer {
         verboseFlag = mode;
         Logger root = Logger.getRootLogger();
         if (verboseFlag) {
-            root.setLevel(Level.DEBUG);
+            root.setLevel(Level.ALL);
             root.addAppender(consoleAppender);
         } else {
-            root.setLevel(Level.INFO);
             root.removeAppender(consoleAppender);
         }
     }

@@ -65,7 +65,7 @@ public class NadeefService extends AbstractIdleService {
         NadeefService service = null;
         try {
             service = new NadeefService();
-            service.startAndWait();
+            service.startUp();
             Thread.sleep(100);
         } catch (Exception ex) {
             tracer.err("Nadeef service has exception underneath.", ex);

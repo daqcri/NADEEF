@@ -82,7 +82,7 @@ public class UpdateExecutor {
     }
 
     public void run() {
-        Stopwatch sw = new Stopwatch().start();
+        Stopwatch sw = Stopwatch.createStarted();
         updateFlow.reset();
         updateFlow.start();
         updateFlow.waitUntilFinish();

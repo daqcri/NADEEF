@@ -22,8 +22,6 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.service.NadeefJobScheduler;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TJobStatusType;
@@ -49,13 +47,6 @@ public class NadeefJobSchedulerTest extends NadeefTestBase{
             Bootstrap.start(testConfig);
             Tracer.setVerbose(true);
             NadeefConfiguration.setAlwaysOverride(true);
-            CSVTools.dump(
-                NadeefConfiguration.getDbConfig(),
-                SQLDialectFactory.getNadeefDialectManagerInstance(),
-                TestDataRepository.getLocationData1(),
-                "location",
-                true
-            );
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
@@ -73,7 +64,7 @@ public class NadeefJobSchedulerTest extends NadeefTestBase{
 
         try {
             String hostname = InetAddress.getLocalHost().getHostName();
-            CleanPlan cleanPlan = TestDataRepository.getCleanPlan();
+            CleanPlan cleanPlan = TestDataRepository.getCleanPlan2();
 
             NadeefJobScheduler scheduler = NadeefJobScheduler.getInstance();
             String[] keys = new String[taskNum];

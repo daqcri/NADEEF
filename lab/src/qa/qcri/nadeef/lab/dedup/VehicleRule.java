@@ -65,8 +65,8 @@ public class VehicleRule extends PairTupleRule {
             withInPriceRange(price1s, price2s)
         ) {
             Violation violation = new Violation(getRuleName());
-            violation.addCell(left.getCell("id"));
-            violation.addCell(right.getCell("id"));
+            violation.addCell(left.getCell("tid"));
+            violation.addCell(right.getCell("tid"));
             result.add(violation);
         }
 

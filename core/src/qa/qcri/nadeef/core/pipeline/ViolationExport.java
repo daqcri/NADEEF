@@ -45,7 +45,7 @@ public class ViolationExport extends Operator<Collection<Violation>, Collection<
      */
     @Override
     public Collection<Violation> execute(Collection<Violation> violations) throws Exception {
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Connection conn = null;
         PreparedStatement stat = null;
         DBConnectionPool connectionPool = getCurrentContext().getConnectionPool();

@@ -63,7 +63,7 @@ public class DedupService extends AbstractIdleService {
         DedupService service = null;
         try {
             service = new DedupService();
-            service.startAndWait();
+            service.startUp();
             Thread.sleep(100);
         } catch (Exception ex) {
             tracer.err("Nadeef service has exception underneath.", ex);

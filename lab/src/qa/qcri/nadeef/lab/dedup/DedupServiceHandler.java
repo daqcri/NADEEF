@@ -15,8 +15,10 @@ package qa.qcri.nadeef.lab.dedup;
 
 import com.google.common.collect.Lists;
 import org.apache.thrift.TException;
+import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 
 import java.io.FileReader;
@@ -32,7 +34,7 @@ public class DedupServiceHandler implements TDedupService.Iface {
         try {
             CleanPlan cleanPlan =
                 CleanPlan.createCleanPlanFromJSON(
-                    new FileReader("web/src/qa/qcri/nadeef/lab/dedup/DedupPlan.json"),
+                    new FileReader("lab/src/qa/qcri/nadeef/lab/dedup/DedupPlan.json"),
                     NadeefConfiguration.getDbConfig()
                 ).get(0);
 
@@ -46,6 +48,17 @@ public class DedupServiceHandler implements TDedupService.Iface {
             }
             executor.incrementalAppend(tableName, set);
             executor.detect();
+            List<Violation> violations = executor.getDetectViolation();
+            for (Violation v : violations) {
+                List<Cell> cells = Lists.newArrayList(v.getCells());
+                List<Integer> tmp = Lists.newArrayList();
+                for (Cell cell : cells) {
+                    tmp.add(cell.<Integer>getValue());
+                }
+                if (tmp.size() != 0) {
+                    result.add(tmp);
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {

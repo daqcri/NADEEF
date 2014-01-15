@@ -126,7 +126,8 @@ public class NodeCacheManager {
      * @param key value key.
      * @return value.
      */
-    public Object get(String key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
         Object result = tease(key);
 
         // clean the cache once the life is finished, to prevent memory leaking.
@@ -138,7 +139,7 @@ public class NodeCacheManager {
             refPool.put(key, refCount);
         }
 
-        return result;
+        return (T)result;
     }
 
     /**

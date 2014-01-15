@@ -20,7 +20,6 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.json.simple.JSONObject;
 
 import java.util.List;
 
@@ -53,15 +52,13 @@ public class DedupClient {
 
     private DedupClient() {}
 
-    public String incrementalDedup(List<Integer> newItems) throws TException {
+    public List<List<Integer>> incrementalDedup(List<Integer> newItems) throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
         TProtocol protocol = new TBinaryProtocol(transport);
         TDedupService.Client client = new TDedupService.Client(protocol);
-        JSONObject json = new JSONObject();
         List<List<Integer>> result = client.incrementalDedup(newItems);
-        json.put("data", result);
         transport.close();
-        return json.toJSONString();
+        return result;
     }
 }

@@ -149,7 +149,7 @@ public abstract class RuleBuilder {
         Collection<File> outputFiles = compile();
         Tracer tracer = Tracer.getTracer(RuleBuilder.class);
         for (File outputFile : outputFiles) {
-            Stopwatch stopwatch = new Stopwatch().start();
+            Stopwatch stopwatch = Stopwatch.createStarted();
             String className =
                 Files.getNameWithoutExtension(outputFile.getName());
 
