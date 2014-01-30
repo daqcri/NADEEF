@@ -137,7 +137,7 @@ public class SQLTable extends Table {
     @Override
     public Table filter(List<Predicate> expressions) {
         for (Predicate expression : expressions) {
-            sqlQuery.addWhere(expression.toString());
+            sqlQuery.addWhere(expression.toSQLString());
         }
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -195,7 +195,7 @@ public class SQLTable extends Table {
                 SQLTable newTable =
                     new SQLTable(tableName, connectionFactory);
                 newTable.sqlQuery = new SQLQueryBuilder(sqlQuery);
-                newTable.sqlQuery.addWhere(columnFilter.toString());
+                newTable.sqlQuery.addWhere(columnFilter.toSQLString());
                 result.add(newTable);
             }
         } catch (Exception ex) {
