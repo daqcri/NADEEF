@@ -108,7 +108,12 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
         sqlBuilder.append(',');
         sqlBuilder.append("'").append(cell.getColumn().getTableName()).append("',");
         sqlBuilder.append("'").append(cell.getColumn().getColumnName()).append("',");
-        sqlBuilder.append("'").append(cell.getValue().toString()).append("',");
+        Object val = cell.getValue();
+        if (val == null) {
+            sqlBuilder.append("null,");
+        } else {
+            sqlBuilder.append("'").append(val.toString()).append("',");
+        }
 
         sqlBuilder.append(fix.getOperation().getValue());
         sqlBuilder.append(',');

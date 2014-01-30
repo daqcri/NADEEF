@@ -77,7 +77,12 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
                     " VALUES (default, ?, ?, ?, ?, ?, ?, current_timestamp)");
             for (Fix fix : fixes) {
                 Cell cell = fix.getLeft();
-                oldValue = cell.getValue().toString();
+                Object oldValue_ = cell.getValue();
+                if (oldValue_ == null) {
+                    oldValue = null;
+                } else {
+                    oldValue = oldValue_.toString();
+                }
 
                 // this cell has already been changed to unknown
                 if (unknownTag.containsKey(cell)) {
@@ -101,11 +106,11 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
                 }
 
                 // check for numerical type.
-                if (!CommonTools.isNumericalString(rightValue)) {
+                if (rightValue != null && !CommonTools.isNumericalString(rightValue)) {
                     rightValue = '\'' + rightValue + '\'';
                 }
 
-                if (!CommonTools.isNumericalString(oldValue)) {
+                if (oldValue != null && !CommonTools.isNumericalString(oldValue)) {
                     oldValue = '\'' + oldValue + '\'';
                 }
 

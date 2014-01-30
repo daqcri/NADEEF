@@ -219,9 +219,12 @@ public class DBConnectionPool {
                         "CREATE INDEX " + indexName + " ON " +
                             tableName + " (" + fullColumnName + ")";
                     stat.executeUpdate(indexSQL);
-                    conn.commit();
+
+                    // in case of creating failure, this will prevent the exception happens again.
                     indexCache.put(indexName, tableName);
                     indexCount.put(indexName, 1);
+
+                    conn.commit();
 
                     PerfReport.addMetric(PerfReport.Metric.SourceIndexCreationCount, 1);
                 } catch (Exception ex) {

@@ -35,6 +35,10 @@ public class UpdateExecutor {
     private DBConnectionPool connectionPool;
     private ExecutionContext context;
 
+    public UpdateExecutor(CleanPlan cleanPlan) {
+        this(cleanPlan, NadeefConfiguration.getDbConfig());
+    }
+
     public UpdateExecutor(CleanPlan cleanPlan, DBConfig nadeefConfig) {
         cacheManager = NodeCacheManager.getInstance();
         tracer = Tracer.getTracer(UpdateExecutor.class);

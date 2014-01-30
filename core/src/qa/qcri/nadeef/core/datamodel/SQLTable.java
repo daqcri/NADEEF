@@ -279,7 +279,7 @@ public class SQLTable extends Table {
             SQLQueryBuilder builder = new SQLQueryBuilder(sqlQuery);
             builder.setLimit(1);
             String sql = builder.build(dialectManager);
-            tracer.verbose(sql);
+            // tracer.verbose(sql);
 
             conn = connectionFactory.getSourceConnection();
             stat = conn.createStatement();
@@ -333,7 +333,7 @@ public class SQLTable extends Table {
         try {
             // prepare for the SQL
             String sql = sqlQuery.build(dialectManager);
-            tracer.verbose(sql);
+            // tracer.verbose(sql);
 
             // get the connection and run the SQL
             conn = connectionFactory.getSourceConnection();

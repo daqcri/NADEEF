@@ -58,7 +58,7 @@ public class FlowTest extends NadeefTestBase {
         flow.start();
         flow.waitUntilFinish();
         String resultKey = flow.getCurrentOutputKey();
-        Integer result = (Integer)cacheManager.get(resultKey);
+        Integer result = cacheManager.get(resultKey);
 
         Assert.assertEquals("Result is not correct", result.longValue(), 5);
         Assert.assertEquals("Cache is not clean", cacheManager.getSize(), 1);

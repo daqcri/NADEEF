@@ -38,7 +38,7 @@ public class Predicate {
         realMap.put(Operation.EQ, "=");
         realMap.put(Operation.GT, ">");
         realMap.put(Operation.LT, "<");
-        realMap.put(Operation.NEQ, "!=");
+        realMap.put(Operation.NEQ, "<>");
         realMap.put(Operation.GTE, ">=");
         realMap.put(Operation.LTE, "<=");
         realMap.put(Operation.CEQ, "<-");
@@ -90,6 +90,11 @@ public class Predicate {
             return this;
         }
 
+        public PredicateBuilder isNull() {
+            this.value = null;
+            return this;
+        }
+
         public Predicate build() {
             Predicate exp = new Predicate();
             exp.left = left;
@@ -104,12 +109,20 @@ public class Predicate {
     private Predicate() {}
 
     /**
-     * Returns the expression in string.
+     * Returns the expression in SQL string.
      * @return SQL String.
      */
+    // TODO: move this to SQLTable
     public String toString() {
         StringBuilder builder = new StringBuilder(left.getFullColumnName());
-        builder.append(operationMap.get(operation));
+
+        // http://en.wikipedia.org/wiki/SQL
+        if (operation == Operation.NEQ && value == null) {
+            builder.append(" is not ");
+        } else {
+            builder.append(operationMap.get(operation));
+        }
+
         if (value == null) {
             builder.append("null");
         } else if (!(value instanceof String)) {

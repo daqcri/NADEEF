@@ -19,7 +19,6 @@ import com.google.common.collect.Lists;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.nio.charset.Charset;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -94,7 +93,7 @@ public class Tuple {
                     result = Boolean.parseBoolean(stringValue);
                     break;
                 case TIMESTAMP:
-                    result = Timestamp.parse(stringValue);
+                    result = stringValue;
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown data type");
