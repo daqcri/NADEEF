@@ -25,8 +25,6 @@ import qa.qcri.nadeef.tools.Tracer;
 
 /**
  * Service container which starts / stops the NADEEF thrift service.
- *
- * @author Si Yin <siyin@qf.org.qa>
  */
 public class NadeefService extends AbstractIdleService {
     private TServer server;
@@ -67,7 +65,7 @@ public class NadeefService extends AbstractIdleService {
         NadeefService service = null;
         try {
             service = new NadeefService();
-            service.startAndWait();
+            service.startUp();
             Thread.sleep(100);
         } catch (Exception ex) {
             tracer.err("Nadeef service has exception underneath.", ex);

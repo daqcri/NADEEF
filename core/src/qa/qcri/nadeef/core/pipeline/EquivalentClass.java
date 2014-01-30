@@ -33,10 +33,7 @@ public class EquivalentClass extends FixDecisionMaker {
     }
 
     /**
-     * Decides which fixes are right given a collection of candidate fixes.
-     *
-     * @param fixes candidate fixes.
-     * @return a collection of final {@link Fix}.
+     * {@inheritDoc}
      */
     @Override
     public Collection<Fix> decide(Collection<Fix> fixes) {

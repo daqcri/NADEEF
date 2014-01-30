@@ -70,10 +70,17 @@ public abstract class SQLDialectBase {
      * @param tableName table name.
      * @param start start index.
      * @param interval interval.
-     * @param filter filter.
+     * @param firstNViolation first N violation.
+     * @param ruleFilter filter on rule.
      * @return query SQL.
      */
-    public abstract String queryTable(String tableName, int start, int interval, String filter);
+    public abstract String queryTable(
+        String tableName,
+        int start,
+        int interval,
+        String firstNViolation,
+        String ruleFilter
+    );
 
     /**
      * Delete violation.
@@ -209,4 +216,11 @@ public abstract class SQLDialectBase {
      * @return SQL.
      */
     public abstract String queryTopK(int k);
+
+    /**
+     * Returns True when the database exists.
+     * @param databaseName input database name.
+     * @return Returns True when the database exists.
+     */
+    public abstract String hasDatabase(String databaseName);
 }

@@ -15,12 +15,12 @@ set argC=0
 for %%x in (%*) do Set /A argC+=1
 
 if not %argC% == 1 (
-    goto usage
+    "%JAVA_HOME%\bin\java" -cp out\bin\*;out\test;examples\;out\production\ qa.qcri.nadeef.console.Console
 ) else (
     if "%1" == "console" (
-        "%JAVA_HOME%\bin\java" -d64 -cp out\bin\*;out\test;examples\;out\production\ qa.qcri.nadeef.console.Console
+        "%JAVA_HOME%\bin\java" -cp out\bin\*;out\test;examples\;out\production\ qa.qcri.nadeef.console.Console
     ) else if "%1" == "dashboard" (
-        "%JAVA_HOME%\bin\java" -d64 -cp out\bin\*;out\production\ qa.qcri.nadeef.web.NadeefStart
+        "%JAVA_HOME%\bin\java" -cp out\bin\*;out\production\ qa.qcri.nadeef.web.NadeefStart
     ) else (
         goto usage
     )

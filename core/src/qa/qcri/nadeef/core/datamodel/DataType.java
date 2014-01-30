@@ -22,7 +22,9 @@ public enum DataType {
     STRING(0),
     INTEGER(1),
     DOUBLE(2),
-    FLOAT(3);
+    FLOAT(3),
+    BOOL(4),
+    TIMESTAMP(5);
 
     private final int value;
     private DataType(int value) {
@@ -46,12 +48,18 @@ public enum DataType {
             result = DataType.INTEGER;
         else if (sqlTypeValue.equalsIgnoreCase("varchar"))
             result = DataType.STRING;
+        else if (sqlTypeValue.equalsIgnoreCase("text"))
+            result = DataType.STRING;
         else if (sqlTypeValue.equalsIgnoreCase("float"))
             result = DataType.FLOAT;
         else if (sqlTypeValue.equalsIgnoreCase("float8"))
             result = DataType.FLOAT;
         else if (sqlTypeValue.equalsIgnoreCase("double"))
             result = DataType.DOUBLE;
+        else if (sqlTypeValue.equalsIgnoreCase("bool"))
+            result = DataType.BOOL;
+        else if (sqlTypeValue.equalsIgnoreCase("timestamp"))
+            result = DataType.TIMESTAMP;
         else
             throw new IllegalArgumentException("Unknown data types " + sqlTypeValue);
         return result;
@@ -64,6 +72,7 @@ public enum DataType {
                 result = DataType.INTEGER;
                 break;
             case Types.VARCHAR:
+            case Types.NVARCHAR:
                 result = DataType.STRING;
                 break;
             case Types.FLOAT:
@@ -71,6 +80,12 @@ public enum DataType {
                 break;
             case Types.DOUBLE:
                 result = DataType.DOUBLE;
+                break;
+            case Types.BOOLEAN:
+                result = DataType.BOOL;
+                break;
+            case Types.TIMESTAMP:
+                result = DataType.TIMESTAMP;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown data types " + sqlTypeValue);

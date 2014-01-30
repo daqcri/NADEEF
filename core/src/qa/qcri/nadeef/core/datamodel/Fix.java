@@ -87,7 +87,11 @@ public class Fix {
         public Fix build() {
             Fix fix;
             if (operation.isPresent()) {
-                fix = new Fix(vid, left, right, operation.get());
+                if (right != null) {
+                    fix = new Fix(vid, left, right, operation.get());
+                } else {
+                    fix = new Fix(vid, left, rightValue, operation.get());
+                }
                 operation = Optional.absent();
             } else {
                 if (rightValue != null) {

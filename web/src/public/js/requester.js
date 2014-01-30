@@ -161,7 +161,13 @@ define(['router'], function(Router) {
     function doGenerate(data, successCallback, failureCallback) {
         // inject project name
         data.project = getProjectName();
-        request("/do/generate", "POST", data, successCallback, failureCallback);
+        $.ajax({
+            url: "/do/generate",
+            type: 'POST',
+            data: data,
+            success: successCallback,
+            fail: failureCallback
+        });
     }
 
     function createRule(data, successCallback, failureCallback) {

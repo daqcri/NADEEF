@@ -20,9 +20,7 @@ else
             echo '    dashboard : start the NADEEF dashboard.'
         fi
     else
-        echo 'Usage: nadeef.sh [OPTIONS]'
-        echo 'Options are:'
-        echo '    console : start the NADEEF console.'
-        echo '    dashboard : start the NADEEF dashboard.'
+            cmd='java -cp out/bin/*:examples/:out/test qa.qcri.nadeef.console.Console'
+            exec $cmd
     fi
 fi

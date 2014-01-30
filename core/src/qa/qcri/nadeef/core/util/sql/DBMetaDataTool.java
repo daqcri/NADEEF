@@ -47,7 +47,6 @@ public final class DBMetaDataTool {
         IllegalAccessException {
         Connection conn = null;
         Statement stat = null;
-        ResultSet resultSet = null;
         try {
             conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
@@ -56,10 +55,6 @@ public final class DBMetaDataTool {
             }
             dialectManager.copyTable(conn, sourceTableName, targetTableName);
         } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-
             if (stat != null) {
                 stat.close();
             }

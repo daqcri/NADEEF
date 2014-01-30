@@ -18,6 +18,7 @@ import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.ProgressReport;
+import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -139,9 +140,9 @@ public class CleanExecutor {
      * Gets the output from Detect.
      * @return output object from Detect.
      */
-    public int getDetectViolationCount() {
+    public List<Violation> getDetectViolation() {
         String key = detectFlow.getCurrentOutputKey();
-        return (Integer)cacheManager.get(key);
+        return cacheManager.get(key);
     }
 
     /**
@@ -192,7 +193,7 @@ public class CleanExecutor {
      * Runs the violation detection.
      */
     public CleanExecutor detect() {
-        Stopwatch sw = new Stopwatch().start();
+        Stopwatch sw = Stopwatch.createStarted();
 
         queryFlow.reset();
         detectFlow.reset();
@@ -228,7 +229,7 @@ public class CleanExecutor {
      * Runs the violation repair.
      */
     public CleanExecutor repair() {
-        Stopwatch sw = new Stopwatch().start();
+        Stopwatch sw = Stopwatch.createStarted();
         repairFlow.reset();
 
         repairFlow.start();

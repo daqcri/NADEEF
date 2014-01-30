@@ -10,41 +10,33 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/guava-14.0.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../vendors/ST-4.0.7.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="org.slf4j:slf4j-log4j12:1.6.5" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/log4j-1.2.17.jar!/" />
+          <root url="jar://$MODULE_DIR$/../vendors/simmetrics.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/json-simple-1.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
+    <option name="_basePreferences">
+      <map>
+        <entry key="property.analysisEffortLevel" value="default" />
+        <entry key="property.minPriorityToReport" value="High" />
+        <entry key="property.toolWindowToFront" value="true" />
+      </map>
+    </option>
     <option name="_detectors">
       <map>
         <entry key="AppendingToAnObjectOutputStream" value="true" />

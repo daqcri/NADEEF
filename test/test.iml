@@ -12,6 +12,8 @@
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="console" />
     <orderEntry type="module" module-name="tools" />
+    <orderEntry type="module" module-name="service" />
+    <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -30,8 +32,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="ruleext" />
-    <orderEntry type="module" module-name="service" />
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -43,16 +44,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="com.google.guava:guava:14.0.1" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/json-simple-1.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

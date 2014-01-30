@@ -30,8 +30,6 @@ import java.util.List;
 
 /**
  * Nadeef Thrift client. This is the wrapper class for calling thrift methods.
- *
- *
  */
 public final class NadeefClient {
     private static NadeefClient instance;

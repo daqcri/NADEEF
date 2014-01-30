@@ -28,7 +28,7 @@ public final class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
 
     /**
-     * Delete all the existing data from Violation, Repair table.
+     * Delete all the existing data from Violation and Repair table.
      */
     public static void cleanExecutionDB() throws Exception {
         Connection conn = null;
