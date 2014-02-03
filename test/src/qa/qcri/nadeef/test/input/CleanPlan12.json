@@ -5,9 +5,8 @@
     },
     "rule" : [
         {
-            "name" : "floatDC",
-            "type" : "dc",
-            "value" : ["not(t1.A>t1.B&t1.B=2)"]
+            "type" : "udf",
+            "value" : ["qa.qcri.nadeef.test.udf.MyRule8"]
         }
     ]
 }

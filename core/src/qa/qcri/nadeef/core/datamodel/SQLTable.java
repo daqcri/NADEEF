@@ -184,12 +184,11 @@ public class SQLTable extends Table {
 
             while (distinctResult.next()) {
                 Object value = distinctResult.getObject(1);
-                String stringValue = value == null ? null : value.toString();
                 Predicate columnFilter =
                     new Predicate.PredicateBuilder()
                         .left(column)
                         .isSingle()
-                        .constant(stringValue)
+                        .constant(value)
                         .op(Operation.EQ).build();
 
                 SQLTable newTable =

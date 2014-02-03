@@ -41,7 +41,7 @@ public abstract class NadeefTestBase {
         } else {
             data =
                 new String[][] {
-                    { TestDataRepository.PostgresConfig },
+                    { TestDataRepository.DerbyConfig },
                 };
         }
         return Arrays.asList(data);
