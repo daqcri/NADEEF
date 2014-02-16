@@ -121,7 +121,7 @@ public final class Dashboard {
                             true
                         );
                     JSONArray dataArray = (JSONArray)countJson.get("data");
-                    Long count = (Long)(((JSONArray)(dataArray.get(0))).get(0));
+                    Integer count = (Integer)(((JSONArray)(dataArray.get(0))).get(0));
                     queryJson.put("iTotalRecords", count.toString());
                     queryJson.put("iTotalDisplayRecords", count.toString());
                     queryJson.put("sEcho", request.queryParams("sEcho"));
