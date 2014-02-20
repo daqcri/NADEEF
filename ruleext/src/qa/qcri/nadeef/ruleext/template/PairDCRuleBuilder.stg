@@ -32,24 +32,19 @@ public class $DCName$ extends PairTupleRule{
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
         List<Violation> result = new ArrayList<>();
-        Set<Cell> infectedCells = new HashSet<>();
-        boolean isValid = true;
-        for (Predicate predicate : predicates) {
-            if (!predicate.isValid(tuplePair.getLeft(), tuplePair.getRight())) {
-                isValid = false;
-                break;
-            }
+        Set<Cell> infectedCells;
+        Tuple left = tuplePair.getLeft();
+        Tuple right = tuplePair.getRight();
 
-            Cell leftCell = tuplePair.getLeft().getCell(predicate.getLeft());
-            infectedCells.add(leftCell);
-            if (!predicate.isRightConstant()){
-                Cell rightCell = tuplePair.getRight().getCell(predicate.getRight());
-                infectedCells.add(rightCell);
-            }
+        infectedCells = isValid(left, right);
+
+        // invert the order and try again
+        if (infectedCells == null) {
+            infectedCells = isValid(right, left);
         }
 
         // all the predicates are valid, then the DC is violated
-        if (isValid) {
+        if (infectedCells != null) {
             Violation violation = new Violation(getRuleName());
             for (Cell cell : infectedCells) {
                 violation.addCell(cell);
@@ -65,6 +60,25 @@ public class $DCName$ extends PairTupleRule{
     public Collection<Fix> repair(Violation violation) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    private Set<Cell> isValid(Tuple left, Tuple right) {
+        Set<Cell> infectedCells = new HashSet<>();
+        boolean isValid = true;
+        for (Predicate predicate : predicates) {
+            if (!predicate.isValid(left, right)) {
+                isValid = false;
+                break;
+            }
+
+            Cell leftCell = left.getCell(predicate.getLeft());
+            infectedCells.add(leftCell);
+            if (!predicate.isRightConstant()){
+                Cell rightCell = right.getCell(predicate.getRight());
+                infectedCells.add(rightCell);
+            }
+        }
+        return isValid ? infectedCells : null;
     }
 }
 >>
