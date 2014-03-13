@@ -45,7 +45,7 @@ public class MyRule7 extends SingleTupleRule {
             }
         }
         // all the predicates are valid, then the DC is violated
-        if (isValid){
+        if (isValid) {
             Violation violation = new Violation(getRuleName());
             for (Cell cell : infectedCells){
                 violation.addCell(cell);
@@ -58,7 +58,57 @@ public class MyRule7 extends SingleTupleRule {
 
     @Override
     public Collection<Fix> repair(Violation violation) {
-        // TODO Auto-generated method stub
-        return null;
+        List<Cell> cells = new ArrayList<>(violation.getCells());
+        List<Fix> result = new ArrayList<>();
+        HashMap<Column, Cell> columnMap = new HashMap<>();
+
+        Fix.Builder builder = new Fix.Builder(violation);
+        for (Cell cell : cells)
+            columnMap.put(cell.getColumn(), cell);
+
+        for (Predicate predicate : predicates) {
+            Column leftColumn = predicate.getLeft();
+            if (predicate.isRightConstant()) {
+                result.add(builder
+                    .left(columnMap.get(leftColumn))
+                    .op(repairOperation(predicate.getOperation()))
+                    .right(predicate.getValue())
+                    .build()
+                );
+            } else {
+                Column rightColumn = predicate.getRight();
+                result.add(builder
+                    .left(columnMap.get(leftColumn))
+                    .op(repairOperation(predicate.getOperation()))
+                    .right(columnMap.get(rightColumn))
+                    .build()
+                );
+            }
+        }
+        return result;
+    }
+
+    private Operation repairOperation(Operation op) {
+        Operation result = null;
+        switch (op) {
+            case EQ:
+                result = Operation.NEQ;
+                break;
+            case GT:
+                result = Operation.LTE;
+                break;
+            case GTE:
+                result = Operation.LT;
+                break;
+            case LT:
+                result = Operation.GTE;
+                break;
+            case LTE:
+                result = Operation.GT;
+                break;
+            default:
+                assert true : "unknown operations";
+        }
+        return result;
     }
 }
