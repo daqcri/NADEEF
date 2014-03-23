@@ -41,7 +41,7 @@ import static spark.Spark.*;
  * Start class for launching dashboard.
  */
 public final class Dashboard {
-    private static final String TABLE_PREFIX = "TB_";
+    private static final String TABLE_PREFIX = "tb_";
     private static Tracer tracer;
     private static SQLDialectBase dialectInstance;
     private static SQLDialect dialect;
@@ -291,12 +291,13 @@ public final class Dashboard {
 
                     List<String> tables = DBMetaDataTool.getTables(dbConfig);
                     for (String tableName : tables) {
-                        if ( !tableName.equalsIgnoreCase("AUDIT") &&
-                             !tableName.equalsIgnoreCase("VIOLATION") &&
-                             !tableName.equalsIgnoreCase("RULE") &&
-                             !tableName.equalsIgnoreCase("RULETYPE") &&
-                             !tableName.equalsIgnoreCase("REPAIR") &&
-                             !tableName.equalsIgnoreCase("PROJECT")
+                        if (!tableName.equalsIgnoreCase("AUDIT") &&
+                            !tableName.equalsIgnoreCase("VIOLATION") &&
+                            !tableName.equalsIgnoreCase("RULE") &&
+                            !tableName.equalsIgnoreCase("RULETYPE") &&
+                            !tableName.equalsIgnoreCase("REPAIR") &&
+                            !tableName.equalsIgnoreCase("PROJECT") &&
+                            tableName.startsWith(TABLE_PREFIX)
                         ) {
                             result.add(tableName);
                         }
