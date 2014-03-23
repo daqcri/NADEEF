@@ -19,6 +19,7 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.tools.PerfReport;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,14 +45,19 @@ public class ViolationRepair
     @SuppressWarnings("unchecked")
     public Collection<Collection<Fix>> execute(Collection<Violation> violations)
         throws Exception {
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Rule rule = getCurrentContext().getRule();
         List<Collection<Fix>> result = Lists.newArrayList();
         int count = 0;
         for (Violation violation : violations) {
-            Collection<Fix> fix = (Collection<Fix>)rule.repair(violation);
-            result.add(fix);
-            count ++;
+            try {
+                Collection<Fix> fix = (Collection<Fix>)rule.repair(violation);
+                result.add(fix);
+                count ++;
+            } catch (Exception ex) {
+                Tracer tracer = Tracer.getTracer(ViolationRepair.class);
+                tracer.err("Exception in repair method.", ex);
+            }
             setPercentage(count / violations.size());
         }
 

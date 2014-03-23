@@ -35,6 +35,10 @@ public class UpdateExecutor {
     private DBConnectionPool connectionPool;
     private ExecutionContext context;
 
+    public UpdateExecutor(CleanPlan cleanPlan) {
+        this(cleanPlan, NadeefConfiguration.getDbConfig());
+    }
+
     public UpdateExecutor(CleanPlan cleanPlan, DBConfig nadeefConfig) {
         cacheManager = NodeCacheManager.getInstance();
         tracer = Tracer.getTracer(UpdateExecutor.class);
@@ -82,7 +86,7 @@ public class UpdateExecutor {
     }
 
     public void run() {
-        Stopwatch sw = new Stopwatch().start();
+        Stopwatch sw = Stopwatch.createStarted();
         updateFlow.reset();
         updateFlow.start();
         updateFlow.waitUntilFinish();

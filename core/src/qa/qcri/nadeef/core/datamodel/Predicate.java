@@ -90,6 +90,11 @@ public class Predicate {
             return this;
         }
 
+        public PredicateBuilder isNull() {
+            this.value = null;
+            return this;
+        }
+
         public Predicate build() {
             Predicate exp = new Predicate();
             exp.left = left;
@@ -104,13 +109,26 @@ public class Predicate {
     private Predicate() {}
 
     /**
-     * Returns the expression in string.
+     * Returns the expression in SQL string.
      * @return SQL String.
      */
-    public String toString() {
+    // TODO: move this to SQLTable
+    public String toSQLString() {
         StringBuilder builder = new StringBuilder(left.getFullColumnName());
-        builder.append(operationMap.get(operation));
-        if (!(value instanceof String)) {
+
+        // http://en.wikipedia.org/wiki/SQL
+        if (operation == Operation.NEQ && value == null) {
+            builder.append(" is not ");
+        } else {
+            if (operation == Operation.NEQ)
+                builder.append("<>");
+            else
+                builder.append(operationMap.get(operation));
+        }
+
+        if (value == null) {
+            builder.append("null");
+        } else if (!(value instanceof String)) {
             builder.append(value.toString());
         } else {
             builder.append("'");

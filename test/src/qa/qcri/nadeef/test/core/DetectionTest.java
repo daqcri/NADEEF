@@ -201,6 +201,19 @@ public class DetectionTest extends NadeefTestBase {
         }
     }
 
+    @Test
+    public void cleanExecutorTest10() {
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getPlan("CleanPlan12.json").get(0);
+            executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(36);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
     private void verifyViolationResult(int expectRow)
         throws Exception {
         int rowCount = Violations.getViolationRowCount(NadeefConfiguration.getDbConfig());

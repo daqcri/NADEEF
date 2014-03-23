@@ -137,7 +137,7 @@ public class SQLTable extends Table {
     @Override
     public Table filter(List<Predicate> expressions) {
         for (Predicate expression : expressions) {
-            sqlQuery.addWhere(expression.toString());
+            sqlQuery.addWhere(expression.toSQLString());
         }
         synchronized (this) {
             changeTimestamp = System.currentTimeMillis();
@@ -184,18 +184,17 @@ public class SQLTable extends Table {
 
             while (distinctResult.next()) {
                 Object value = distinctResult.getObject(1);
-                String stringValue = value.toString();
                 Predicate columnFilter =
                     new Predicate.PredicateBuilder()
                         .left(column)
                         .isSingle()
-                        .constant(stringValue)
+                        .constant(value)
                         .op(Operation.EQ).build();
 
                 SQLTable newTable =
                     new SQLTable(tableName, connectionFactory);
                 newTable.sqlQuery = new SQLQueryBuilder(sqlQuery);
-                newTable.sqlQuery.addWhere(columnFilter.toString());
+                newTable.sqlQuery.addWhere(columnFilter.toSQLString());
                 result.add(newTable);
             }
         } catch (Exception ex) {
@@ -279,7 +278,7 @@ public class SQLTable extends Table {
             SQLQueryBuilder builder = new SQLQueryBuilder(sqlQuery);
             builder.setLimit(1);
             String sql = builder.build(dialectManager);
-            tracer.verbose(sql);
+            // tracer.verbose(sql);
 
             conn = connectionFactory.getSourceConnection();
             stat = conn.createStatement();
@@ -326,14 +325,14 @@ public class SQLTable extends Table {
      * @return Returns <code>True</code> when the synchronization is successful.
      */
     private boolean syncData() {
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Connection conn = null;
         Statement stat = null;
         ResultSet resultSet = null;
         try {
             // prepare for the SQL
             String sql = sqlQuery.build(dialectManager);
-            tracer.verbose(sql);
+            // tracer.verbose(sql);
 
             // get the connection and run the SQL
             conn = connectionFactory.getSourceConnection();
@@ -429,7 +428,7 @@ public class SQLTable extends Table {
     //</editor-fold>
 
     //<editor-fold desc="Finalization methods">
-    public void recycle() {
+    public synchronized void recycle() {
         tuples.clear();
         tuples = null;
         tableName = null;

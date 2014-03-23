@@ -161,7 +161,7 @@ public class Console {
 
             System.out.println("OK");
             // bootstrap Nadeef.
-            Stopwatch stopwatch = new Stopwatch().start();
+            Stopwatch stopwatch = Stopwatch.createStarted();
             Bootstrap.start();
 
             console = new ConsoleReader();
@@ -238,7 +238,7 @@ public class Console {
     }
 
     private static void load(String cmdLine) throws IOException {
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         String[] splits = cmdLine.split("\\s");
         if (splits.length != 2) {
             console.println("Invalid load command. Run load <Nadeef config file>.");

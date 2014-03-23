@@ -259,6 +259,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                     <exclude name="**/TestDataRepository.class" />
                     <exclude name="**/NadeefTestBase.class" />
                     <exclude name="**/MyTestRule1.class" />
+                    <exclude name="**/ERDetectionTest.class" />
                 </fileset>
             </batchtest>
         </junit>
@@ -290,6 +291,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                     <exclude name="**/NadeefTestBase.class" />
                     <exclude name="**/MyTestRule1.class" />
                     <exclude name="**/TestDataRepository.class" />
+                    <exclude name="**/ERDetectionTest.class" />
                 </fileset>
             </batchtest>
         </junit>

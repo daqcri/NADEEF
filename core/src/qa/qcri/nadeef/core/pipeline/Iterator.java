@@ -139,7 +139,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
         ListeningExecutorService service = MoreExecutors.listeningDecorator(executor);
 
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         blockCount = 0;
 
         ExecutionContext context = getCurrentContext();

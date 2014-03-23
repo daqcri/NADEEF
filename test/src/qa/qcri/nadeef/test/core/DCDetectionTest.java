@@ -110,7 +110,7 @@ public class DCDetectionTest extends NadeefTestBase {
             CleanPlan cleanPlan = TestDataRepository.getFloatDCTestPlan();
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            verifyViolationResult(24);
+            verifyViolationResult(6);
         } catch(Exception e){
             e.printStackTrace();
             Assert.fail(e.getMessage());

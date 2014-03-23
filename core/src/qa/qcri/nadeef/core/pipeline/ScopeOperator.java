@@ -37,7 +37,7 @@ public class ScopeOperator extends Operator<Collection<Table>, Collection<Table>
     @SuppressWarnings("unchecked")
     public Collection<Table> execute(Collection<Table> tables)
         throws Exception {
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         ExecutionContext context = getCurrentContext();
         Rule rule = context.getRule();
 

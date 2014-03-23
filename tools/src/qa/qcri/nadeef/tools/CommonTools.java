@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -165,7 +166,7 @@ public final class CommonTools {
             Hashing
                 .md5()
                 .newHasher()
-                .putString(value)
+                .putString(value, Charset.forName("UTF8"))
                 .hash()
                 .asInt()
         );

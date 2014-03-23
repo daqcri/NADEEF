@@ -33,19 +33,24 @@ public enum Operation {
     public int getValue() {
         return value;
     }
-    
-    public String toLinquistics(){
-    	switch (value){
-    		case 0: return "equal to";
-    		case 1: return "less than";
-    		case 2: return "greater than";
-    		case 3: return "not equal to";
-    		case 4: return "less than or equal to";
-    		case 5: return "greater than or equal to";
-    		// CEQ: TODO 
-    		case 6: return "similar to";
-    		
-    	}
-    	return "";
-    }
+	
+	public String toLinquistics(){
+		switch (this){
+			case EQ:
+				return "equals to";
+			case LT:
+				return "less than";
+			case GT:
+				return "greater than";
+			case NEQ:
+				return "not equal to";
+			case LTE:
+				return "less than or equal to";
+			case GTE:
+				return "greater than or equal to";
+			case CEQ:
+				return "not equal to";
+		}
+		return "unknown predicate";
+	}
 }

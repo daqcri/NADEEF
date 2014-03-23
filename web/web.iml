@@ -8,8 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.sparkjava:spark-core:1.1" level="project" />
-    <orderEntry type="module" module-name="tools" />
-    <orderEntry type="module" module-name="core" />
+    <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -19,27 +18,12 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/guava-14.0.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/json-simple-1.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
+    <orderEntry type="module" module-name="tools" />
+    <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="ruleext" />
-    <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
     <orderEntry type="module" module-name="service" />
+    <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

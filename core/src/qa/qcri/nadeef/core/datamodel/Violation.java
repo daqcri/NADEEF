@@ -46,8 +46,8 @@ public class Violation {
     public Violation(String ruleId) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
-        cells = Sets.newHashSet();
-        vid = Optional.absent();
+        this.cells = Sets.newHashSet();
+        this.vid = Optional.absent();
     }
 
     /**
@@ -57,7 +57,7 @@ public class Violation {
     public Violation(String ruleId, int vid) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(ruleId));
         this.ruleId = ruleId;
-        cells = Sets.newHashSet();
+        this.cells = Sets.newHashSet();
         this.vid = Optional.of(vid);
     }
 
@@ -69,7 +69,15 @@ public class Violation {
         return cells;
     }
 
+    /**
+     * Gets the {@link Cell} from specific table name and column name.
+     * @param tableName table name.
+     * @param columnName column name.
+     * @return the {@link Cell} from specific table name and column name.
+     * Returns {@code NULL} when the cell does not exist.
+     */
     public Cell getCell(String tableName, String columnName) {
+        // TODO: buggy
         for (Cell cell : cells) {
             Column column = cell.getColumn();
             if (

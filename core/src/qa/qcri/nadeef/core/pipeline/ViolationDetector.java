@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.PerfReport;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
 import java.util.List;
@@ -105,19 +106,24 @@ public class ViolationDetector
 
                 count ++;
                 Collection<Violation> violations = null;
-                if (rule instanceof SingleTupleRule) {
-                    Tuple tuple = (Tuple)item;
-                    violations = rule.detect(tuple);
-                } else if (rule instanceof PairTupleRule) {
-                    TuplePair pair = (TuplePair)item;
-                    violations = rule.detect(pair);
-                } else {
-                    Table collection = (Table)item;
-                    violations = rule.detect(collection);
-                }
+                try {
+                    if (rule instanceof SingleTupleRule) {
+                        Tuple tuple = (Tuple)item;
+                        violations = rule.detect(tuple);
+                    } else if (rule instanceof PairTupleRule) {
+                        TuplePair pair = (TuplePair)item;
+                        violations = rule.detect(pair);
+                    } else {
+                        Table collection = (Table)item;
+                        violations = rule.detect(collection);
+                    }
 
-                if (violations != null && violations.size() > 0) {
-                    result.addAll(violations);
+                    if (violations != null && violations.size() > 0) {
+                        result.addAll(violations);
+                    }
+                } catch (Exception ex) {
+                    Tracer tracer = Tracer.getTracer(this.getClass());
+                    tracer.err("Exception inside detect method.", ex);
                 }
             }
 
@@ -145,7 +151,7 @@ public class ViolationDetector
         IteratorStream iteratorStream = new IteratorStream();
         resultCollection.clear();
         List<Object> tupleList;
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         List<ListenableFuture<Integer>> futures = Lists.newArrayList();
         while (true) {
             tupleList = iteratorStream.poll();

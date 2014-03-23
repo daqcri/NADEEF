@@ -89,6 +89,14 @@ public class Tuple {
                 case FLOAT:
                     result = Float.parseFloat(stringValue);
                     break;
+                case BOOL:
+                    result = Boolean.parseBoolean(stringValue);
+                    break;
+                case TIMESTAMP:
+                    result = stringValue;
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown data type");
             }
         }
         return result;

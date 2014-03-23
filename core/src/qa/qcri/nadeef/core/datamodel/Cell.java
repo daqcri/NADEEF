@@ -85,11 +85,13 @@ public class Cell {
     }
 
     /**
-     * Gets the column value.
+     * Gets the column value. It does the type inferring and throws exception when
+     * value is not the correct type.
      * @return column value.
      */
-    public Object getValue() {
-        return value;
+    @SuppressWarnings("unchecked")
+    public <T> T getValue() {
+        return (T)value;
     }
 
     /**

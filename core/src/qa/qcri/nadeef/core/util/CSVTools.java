@@ -85,7 +85,7 @@ public class CSVTools {
         Preconditions.checkNotNull(dialectManager);
 
         Tracer tracer = Tracer.getTracer(CSVTools.class);
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         HashSet<Integer> result = Sets.newHashSet();
         try {
             boolean hasTableExist = DBMetaDataTool.isTableExist(dbConfig, tableName);
@@ -210,7 +210,7 @@ public class CSVTools {
         Preconditions.checkNotNull(dialectManager);
 
         Tracer tracer = Tracer.getTracer(CSVTools.class);
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         String fullTableName = null;
         String sql;
         BufferedReader reader = null;
@@ -242,7 +242,7 @@ public class CSVTools {
                     reader = new BufferedReader(new FileReader(file));
                     // TODO: check whether the header exists.
                     String line;
-                    while ((line = reader.readLine()).isEmpty());
+                    while (Strings.isNullOrEmpty(line = reader.readLine()));
                     sql = dialectManager.createTableFromCSV(fullTableName, line);
                     tracer.verbose(sql);
                     stat.execute(sql);

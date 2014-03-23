@@ -250,6 +250,9 @@ public class PerfReport {
         String value;
         List<Long> values = PerfReport.get(metric);
         StringBuilder outputBuilder = new StringBuilder(50);
+        // TODO: a quick fix
+        if (values == null)
+            return "";
         for (Long tmp : values) {
             outputBuilder.append(String.format("%9d", tmp));
         }

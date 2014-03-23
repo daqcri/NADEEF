@@ -7,7 +7,7 @@
         {
             "name" : "floatDC",
             "type" : "dc",
-            "value" : ["not(t1.A>t1.B&t1.B=2.0)"]
+            "value" : ["not(t1.A>t1.B&t1.B=2)"]
         }
     ]
 }

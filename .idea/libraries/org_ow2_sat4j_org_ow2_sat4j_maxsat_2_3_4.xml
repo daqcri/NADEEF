@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4" type="repository">
+    <properties maven-id="org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/vendors/org.ow2.sat4j.maxsat-2.3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/org.ow2.sat4j.core-2.3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/org.ow2.sat4j.pb-2.3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/org.ow2.sat4j.core-2.3.4-tests.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/commons-cli-1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/vendors/org.ow2.sat4j.maxsat-2.3.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
