@@ -53,7 +53,7 @@ define([
     function render(id) {
         ProgressBarView.start('progressbar');
         domId = id;
-        renderSourceList();
+        refreshList();
     }
 
     function getSelectedPlan() {
@@ -64,7 +64,7 @@ define([
         return $("#selected_source").val();
     }
 
-    function renderSourceList() {
+    function refreshList() {
         Requester.getSource(
             function(source) {
                 var sources = source['data'];
@@ -102,7 +102,7 @@ define([
                 function(data) {
                     info("Selected rules are deleted.");
                     // force a refresh
-                    renderSourceList();
+                    refreshList();
                 }
             );
         });
@@ -196,11 +196,11 @@ define([
 
     function bindEvent() {
         $('#refresh_rule').on('click', function(e) {
-            renderSourceList();
+            refreshList();
         });
 
         $('#refresh_source').on('click', function(e) {
-            renderSourceList();
+            refreshList();
         });
 
         $('#new_plan').on('click', function(e) {
@@ -211,7 +211,7 @@ define([
         });
 
         $('#cleanPlanPopup').on('hidden', function(e) {
-            renderSourceList();
+            refreshList();
             // info('You just successfully updated a rule.');
         });
 
