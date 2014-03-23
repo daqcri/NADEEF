@@ -173,8 +173,8 @@ public class Tuple {
             return true;
         }
 
-        if (tableName_.startsWith("CSV_")) {
-            String originalTableName = tableName_.substring(4);
+        if (tableName_.startsWith("tb_")) {
+            String originalTableName = tableName_.substring(3);
             return originalTableName.equalsIgnoreCase(tableName);
         }
         return false;

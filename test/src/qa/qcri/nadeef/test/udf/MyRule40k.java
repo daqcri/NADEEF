@@ -33,9 +33,9 @@ public class MyRule40k extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
-        leftHandSide.add(new Column("CSV_HOSPITAL_40K.zipcode"));
+        leftHandSide.add(new Column("tb_HOSPITAL_40K.zipcode"));
 
-        rightHandSide.add(new Column("CSV_HOSPITAL_40K.city"));
+        rightHandSide.add(new Column("tb_HOSPITAL_40K.city"));
 
     }
 
