@@ -53,7 +53,7 @@
         <div class="control-group">
             <select multiple id="selected_rule" class="selectbox fullwidth" size="10">
                 <% _.each(plans, function(plan) { %>
-                <option><%= plan[2].substring(0, 10) %></option>
+                <option value="<%= plan[0] %>"><%= plan[2].substring(0, 20) %></option>
                 <% }); %>
             </select>
         </div>
