@@ -8,7 +8,7 @@
     "rule" : [
         {
             "type" : "fd",
-            "table" : ["csv_location"],
+            "table" : ["tb_location"],
             "target" : ["location_copy"],
             "value" : ["zip|city, state"]
         }

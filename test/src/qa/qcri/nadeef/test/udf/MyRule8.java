@@ -30,8 +30,8 @@ public class MyRule8 extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
-        leftHandSide.add(new Column("CSV_DUMPTEST3.A"));
-        rightHandSide.add(new Column("CSV_DUMPTEST3.C"));
+        leftHandSide.add(new Column("tb_DUMPTEST3.A"));
+        rightHandSide.add(new Column("tb_DUMPTEST3.C"));
 
     }
 

@@ -28,8 +28,8 @@ public class MyRule80k extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
-        leftHandSide.add(new Column("CSV_HOSPITAL_80K.zipcode"));
-        rightHandSide.add(new Column("CSV_HOSPITAL_80K.city"));
+        leftHandSide.add(new Column("tb_HOSPITAL_80K.zipcode"));
+        rightHandSide.add(new Column("tb_HOSPITAL_80K.city"));
     }
 
     /**

@@ -95,6 +95,19 @@ define([
         };
     }
 
+    function deleteRule(rules) {
+        _.each(rules, function(rule) {
+            Requester.deleteRule(
+                rule,
+                function(data) {
+                    info("Selected rules are deleted.");
+                    // force a refresh
+                    renderSourceList();
+                }
+            );
+        });
+    }
+
     function renderRuleDetail() {
         var selectedPlan = getSelectedPlan();
         if (_.isUndefined(selectedPlan) || _.isNull(selectedPlan)) {
@@ -205,7 +218,7 @@ define([
         $('#edit_plan').on('click', function(e) {
             var selectedPlan = getSelectedPlan();
             if (selectedPlan == null) {
-                err('No CleanPlan is selected.');
+                err('No rule is selected.');
                 return;
             }
 
@@ -240,6 +253,16 @@ define([
             }
 
             detect(selectedPlan);
+        });
+
+        $('#delete').on('click', function(e) {
+            var selectedPlan = getSelectedPlan();
+            if (selectedPlan == null || !_.isArray(selectedPlan)) {
+                err('No rule is selected.');
+                return;
+            }
+
+            deleteRule(selectedPlan);
         });
 
         $('#repair').on('click', function(e) {

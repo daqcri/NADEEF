@@ -56,6 +56,15 @@ define(['router'], function(Router) {
         });
     }
 
+    function deleteRule(ruleName, successCallback, failureCallback) {
+        $.ajax({
+            url : '/' + getProjectName() + '/data/rule/' + ruleName,
+            type: 'DELETE',
+            success: successCallback,
+            fail: failureCallback
+        });
+    }
+
     function getRuleDetail(ruleName, successCallback, failureCallback) {
         $.ajax({
             url : '/' + getProjectName() + '/data/rule/' + ruleName,
@@ -204,7 +213,7 @@ define(['router'], function(Router) {
 
         createProject: createProject,
         createRule: createRule,
-
+        deleteRule: deleteRule,
         getProject: getProject,
         getSource: getSource,
         getRule: getRule,

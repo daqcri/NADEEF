@@ -41,6 +41,7 @@ import static spark.Spark.*;
  * Start class for launching dashboard.
  */
 public final class Dashboard {
+    private static final String TABLE_PREFIX = "TB_";
     private static Tracer tracer;
     private static SQLDialectBase dialectInstance;
     private static SQLDialect dialect;
@@ -121,7 +122,7 @@ public final class Dashboard {
                             true
                         );
                     JSONArray dataArray = (JSONArray)countJson.get("data");
-                    Integer count = (Integer)(((JSONArray)(dataArray.get(0))).get(0));
+                    Long count = (Long)(((JSONArray)(dataArray.get(0))).get(0));
                     queryJson.put("iTotalRecords", count.toString());
                     queryJson.put("iTotalDisplayRecords", count.toString());
                     queryJson.put("sEcho", request.queryParams("sEcho"));
@@ -212,6 +213,22 @@ public final class Dashboard {
                     dialectInstance.queryRule(ruleName),
                     true
                 );
+            }
+        });
+
+        delete(new Route("/:project/data/rule/:ruleName") {
+            @Override
+            public Object handle(Request request, Response response) {
+                String ruleName = request.params("ruleName");
+                String project = request.params("project");
+
+                if (Strings.isNullOrEmpty(project) || Strings.isNullOrEmpty(ruleName)) {
+                    return fail("Invalid input");
+                }
+
+                response.type("application/json");
+                update(project, dialectInstance.deleteRule(ruleName), "delete rule");
+                return success(0);
             }
         });
 
@@ -672,7 +689,7 @@ public final class Dashboard {
                     }
 
                     // write to disk
-                    File outputFile = File.createTempFile("CSV_", fileName);
+                    File outputFile = File.createTempFile(TABLE_PREFIX, fileName);
                     writer = new BufferedWriter(new FileWriter(outputFile));
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("multipartformboundary") || line.isEmpty()) {
