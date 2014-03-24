@@ -29,7 +29,7 @@ public abstract class SolverBase {
         HashSet<Cell> cells = Sets.newHashSet();
         for (Fix fix : repairContext) {
             cells.add(fix.getLeft());
-            if (!fix.isConstantAssign())
+            if (!fix.isRightConstant())
                 cells.add(fix.getRight());
         }
         return solve(repairContext, cells);

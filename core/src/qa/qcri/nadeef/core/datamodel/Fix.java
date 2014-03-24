@@ -180,7 +180,7 @@ public class Fix {
      * Returns <code>True</code> when the right cell is a constant value.
      * @return <code>True</code> when the right cell is a constant value.
      */
-    public boolean isConstantAssign() {
+    public boolean isRightConstant() {
         return this.right == null;
     }
     //</editor-fold>

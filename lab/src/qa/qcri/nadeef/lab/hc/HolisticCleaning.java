@@ -66,7 +66,7 @@ public class HolisticCleaning extends FixDecisionMaker {
             Cell cell = fix.getLeft();
             addOrCreate(cell, fix);
 
-            if (!fix.isConstantAssign()) {
+            if (!fix.isRightConstant()) {
                 Cell rightCell = fix.getRight();
                 addOrCreate(rightCell, fix);
             }
@@ -114,7 +114,7 @@ public class HolisticCleaning extends FixDecisionMaker {
                     if (heapIndex.containsKey(cell))
                         maxHeap.remove(heapIndex.get(cell));
                     cell = fix.getRight();
-                    if (!fix.isConstantAssign() && heapIndex.containsKey(cell))
+                    if (!fix.isRightConstant() && heapIndex.containsKey(cell))
                         maxHeap.remove(heapIndex.get(cell));
                 }
             }
@@ -147,7 +147,7 @@ public class HolisticCleaning extends FixDecisionMaker {
                 queue.addAll(graphMap.get(leftCell));
             }
 
-            if (!fix.isConstantAssign()) {
+            if (!fix.isRightConstant()) {
                 Cell rightCell = fix.getRight();
                 if (!result.contains(rightCell)) {
                     result.add(rightCell);

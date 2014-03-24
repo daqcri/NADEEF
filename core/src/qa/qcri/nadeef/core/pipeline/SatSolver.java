@@ -16,19 +16,20 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import org.sat4j.core.VecInt;
 import org.sat4j.maxsat.SolverFactory;
 import org.sat4j.maxsat.WeightedMaxSatDecorator;
 import org.sat4j.pb.IPBSolver;
 import org.sat4j.specs.IProblem;
-
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class SatSolver extends FixDecisionMaker {
     private HashMap<SatVariable, Integer> variableIndexMap;
@@ -99,7 +100,7 @@ public class SatSolver extends FixDecisionMaker {
                 leftFixCluster = clusterMap.get(leftCell);
             }
 
-            Cell rightCell = fix.isConstantAssign() ? null : fix.getRight();
+            Cell rightCell = fix.isRightConstant() ? null : fix.getRight();
             HashSet<Fix> rightFixCluster = null;
             if (rightCell != null && clusterMap.containsKey(rightCell)) {
                 rightFixCluster = clusterMap.get(rightCell);
@@ -155,7 +156,7 @@ public class SatSolver extends FixDecisionMaker {
                         leftCell.getValue()
                     );
                 Object value =
-                    fix.isConstantAssign() ? fix.getRightValue() : fix.getRight().getValue();
+                    fix.isRightConstant() ? fix.getRightValue() : fix.getRight().getValue();
                 int lit2 =
                     new SatVariableFactory()
                         .createSatVariable(leftCell, value);
@@ -174,7 +175,7 @@ public class SatSolver extends FixDecisionMaker {
                 lits.add(lit2);
                 cells.add(leftCell);
 
-                if (!fix.isConstantAssign()) {
+                if (!fix.isRightConstant()) {
                     // for non-constant assignment
                     // generate
                     //      (t2.a = v1 v t2.a = v2) ^ (~t2.a = v1 v ~t2.a = v2)
@@ -242,7 +243,7 @@ public class SatSolver extends FixDecisionMaker {
                     vioGroup.put(vid, lits);
                 }
 
-                if (!fix.isConstantAssign()) {
+                if (!fix.isRightConstant()) {
                     int lit2 =
                         new SatVariableFactory()
                             .createSatVariable(

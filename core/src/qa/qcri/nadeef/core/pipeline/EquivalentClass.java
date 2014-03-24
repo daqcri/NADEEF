@@ -51,7 +51,7 @@ public class EquivalentClass extends FixDecisionMaker {
             Cell leftCell = fix.getLeft();
             fixMap.put(leftCell, fix);
 
-            if (fix.isConstantAssign()) {
+            if (fix.isRightConstant()) {
                 // TODO: do a statistic on the assign count.
                 assignMap.put(leftCell, fix.getRightValue());
                 continue;

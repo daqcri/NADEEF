@@ -72,7 +72,7 @@ public class GurobiSolver extends SolverBase {
                 // check right hand of the predicate
                 GRBVar var2 = null;
                 double v2 = 0.0;
-                if (!fix.isConstantAssign()) {
+                if (!fix.isRightConstant()) {
                     cell = fix.getRight();
                     v2 = getValue(cell.getValue());
                     if (changedCell.contains(cell)) {

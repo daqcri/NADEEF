@@ -117,7 +117,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
 
         sqlBuilder.append(fix.getOperation().getValue());
         sqlBuilder.append(',');
-        if (!fix.isConstantAssign()) {
+        if (!fix.isRightConstant()) {
             cell = fix.getRight();
             sqlBuilder.append(cell.getTid());
             sqlBuilder.append(',');

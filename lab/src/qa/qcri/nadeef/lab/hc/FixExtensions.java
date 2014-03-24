@@ -39,7 +39,7 @@ class FixExtensions {
             }
 
             double rightValue;
-            if (!fix.isConstantAssign()) {
+            if (!fix.isRightConstant()) {
                 Cell rightCell = fix.getRight();
                 if (modifiedCell.containsKey(rightCell)) {
                     String obj = modifiedCell.get(rightCell);

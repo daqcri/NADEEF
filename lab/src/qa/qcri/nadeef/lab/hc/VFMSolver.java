@@ -39,7 +39,7 @@ public class VFMSolver extends SolverBase {
         // When there are only NEQ, we need to assign an variable
         // class.
         for (Fix fix : repairContext) {
-            if (fix.isConstantAssign()) {
+            if (fix.isRightConstant()) {
                 values.add(fix.getRightValue());
                 cells.add(fix.getLeft());
             } else {

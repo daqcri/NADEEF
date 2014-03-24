@@ -55,7 +55,7 @@ public class VFMTest {
 
         Assert.assertEquals(1, result.size());
         Fix fix = result.get(0);
-        Assert.assertTrue(fix.isConstantAssign());
+        Assert.assertTrue(fix.isRightConstant());
 
         int value = Integer.parseInt(fix.getRightValue());
         Assert.assertEquals(3, value);
@@ -90,7 +90,7 @@ public class VFMTest {
 
         Assert.assertEquals(1, result.size());
         Fix fix = result.get(0);
-        Assert.assertTrue(fix.isConstantAssign());
+        Assert.assertTrue(fix.isRightConstant());
         Assert.assertEquals("C", fix.getRightValue());
     }
 }
