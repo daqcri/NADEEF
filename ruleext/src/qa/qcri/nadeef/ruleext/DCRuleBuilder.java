@@ -41,6 +41,10 @@ public class DCRuleBuilder extends RuleBuilder {
         predicateList = Lists.newArrayList();
     }
 
+	public List<Predicate> getPredicateList(){
+		return predicateList;
+	}
+	
     @Override
     public Collection<File> compile() throws Exception {
         File inputFile = generate().iterator().next();
@@ -86,7 +90,9 @@ public class DCRuleBuilder extends RuleBuilder {
         return result;
     }
 
-    private boolean isSingle() {
+	
+	
+    public boolean isSingle() {
         boolean isSingle = true;
         for (Predicate predicate : predicateList) {
             if (!predicate.isSingle()) {
