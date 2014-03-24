@@ -23,7 +23,6 @@ import java.util.List;
 
 /**
  * Tuple class represents a tuple (row) in a table.
- *
  */
 public class Tuple {
     private Tracer tracer = Tracer.getTracer(Tuple.class);

@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.lab.holisticCleaning;
+package qa.qcri.nadeef.lab.hc;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -21,7 +21,6 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Operation;
 import qa.qcri.nadeef.core.pipeline.ExecutionContext;
 import qa.qcri.nadeef.core.pipeline.FixDecisionMaker;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.*;
 
@@ -31,8 +30,11 @@ import java.util.*;
  * (http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=6544847&tag=1)
  */
 public class HolisticCleaning extends FixDecisionMaker {
-    private Tracer tracer = Tracer.getTracer(this.getClass());
     private HashMap<Cell, HashSet<Fix>> graphMap = Maps.newHashMap();
+
+    public HolisticCleaning(ExecutionContext context) {
+        super(context);
+    }
 
     /**
      * CountPair is used to generate a Min/Max heap with {@link PriorityQueue}.
@@ -53,42 +55,25 @@ public class HolisticCleaning extends FixDecisionMaker {
         }
     }
 
-    public HolisticCleaning(ExecutionContext context) {
-        super(context);
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public Collection<Fix> decide(Collection<Fix> fixes) {
-        // generate the graph
+        // generate the hyper-graph
+        // vertex is the cell, and edge is the fix which works on this cell
         for (Fix fix : fixes) {
             Cell cell = fix.getLeft();
-            if (graphMap.containsKey(cell)) {
-                HashSet<Fix> relatedFix = graphMap.get(cell);
-                relatedFix.add(fix);
-            } else {
-                HashSet<Fix> relatedFix = Sets.newHashSet();
-                relatedFix.add(fix);
-                graphMap.put(cell, relatedFix);
-            }
+            addOrCreate(cell, fix);
 
             if (!fix.isConstantAssign()) {
                 Cell rightCell = fix.getRight();
-                if (graphMap.containsKey(rightCell)) {
-                    HashSet<Fix> relatedFix = graphMap.get(rightCell);
-                    relatedFix.add(fix);
-                } else {
-                    HashSet<Fix> relatedFix = Sets.newHashSet();
-                    relatedFix.add(fix);
-                    graphMap.put(cell, relatedFix);
-                }
+                addOrCreate(rightCell, fix);
             }
         }
 
         // initialize the heap by count of edges
-        // Here instead of using MVC, we use a greedy approach
+        // Here we use a greedy approach to find the MVC, which is
         // to get the vertexes in the order of hyper-edge counts.
         PriorityQueue<CountPair<Cell>> maxHeap = new PriorityQueue<>();
         HashMap<Cell, CountPair<Cell>> heapIndex = Maps.newHashMap();
@@ -101,26 +86,53 @@ public class HolisticCleaning extends FixDecisionMaker {
 
         ArrayList<Fix> result = Lists.newArrayList();
 
-        // Inner loop, in this implementation we don't have an outer-loop
+        // we try the node with maximum connected fixes first
+        // until the heap is empty.
         while (!maxHeap.isEmpty()) {
             HashSet<Fix> repairContext = Sets.newHashSet();
+            HashSet<Integer> vids = Sets.newHashSet();
+
             CountPair<Cell> topCell = maxHeap.poll();
             // generate the frontier using BFS
             HashSet<Cell> frontier = generateFrontier(topCell.cell);
 
-            // remove frontier vertexes from the graph
+            // generate repairContext and record all the hyper edges
             for (Cell cell : frontier) {
-                repairContext.addAll(graphMap.get(cell));
-                CountPair<Cell> pair = heapIndex.get(cell);
-                // remove from the heap
-                maxHeap.remove(pair);
+                HashSet<Fix> fixSet = graphMap.get(cell);
+                repairContext.addAll(fixSet);
+                for (Fix fix : fixSet)
+                    vids.add(fix.getVid());
             }
 
-            result.addAll(determine(repairContext));
+            result.addAll(determine(repairContext, frontier, topCell.cell));
+
+            // remove hyper-edges
+            for (Fix fix : fixes) {
+                int vid = fix.getVid();
+                if (vids.contains(vid)) {
+                    Cell cell = fix.getLeft();
+                    if (heapIndex.containsKey(cell))
+                        maxHeap.remove(heapIndex.get(cell));
+                    cell = fix.getRight();
+                    if (!fix.isConstantAssign() && heapIndex.containsKey(cell))
+                        maxHeap.remove(heapIndex.get(cell));
+                }
+            }
         }
+
         return result;
     }
 
+    private void addOrCreate(Cell cell, Fix fix) {
+        if (graphMap.containsKey(cell)) {
+            HashSet<Fix> relatedFix = graphMap.get(cell);
+            relatedFix.add(fix);
+        } else {
+            HashSet<Fix> relatedFix = Sets.newHashSet();
+            relatedFix.add(fix);
+            graphMap.put(cell, relatedFix);
+        }
+    }
 
     private HashSet<Cell> generateFrontier(Cell topCell) {
         HashSet<Cell> result = Sets.newHashSet();
@@ -129,27 +141,29 @@ public class HolisticCleaning extends FixDecisionMaker {
         Queue<Fix> queue = new LinkedList<>(graphMap.get(topCell));
         while (!queue.isEmpty()) {
             Fix fix = queue.poll();
-            Cell cell = fix.getLeft();
-            if (!result.contains(cell)) {
-                result.add(cell);
-                queue.addAll(graphMap.get(cell));
+            Cell leftCell = fix.getLeft();
+            if (!result.contains(leftCell)) {
+                result.add(leftCell);
+                queue.addAll(graphMap.get(leftCell));
             }
 
-            if (!fix.isConstantAssign() && !result.contains(cell)) {
-                result.add(fix.getRight());
-                queue.addAll(graphMap.get(cell));
+            if (!fix.isConstantAssign()) {
+                Cell rightCell = fix.getRight();
+                if (!result.contains(rightCell)) {
+                    result.add(rightCell);
+                    queue.addAll(graphMap.get(rightCell));
+                }
             }
         }
         return result;
 
     }
 
-
-    private List<Fix> qpDetermine(HashSet<Fix> repairContext) {
-        return new GurobiSolver().solve(repairContext);
-    }
-
-    private List<Fix> determine(HashSet<Fix> repairContext) {
+    private List<Fix> determine(
+        HashSet<Fix> repairContext,
+        HashSet<Cell> frontier,
+        Cell topCell
+    ) {
         boolean hasOnlyEq = true;
         for (Fix fix : repairContext) {
             if (fix.getOperation() != Operation.EQ &&
@@ -160,12 +174,34 @@ public class HolisticCleaning extends FixDecisionMaker {
             }
         }
 
-        if (hasOnlyEq) {
+        if (hasOnlyEq)
             // executing vfm
             return new VFMSolver().solve(repairContext);
+
+        // executing QP, combinatorial trail
+        GurobiSolver solver = new GurobiSolver();
+        CombinationGenerator<Cell> gen = new CombinationGenerator<>(frontier);
+        HashSet<Cell> trail = gen.getNext();
+        List<Fix> result = null;
+        while (trail != null) {
+            result = solver.solve(repairContext, trail);
+            if (result != null && FixExtensions.isValidFix(repairContext, result))
+                break;
+            trail = gen.getNext();
         }
 
-        // executing QP
-        return new GurobiSolver().solve(repairContext);
+        // when everything fail, we mark it as not resolvable.
+        // How?
+        // mark topCell as the same value as before, this leads to the same assignment
+        // in the next cleaning iteration, which eventually leads to a "fresh value".
+        // TODO: please prove its correctness.
+        if (result == null) {
+            result = Lists.newArrayList();
+            Fix fix =
+                new Fix.Builder().left(topCell).right(topCell.getValue()).op(Operation.EQ).build();
+            result.add(fix);
+        }
+
+        return result;
     }
 }

@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
+    <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="jline-2.11" level="project" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />

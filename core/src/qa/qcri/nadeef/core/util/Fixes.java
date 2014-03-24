@@ -15,10 +15,7 @@ package qa.qcri.nadeef.core.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.datamodel.Cell;
-import qa.qcri.nadeef.core.datamodel.Column;
-import qa.qcri.nadeef.core.datamodel.Fix;
-import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -106,9 +103,21 @@ public class Fixes {
                         cellBuilder.column(
                             new Column(c2TableName, c2Attribute)
                         ).value(c2Value).tid(c2TupleId).build();
-                    newFix = builder.vid(vid).left(c1Cell).right(c2Cell).build();
+                    newFix =
+                        builder
+                            .vid(vid)
+                            .left(c1Cell)
+                            .right(c2Cell)
+                            .op(Operation.values()[op])
+                            .build();
                 } else {
-                    newFix = builder.vid(vid).left(c1Cell).right(c2Value).build();
+                    newFix =
+                        builder
+                            .vid(vid)
+                            .left(c1Cell)
+                            .right(c2Value)
+                            .op(Operation.values()[op])
+                            .build();
                 }
 
                 result.add(newFix);

@@ -22,6 +22,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -113,8 +114,8 @@ public class UpdateExecutor {
                         );
                 }
 
-                fixDecisionMaker =
-                    (FixDecisionMaker)customizedClass.getConstructor().newInstance(context);
+                Constructor<?>[] constructors = customizedClass.getConstructors();
+                fixDecisionMaker = (FixDecisionMaker)constructors[0].newInstance(context);
             } else {
                 fixDecisionMaker = new EquivalentClass(context);
             }

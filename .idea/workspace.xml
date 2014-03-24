@@ -5,20 +5,33 @@
     <option name="ANALYSIS_IN_BACKGROUND" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="- Adds SatSolver.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gurobi.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/joptimizer_3_2_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/dataSources.ids" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule7.java" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule7.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/lab.iml" afterPath="$PROJECT_DIR$/lab/lab.iml" />
+    <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="- Adds HolisticCleaning algorithm (with Gurobi support).">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/CombinationGenTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/CombinationGenerator.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DCRepairTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/SolverBase.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/hcConfig.conf" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/UserGuide.html" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/GurobiSolver.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/HolisticCleaning.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/FixExtensions.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/VFMSolver.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/log4j.properties" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/GurobiSolverTest.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/JOptimizerTest.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/VFMTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Fixes.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Fixes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Operation.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Operation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg" afterPath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg" afterPath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java" afterPath="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/console/console.iml" afterPath="$PROJECT_DIR$/console/console.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nadeef.bat" afterPath="$PROJECT_DIR$/nadeef.bat" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.iml" afterPath="$PROJECT_DIR$/test/test.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="d763a6a4-3fac-4bf4-a3a5-2672c971d002" name="New changelist" comment="" />
@@ -293,67 +306,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java" line="37" class="qa.qcri.nadeef.lab.holisticCleaning.test.JOptimizerTest" package="qa.qcri.nadeef.lab.holisticCleaning.test">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" line="32" class="qa.qcri.nadeef.lab.holisticCleaning.GurobiSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" line="159" class="qa.qcri.nadeef.lab.holisticCleaning.GurobiSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" line="32" class="qa.qcri.nadeef.lab.holisticCleaning.VFMSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" line="68" class="qa.qcri.nadeef.lab.holisticCleaning.VFMSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
+      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/JOptimizerTest.java" line="37" class="qa.qcri.nadeef.lab.hc.test.JOptimizerTest" package="qa.qcri.nadeef.lab.hc.test">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -398,112 +351,7 @@
     <favorites_list name="NADEEF" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf>
-          <file leaf-file-name="MyRule7.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule7.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="87" column="22" selection-start="3259" selection-end="3259" vertical-scroll-proportion="0.0" vertical-offset="575" max-vertical-offset="1785">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="VFMSolver.java" pinned="false" current="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="101" column="0" selection-start="3984" selection-end="3984" vertical-scroll-proportion="1.7884363" vertical-offset="169" max-vertical-offset="1683">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Fix.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="21" column="0" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="3111">
-                  <folding>
-                    <element signature="e#0#5036#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="PairDCRuleBuilder.stg" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="663" max-vertical-offset="1513">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="HolisticCleaning.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="166" column="33" selection-start="5628" selection-end="5628" vertical-scroll-proportion="0.0" vertical-offset="1799" max-vertical-offset="2635">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="VFMTest.java" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="27" column="43" selection-start="1075" selection-end="1075" vertical-scroll-proportion="0.36956522" vertical-offset="0" max-vertical-offset="986">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ISolver.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="20" column="0" selection-start="765" selection-end="765" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="GurobiSolver.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="69" column="0" selection-start="2476" selection-end="2476" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3179">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="JOptimizerTest.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="24" column="13" selection-start="1065" selection-end="1065" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="952">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="GurobiSolverTest.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="78" column="0" selection-start="2822" selection-end="2934" vertical-scroll-proportion="0.0" vertical-offset="668" max-vertical-offset="1479">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -532,41 +380,11 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java" />
-        <option value="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" />
-        <option value="$PROJECT_DIR$/nadeef.sh" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/IResultSetHandler.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/QueryToJsonResultSetHandler.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/buildThrift.sh" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/FixExport.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Updater.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/SQLTable.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupPlan.json" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/sql/DBConnectionPool.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/SQLTableTest.java" />
-        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CountOperator.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleDedupRule.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CarStandarlizationRule.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CureMissing.json" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/service.thrift" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupClient.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template/tableentry.template.html" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template/detailpanel.template.html" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/sql/DBInstaller.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CarCureMissingRule.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupServiceHandler.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template/home.template.html" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/HomeView.js" />
-        <option value="$PROJECT_DIR$/nadeef.conf" />
         <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/EquivalentClass.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleRule.java" />
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java" />
         <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/SatSolverTest.java" />
         <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/SatSolver.java" />
         <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java" />
@@ -576,13 +394,43 @@
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/QPSolver.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/QPTest.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/IQPSolver.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" />
         <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule7.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java" />
+        <option value="$PROJECT_DIR$/tools/src/qa/qcri/nadeef/tools/PerfReport.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" />
+        <option value="$PROJECT_DIR$/out/myDC1.java" />
+        <option value="$PROJECT_DIR$/nadeef.conf" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Operation.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java" />
+        <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg" />
+        <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DCRepairTest.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java" />
+        <option value="$PROJECT_DIR$/out/floatDC.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Fixes.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/FixExtension.java" />
+        <option value="$PROJECT_DIR$/out/myDC2.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/FixExtensions.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/CombinationGenTest.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/CombinationGenerator.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/ISolver.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/SolverBase.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/VFMSolver.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/GurobiSolver.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/GurobiSolverTest.java" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/HolisticCleaning.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java" />
+        <option value="$PROJECT_DIR$/build.xml" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/VFMTest.java" />
+        <option value="$PROJECT_DIR$/nadeef.bat" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/hcConfig.conf" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/derbyConfig.conf" />
       </list>
     </option>
   </component>
@@ -590,9 +438,9 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1919" />
-    <option name="width" value="1922" />
-    <option name="height" value="1201" />
+    <option name="x" value="1920" />
+    <option name="width" value="1920" />
+    <option name="height" value="1200" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -664,6 +512,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -671,6 +520,80 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="NADEEF" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sql" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -753,6 +676,78 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="input" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="service" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -763,6 +758,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="ruleext" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -794,40 +803,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ruleext" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NADEEF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruleext" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qcri" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nadeef" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruleext" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -871,7 +846,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="holisticCleaning" />
+              <option name="myItemId" value="hc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -905,7 +880,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="holisticCleaning" />
+              <option name="myItemId" value="hc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -943,13 +918,52 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="console" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="console" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="console" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="253" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="263" />
     <property name="project.structure.proportion" value="0.15" />
@@ -961,7 +975,7 @@
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/gurobi562/linux64/lib" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/out/floatDC.java" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="267" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1059" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1061" />
@@ -1002,13 +1016,6 @@
       <recent name="qa.qcri.nadeef.tools.sql.SQLDialectTools" />
       <recent name="qa.qcri.nadeef.tools.SQLDialectManagerBase" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template" />
-      <recent name="$PROJECT_DIR$/web/src/qa/qcri/nadeef/lab/dedup/web" />
-      <recent name="$PROJECT_DIR$/web/src/public/js/mvc/template" />
-      <recent name="$PROJECT_DIR$/web/src/public/images" />
-      <recent name="$PROJECT_DIR$/web/src" />
-    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="qa.qcri.nadeef.lab" />
       <recent name="qa.qcri.nadeef" />
@@ -1016,9 +1023,16 @@
       <recent name="qa.qcri.nadeef.tools" />
       <recent name="qa.qcri.nadeef.core.util" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template" />
+      <recent name="$PROJECT_DIR$/web/src/qa/qcri/nadeef/lab/dedup/web" />
+      <recent name="$PROJECT_DIR$/web/src/public/js/mvc/template" />
+      <recent name="$PROJECT_DIR$/web/src/public/images" />
+      <recent name="$PROJECT_DIR$/web/src" />
+    </key>
   </component>
-  <component name="RunManager" selected="JUnit.VFMTest.simpleTest">
-    <configuration default="false" name="FlowTest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.DCDetectionTest">
+    <configuration default="false" name="DCRepairTest.cleanExecutorFloatDCTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="qa.qcri.nadeef.test.core.*" />
@@ -1029,8 +1043,8 @@
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PACKAGE_NAME" value="qa.qcri.nadeef.test.core" />
-      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.test.core.FlowTest" />
-      <option name="METHOD_NAME" value="test" />
+      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.test.core.DCRepairTest" />
+      <option name="METHOD_NAME" value="cleanExecutorFloatDCTest" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
@@ -1042,65 +1056,27 @@
       </option>
       <envs />
       <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
-      <method />
-    </configuration>
-    <configuration default="false" name="JOptimizerTest.simpleQpTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="qa.qcri.nadeef.lab.holisticCleaning.test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="lab" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test" />
-      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test.JOptimizerTest" />
-      <option name="METHOD_NAME" value="simpleQpTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea -Dlog4j.configuration=file:lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties " />
-      <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="GurobiSolverTest.simpleTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="DCRepairTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="qa.qcri.nadeef.lab.holisticCleaning.test.*" />
+          <option name="PATTERN" value="qa.qcri.nadeef.test.core.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="lab" />
+      <module name="test" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test" />
-      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test.GurobiSolverTest" />
-      <option name="METHOD_NAME" value="simpleTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea -Dlog4j.configuration=file:lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties" />
-      <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.test.core" />
+      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.test.core.DCRepairTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="TEST_SEARCH_SCOPE">
@@ -1108,30 +1084,24 @@
       </option>
       <envs />
       <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="GurobiSolverTest.infeasibleTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="CleanPlanTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="qa.qcri.nadeef.lab.holisticCleaning.test.*" />
+          <option name="PATTERN" value="qa.qcri.nadeef.test.core.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="lab" />
+      <module name="test" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test" />
-      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test.GurobiSolverTest" />
-      <option name="METHOD_NAME" value="infeasibleTest" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.test.core" />
+      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.test.core.CleanPlanTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -1142,28 +1112,24 @@
       </option>
       <envs />
       <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="VFMTest.simpleTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="CleanExecutorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="qa.qcri.nadeef.lab.holisticCleaning.test.*" />
+          <option name="PATTERN" value="qa.qcri.nadeef.test.core.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="lab" />
+      <module name="test" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test" />
-      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.lab.holisticCleaning.test.VFMTest" />
-      <option name="METHOD_NAME" value="simpleTest" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.test.core" />
+      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.test.core.CleanExecutorTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -1174,13 +1140,35 @@
       </option>
       <envs />
       <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="DCDetectionTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="qa.qcri.nadeef.test.core.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="test" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="qa.qcri.nadeef.test.core" />
+      <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.test.core.DCDetectionTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -1477,6 +1465,12 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
+    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -1494,12 +1488,6 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <method />
-    </configuration>
-    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
-      <option name="VM_PARAMETERS" value="" />
-      <option name="USER_CFG_CLASS" />
-      <option name="CONTEXT_PROVIDER" />
       <method />
     </configuration>
     <configuration default="false" name="NadeefService" type="Application" factoryName="Application">
@@ -1528,7 +1516,7 @@
     <configuration default="false" name="Console" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="qa.qcri.nadeef.console.Console" />
-      <option name="VM_PARAMETERS" value="" />
+      <option name="VM_PARAMETERS" value="-Ddebug" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -1536,7 +1524,7 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="lab" />
+      <module name="console" />
       <envs />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="" />
@@ -1638,20 +1626,20 @@
       <item index="2" class="java.lang.String" itemvalue="Application.NadeefStart" />
       <item index="3" class="java.lang.String" itemvalue="Application.DedupService" />
       <item index="4" class="java.lang.String" itemvalue="Application.DedupHttpServer" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.FlowTest.test" />
-      <item index="6" class="java.lang.String" itemvalue="JUnit.JOptimizerTest.simpleQpTest" />
-      <item index="7" class="java.lang.String" itemvalue="JUnit.GurobiSolverTest.simpleTest" />
-      <item index="8" class="java.lang.String" itemvalue="Remote.RemoteNadeefService" />
-      <item index="9" class="java.lang.String" itemvalue="JUnit.GurobiSolverTest.infeasibleTest" />
-      <item index="10" class="java.lang.String" itemvalue="JUnit.VFMTest.simpleTest" />
+      <item index="5" class="java.lang.String" itemvalue="Remote.RemoteNadeefService" />
+      <item index="6" class="java.lang.String" itemvalue="JUnit.DCRepairTest.cleanExecutorFloatDCTest" />
+      <item index="7" class="java.lang.String" itemvalue="JUnit.DCRepairTest" />
+      <item index="8" class="java.lang.String" itemvalue="JUnit.CleanPlanTest" />
+      <item index="9" class="java.lang.String" itemvalue="JUnit.CleanExecutorTest" />
+      <item index="10" class="java.lang.String" itemvalue="JUnit.DCDetectionTest" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.VFMTest.simpleTest" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.GurobiSolverTest.infeasibleTest" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.GurobiSolverTest.simpleTest" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.JOptimizerTest.simpleQpTest" />
-        <item index="4" class="java.lang.String" itemvalue="JUnit.FlowTest.test" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.DCDetectionTest" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.CleanExecutorTest" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.CleanPlanTest" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.DCRepairTest" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.DCRepairTest.cleanExecutorFloatDCTest" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1725,7 +1713,14 @@
       <workItem from="1394456963230" duration="16646000" />
       <workItem from="1394618192458" duration="9982000" />
       <workItem from="1394704080628" duration="16000" />
-      <workItem from="1394704245115" duration="7844000" />
+      <workItem from="1394704245115" duration="18555000" />
+      <workItem from="1394965733589" duration="3736000" />
+      <workItem from="1395131852509" duration="17000" />
+      <workItem from="1395131898654" duration="38583000" />
+      <workItem from="1395312620431" duration="230000" />
+      <workItem from="1395316564173" duration="6822000" />
+      <workItem from="1395574111895" duration="19249000" />
+      <workItem from="1395651031970" duration="6681000" />
     </task>
     <task id="LOCAL-00001" summary="- fix git setup.">
       <created>1372597206357</created>
@@ -1839,11 +1834,19 @@
       <created>1389792324485</created>
       <updated>1389792324485</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="- Adds HolisticCleaning algorithm (with Gurobi support).">
+      <created>1394715198959</created>
+      <updated>1394715198959</updated>
+    </task>
+    <task id="LOCAL-00030" summary="- Minor fix on null values in the report.">
+      <created>1394966915541</created>
+      <updated>1394966915541</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="394635000" />
+    <option name="totallyTimeSpent" value="480664000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1866,34 +1869,34 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1919" y="0" width="1922" height="1201" extended-state="6" />
+    <frame x="1920" y="0" width="1920" height="1200" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2648699" sideWeight="0.4108858" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.47162792" sideWeight="0.4108858" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29275092" sideWeight="0.50426894" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" x="2535" y="165" width="393" height="548" />
       <window_info id="Ant Build" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24919957" sideWeight="0.6644487" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37081784" sideWeight="0.5090715" order="4" side_tool="false" content_ui="tabs" x="11" y="291" width="1257" height="217" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33953488" sideWeight="0.5090715" order="4" side_tool="false" content_ui="tabs" x="11" y="291" width="1257" height="217" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22411953" sideWeight="0.2905983" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27230483" sideWeight="0.4909285" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34107807" sideWeight="0.4909285" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15865384" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806692" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32620817" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18215613" sideWeight="0.53681964" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18139535" sideWeight="0.52187836" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32899627" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22251868" sideWeight="0.6951567" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.40032414" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.19530416" sideWeight="0.7217474" order="0" side_tool="false" content_ui="combo" x="1310" y="64" width="516" height="995" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31877324" sideWeight="0.41607" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.19530416" sideWeight="0.7217474" order="0" side_tool="false" content_ui="combo" x="1371" y="24" width="506" height="1152" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24930233" sideWeight="0.41607" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="1990" y="284" width="1722" height="731" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924226" sideWeight="0.78612167" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298479" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924226" sideWeight="0.78612167" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32922202" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32992566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1908,6 +1911,7 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.conf" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.bat" />
   </component>
   <component name="UpdateCopyrightCheckinHandler">
     <option name="UPDATE_COPYRIGHT" value="true" />
@@ -1925,8 +1929,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="- Dashboard build.&#10;- Dashboard spark RESTful ready." />
-    <MESSAGE value="- Unittest fix.&#10;- Adds Dashboard launcher.&#10;- Updates copyright for Web files.&#10;- Modify the build and launch script to make it one click show." />
     <MESSAGE value="- Regression test fixes.&#10;- Batch improvement on options." />
     <MESSAGE value="- Adds MySQL / Postgres support for Dashboard&#10;- Improve stability of Dashboard experience." />
     <MESSAGE value="- Unit test fix." />
@@ -1950,7 +1952,9 @@
     <MESSAGE value="- Adds support for boolean and datetime type.&#10;- Fix bugs in the Dashboard, adds DC support.&#10;- Adds extra interface for violation query (rule name matching and violation limit).&#10;" />
     <MESSAGE value="- Adds dedup service." />
     <MESSAGE value="- Adds initial framework for test app of qatar car sales.&#10;- Adds Guava 15.0 support.&#10;- Clean the project deps.&#10;- Adds exception handler for rule detect / repair  itself.&#10;- Adds better Log4j support (-Ddebug).&#10;- Minor bug fixes." />
-    <option name="LAST_COMMIT_MESSAGE" value="- Adds initial framework for test app of qatar car sales.&#10;- Adds Guava 15.0 support.&#10;- Clean the project deps.&#10;- Adds exception handler for rule detect / repair  itself.&#10;- Adds better Log4j support (-Ddebug).&#10;- Minor bug fixes." />
+    <MESSAGE value="- Adds HolisticCleaning algorithm (with Gurobi support)." />
+    <MESSAGE value="- Minor fix on null values in the report." />
+    <option name="LAST_COMMIT_MESSAGE" value="- Minor fix on null values in the report." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1965,327 +1969,354 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java">
+    <entry file="jar:///usr/lib/jvm/java-7-oracle/src.zip!/java/util/concurrent/ConcurrentHashMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="39" selection-start="2861" selection-end="2861" vertical-scroll-proportion="0.0" vertical-offset="333" max-vertical-offset="2567" />
+        <state line="1123" column="0" selection-start="43451" selection-end="43451" vertical-scroll-proportion="0.36544344" vertical-offset="18189" max-vertical-offset="26962" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html">
+    <entry file="file://$PROJECT_DIR$/out/production/qa/qcri/nadeef/core/pipeline/Updater.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="6.6923075" vertical-offset="174" max-vertical-offset="884" />
+        <state line="14" column="0" selection-start="912" selection-end="912" vertical-scroll-proportion="0.30952382" vertical-offset="0" max-vertical-offset="714" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template/home.template.html">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan1.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="32" selection-start="868" selection-end="868" vertical-scroll-proportion="-17.0" vertical-offset="0" max-vertical-offset="629" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="752">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/EquivalentClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="127" column="71" selection-start="4900" selection-end="4900" vertical-scroll-proportion="0.0" vertical-offset="2023" max-vertical-offset="2839" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="249" column="80" selection-start="7612" selection-end="7612" vertical-scroll-proportion="0.0" vertical-offset="3545" max-vertical-offset="4199" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/ViolationRepair.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="64" selection-start="1103" selection-end="1103" vertical-scroll-proportion="0.13001911" vertical-offset="0" max-vertical-offset="1046" />
+        <state line="71" column="37" selection-start="2571" selection-end="2571" vertical-scroll-proportion="0.0" vertical-offset="281" max-vertical-offset="1020" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/FixImport.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="142" column="61" selection-start="5011" selection-end="5011" vertical-scroll-proportion="1.7081339" vertical-offset="51" max-vertical-offset="3468" />
+        <state line="56" column="30" selection-start="2150" selection-end="2150" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1207" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/HomeView.js">
+    <entry file="jar://$PROJECT_DIR$/vendors/gurobi.jar!/gurobi/GRBVar.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="24" selection-start="1647" selection-end="1647" vertical-scroll-proportion="0.66698563" vertical-offset="0" max-vertical-offset="1045" />
+        <state line="12" column="4" selection-start="249" selection-end="249" vertical-scroll-proportion="-7.48" vertical-offset="0" max-vertical-offset="714" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/CleanPlan.java">
+    <entry file="jar://$PROJECT_DIR$/vendors/gurobi.jar!/gurobi/GRBModel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5576" />
+        <state line="99" column="25" selection-start="4108" selection-end="4108" vertical-scroll-proportion="-8.2" vertical-offset="1461" max-vertical-offset="7803" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nadeef.conf">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Node.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="53" selection-start="338" selection-end="338" vertical-scroll-proportion="0.27868852" vertical-offset="0" max-vertical-offset="732" />
+        <state line="73" column="0" selection-start="2363" selection-end="2363" vertical-scroll-proportion="0.0" vertical-offset="785" max-vertical-offset="1887" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan3.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="11" selection-start="270" selection-end="270" vertical-scroll-proportion="0.32484075" vertical-offset="0" max-vertical-offset="628" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="63" column="22" selection-start="1900" selection-end="1900" vertical-scroll-proportion="1.1957186" vertical-offset="289" max-vertical-offset="2992" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/SourceImport.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="7" selection-start="1200" selection-end="1200" vertical-scroll-proportion="0.0" vertical-offset="94" max-vertical-offset="748" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/FixDecisionMaker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="864" selection-end="864" vertical-scroll-proportion="0.28593272" vertical-offset="0" max-vertical-offset="697">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairCFDRuleBuilder.stg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="180" column="0" selection-start="6188" selection-end="6188" vertical-scroll-proportion="0.0" vertical-offset="2622" max-vertical-offset="3247" />
       </provider>
       <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/NadeefConfiguration.java">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/Fixes.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="33" selection-start="3699" selection-end="3699" vertical-scroll-proportion="0.7941176" vertical-offset="902" max-vertical-offset="4437" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleRule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="58" selection-start="2847" selection-end="2847" vertical-scroll-proportion="0.36136663" vertical-offset="881" max-vertical-offset="2125">
+        <state line="105" column="28" selection-start="4105" selection-end="4105" vertical-scroll-proportion="0.47942585" vertical-offset="1284" max-vertical-offset="2329">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/SatSolverTest.java">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="0" selection-start="2945" selection-end="2945" vertical-scroll-proportion="0.0" vertical-offset="416" max-vertical-offset="1462">
+        <state line="95" column="0" selection-start="2883" selection-end="2883" vertical-scroll-proportion="0.30813953" vertical-offset="1297" max-vertical-offset="2329">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="338" column="16" selection-start="11494" selection-end="11494" vertical-scroll-proportion="0.0" vertical-offset="4986" max-vertical-offset="5763">
           <folding>
-            <element signature="e#0#3001#0" expanded="true" />
-            <element signature="imports" expanded="false" />
+            <element signature="e#10770#10771#0" expanded="false" />
+            <element signature="e#10802#10803#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/buildThrift.sh">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/hospital_1k.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="21" selection-start="237" selection-end="237" vertical-scroll-proportion="0.14627151" vertical-offset="0" max-vertical-offset="1046" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="17085" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/service.thrift">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/locations.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="187" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="559" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/out/test/qa/qcri/nadeef/test/core/FlowTest.class">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/tran1_inc2.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="732" selection-end="732" vertical-scroll-proportion="0.5296736" vertical-offset="0" max-vertical-offset="674" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="571" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/junit-4.11.jar!/org/junit/runners/ParentRunner.class">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/bank1_inc1.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="25" selection-start="2400" selection-end="2400" vertical-scroll-proportion="0.34569734" vertical-offset="498" max-vertical-offset="1224" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="571" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/junit-4.11.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/bank1.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="40" selection-start="388" selection-end="388" vertical-scroll-proportion="0.25222552" vertical-offset="0" max-vertical-offset="674" />
+        <state line="3" column="58" selection-start="259" selection-end="259" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/TestDataRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="5" selection-start="2348" selection-end="2348" vertical-scroll-proportion="0.77922076" vertical-offset="642" max-vertical-offset="1258" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Updater.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="816" max-vertical-offset="2635" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Violation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="0" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2074" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/SatSolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="49" selection-start="2139" selection-end="2139" vertical-scroll-proportion="0.0" vertical-offset="867" max-vertical-offset="4879" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/guava-15.0.jar!/com/google/common/collect/Multisets.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="19" selection-start="219" selection-end="219" vertical-scroll-proportion="0.099902056" vertical-offset="0" max-vertical-offset="3621" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2159" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/EquivalentClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="137" column="26" selection-start="5296" selection-end="5296" vertical-scroll-proportion="0.0" vertical-offset="1606" max-vertical-offset="2652" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Cell.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="11" selection-start="2434" selection-end="2439" vertical-scroll-proportion="0.0" vertical-offset="699" max-vertical-offset="2278">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="0" selection-start="1998" selection-end="1998" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1207">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefServiceHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="13" selection-start="1571" selection-end="1571" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4471">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/IteratorStream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="13" selection-start="991" selection-end="991" vertical-scroll-proportion="-0.6044177" vertical-offset="772" max-vertical-offset="1768" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefJobScheduler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="212" column="9" selection-start="7048" selection-end="7048" vertical-scroll-proportion="0.0" vertical-offset="3008" max-vertical-offset="4029">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/joptimizer-3.2.0.jar!/com/joptimizer/optimizers/JOptimizer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="0" selection-start="1398" selection-end="1398" vertical-scroll-proportion="0.74634147" vertical-offset="0" max-vertical-offset="615" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="33" selection-start="166" selection-end="166" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/DCRuleBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="13" selection-start="1161" selection-end="1161" vertical-scroll-proportion="0.0" vertical-offset="1158" max-vertical-offset="1785">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyTestRule1.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="13" selection-start="784" selection-end="784" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2261">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule40k.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="13" selection-start="911" selection-end="911" vertical-scroll-proportion="0.0" vertical-offset="1837" max-vertical-offset="2414">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule8.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="13" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2431">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="0" selection-start="2476" selection-end="2476" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3179">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan3.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="836">
+        <state line="174" column="23" selection-start="7052" selection-end="7052" vertical-scroll-proportion="0.33278957" vertical-offset="2482" max-vertical-offset="5797">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan2.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="836">
+        <state line="12" column="56" selection-start="258" selection-end="258" vertical-scroll-proportion="-7.8461537" vertical-offset="0" max-vertical-offset="306">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan1.json">
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/FixExtensions.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="836">
+        <state line="90" column="93" selection-start="3187" selection-end="3187" vertical-scroll-proportion="0.4993565" vertical-offset="836" max-vertical-offset="1700">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg">
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/dumptest.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1513">
+        <state line="13" column="80" selection-start="153" selection-end="153" vertical-scroll-proportion="0.29545453" vertical-offset="0" max-vertical-offset="748" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan4.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="1" selection-start="269" selection-end="269" vertical-scroll-proportion="0.27163783" vertical-offset="0" max-vertical-offset="751">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule7.java">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="22" selection-start="3259" selection-end="3259" vertical-scroll-proportion="0.0" vertical-offset="575" max-vertical-offset="1785">
+        <state line="123" column="62" selection-start="4236" selection-end="4236" vertical-scroll-proportion="0.64993566" vertical-offset="1195" max-vertical-offset="1972" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Operation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="0" selection-start="892" selection-end="892" vertical-scroll-proportion="0.41570142" vertical-offset="0" max-vertical-offset="777">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java">
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/SolverBase.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="765" selection-end="765" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="166" column="33" selection-start="5628" selection-end="5628" vertical-scroll-proportion="0.0" vertical-offset="1799" max-vertical-offset="2635">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="3111">
-          <folding>
-            <element signature="e#0#5036#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="13" selection-start="1065" selection-end="1065" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="952">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="0" selection-start="2822" selection-end="2934" vertical-scroll-proportion="0.0" vertical-offset="668" max-vertical-offset="1479">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/out/production/lab/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="452" selection-end="452" vertical-scroll-proportion="0.19793014" vertical-offset="0" max-vertical-offset="773">
+        <state line="27" column="21" selection-start="979" selection-end="979" vertical-scroll-proportion="0.28549618" vertical-offset="0" max-vertical-offset="655">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="40" selection-start="388" selection-end="388" vertical-scroll-proportion="0.20961775" vertical-offset="0" max-vertical-offset="811">
+        <state line="11" column="40" selection-start="388" selection-end="388" vertical-scroll-proportion="0.26984128" vertical-offset="0" max-vertical-offset="630">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java">
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Cell.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="0" selection-start="3984" selection-end="3984" vertical-scroll-proportion="1.7884363" vertical-offset="169" max-vertical-offset="1683">
+        <state line="93" column="0" selection-start="2453" selection-end="2453" vertical-scroll-proportion="0.33282444" vertical-offset="1142" max-vertical-offset="2278">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/CombinationGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="20" selection-start="1649" selection-end="1649" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="1173">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/VFMSolver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="64" selection-start="1860" selection-end="1860" vertical-scroll-proportion="0.3063063" vertical-offset="255" max-vertical-offset="1105">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/dumptest3.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="5" selection-start="124" selection-end="124" vertical-scroll-proportion="0.29545453" vertical-offset="0" max-vertical-offset="748">
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/GurobiSolver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="138" column="109" selection-start="5759" selection-end="5759" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="3978">
           <folding>
+            <element signature="e#0#9119#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java">
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/HolisticCleaning.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="43" selection-start="1075" selection-end="1075" vertical-scroll-proportion="0.36956522" vertical-offset="0" max-vertical-offset="986">
+        <state line="204" column="8" selection-start="7110" selection-end="7110" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3264">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="165" column="51" selection-start="4540" selection-end="4540" vertical-scroll-proportion="0.0" vertical-offset="1862" max-vertical-offset="2907">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanPlanTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="16" selection-start="1613" selection-end="1613" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1853">
           <folding>
+            <element signature="e#0#4040#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/GurobiSolverTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="69" column="44" selection-start="2661" selection-end="2661" vertical-scroll-proportion="0.0" vertical-offset="1288" max-vertical-offset="2040">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/CombinationGenTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="42" selection-start="1290" selection-end="1290" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="663">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/VFMTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="0" selection-start="1651" selection-end="1651" vertical-scroll-proportion="0.0" vertical-offset="957" max-vertical-offset="1734">
+          <folding>
+            <element signature="e#0#3284#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DCRepairTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="27" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0" vertical-offset="103" max-vertical-offset="1938">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nadeef.bat">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="35" selection-start="245" selection-end="245" vertical-scroll-proportion="0.32818532" vertical-offset="0" max-vertical-offset="833">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/CleanExecutorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="13" selection-start="1324" selection-end="1324" vertical-scroll-proportion="0.55947953" vertical-offset="56" max-vertical-offset="2057">
+          <folding>
+            <element signature="e#0#4065#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="31" selection-start="1636" selection-end="1636" vertical-scroll-proportion="0.0" vertical-offset="447" max-vertical-offset="5253">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nadeef.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="23" selection-start="181" selection-end="181" vertical-scroll-proportion="-3.5172415" vertical-offset="0" max-vertical-offset="544">
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/hcConfig.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="658" selection-end="658" vertical-scroll-proportion="0.7267658" vertical-offset="0" max-vertical-offset="538">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/derbyConfig.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="30" selection-start="331" selection-end="331" vertical-scroll-proportion="0.40078586" vertical-offset="0" max-vertical-offset="509">
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
   </component>
@@ -2353,7 +2384,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>lab</last-edited>
+          <last-edited>test</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

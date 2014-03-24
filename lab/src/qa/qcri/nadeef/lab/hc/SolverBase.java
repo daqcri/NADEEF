@@ -11,13 +11,29 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.lab.holisticCleaning;
+package qa.qcri.nadeef.lab.hc;
 
+import com.google.common.collect.Sets;
+import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 
 import java.util.HashSet;
 import java.util.List;
 
-interface ISolver {
-    public List<Fix> solve(HashSet<Fix> repairContext);
+public abstract class SolverBase {
+
+    /**
+     * Default solver behavior. It does not restrict the changing cells.
+     */
+    public List<Fix> solve(HashSet<Fix> repairContext) {
+        HashSet<Cell> cells = Sets.newHashSet();
+        for (Fix fix : repairContext) {
+            cells.add(fix.getLeft());
+            if (!fix.isConstantAssign())
+                cells.add(fix.getRight());
+        }
+        return solve(repairContext, cells);
+    }
+
+    public abstract List<Fix> solve(HashSet<Fix> repairContext, HashSet<Cell> changedCell);
 }

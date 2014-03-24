@@ -35,6 +35,7 @@
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
     <orderEntry type="library" name="org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4" level="project" />
+    <orderEntry type="module" module-name="lab" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

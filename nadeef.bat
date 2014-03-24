@@ -10,7 +10,6 @@ if not exist "%JAVA_HOME%\bin\javac.exe" goto noJDK
 if not exist "out\bin\nadeef.jar" goto noCompile
 
 :START
-set BuildVersion=1.0.1019
 set argC=0
 for %%x in (%*) do Set /A argC+=1
 

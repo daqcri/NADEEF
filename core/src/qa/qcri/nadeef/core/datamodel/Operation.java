@@ -22,8 +22,7 @@ public enum Operation {
     GT(2),
     NEQ(3),
     LTE(4),
-    GTE(5),
-    CEQ(6);
+    GTE(5);
 
     private final int value;
     private Operation(int value) {

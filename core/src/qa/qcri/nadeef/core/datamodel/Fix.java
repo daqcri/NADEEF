@@ -92,10 +92,9 @@ public class Fix {
                 } else {
                     fix = new Fix(vid, left, rightValue, operation.get());
                 }
-                operation = Optional.absent();
             } else {
                 if (rightValue != null) {
-                    fix = new Fix(vid, left, rightValue, Operation.CEQ);
+                    fix = new Fix(vid, left, rightValue, Operation.EQ);
                 } else {
                     fix = new Fix(vid, left, right, Operation.EQ);
                 }

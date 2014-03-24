@@ -41,7 +41,6 @@ public class Predicate {
         realMap.put(Operation.NEQ, "!=");
         realMap.put(Operation.GTE, ">=");
         realMap.put(Operation.LTE, "<=");
-        realMap.put(Operation.CEQ, "<-");
         operationMap = ImmutableBiMap.copyOf(Collections.unmodifiableMap(realMap));
     }
 
