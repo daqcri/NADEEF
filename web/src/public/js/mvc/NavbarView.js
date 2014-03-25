@@ -72,6 +72,9 @@ define([
                 Router.redirect('#home', { name : selectedProject });
             }
         });
+
+        Router.redirect('#home', { name : "dcdemo" });
+
     }
     
     function render() {
@@ -102,7 +105,7 @@ define([
 		render();
 		bindEvent();
 
-        startProject('projectModal');
+        // startProject('projectModal');
 	}
 	
     return {
