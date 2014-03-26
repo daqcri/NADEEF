@@ -20,6 +20,8 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  * Tuple class represents a tuple (row) in a table.
@@ -64,6 +66,27 @@ public class Tuple {
         this.values = values;
     }
 
+	public List<byte[]> getValues(){
+		return values;
+	}
+
+	public Tuple cloneObj(){
+		List<byte[]> clonedValues = new ArrayList<byte[]>();
+		for (byte[] v : this.values){
+			clonedValues.add((byte[])v.clone());
+		}
+		Tuple tuple = new Tuple(tid,schema, clonedValues);
+		return tuple;
+	}
+
+	
+	public void setCell(String columnName, byte[] value){
+		Column column = new Column(schema.getTableName(), columnName);
+		 int index = schema.get(column);
+		 values.set(index, value);
+	}
+
+	
     /**
      * Gets the value from the tuple.
      * @param key The attribute key

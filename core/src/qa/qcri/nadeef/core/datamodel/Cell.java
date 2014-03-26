@@ -74,6 +74,16 @@ public class Cell {
     }
     //</editor-fold>
 
+		/**
+     * Sets the column value. 
+     * @return void.
+     */
+    public void setValue(Object obj) {
+        value = obj;
+    }
+	
+
+	
     //<editor-fold desc="Getter and Setters">
 
     /**
