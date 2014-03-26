@@ -22,7 +22,8 @@ public enum Operation {
     GT(2),
     NEQ(3),
     LTE(4),
-    GTE(5);
+    GTE(5),
+    CEQ(6);
 
     private final int value;
     private Operation(int value) {
@@ -32,19 +33,65 @@ public enum Operation {
     public int getValue() {
         return value;
     }
-    
-    public String toLinquistics(){
-    	switch (value){
-    		case 0: return "equal to";
-    		case 1: return "less than";
-    		case 2: return "greater than";
-    		case 3: return "not equal to";
-    		case 4: return "less than or equal to";
-    		case 5: return "greater than or equal to";
-    		// CEQ: TODO 
-    		case 6: return "similar to";
-    		
-    	}
-    	return "";
-    }
+	
+		public Operation getRevertedOpertion(){
+		switch (this){
+			case EQ:
+				return EQ;
+			case LT:
+				return GT;
+			case GT:
+				return LT;
+			case NEQ:
+				return NEQ;
+			case LTE:
+				return GTE;
+			case GTE:
+				return LTE;
+			case CEQ:
+				return CEQ;
+		}
+		return null;
+	}
+	
+	public Operation getInvertedOperation(){
+		switch (this){
+			case EQ:
+				return NEQ;
+			case LT:
+				return GTE;
+			case GT:
+				return LTE;
+			case NEQ:
+				return EQ;
+			case LTE:
+				return GT;
+			case GTE:
+				return LT;
+			case CEQ:
+				return CEQ;
+		}
+		return null;
+	}
+
+	
+	public String toLinquistics(){
+		switch (this){
+			case EQ:
+				return "equals to";
+			case LT:
+				return "less than";
+			case GT:
+				return "greater than";
+			case NEQ:
+				return "not equal to";
+			case LTE:
+				return "less than or equal to";
+			case GTE:
+				return "greater than or equal to";
+			case CEQ:
+				return "not equal to";
+		}
+		return "unknown predicate";
+	}
 }
