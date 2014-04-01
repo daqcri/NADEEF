@@ -29,6 +29,7 @@ public class DedupService extends AbstractIdleService {
     private static Tracer tracer = Tracer.getTracer(DedupService.class);
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void startUp() throws Exception {
         Bootstrap.start();
         int port = NadeefConfiguration.getServerPort();

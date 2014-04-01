@@ -13,12 +13,6 @@
 
 package qa.qcri.nadeef.lab.hc.test;
 
-import com.joptimizer.functions.ConvexMultivariateRealFunction;
-import com.joptimizer.functions.LinearMultivariateRealFunction;
-import com.joptimizer.functions.PDQuadraticMultivariateRealFunction;
-import com.joptimizer.optimizers.JOptimizer;
-import com.joptimizer.optimizers.OptimizationRequest;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,6 +29,7 @@ public class JOptimizerTest {
         //      y > 0
         //      3x = 1
         //
+        /*
         double[][] P = new double[][] { { 1.0, 0.0 }, { 0.0, 1.0 }};
         double[] Q = new double[] { -2.0, -4.0 };
         double r = 5.0;
@@ -64,5 +59,6 @@ public class JOptimizerTest {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        */
     }
 }

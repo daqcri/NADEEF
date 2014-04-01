@@ -17,7 +17,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -69,12 +71,18 @@ public class Bootstrap {
 
         try {
             NadeefConfiguration.initialize(new FileReader(configFile));
+
             // set the logging directory
             Path outputPath = NadeefConfiguration.getOutputPath();
             Tracer.setLoggingPrefix("log");
             Tracer.setLoggingDir(outputPath.toString());
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
+
+            // start embedded database
+            if (NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBY ||
+                NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBYMEMORY)
+                CommonTools.startDerby(NadeefConfiguration.getDerbyPort());
         } catch (FileNotFoundException ex) {
             System.err.println("Nadeef configuration is not found.");
             ex.printStackTrace();

@@ -52,7 +52,7 @@ public class NadeefJobScheduler {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             tracer.err("Unknown hostname", e);
-            hostname = "localhost";
+            hostname = "127.0.0.1";
         }
 
         // TODO: the limit is one.

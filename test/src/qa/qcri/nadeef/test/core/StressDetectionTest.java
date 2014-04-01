@@ -142,7 +142,8 @@ public class StressDetectionTest extends NadeefTestBase {
             e.printStackTrace();
             Assert.fail(e.getMessage());
         } finally {
-            executor.shutdown();
+            if (executor != null)
+                executor.shutdown();
         }
     }
 

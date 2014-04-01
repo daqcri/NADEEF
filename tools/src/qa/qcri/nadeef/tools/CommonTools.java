@@ -30,10 +30,10 @@ import java.util.List;
 
 /**
  * Common helper tools.
- * @author Si Yin <siyin@qf.org.qa>
  */
 public final class CommonTools {
     private static Tracer tracer = Tracer.getTracer(CommonTools.class);
+    private static Process derbyProcess;
 
     public static boolean isWindows() {
         String osName = System.getProperty("os.name");
@@ -199,5 +199,26 @@ public final class CommonTools {
             }
             tryCount ++;
         }
+    }
+
+    public static void startDerby(int port) throws IOException {
+        Runtime runtime = Runtime.getRuntime();
+        runtime.addShutdownHook(new Thread() {
+            public void run() {
+                if (derbyProcess != null)
+                    derbyProcess.destroy();
+            }
+        });
+        System.out.print("Start embedded database...");
+        String cmd = String.format(
+            "java -Dderby.drda.portNumber=%d -jar out/bin/derbyrun.jar server start",
+            port
+        );
+        derbyProcess = runtime.exec(cmd);
+        if (!CommonTools.waitForService(port)) {
+            System.out.println("FAILED");
+            System.exit(1);
+        }
+        System.out.println("OK");
     }
 }

@@ -47,6 +47,7 @@ public class NadeefConfiguration {
     private static Path outputPath;
     private static String serverUrl = "localhost";
     private static int serverPort = 9000;
+    private static int derbyPort = 45000;
 
     //<editor-fold desc="Public methods">
 
@@ -74,6 +75,10 @@ public class NadeefConfiguration {
             type = (String)database.get("type");
         } else {
             type = "derby";
+        }
+
+        if (type.equals("derby") && database.containsKey("port")) {
+            derbyPort = ((Long)database.get("port")).intValue();
         }
 
         dbConfig =
@@ -209,9 +214,11 @@ public class NadeefConfiguration {
         return outputPath;
     }
 
+    public static int getDerbyPort() { return derbyPort; }
+
     /**
-     * Gets the <code>DBConfig</code> of Nadeef metadata database.
-     * @return meta data <code>DBConfig</code>.
+     * Gets the {@link qa.qcri.nadeef.tools.DBConfig} of Nadeef metadata database.
+     * @return meta data {@link qa.qcri.nadeef.tools.DBConfig}.
      */
     public static DBConfig getDbConfig() {
         return dbConfig;

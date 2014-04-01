@@ -67,8 +67,6 @@ public class Console {
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
     private static Tracer tracer = Tracer.getTracer(Console.class);
-    private static Process derbyProcess;
-    private static final int DERBY_PORT = 1527;
     private static int lastExecutorIndex = -1;
 
     //</editor-fold>
@@ -141,25 +139,6 @@ public class Console {
                 System.exit(1);
             }
 
-            // start derby db.
-            System.out.print("Start embedded database...");
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    if (derbyProcess != null)  {
-                        derbyProcess.destroy();
-                    }
-                }
-            });
-            derbyProcess =
-                Runtime.getRuntime().exec(
-                    "java -d64 -Dderby.storage.pageSize=8192 -jar out/bin/derbyrun.jar server start"
-                );
-            if (!CommonTools.waitForService(DERBY_PORT)) {
-                System.out.println("FAILED");
-                System.exit(1);
-            }
-
-            System.out.println("OK");
             // bootstrap Nadeef.
             Stopwatch stopwatch = Stopwatch.createStarted();
             Bootstrap.start();

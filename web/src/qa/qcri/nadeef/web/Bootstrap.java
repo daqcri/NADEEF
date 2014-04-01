@@ -14,7 +14,9 @@
 package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -60,6 +62,11 @@ public final class Bootstrap {
             Tracer.setLoggingDir(outputPath.toString());
             Tracer tracer = Tracer.getTracer(Bootstrap.class);
             tracer.verbose("Tracer initialized at " + outputPath.toString());
+
+            // start embedded database
+            if (NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBY ||
+                NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBYMEMORY)
+                CommonTools.startDerby(NadeefConfiguration.getDerbyPort());
 
             // install the meta data
             DBInstaller.installMetaData(NadeefConfiguration.getDbConfig());
