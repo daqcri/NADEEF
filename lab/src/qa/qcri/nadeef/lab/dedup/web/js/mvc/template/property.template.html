@@ -1,0 +1,52 @@
+<!--
+  ~ QCRI, NADEEF LICENSE
+  ~ NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+  ~ NADEEF means "Clean" in Arabic
+  ~
+  ~ Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+  ~ behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+  ~ Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+  ~
+  ~ NADEEF has patent pending nevertheless the following is granted.
+  ~ NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+  -->
+
+<div>
+  <form class="form-inline">
+	<div class="input-group">
+	  <span class="input-group-addon"><%= source %></span>
+	  <select id="propertySelect" class="form-control">
+		<option value="EQ" <% if (type == 0) { %> selected <% } %>>EQ</option>
+		<option value="ED" <% if (type == 1) { %>
+				selected <% } %>>EuclideanDistance (ED)
+		</option>
+		<option value="LS" <% if (type == 2) { %>
+				selected <% } %>>Levenshtein (LS) </option>
+		<option value="QG" <% if (type == 3) { %>
+				selected <% } %>>QGramsDistance (QG) </option>
+		<option value="SD" <% if (type == 4) { %> selected
+				<% } %>>Soundex (SD) </option>
+	  </select>
+	  <span class="input-group-addon"><%= target %></span>
+	</div>
+	<p/>
+	<div class="input-group">
+	  <select class="form-control" id="operatorSelect" style="width:80px">
+		<option value="=" <% if (op == 0) { %> selected <% } %>>=</option>
+		<option value=">=" <% if (op == 1) { %> selected <% } %>>>=</option>
+		<option value="<=" <% if (op == 2) { %> selected <% } %>><=</option>
+		<option value="!=" <% if (op == 3) { %> selected <% } %>>!=</option>
+	  </select>
+	  <input id="operatorValue" 
+			 class="form-control" 
+			 type="text" 
+			 style="width:80px" 
+			 value='<%= value %>'></input>
+	</div>
+  </form>
+  <p/>
+  <div class="btn-toolbar">
+	<button class="btn btn-default" id='apply'>Apply</button>
+	<button class="btn btn-default" id='delete'>Delete</button>
+  </div>  
+</div>

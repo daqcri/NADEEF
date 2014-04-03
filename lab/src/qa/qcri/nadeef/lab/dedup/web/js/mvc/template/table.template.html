@@ -1,0 +1,40 @@
+    <!--
+  ~ QCRI, NADEEF LICENSE
+  ~ NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+  ~ NADEEF means "Clean" in Arabic
+  ~
+  ~ Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+  ~ behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+  ~ Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+  ~
+  ~ NADEEF has patent pending nevertheless the following is granted.
+  ~ NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+  -->
+
+<td><%= id + 1%></td>
+    <td><%= left %></td>
+    <td>
+        <select class="form-control" id="op<%=id%>">
+            <option value="0" <% if (op == 0) { %>
+                selected="selected"
+            <% } %> > Equals</option>
+            <option value="1" <% if (op == 1) { %> selected="selected" <% } %> > Edit distance</option>
+            <option value="1" <% if (op == 2) { %> selected="selected" <% } %> > Levenshtein</option>
+            <option value="1" <% if (op == 3) { %> selected="selected" <% } %> > QGram</option>
+            <option value="1" <% if (op == 4) { %> selected="selected" <% } %> > Soundex</option>
+        </select>
+    </td>
+    <td><%= right %></td>
+    <td>
+        <select class="form-control form-inline" id="cmp<%=id %>">
+            <option value="0" <% if (cmp == 0) { %> selected="selected" <% } %> > =</option>
+            <option value="1" <% if (cmp == 1) { %> selected="selected" <% } %> > <</option>
+            <option value="2" <% if (cmp == 2) { %> selected="selected" <% } %> > ></option>
+            <option value="3" <% if (cmp == 2) { %> selected="selected" <% } %> > >=</option>
+            <option value="4" <% if (cmp == 2) { %> selected="selected" <% } %> > <=</option>
+        </select>
+    </td>
+    <td>
+        <input class="form-control" value="<%= value %>" id="v<%= id%>">
+    </td>
+    <td><button type="button" class="btn btn-default btn-info" id="del<%= id%>">Del</button></td>

@@ -1,0 +1,66 @@
+<!--
+  ~ QCRI, NADEEF LICENSE
+  ~ NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+  ~ NADEEF means "Clean" in Arabic
+  ~
+  ~ Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+  ~ behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+  ~ Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+  ~
+  ~ NADEEF has patent pending nevertheless the following is granted.
+  ~ NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+  -->
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title"><%= car.title %></h4>
+        </div>
+        <div class="modal-body">
+            <div id="carousel-img" class="carousel slide" data-ride="carousel" data-interval="false">
+                <div class="carousel-inner" id="imgs">
+                </div>
+
+                <a class="left carousel-control" href="#carousel-img" data-slide="prev"><</a>
+                <a class="right carousel-control" href="#carousel-img" data-slide="next">></a>
+            </div>
+            <p></p>
+            <table class="table table-striped">
+                <tr class="warning">
+                    <td><b>Year</b></td>
+                    <td><%= _.isNull(car.model) ? '<span class="label label-danger">Unknown</span>' : car.model %></td>
+                </tr>
+                <tr class="warning">
+                    <td><b>Brand</b></td>
+                    <td><%= _.isNull(car.brand_id) ? '<span class="label label-danger">Unknown</span>' : car.brand_id %></td>
+                </tr>
+                <tr class="warning">
+                    <td><b>Price</b></td>
+                    <td><%= _.isNull(car.price) ? '<span class="label label-danger">Unknown</span>' : car.price %></td>
+                </tr>
+                <tr class="warning">
+                    <td><b>Mileage</b></td>
+                    <td><%= _.isNull(car.mileage) ? '<span class="label label-danger">Unknown</span>' : car.mileage %></td>
+                </tr>
+                <tr class="warning">
+                    <td><b>Color</b></td>
+                    <td><%= _.isNull(car.outside_color) ? '<span class="label label-danger">Unknown</span>' : car.outside_color %></td>
+                </tr>
+                <tr class="warning">
+                    <td><b>Posted at</b></td>
+                    <td><%= car.timestamp %></td>
+                </tr>
+                <tr class="warning">
+                    <td><b>Contacts</b></td>
+                    <td>
+                        <div class="list-group" id="contacts"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

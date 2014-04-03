@@ -15,22 +15,66 @@ package qa.qcri.nadeef.lab.dedup;
 
 import com.google.common.collect.Lists;
 import org.apache.thrift.TException;
-import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
+import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileReader;
 import java.util.HashSet;
 import java.util.List;
 
-public class DedupServiceHandler implements TDedupService.Iface {
-    @Override
-    public List<List<Integer>> incrementalDedup(List<Integer> newItems)
+public class DedupServiceHandler {
+    private Tracer tracer = Tracer.getTracer(DedupServiceHandler.class);
+
+    public void cureMissingValue(List<Integer> newItems) throws TException {
+        tracer.info("-- Start Data cure --");
+        CleanExecutor executor = null;
+        int count;
+        List<Integer> result = Lists.newArrayList();
+        try {
+            CleanPlan cleanPlan =
+                CleanPlan.createCleanPlanFromJSON(
+                    new FileReader("lab/src/qa/qcri/nadeef/lab/dedup/CureMissing.json"),
+                    NadeefConfiguration.getDbConfig()
+                ).get(0);
+
+            List<String> tableNames = cleanPlan.getRule().getTableNames();
+            String tableName = tableNames.get(0);
+
+            HashSet<Integer> set = new HashSet<>();
+            for (int tid : newItems) {
+                set.add(tid);
+            }
+
+            executor = new CleanExecutor(cleanPlan);
+            if (!set.isEmpty()) {
+                executor.incrementalAppend(tableName, set);
+            }
+
+            executor.detect();
+            count = executor.getDetectViolation().size();
+            tracer.info("Found " + count + " tuples with missing value.");
+            executor.repair();
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan);
+            updateExecutor.run();
+            count = updateExecutor.getUpdateCellCount();
+            tracer.info("Cured " + count + " items.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
+        }
+    }
+
+    public List<Integer> incrementalDedup(List<Integer> newItems)
         throws TException {
         CleanExecutor executor = null;
-        List<List<Integer>> result = Lists.newArrayList();
+        List<Integer> result = Lists.newArrayList();
+        int count;
         try {
             CleanPlan cleanPlan =
                 CleanPlan.createCleanPlanFromJSON(
@@ -46,19 +90,19 @@ public class DedupServiceHandler implements TDedupService.Iface {
             for (int tid : newItems) {
                 set.add(tid);
             }
-            executor.incrementalAppend(tableName, set);
-            executor.detect();
-            List<Violation> violations = executor.getDetectViolation();
-            for (Violation v : violations) {
-                List<Cell> cells = Lists.newArrayList(v.getCells());
-                List<Integer> tmp = Lists.newArrayList();
-                for (Cell cell : cells) {
-                    tmp.add(cell.<Integer>getValue());
-                }
-                if (tmp.size() != 0) {
-                    result.add(tmp);
-                }
+
+            if (!set.isEmpty()) {
+                executor.incrementalAppend(tableName, set);
             }
+
+            executor.detect();
+            count = executor.getDetectViolation().size();
+            tracer.info("Found " + count + " tuples with duplications.");
+            executor.repair();
+
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan);
+            updateExecutor.run();
+            tracer.info("Deduped " + count + " items.");
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {

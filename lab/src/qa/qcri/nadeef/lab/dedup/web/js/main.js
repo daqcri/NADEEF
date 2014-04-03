@@ -14,11 +14,11 @@
 require.config({
     baseUri: '.',
     paths: {
-        "text" : "text",
-        "jquery" : "jquery-1.10.2",
-        "underscore" : "underscore",
-        "bootstrap" : "bootstrap",
-        "d3" : "d3.v3"
+        "text" : "lib/text",
+        "jquery" : "lib/jquery-1.10.2",
+        "underscore" : "lib/underscore",
+        "bootstrap" : "lib/bootstrap",
+        "d3" : "lib/d3.v3"
     },
 
     shim: {

@@ -1,0 +1,94 @@
+/*
+ * QCRI, NADEEF LICENSE
+ * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+ * NADEEF means "Clean" in Arabic
+ *
+ * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+ * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+ * Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+ *
+ * NADEEF has patent pending nevertheless the following is granted.
+ * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+ */
+
+body {
+    overflow: hidden;
+}
+
+.fullwidth {
+    width: 90%;
+}
+
+.paginator {
+    text-align: center;
+    font-size: 14px;
+}
+
+.header {
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.searchbar {
+    margin-bottom: 60px;
+}
+
+.img-element {
+    margin: 5px;
+}
+
+.carousel-control
+{
+    top: 45%;
+    left: 8px;
+    width: 40px;
+    height: 40px;
+    margin-top: 0px;
+    font-size: 32px;
+    font-weight: 100;
+    line-height: 30px;
+    color: #fff;
+    text-align: center;
+    background: #222;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+.carousel-control.right
+{
+    right:0px;
+}
+
+.modal-body {
+    margin-bottom: -50px;
+}
+
+.modal-content {
+    margin-right: 50px;
+}
+
+.main {
+    padding-top: 60px;
+}
+
+.g_main {
+    cursor:pointer;
+    pointer-events: all;
+}
+
+.the-table {
+    word-wrap: break-word;
+}
+
+.background {
+    fill: #eee;
+}
+
+line {
+    stroke: #fff;
+}
+
+text.active {
+    fill: red;
+}
+

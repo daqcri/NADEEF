@@ -29,17 +29,16 @@ public class VehicleRule extends PairTupleRule {
     }
 
 
-    /**
-     * Default block operation.
-     * @param tables a collection of tables.
-     * @return a collection of blocked tables.
-     */
-    @Override
-    public Collection<Table> block(Collection<Table> tables) {
-        Table table = tables.iterator().next();
-        Collection<Table> groupResult = table.groupOn("model");
-        return groupResult;
-    }
+//    /**
+//     * Default block operation.
+//     * @param tables a collection of tables.
+//     * @return a collection of blocked tables.
+//     */
+//    @Override
+//    public Collection<Table> block(Collection<Table> tables) {
+//        Table table = tables.iterator().next();
+//        return table.groupOn("model");
+//    }
 
     /**
      * Detect method.
@@ -65,8 +64,8 @@ public class VehicleRule extends PairTupleRule {
             withInPriceRange(price1s, price2s)
         ) {
             Violation violation = new Violation(getRuleName());
-            violation.addCell(left.getCell("tid"));
-            violation.addCell(right.getCell("tid"));
+            violation.addCell(left.getCell("duplicate_group"));
+            violation.addCell(right.getCell("duplicate_group"));
             result.add(violation);
         }
 
@@ -91,9 +90,7 @@ public class VehicleRule extends PairTupleRule {
     }
 
     private boolean sameBrand(Object a, Object b) {
-        if (a == null || b == null)
-            return true;
-        return a.equals(b);
+        return a == null || b == null || a.equals(b);
     }
 
     private boolean similarContactNumber(Object a, Object b) {
@@ -118,7 +115,7 @@ public class VehicleRule extends PairTupleRule {
             return null;
         }
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < s.length(); i ++) {
             char c = s.charAt(i);
             if (c >= '0' && c <='9')

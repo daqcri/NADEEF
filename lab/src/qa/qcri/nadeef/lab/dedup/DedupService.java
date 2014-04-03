@@ -13,45 +13,120 @@
 
 package qa.qcri.nadeef.lab.dedup;
 
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractIdleService;
-import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TThreadPoolServer;
-import org.apache.thrift.transport.TServerSocket;
-import org.apache.thrift.transport.TServerTransport;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.util.sql.DBInstaller;
 import qa.qcri.nadeef.tools.Tracer;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import static qa.qcri.nadeef.core.util.Bootstrap.shutdown;
 
 public class DedupService extends AbstractIdleService {
-    private TServer server;
+    private static String fileName = "lab/src/qa/qcri/nadeef/lab/dedup/nadeef.conf";
+    private final String tableName = "vehicles";
     private static Tracer tracer = Tracer.getTracer(DedupService.class);
+    private int lastId;
 
     @Override
     protected void startUp() throws Exception {
-        Bootstrap.start();
-        int port = NadeefConfiguration.getServerPort();
+        Bootstrap.start(fileName);
+        DedupServiceHandler client = new DedupServiceHandler();
+        while (true) {
+            DBInstaller.cleanExecutionDB();
+            if (lastId == 0) {
+                client.cureMissingValue(Lists.<Integer>newArrayList());
+                Thread.sleep(5000);
+                DBInstaller.cleanExecutionDB();
+                client.incrementalDedup(Lists.<Integer>newArrayList());
+                lastId = getMaxId();
+            } else {
+                List<Integer> idList = getIdList(lastId);
+                if (idList != null && !idList.isEmpty()) {
+                    client.cureMissingValue(idList);
+                    Thread.sleep(5000);
+                    DBInstaller.cleanExecutionDB();
+                    client.incrementalDedup(idList);
+                    lastId = idList.get(idList.size() - 1);
+                }
+            }
+            Thread.sleep(5000);
+        }
+    }
 
-        DedupServiceHandler handler = new DedupServiceHandler();
-        TDedupService.Processor processor =
-            new TDedupService.Processor(handler);
-        TServerTransport serverTransport = new TServerSocket(port);
-        server =
-            new TThreadPoolServer(
-                new TThreadPoolServer
-                    .Args(serverTransport)
-                    .processor(processor)
+    private int getMaxId() {
+        Connection conn = null;
+        PreparedStatement stat = null;
+        ResultSet rs = null;
+        int result = 0;
+        try {
+            conn =
+                DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
+            stat = conn.prepareStatement("select max(id) as id from " + tableName);
+            rs = stat.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("id");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (conn != null)
+                    conn.close();
+                if (stat != null)
+                    stat.close();
+                if (rs != null)
+                    rs.close();
+            } catch (SQLException ex) {
+                // ignore
+            }
+        }
+        return result;
+    }
+
+    private List<Integer> getIdList(int lastId) {
+        Connection conn = null;
+        PreparedStatement stat = null;
+        ResultSet rs = null;
+        List<Integer> result = null;
+        try {
+            conn =
+                DBConnectionPool.createConnection(NadeefConfiguration.getDbConfig());
+            stat = conn.prepareStatement(
+                "select id from " + tableName + " where id > ? order by id"
             );
-        tracer.info("Starting NADEEF Dedup server @ " + port);
-        server.serve();
+            stat.setInt(1, lastId);
+            rs = stat.executeQuery();
+            result = Lists.newArrayList();
+            if (rs.next()) {
+                result.add(rs.getInt("id"));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (conn != null)
+                    conn.close();
+                if (stat != null)
+                    stat.close();
+                if (rs != null)
+                    rs.close();
+            } catch (SQLException ex) {
+                // ignore
+            }
+        }
+        return result;
     }
 
     @Override
     protected void shutDown() throws Exception {
-        if (server != null && server.isServing()) {
-            server.stop();
-        }
         shutdown();
     }
 

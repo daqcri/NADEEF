@@ -533,6 +533,7 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("application/json");
+                response.header("Access-Control-Allow-Origin", "*");
 
                 String type = request.queryParams("type");
                 String name = request.queryParams("name");

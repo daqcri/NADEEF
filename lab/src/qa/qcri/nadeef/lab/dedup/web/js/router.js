@@ -14,7 +14,8 @@
 /* Simple routing system */
 define([], function() {
     var routes = [
-            {hash:'#home', controller:'HomeView'}
+            {hash:'#home', controller:'mvc/HomeView'},
+            {hash:'#editor', controller: 'mvc/EditorView'}
         ];
     var currentHash = '';
     var currentState = null;
@@ -57,7 +58,7 @@ define([], function() {
     }
 
     function redirectToRoot() {
-        window.history.pushState(null, null, "#home");
+        window.history.pushState(null, null, "#editor");
     }
 
     return {

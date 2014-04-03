@@ -13,9 +13,8 @@
 
 package qa.qcri.nadeef.lab.dedup;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import org.apache.thrift.TException;
 import org.json.simple.JSONArray;
@@ -31,27 +30,27 @@ import spark.Route;
 
 import java.io.FileReader;
 import java.nio.file.Path;
-import java.sql.*;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import static spark.Spark.*;
 
 public class DedupRestServer {
-    private static String fileName = "nadeef.conf";
+    private static String fileName = "lab/src/qa/qcri/nadeef/lab/dedup/nadeef.conf";
+    private static final String tableName = "qatarcars";
     private static DedupClient dedupClient;
 
     public static void main(String[] args) {
         try {
             NadeefConfiguration.initialize(new FileReader(fileName));
+
             // set the logging directory
             Path outputPath = NadeefConfiguration.getOutputPath();
             Tracer.setLoggingPrefix("dedup");
             Tracer.setLoggingDir(outputPath.toString());
-            Tracer tracer = Tracer.getTracer(DedupRestServer.class);
-            tracer.verbose("Tracer initialized at " + outputPath.toString());
-            staticFileLocation("qa/qcri/nadeef/lab/dedup/web");
 
             // initialize nadeef client
             DedupClient.initialize(
@@ -60,54 +59,37 @@ public class DedupRestServer {
             );
 
             dedupClient = DedupClient.getInstance();
+
+            String rootDir = System.getProperty("rootDir");
+            if (Strings.isNullOrEmpty(rootDir)) {
+                staticFileLocation("qa/qcri/nadeef/web/public");
+            } else {
+                externalStaticFileLocation(rootDir);
+            }
+
+            setPort(4568);
             setupRest();
         } catch (Exception ex) {
-            System.err.println("Nadeef initialization failed.");
             ex.printStackTrace();
             System.exit(1);
         }
     }
 
-    private static JSONArray flatResult(List<List<Integer>> input) {
-        JSONArray result = new JSONArray();
-        HashMap<Integer, HashSet<Integer>> maps = Maps.newHashMap();
-        List<HashSet<Integer>> record = Lists.newArrayList();
-        for (List<Integer> x : input) {
-            int tid1 = x.get(0);
-            int tid2 = x.get(1);
-
-            HashSet<Integer> targetSet = null;
-            if (maps.containsKey(tid1)) {
-                targetSet = maps.get(tid1);
-                targetSet.add(tid2);
-            } else if (maps.containsKey(tid2)) {
-                targetSet = maps.get(tid2);
-                targetSet.add(tid1);
-            }
-
-            if (targetSet == null) {
-                HashSet<Integer> nset = Sets.newHashSet();
-                nset.add(tid1);
-                nset.add(tid2);
-                maps.put(tid1, nset);
-                maps.put(tid2, nset);
-                record.add(nset);
-            }
-        }
-
-        int i = 0;
-        for (HashSet<Integer> x : record) {
-            JSONArray group = new JSONArray();
-            group.add(i ++);
-            for (int y : x) {
-                group.add(y);
-            }
-            result.add(group);
-        }
-        return result;
-    }
-
     private static void setupRest() {
+        get(new Route("/do/cure") {
+            @Override
+            public Object handle(Request request, Response response) {
+                response.type("application/json");
+                try {
+                    dedupClient.cureMissingValue();
+                } catch (TException e) {
+                    e.printStackTrace();
+                }
+
+                return 0;
+            }
+        });
+
         post(new Route("/do/incdedup") {
             @Override
             public Object handle(Request request, Response response) {
@@ -123,16 +105,14 @@ public class DedupRestServer {
                     input.add(Ints.checkedCast((Long)t));
                 }
 
-                List<List<Integer>> dedupPairs = null;
-                JSONArray result = new JSONArray();
+                List<Integer> dedupPairs = null;
                 try {
                     dedupPairs = dedupClient.incrementalDedup(input);
-                    result = flatResult(dedupPairs);
                 } catch (TException e) {
                     e.printStackTrace();
                 }
 
-                return result;
+                return dedupPairs;
             }
         });
 
@@ -140,8 +120,37 @@ public class DedupRestServer {
             @Override
             public Object handle(Request request, Response response) {
                 response.type("text/html");
+                response.header("Access-Control-Allow-Origin", "*");
                 response.redirect("/index.html");
-                return null;
+                return 0;
+            }
+        });
+
+        get(new Route("/imgs") {
+            @Override
+            public Object handle(Request request, Response response) {
+                response.type("application/json");
+                String responseText = "";
+                try {
+                    String id_ = request.queryParams("id");
+                    if (Strings.isNullOrEmpty(id_)) {
+                        throw new NullPointerException();
+                    }
+
+                    int id = Integer.parseInt(id_);
+                    String sql =
+                        String.format(
+                            "select url from images where vehicle_id = %d", id
+                        );
+                    return query(sql, new QueryToJsonResultSetHandler(true));
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                    responseText = "Invalid ID";
+                } catch (NullPointerException ex) {
+                    responseText = "Empty ID parameter";
+                }
+
+                return fail(responseText);
             }
         });
 
@@ -150,16 +159,83 @@ public class DedupRestServer {
             public Object handle(Request request, Response response) {
                 response.type("application/json");
                 String limit_ = request.queryParams("limit");
-                int limit;
-                if (limit_ == null) {
-                    limit = 40;
+                String offset_ = request.queryParams("offset");
+                String keyword_ = request.queryParams("keyword");
+
+                int limit = limit_ == null ? 12 : Integer.parseInt(limit_);
+                int offset = offset_ == null ? 0 : Integer.parseInt(offset_);
+                String sql;
+
+                if (keyword_ == null) {
+                    sql = String.format(
+                        "select c.*, d.duplicate_count from %s c right join " +
+                        "(select max(id) as id, duplicate_group, count(*) as duplicate_count from " +
+                        "%s group by duplicate_group order by id desc limit %d) d " +
+                        "on c.id = d.id order by c.timestamp desc",
+                        tableName,
+                        tableName,
+                        limit
+                    );
                 } else {
-                    limit = Integer.parseInt(request.queryParams("limit"));
+                    sql = String.format(
+                        "select c.*, d.duplicate_count from %s c right join " +
+                        "(select max(id) as id, duplicate_group, count(*) as duplicate_count from " +
+                        "(select * from %s where title like '%%%s%%' or brand_name like '%%%s%%') e " +
+                        "group by duplicate_group order by id desc limit %d) d " +
+                        "on c.id = d.id order by c.timestamp desc",
+                        tableName,
+                        tableName,
+                        keyword_,
+                        keyword_,
+                        limit
+                    );
                 }
-                String sql = "select * from qatarcars_copy limit " + limit;
-                return query(sql, true);
+                return query(sql, new QueryToJsonResultSetHandler(true));
             }
         });
+
+        get(new Route("/delta") {
+            @Override
+            public Object handle(Request request, Response response) {
+                response.type("application/json");
+                String startId_ = request.queryParams("id");
+                try {
+                    int startId = Integer.parseInt(startId_);
+                    String sql =
+                        String.format(
+                            "select count(*) as id from %s where id > %d",
+                            tableName,
+                            startId
+                        );
+                    return query(sql, new QueryToJsonResultSetHandler(true));
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+                return fail("Invalid input");
+            }
+        });
+
+        get(new Route("/dups") {
+            @Override
+            public Object handle(Request request, Response response) {
+                response.type("application/json");
+                String startId_ = request.queryParams("id");
+                try {
+                    int startId = Integer.parseInt(startId_);
+                    String sql =
+                        String.format(
+                            "select url from %s where duplicate_group = %d",
+                            tableName,
+                            startId
+                        );
+                    return query(sql, new QueryToJsonResultSetHandler(true));
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+                return fail("Invalid input");
+            }
+        });
+
     }
 
     @SuppressWarnings("unchecked")
@@ -169,38 +245,9 @@ public class DedupRestServer {
         return obj;
     }
 
-    @SuppressWarnings("unchecked")
-    private static String queryToJson(
-        ResultSet rs,
-        boolean includeHeader
-    ) throws SQLException {
-        JSONObject result = new JSONObject();
-        ResultSetMetaData metaData = rs.getMetaData();
-        int ncol = metaData.getColumnCount();
-
-        if (includeHeader) {
-            JSONArray columns = new JSONArray();
-            for (int i = 1; i <= ncol; i ++) {
-                columns.add(metaData.getColumnName(i));
-            }
-            result.put("schema", columns);
-        }
-
-        JSONArray data = new JSONArray();
-        while (rs.next()) {
-            JSONArray entry = new JSONArray();
-            for (int i = 1; i <= ncol; i ++) {
-                entry.add(rs.getObject(i));
-            }
-            data.add(entry);
-        }
-
-        return data.toJSONString();
-    }
-
-    private static String query(
+    private static Object query(
         String sql,
-        boolean includeHeader
+        IResultSetHandler handler
     ) {
         Connection conn = null;
         ResultSet rs = null;
@@ -210,9 +257,9 @@ public class DedupRestServer {
             conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             rs = stat.executeQuery(sql);
-            return queryToJson(rs, includeHeader);
+            return handler.handle(rs);
         } catch (Exception ex) {
-            return fail(ex.getMessage()).toJSONString();
+            return fail(ex.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -226,7 +273,9 @@ public class DedupRestServer {
                 if (conn != null) {
                     conn.close();
                 }
-            } catch (SQLException e) {}
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

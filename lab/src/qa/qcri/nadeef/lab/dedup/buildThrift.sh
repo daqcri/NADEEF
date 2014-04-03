@@ -6,4 +6,4 @@ if ! [ -n "$NADEEF_HOME" ]; then
 fi
 
 mkdir -p $NADEEF_HOME/out/gen/py
-thrift -gen java:private-members -out $NADEEF_HOME/web/src $NADEEF_HOME/web/src/qa/qcri/nadeef/lab/dedup/service.thrift
+thrift -gen java:private-members -out $NADEEF_HOME/lab/src $NADEEF_HOME/lab/src/qa/qcri/nadeef/lab/dedup/service.thrift

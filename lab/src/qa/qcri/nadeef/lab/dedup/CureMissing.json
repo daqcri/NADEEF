@@ -1,0 +1,18 @@
+{
+    "source" : {
+        "url" : "localhost:5433/unittest",
+        "username" : "tester",
+        "password" : "tester",
+        "type" : "postgres"
+    },
+    "rule" : [
+        {
+            "type" : "udf",
+            "table" : ["vehicles_view"],
+            "target" : ["vehicles_view"],
+            "value" : [
+                "qa.qcri.nadeef.lab.dedup.CarCureMissingRule"
+            ]
+        }
+    ]
+}

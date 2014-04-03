@@ -33,13 +33,17 @@ public class TDedupService {
 
   public interface Iface {
 
-    public List<List<Integer>> incrementalDedup(List<Integer> newItems) throws org.apache.thrift.TException;
+    public List<Integer> incrementalDedup(List<Integer> newItems) throws org.apache.thrift.TException;
+
+    public void cureMissingValue() throws org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
     public void incrementalDedup(List<Integer> newItems, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.incrementalDedup_call> resultHandler) throws org.apache.thrift.TException;
+
+    public void cureMissingValue(org.apache.thrift.async.AsyncMethodCallback<AsyncClient.cureMissingValue_call> resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -63,7 +67,7 @@ public class TDedupService {
       super(iprot, oprot);
     }
 
-    public List<List<Integer>> incrementalDedup(List<Integer> newItems) throws org.apache.thrift.TException
+    public List<Integer> incrementalDedup(List<Integer> newItems) throws org.apache.thrift.TException
     {
       send_incrementalDedup(newItems);
       return recv_incrementalDedup();
@@ -76,7 +80,7 @@ public class TDedupService {
       sendBase("incrementalDedup", args);
     }
 
-    public List<List<Integer>> recv_incrementalDedup() throws org.apache.thrift.TException
+    public List<Integer> recv_incrementalDedup() throws org.apache.thrift.TException
     {
       incrementalDedup_result result = new incrementalDedup_result();
       receiveBase(result, "incrementalDedup");
@@ -84,6 +88,25 @@ public class TDedupService {
         return result.success;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "incrementalDedup failed: unknown result");
+    }
+
+    public void cureMissingValue() throws org.apache.thrift.TException
+    {
+      send_cureMissingValue();
+      recv_cureMissingValue();
+    }
+
+    public void send_cureMissingValue() throws org.apache.thrift.TException
+    {
+      cureMissingValue_args args = new cureMissingValue_args();
+      sendBase("cureMissingValue", args);
+    }
+
+    public void recv_cureMissingValue() throws org.apache.thrift.TException
+    {
+      cureMissingValue_result result = new cureMissingValue_result();
+      receiveBase(result, "cureMissingValue");
+      return;
     }
 
   }
@@ -126,13 +149,42 @@ public class TDedupService {
         prot.writeMessageEnd();
       }
 
-      public List<List<Integer>> getResult() throws org.apache.thrift.TException {
+      public List<Integer> getResult() throws org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
         return (new Client(prot)).recv_incrementalDedup();
+      }
+    }
+
+    public void cureMissingValue(org.apache.thrift.async.AsyncMethodCallback<cureMissingValue_call> resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      cureMissingValue_call method_call = new cureMissingValue_call(resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class cureMissingValue_call extends org.apache.thrift.async.TAsyncMethodCall {
+      public cureMissingValue_call(org.apache.thrift.async.AsyncMethodCallback<cureMissingValue_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("cureMissingValue", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        cureMissingValue_args args = new cureMissingValue_args();
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_cureMissingValue();
       }
     }
 
@@ -150,6 +202,7 @@ public class TDedupService {
 
     private static <I extends Iface> Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> getProcessMap(Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
       processMap.put("incrementalDedup", new incrementalDedup());
+      processMap.put("cureMissingValue", new cureMissingValue());
       return processMap;
     }
 
@@ -169,6 +222,26 @@ public class TDedupService {
       public incrementalDedup_result getResult(I iface, incrementalDedup_args args) throws org.apache.thrift.TException {
         incrementalDedup_result result = new incrementalDedup_result();
         result.success = iface.incrementalDedup(args.newItems);
+        return result;
+      }
+    }
+
+    public static class cureMissingValue<I extends Iface> extends org.apache.thrift.ProcessFunction<I, cureMissingValue_args> {
+      public cureMissingValue() {
+        super("cureMissingValue");
+      }
+
+      public cureMissingValue_args getEmptyArgsInstance() {
+        return new cureMissingValue_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public cureMissingValue_result getResult(I iface, cureMissingValue_args args) throws org.apache.thrift.TException {
+        cureMissingValue_result result = new cureMissingValue_result();
+        iface.cureMissingValue();
         return result;
       }
     }
@@ -592,7 +665,7 @@ public class TDedupService {
       schemes.put(TupleScheme.class, new incrementalDedup_resultTupleSchemeFactory());
     }
 
-    private List<List<Integer>> success; // required
+    private List<Integer> success; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -658,8 +731,7 @@ public class TDedupService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-              new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-                  new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)))));
+              new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32))));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(incrementalDedup_result.class, metaDataMap);
     }
@@ -668,7 +740,7 @@ public class TDedupService {
     }
 
     public incrementalDedup_result(
-      List<List<Integer>> success)
+      List<Integer> success)
     {
       this();
       this.success = success;
@@ -679,13 +751,9 @@ public class TDedupService {
      */
     public incrementalDedup_result(incrementalDedup_result other) {
       if (other.isSetSuccess()) {
-        List<List<Integer>> __this__success = new ArrayList<List<Integer>>();
-        for (List<Integer> other_element : other.success) {
-          List<Integer> __this__success_copy = new ArrayList<Integer>();
-          for (Integer other_element_element : other_element) {
-            __this__success_copy.add(other_element_element);
-          }
-          __this__success.add(__this__success_copy);
+        List<Integer> __this__success = new ArrayList<Integer>();
+        for (Integer other_element : other.success) {
+          __this__success.add(other_element);
         }
         this.success = __this__success;
       }
@@ -704,22 +772,22 @@ public class TDedupService {
       return (this.success == null) ? 0 : this.success.size();
     }
 
-    public java.util.Iterator<List<Integer>> getSuccessIterator() {
+    public java.util.Iterator<Integer> getSuccessIterator() {
       return (this.success == null) ? null : this.success.iterator();
     }
 
-    public void addToSuccess(List<Integer> elem) {
+    public void addToSuccess(int elem) {
       if (this.success == null) {
-        this.success = new ArrayList<List<Integer>>();
+        this.success = new ArrayList<Integer>();
       }
       this.success.add(elem);
     }
 
-    public List<List<Integer>> getSuccess() {
+    public List<Integer> getSuccess() {
       return this.success;
     }
 
-    public incrementalDedup_result setSuccess(List<List<Integer>> success) {
+    public incrementalDedup_result setSuccess(List<Integer> success) {
       this.success = success;
       return this;
     }
@@ -745,7 +813,7 @@ public class TDedupService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((List<List<Integer>>)value);
+          setSuccess((List<Integer>)value);
         }
         break;
 
@@ -896,21 +964,11 @@ public class TDedupService {
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
                   org.apache.thrift.protocol.TList _list8 = iprot.readListBegin();
-                  struct.success = new ArrayList<List<Integer>>(_list8.size);
+                  struct.success = new ArrayList<Integer>(_list8.size);
                   for (int _i9 = 0; _i9 < _list8.size; ++_i9)
                   {
-                    List<Integer> _elem10; // required
-                    {
-                      org.apache.thrift.protocol.TList _list11 = iprot.readListBegin();
-                      _elem10 = new ArrayList<Integer>(_list11.size);
-                      for (int _i12 = 0; _i12 < _list11.size; ++_i12)
-                      {
-                        int _elem13; // required
-                        _elem13 = iprot.readI32();
-                        _elem10.add(_elem13);
-                      }
-                      iprot.readListEnd();
-                    }
+                    int _elem10; // required
+                    _elem10 = iprot.readI32();
                     struct.success.add(_elem10);
                   }
                   iprot.readListEnd();
@@ -938,17 +996,10 @@ public class TDedupService {
         if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
-            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.LIST, struct.success.size()));
-            for (List<Integer> _iter14 : struct.success)
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, struct.success.size()));
+            for (int _iter11 : struct.success)
             {
-              {
-                oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, _iter14.size()));
-                for (int _iter15 : _iter14)
-                {
-                  oprot.writeI32(_iter15);
-                }
-                oprot.writeListEnd();
-              }
+              oprot.writeI32(_iter11);
             }
             oprot.writeListEnd();
           }
@@ -979,15 +1030,9 @@ public class TDedupService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (List<Integer> _iter16 : struct.success)
+            for (int _iter12 : struct.success)
             {
-              {
-                oprot.writeI32(_iter16.size());
-                for (int _iter17 : _iter16)
-                {
-                  oprot.writeI32(_iter17);
-                }
-              }
+              oprot.writeI32(_iter12);
             }
           }
         }
@@ -999,26 +1044,509 @@ public class TDedupService {
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list18 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.LIST, iprot.readI32());
-            struct.success = new ArrayList<List<Integer>>(_list18.size);
-            for (int _i19 = 0; _i19 < _list18.size; ++_i19)
+            org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
+            struct.success = new ArrayList<Integer>(_list13.size);
+            for (int _i14 = 0; _i14 < _list13.size; ++_i14)
             {
-              List<Integer> _elem20; // required
-              {
-                org.apache.thrift.protocol.TList _list21 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-                _elem20 = new ArrayList<Integer>(_list21.size);
-                for (int _i22 = 0; _i22 < _list21.size; ++_i22)
-                {
-                  int _elem23; // required
-                  _elem23 = iprot.readI32();
-                  _elem20.add(_elem23);
-                }
-              }
-              struct.success.add(_elem20);
+              int _elem15; // required
+              _elem15 = iprot.readI32();
+              struct.success.add(_elem15);
             }
           }
           struct.setSuccessIsSet(true);
         }
+      }
+    }
+
+  }
+
+  public static class cureMissingValue_args implements org.apache.thrift.TBase<cureMissingValue_args, cureMissingValue_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("cureMissingValue_args");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new cureMissingValue_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new cureMissingValue_argsTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(cureMissingValue_args.class, metaDataMap);
+    }
+
+    public cureMissingValue_args() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public cureMissingValue_args(cureMissingValue_args other) {
+    }
+
+    public cureMissingValue_args deepCopy() {
+      return new cureMissingValue_args(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof cureMissingValue_args)
+        return this.equals((cureMissingValue_args)that);
+      return false;
+    }
+
+    public boolean equals(cureMissingValue_args that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(cureMissingValue_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      cureMissingValue_args typedOther = (cureMissingValue_args)other;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("cureMissingValue_args(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class cureMissingValue_argsStandardSchemeFactory implements SchemeFactory {
+      public cureMissingValue_argsStandardScheme getScheme() {
+        return new cureMissingValue_argsStandardScheme();
+      }
+    }
+
+    private static class cureMissingValue_argsStandardScheme extends StandardScheme<cureMissingValue_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, cureMissingValue_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, cureMissingValue_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class cureMissingValue_argsTupleSchemeFactory implements SchemeFactory {
+      public cureMissingValue_argsTupleScheme getScheme() {
+        return new cureMissingValue_argsTupleScheme();
+      }
+    }
+
+    private static class cureMissingValue_argsTupleScheme extends TupleScheme<cureMissingValue_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, cureMissingValue_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, cureMissingValue_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+      }
+    }
+
+  }
+
+  public static class cureMissingValue_result implements org.apache.thrift.TBase<cureMissingValue_result, cureMissingValue_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("cureMissingValue_result");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new cureMissingValue_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new cureMissingValue_resultTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(cureMissingValue_result.class, metaDataMap);
+    }
+
+    public cureMissingValue_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public cureMissingValue_result(cureMissingValue_result other) {
+    }
+
+    public cureMissingValue_result deepCopy() {
+      return new cureMissingValue_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof cureMissingValue_result)
+        return this.equals((cureMissingValue_result)that);
+      return false;
+    }
+
+    public boolean equals(cureMissingValue_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(cureMissingValue_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      cureMissingValue_result typedOther = (cureMissingValue_result)other;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("cureMissingValue_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class cureMissingValue_resultStandardSchemeFactory implements SchemeFactory {
+      public cureMissingValue_resultStandardScheme getScheme() {
+        return new cureMissingValue_resultStandardScheme();
+      }
+    }
+
+    private static class cureMissingValue_resultStandardScheme extends StandardScheme<cureMissingValue_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, cureMissingValue_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, cureMissingValue_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class cureMissingValue_resultTupleSchemeFactory implements SchemeFactory {
+      public cureMissingValue_resultTupleScheme getScheme() {
+        return new cureMissingValue_resultTupleScheme();
+      }
+    }
+
+    private static class cureMissingValue_resultTupleScheme extends TupleScheme<cureMissingValue_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, cureMissingValue_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, cureMissingValue_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
       }
     }
 

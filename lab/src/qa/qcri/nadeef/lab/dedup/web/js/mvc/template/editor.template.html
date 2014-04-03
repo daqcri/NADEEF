@@ -1,0 +1,105 @@
+<!--
+  ~ QCRI, NADEEF LICENSE
+  ~ NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
+  ~ NADEEF means "Clean" in Arabic
+  ~
+  ~ Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
+  ~ behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
+  ~ Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
+  ~
+  ~ NADEEF has patent pending nevertheless the following is granted.
+  ~ NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
+  -->
+
+<!-- Editor -->
+<div id="sidebar">
+    <div id="sidebar-content">
+        <pre id="ace-editor">
+            // Empty rule code here
+        </pre>
+    </div>
+</div>
+<div id="node-wrapper">
+    <div style="margin: 5px">
+        <div id="node-alert"></div>
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button type="button"
+                    class="btn btn-default btn-lg"
+                    id="btn-create"
+                    data-target="#rule-edit-modal"
+                    data-toggle="modal">
+                Create
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="btn-delete">
+                Delete
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="btn-generate">
+                Generate
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="btn-export">
+                Export
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="btn-reset">
+                Reset
+            </button>
+          </span>
+            <select style="font-size: 22px; height: 45px;width:150px;" id="rule-name-list">
+                <option value="0">Default</option>
+            </select>
+        </div><!-- /input-group -->
+    </div>
+    <div id="playground"></div>
+    <div style="overflow: auto">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Column A</th>
+                <th>Operation</th>
+                <th>Column B</th>
+                <th>Comparator</th>
+                <th>Value</th>
+                <th>Action</th>
+            </tr>
+            <tbody id="ruleTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal" id="rule-edit-modal" style="font-size: 18px;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Editing a rule</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group" id="rule-input-group">
+                        <label for="rule-name" class="col-sm-3 control-label">Name</label>
+                        <div class="col-sm-8">
+                            <input type="text"
+                                   class="form-control"
+                                   id="rule-name"
+                                   value="Default"
+                                   style="font-size: 18px">
+                            <span class="form-control-feedback" id="rule-name-feedback"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <br>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-primary"
+                        id="btn-save-rule">
+                    Save</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

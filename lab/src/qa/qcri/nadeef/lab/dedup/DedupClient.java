@@ -52,12 +52,21 @@ public class DedupClient {
 
     private DedupClient() {}
 
-    public List<List<Integer>> incrementalDedup(List<Integer> newItems) throws TException {
+    public void cureMissingValue() throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
         TProtocol protocol = new TBinaryProtocol(transport);
         TDedupService.Client client = new TDedupService.Client(protocol);
-        List<List<Integer>> result = client.incrementalDedup(newItems);
+        client.cureMissingValue();
+        transport.close();
+    }
+
+    public List<Integer> incrementalDedup(List<Integer> newItems) throws TException {
+        TTransport transport = new TSocket(url, port);
+        transport.open();
+        TProtocol protocol = new TBinaryProtocol(transport);
+        TDedupService.Client client = new TDedupService.Client(protocol);
+        List<Integer> result = client.incrementalDedup(newItems);
         transport.close();
         return result;
     }

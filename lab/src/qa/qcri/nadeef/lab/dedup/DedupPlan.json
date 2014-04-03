@@ -8,10 +8,10 @@
     "rule" : [
         {
             "type" : "udf",
-            "table" : ["qatarcars_copy"],
-            "target" : ["qatarcars_copy"],
+            "table" : ["vehicles_view"],
+            "target" : ["vehicles_view"],
             "value" : [
-                "qa.qcri.nadeef.lab.dedup.VehicleRule"
+                "qa.qcri.nadeef.lab.dedup.VehicleDedupRule"
             ]
         }
     ]

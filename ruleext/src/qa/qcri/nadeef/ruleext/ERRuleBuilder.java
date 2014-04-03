@@ -35,9 +35,9 @@ public class ERRuleBuilder extends RuleBuilder  {
     private static final Pattern pattern =
         Pattern.compile(
             "\\s*(EQ|ED|LS|QG|SD)\\s*" +
-            "\\(\\s*([a-zA-Z]\\w*)\\.([a-zA-Z]\\w*)\\s*," +
-            "\\s*([a-zA-Z]\\w*)\\.([a-zA-Z]\\w*)\\s*\\)" +
-            "\\s*(>|<|<=|>=|==|!=)\\s*(\\d+\\.?\\d*)\\s*"
+            "\\(\\s*([a-zA-Z_]\\w*)\\.([a-zA-Z_]\\w*)\\s*," +
+            "\\s*([a-zA-Z_]\\w*)\\.([a-zA-Z_]\\w*)\\s*\\)" +
+            "\\s*(>|<|<=|>=|=|!=)\\s*(\\d+\\.?\\d*)\\s*"
         );
 
     @Override

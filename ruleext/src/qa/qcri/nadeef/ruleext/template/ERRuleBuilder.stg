@@ -12,11 +12,6 @@ public class $ERName$ extends PairTupleRule {
         super.initialize(id, tableNames);
     }
 
-    /**
-     * Detect method.
-     * @param tuplePair tuple pair.
-     * @return violation set.
-     */
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
         List<Violation> result = new ArrayList<>();
@@ -35,12 +30,6 @@ public class $ERName$ extends PairTupleRule {
         return result;
     }
 
-    /**
-     * Repair of this rule.
-     *
-     * @param violation violation input.
-     * @return a candidate fix.
-     */
     @Override
     public Collection<Fix> repair(Violation violation) {
         return new ArrayList();
