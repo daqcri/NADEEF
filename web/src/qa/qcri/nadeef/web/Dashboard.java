@@ -458,6 +458,60 @@ public final class Dashboard {
     //</editor-fold>
 
     //<editor-fold desc="Project actions">
+    private static JSONObject createProject(String project) throws Exception {
+        // create the database
+        if (dialect != SQLDialect.DERBY && dialect != SQLDialect.DERBYMEMORY) {
+            Connection conn = null;
+            Statement stat = null;
+            ResultSet rs = null;
+            // lower case for non-derby db.
+            String project_ = project.toLowerCase();
+            try {
+                DBConfig rootConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+                // rootConfig.switchDatabase("");)
+                conn = DBConnectionPool.createConnection(rootConfig, true);
+                stat = conn.createStatement();
+                rs = stat.executeQuery(dialectInstance.hasDatabase(project_));
+                if (!rs.next()) {
+                    stat.execute(dialectInstance.createDatabase(project_));
+                }
+            } finally {
+                try {
+                    if (stat != null) {
+                        stat.close();
+                    }
+
+                    if (conn != null) {
+                        conn.close();
+                    }
+
+                    if (rs != null) {
+                        rs.close();
+                    }
+                } catch (SQLException e) {}
+            }
+        }
+
+        DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
+        dbConfig.switchDatabase(project);
+
+        // install the tables
+        try {
+            DBInstaller.install(dbConfig);
+            qa.qcri.nadeef.core.util.sql.DBInstaller.install(dbConfig);
+        } catch (Exception ex) {
+            tracer.err(ex.getMessage(), ex);
+            return fail("Installing databases failed.");
+        }
+
+        // TODO: magic string, and missing transaction.
+        return update(
+            NadeefConfiguration.getDbConfig().getDatabaseName(),
+            dialectInstance.insertProject(project), // original
+            "Creating project " + project + " failed."
+        );
+    }
+
     private static void setupProject() {
         get(new Route("/project") {
             @Override
@@ -472,65 +526,15 @@ public final class Dashboard {
             @Override
             public Object handle(Request request, Response response) {
                 String project = request.queryParams("project");
-                if (Strings.isNullOrEmpty(project) || !SQLUtil.isValidTableName(project)) {
+                if (Strings.isNullOrEmpty(project) || !SQLUtil.isValidTableName(project))
                     return fail("Invalid project name " + project);
-                }
-
-                // create the database
-                if (dialect != SQLDialect.DERBY && dialect != SQLDialect.DERBYMEMORY) {
-                    Connection conn = null;
-                    Statement stat = null;
-                    ResultSet rs = null;
-                    // lower case for non-derby db.
-                    String project_ = project.toLowerCase();
-                    try {
-                        DBConfig rootConfig = new DBConfig(NadeefConfiguration.getDbConfig());
-                        // rootConfig.switchDatabase("");)
-                        conn = DBConnectionPool.createConnection(rootConfig, true);
-                        stat = conn.createStatement();
-                        rs = stat.executeQuery(dialectInstance.hasDatabase(project_));
-                        if (!rs.next()) {
-                            stat.execute(dialectInstance.createDatabase(project_));
-                        }
-                    } catch (Exception ex) {
-                        String err = "Creating database " + project + " failed.";
-                        tracer.err(err, ex);
-                        return fail(err);
-                    } finally {
-                        try {
-                            if (stat != null) {
-                                stat.close();
-                            }
-
-                            if (conn != null) {
-                                conn.close();
-                            }
-
-                            if (rs != null) {
-                                rs.close();
-                            }
-                        } catch (SQLException e) {}
-                    }
-                }
-
-                DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
-                dbConfig.switchDatabase(project);
-
-                // install the tables
                 try {
-                    DBInstaller.install(dbConfig);
-                    qa.qcri.nadeef.core.util.sql.DBInstaller.install(dbConfig);
+                    return createProject(project);
                 } catch (Exception ex) {
-                    tracer.err(ex.getMessage(), ex);
-                    return fail("Installing databases failed.");
+                    String err = "Creating database " + project + " failed.";
+                    tracer.err(err, ex);
+                    return fail(err);
                 }
-
-                // TODO: magic string, and missing transaction.
-                return update(
-                    NadeefConfiguration.getDbConfig().getDatabaseName(),
-                    dialectInstance.insertProject(project), // original
-                    "Creating project " + project + " failed."
-                );
             }
         });
     }
@@ -790,6 +794,14 @@ public final class Dashboard {
             staticFileLocation("qa/qcri/nadeef/web/public");
         } else {
             externalStaticFileLocation(rootDir);
+        }
+
+        // special call for Ruleminer demo.
+        try {
+            createProject("dcdemo");
+        } catch (Exception ex) {
+            tracer.err("dcdemo db creation failed.");
+            System.exit(1);
         }
 
         Tracer.setInfo(true);
