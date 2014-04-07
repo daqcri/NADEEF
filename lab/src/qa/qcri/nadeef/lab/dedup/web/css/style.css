@@ -67,10 +67,6 @@ body {
     margin-right: 50px;
 }
 
-.main {
-    padding-top: 60px;
-}
-
 .g_main {
     cursor:pointer;
     pointer-events: all;

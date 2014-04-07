@@ -5,356 +5,15 @@
     <option name="ANALYSIS_IN_BACKGROUND" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="- Adds HolisticCleaning algorithm (with Gurobi support).">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/fonts/glyphicons-halflings-regular.eot" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/fonts/glyphicons-halflings-regular.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/fonts/glyphicons-halflings-regular.woff" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/imgs/no_image.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CarCureMissingRule.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CureMissing.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/EditorView.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/HomeView.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/IResultSetHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/QueryToJsonResultSetHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleDedupRule.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/abap.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ace.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/actionscript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/ada.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/apache_conf.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/asciidoc.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/assembly_x86.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/autohotkey.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/batchfile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/brands.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/c9search.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/c_cpp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/cirru.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/clojure.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/cobol.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/coffee.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/coldfusion.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/csharp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/css.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/curly.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/d.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/dart.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/detailpanel.template.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/diff.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/django.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/dot.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/editor.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/editor.template.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/ejs.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/erlang.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-chromevox.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-elastic_tabstops_lite.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-emmet.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-error_marker.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-keybinding_menu.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-language_tools.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-modelist.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-old_ie.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-searchbox.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-settings_menu.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-spellcheck.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-split.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-static_highlight.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-statusbar.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-textarea.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-themelist.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/ext-whitespace.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/forth.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/ftl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/gherkin.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/glsl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/fonts/glyphicons-halflings-regular.svg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/golang.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/groovy.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/haml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/handlebars.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/haskell.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/haxe.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/html.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/html_completions.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/html_ruby.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/ini.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/jack.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/jade.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/java.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/javascript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/json.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/jsoniq.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/jsp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/jsx.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/julia.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/keybinding-emacs.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/keybinding-vim.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/latex.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/less.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/liquid.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/lisp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/livescript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/logiql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/lsl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/lua.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/luapage.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/lucene.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/makefile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/markdown.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/matlab.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/mel.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-abap.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-actionscript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-ada.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-apache_conf.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-asciidoc.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-assembly_x86.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-autohotkey.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-batchfile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-c9search.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-c_cpp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-cirru.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-clojure.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-cobol.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-coffee.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-coldfusion.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-csharp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-css.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-curly.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-d.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-dart.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-diff.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-django.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-dot.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-ejs.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-erlang.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-forth.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-ftl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-gherkin.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-glsl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-golang.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-groovy.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-haml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-handlebars.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-haskell.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-haxe.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-html.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-html_completions.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-html_ruby.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-ini.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-jack.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-jade.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-java.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-javascript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-json.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-jsoniq.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-jsp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-jsx.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-julia.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-latex.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-less.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-liquid.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-lisp.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-livescript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-logiql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-lsl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-lua.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-luapage.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-lucene.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-makefile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-markdown.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-matlab.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-mel.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-mushcode.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-mushcode_high_rules.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-mysql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-nix.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-objectivec.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-ocaml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-pascal.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-perl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-pgsql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-php.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-plain_text.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-powershell.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-prolog.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-properties.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-protobuf.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-python.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-r.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-rdoc.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-rhtml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-ruby.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-rust.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-sass.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-scad.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-scala.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-scheme.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-scss.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-sh.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-sjs.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-smarty.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-snippets.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-soy_template.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-space.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-sql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-stylus.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-svg.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-tcl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-tex.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-text.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-textile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-toml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-twig.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-typescript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-vbscript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-velocity.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-verilog.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-vhdl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-xml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-xquery.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/mode-yaml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/mushcode.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/mushcode_high_rules.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/mysql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/nadeef.conf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/nix.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/node-editor.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/objectivec.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/ocaml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/pascal.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/perl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/pgsql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/php.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/plain_text.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/powershell.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/prolog.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/properties.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/property.template.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/protobuf.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/python.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/r.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/rdoc.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/rhtml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/ruby.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/rust.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/sass.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/scad.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/scala.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/scheme.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/scss.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/sh.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/sjs.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/smarty.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/snippets.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/soy_template.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/space.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/sql.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/stylus.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/svg.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/table.template.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/tableentry.template.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/tcl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/tex.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/text.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/textile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-ambiance.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-chaos.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-chrome.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-clouds.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-clouds_midnight.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-cobalt.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-crimson_editor.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-dawn.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-dreamweaver.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-eclipse.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-github.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-idle_fingers.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-katzenmilch.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-kr.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-kuroir.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-merbivore.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-merbivore_soft.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-mono_industrial.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-monokai.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-pastel_on_dark.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-solarized_dark.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-solarized_light.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-terminal.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-textmate.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-tomorrow.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-tomorrow_night.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-tomorrow_night_blue.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-tomorrow_night_bright.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-tomorrow_night_eighties.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-twilight.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-vibrant_ink.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/theme-xcode.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/toml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/twig.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/typescript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/vbscript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/velocity.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/verilog.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/vhdl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-coffee.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-css.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-html.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-javascript.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-json.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-lua.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-php.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/worker-xquery.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/xml.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/xquery.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/ace-min/snippets/yaml.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/HomeView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template/home.template.html" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/bootstrap.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/bootstrap.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/bootstrap.min.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/d3.v3.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/d3.v3.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/d3.v3.min.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/d3.v3.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/jquery-1.10.2.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/jquery-1.10.2.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/jquery-1.10.2.min.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/jquery-1.10.2.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/jquery.blockUI.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/jquery.blockUI.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/require.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/require.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/text.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/text.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/underscore-min.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/underscore-min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/underscore.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/underscore.js" />
+    <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="- Adds ER Editor tool (especially for SIGMOD demo purpose).">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/admin.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/admin.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" afterPath="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupClient.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupPlan.json" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupPlan.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupServiceHandler.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupServiceHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/ERRuleBuilder.java" afterPath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/ERRuleBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/ERRuleBuilder.stg" afterPath="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/ERRuleBuilder.stg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/JOptimizerTest.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/JOptimizerTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/TDedupService.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/TDedupService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleRule.java" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleRule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap-theme.css" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap-theme.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap-theme.min.css" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap-theme.min.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap.css" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap.min.css" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/bootstrap.min.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/buildThrift.sh" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/buildThrift.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/console/console.iml" afterPath="$PROJECT_DIR$/console/console.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/core.iml" afterPath="$PROJECT_DIR$/core/core.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/findbugs-idea.xml" afterPath="$PROJECT_DIR$/.idea/findbugs-idea.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/lab.iml" afterPath="$PROJECT_DIR$/lab/lab.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/main.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/src/public/js/lib/ace-min/mode-clojure.js" afterPath="$PROJECT_DIR$/web/src/public/js/lib/ace-min/mode-clojure.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nadeef.conf" afterPath="$PROJECT_DIR$/nadeef.conf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/router.js" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/router.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/ruleext.iml" afterPath="$PROJECT_DIR$/ruleext/ruleext.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/service/service.iml" afterPath="$PROJECT_DIR$/service/service.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/service.thrift" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/service.thrift" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.iml" afterPath="$PROJECT_DIR$/test/test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/tools.iml" afterPath="$PROJECT_DIR$/tools/tools.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/web.iml" afterPath="$PROJECT_DIR$/web/web.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css" afterPath="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="d763a6a4-3fac-4bf4-a3a5-2672c971d002" name="New changelist" comment="" />
@@ -427,7 +86,80 @@
     <favorites_list name="NADEEF" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf>
+          <file leaf-file-name="CarCureMissingRule.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CarCureMissingRule.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="78" column="60" selection-start="2515" selection-end="2515" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3230">
+                  <folding>
+                    <element signature="e#0#6247#0" expanded="false" />
+                    <element signature="imports" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DedupRestServer.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="180" column="27" selection-start="6570" selection-end="6570" vertical-scroll-proportion="0.0" vertical-offset="2466" max-vertical-offset="4692">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Dashboard.java" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="754" column="0" selection-start="28993" selection-end="28993" vertical-scroll-proportion="7.1261597" vertical-offset="7515" max-vertical-offset="13736">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#2330#2360#0" expanded="true" />
+                    <element signature="e#9226#9256#0" expanded="true" />
+                    <element signature="e#10974#11004#0" expanded="true" />
+                    <element signature="method#setupProject#0;class#Dashboard#0" expanded="false" />
+                    <element signature="e#31749#31779#0" expanded="true" />
+                    <element signature="e#32630#32660#0" expanded="true" />
+                    <element signature="e#32818#32848#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DedupService.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="61" column="46" selection-start="2495" selection-end="2495" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="2346">
+                  <folding>
+                    <marker date="1396527377093" expanded="true" signature="2811:2837" placeholder="select max(i..vehicles..." />
+                    <marker date="1396527377093" expanded="true" signature="3766:3823" placeholder="select id fr..vehicles..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="Dashboard.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="778" column="0" selection-start="29792" selection-end="29792" vertical-scroll-proportion="1.2411873" vertical-offset="10721" max-vertical-offset="13362">
+                  <folding>
+                    <element signature="method#setupProject#0;class#Dashboard#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -456,8 +188,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java" />
-        <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg" />
         <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg" />
         <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java" />
         <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/DCRepairTest.java" />
@@ -490,23 +220,25 @@
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/editor.html" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/editor.js" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/sample.template.html" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/router.js" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/nodeEditor.js" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/main.js" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/editor.css" />
         <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/ERRuleBuilder.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java" />
         <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/ERRuleBuilder.stg" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/HomeView.js" />
         <option value="$PROJECT_DIR$/nadeef.conf" />
-        <option value="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/editor.template.html" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/node-editor.js" />
-        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/EditorView.js" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/table.template.html" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/admin.html" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/EditorView.js" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/editor.template.html" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/router.js" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/main.js" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/admin.js" />
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html" />
+        <option value="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" />
       </list>
     </option>
   </component>
@@ -588,6 +320,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -790,106 +524,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NADEEF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lab" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qcri" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nadeef" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lab" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dedup" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mvc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NADEEF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lab" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qcri" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nadeef" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lab" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dedup" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mvc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -951,13 +587,6 @@
       <recent name="qa.qcri.nadeef.tools.sql.SQLDialectTools" />
       <recent name="qa.qcri.nadeef.tools.SQLDialectManagerBase" />
     </key>
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="qa.qcri.nadeef.lab" />
-      <recent name="qa.qcri.nadeef" />
-      <recent name="qa.qcri.nadeef.web.lab.dedup" />
-      <recent name="qa.qcri.nadeef.tools" />
-      <recent name="qa.qcri.nadeef.core.util" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js" />
       <recent name="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc" />
@@ -965,8 +594,15 @@
       <recent name="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template" />
       <recent name="$PROJECT_DIR$/web/src/qa/qcri/nadeef/lab/dedup/web" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="qa.qcri.nadeef.lab" />
+      <recent name="qa.qcri.nadeef" />
+      <recent name="qa.qcri.nadeef.web.lab.dedup" />
+      <recent name="qa.qcri.nadeef.tools" />
+      <recent name="qa.qcri.nadeef.core.util" />
+    </key>
   </component>
-  <component name="RunManager" selected="Application.DedupHttpServer">
+  <component name="RunManager" selected="Application.NadeefStart">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
@@ -1260,12 +896,6 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
-      <option name="VM_PARAMETERS" value="" />
-      <option name="USER_CFG_CLASS" />
-      <option name="CONTEXT_PROVIDER" />
-      <method />
-    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -1283,6 +913,12 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
       <method />
     </configuration>
     <configuration default="false" name="NadeefService" type="Application" factoryName="Application">
@@ -1413,6 +1049,12 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="lab" />
       <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
       <method />
     </configuration>
     <configuration default="false" name="CarDedupService" type="Application" factoryName="Application">
@@ -1547,7 +1189,8 @@
       <workItem from="1396163693255" duration="5000" />
       <workItem from="1396256835952" duration="1504000" />
       <workItem from="1396422772260" duration="2973000" />
-      <workItem from="1396435089083" duration="22516000" />
+      <workItem from="1396435089083" duration="32445000" />
+      <workItem from="1396865452331" duration="2543000" />
     </task>
     <task id="LOCAL-00001" summary="- fix git setup.">
       <created>1372597206357</created>
@@ -1669,11 +1312,15 @@
       <created>1394966915541</created>
       <updated>1394966915541</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="- Adds ER Editor tool (especially for SIGMOD demo purpose).">
+      <created>1396527381580</created>
+      <updated>1396527381580</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="540981000" />
+    <option name="totallyTimeSpent" value="553453000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1704,6 +1351,7 @@
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29275092" sideWeight="0.50426894" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23048328" sideWeight="0.4375667" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" x="2535" y="165" width="393" height="548" />
       <window_info id="Ant Build" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24919957" sideWeight="0.6644487" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32342008" sideWeight="0.5090715" order="4" side_tool="false" content_ui="tabs" x="11" y="291" width="1257" height="217" />
@@ -1713,25 +1361,24 @@
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15865384" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806692" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32620817" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18122676" sideWeight="0.52187836" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32899627" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22251868" sideWeight="0.6951567" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.40032414" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.19530416" sideWeight="0.7217474" order="0" side_tool="false" content_ui="combo" x="1374" y="76" width="500" height="1067" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.19530416" sideWeight="0.7217474" order="0" side_tool="false" content_ui="combo" x="1411" y="125" width="480" height="777" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24930233" sideWeight="0.41607" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="1990" y="284" width="1722" height="731" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298479" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924226" sideWeight="0.78612167" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298479" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32922202" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32992566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.8043685" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23048328" sideWeight="0.4375667" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="RESTClient" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18122676" sideWeight="0.52187836" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32953465" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981008" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1756,7 +1403,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="- Regression test fixes.&#10;- Batch improvement on options." />
     <MESSAGE value="- Adds MySQL / Postgres support for Dashboard&#10;- Improve stability of Dashboard experience." />
     <MESSAGE value="- Unit test fix." />
     <MESSAGE value="- table pagination&#10;- table ui fixes." />
@@ -1781,7 +1427,8 @@
     <MESSAGE value="- Adds initial framework for test app of qatar car sales.&#10;- Adds Guava 15.0 support.&#10;- Clean the project deps.&#10;- Adds exception handler for rule detect / repair  itself.&#10;- Adds better Log4j support (-Ddebug).&#10;- Minor bug fixes." />
     <MESSAGE value="- Adds HolisticCleaning algorithm (with Gurobi support)." />
     <MESSAGE value="- Minor fix on null values in the report." />
-    <option name="LAST_COMMIT_MESSAGE" value="- Minor fix on null values in the report." />
+    <MESSAGE value="- Adds ER Editor tool (especially for SIGMOD demo purpose)." />
+    <option name="LAST_COMMIT_MESSAGE" value="- Adds ER Editor tool (especially for SIGMOD demo purpose)." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1797,16 +1444,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/GurobiSolverTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="44" selection-start="2661" selection-end="2661" vertical-scroll-proportion="0.0" vertical-offset="1288" max-vertical-offset="2040" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/CombinationGenTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="42" selection-start="1290" selection-end="1290" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="663" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/VFMTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="46" column="0" selection-start="1651" selection-end="1651" vertical-scroll-proportion="0.0" vertical-offset="957" max-vertical-offset="1734" />
@@ -1838,21 +1475,16 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/derbyConfig.conf">
-      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="30" selection-start="331" selection-end="331" vertical-scroll-proportion="0.40078586" vertical-offset="0" max-vertical-offset="509" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/hc/test/JOptimizerTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="0" selection-start="662" selection-end="662" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CarCureMissingRule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="60" selection-start="2515" selection-end="2515" vertical-scroll-proportion="0.0" vertical-offset="663" max-vertical-offset="3230" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/vendors/spark-core-1.1.jar!/spark/webserver/MatcherFilter.class">
@@ -1876,11 +1508,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/nadeef.conf">
-      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="6" selection-start="160" selection-end="160" vertical-scroll-proportion="-3.5172415" vertical-offset="0" max-vertical-offset="544" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/lib/bootstrap.js">
@@ -1905,87 +1537,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/property.template.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="23" selection-start="1234" selection-end="1234" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="765">
-          <folding />
-        </state>
+        <state line="31" column="23" selection-start="1234" selection-end="1234" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="765" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/cleanplan.template.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="84" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.26275116" vertical-offset="357" max-vertical-offset="1292">
-          <folding />
-        </state>
+        <state line="31" column="84" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.26275116" vertical-offset="357" max-vertical-offset="1292" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/sourceeditor.template.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="6" selection-start="161" selection-end="161" vertical-scroll-proportion="0.15178572" vertical-offset="0" max-vertical-offset="1224">
-          <folding />
-        </state>
+        <state line="6" column="6" selection-start="161" selection-end="161" vertical-scroll-proportion="0.15178572" vertical-offset="0" max-vertical-offset="1224" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/editor.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="8" selection-start="953" selection-end="953" vertical-scroll-proportion="0.0" vertical-offset="237" max-vertical-offset="935">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1479">
-          <folding />
-        </state>
+        <state line="39" column="8" selection-start="953" selection-end="953" vertical-scroll-proportion="0.0" vertical-offset="237" max-vertical-offset="935" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/NadeefStart.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="75" selection-start="2347" selection-end="2347" vertical-scroll-proportion="0.73254085" vertical-offset="493" max-vertical-offset="1530">
-          <folding>
-            <element signature="e#0#3101#0" expanded="true" />
-          </folding>
-        </state>
+        <state line="62" column="75" selection-start="2347" selection-end="2347" vertical-scroll-proportion="0.73254085" vertical-offset="493" max-vertical-offset="1530" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/NadeefConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="26" selection-start="4434" selection-end="4434" vertical-scroll-proportion="0.0" vertical-offset="1530" max-vertical-offset="4437">
-          <folding>
-            <element signature="e#0#9196#0" expanded="true" />
-          </folding>
-        </state>
+        <state line="120" column="26" selection-start="4434" selection-end="4434" vertical-scroll-proportion="0.0" vertical-offset="1530" max-vertical-offset="4437" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/SourceEditorView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="0" selection-start="1707" selection-end="1707" vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="1530">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
+        <state line="42" column="0" selection-start="1707" selection-end="1707" vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="1530" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/CleanPlanView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="98" column="38" selection-start="3436" selection-end="3436" vertical-scroll-proportion="0.0" vertical-offset="1384" max-vertical-offset="2720">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/router.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="34" selection-start="936" selection-end="943" vertical-scroll-proportion="-0.096582465" vertical-offset="286" max-vertical-offset="1088">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="13" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="901">
-          <folding />
-        </state>
+        <state line="98" column="38" selection-start="3436" selection-end="3436" vertical-scroll-proportion="0.0" vertical-offset="1384" max-vertical-offset="2720" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupServiceHandler.java">
@@ -1995,25 +1582,132 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/HomeView.js">
+    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/ERRuleBuilder.stg">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="16" selection-start="976" selection-end="980" vertical-scroll-proportion="0.65676075" vertical-offset="0" max-vertical-offset="4199">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state line="8" column="55" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/controller.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="47" selection-start="384" selection-end="396" vertical-scroll-proportion="0.26275116" vertical-offset="0" max-vertical-offset="1394" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nadeef.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="31" selection-start="52" selection-end="52" vertical-scroll-proportion="-1.1724138" vertical-offset="0" max-vertical-offset="561" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/requester.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="163" column="0" selection-start="4955" selection-end="4955" vertical-scroll-proportion="0.0" vertical-offset="2727" max-vertical-offset="3808" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/tableentry.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="50" selection-start="212" selection-end="212" vertical-scroll-proportion="0.10119048" vertical-offset="0" max-vertical-offset="672" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefServiceHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="59" column="0" selection-start="2157" selection-end="2157" vertical-scroll-proportion="0.02526003" vertical-offset="646" max-vertical-offset="4658" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.6062407" vertical-offset="408" max-vertical-offset="1394" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/postgresConfig.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="0" selection-start="2" selection-end="156" vertical-scroll-proportion="0.17787743" vertical-offset="0" max-vertical-offset="669" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/table.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="46" selection-start="199" selection-end="199" vertical-scroll-proportion="0.12648809" vertical-offset="0" max-vertical-offset="672" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/ERRuleBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="68" column="31" selection-start="2656" selection-end="2656" vertical-scroll-proportion="0.2679083" vertical-offset="561" max-vertical-offset="1853">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/ERRuleBuilder.stg">
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/css/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="55" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139">
-          <folding />
+        <state line="56" column="23" selection-start="1208" selection-end="1208" vertical-scroll-proportion="0.0" vertical-offset="595" max-vertical-offset="1632" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/node-editor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="174" column="24" selection-start="5157" selection-end="5157" vertical-scroll-proportion="0.0" vertical-offset="2533" max-vertical-offset="6562" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/HomeView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="234" column="21" selection-start="8791" selection-end="8800" vertical-scroll-proportion="0.0" vertical-offset="3315" max-vertical-offset="4012" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/EditorView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="124" column="18" selection-start="4311" selection-end="4311" vertical-scroll-proportion="0.0" vertical-offset="1326" max-vertical-offset="3655" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="21" selection-start="1651" selection-end="1651" vertical-scroll-proportion="-27.461538" vertical-offset="0" max-vertical-offset="850" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/editor.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="21" selection-start="1920" selection-end="1920" vertical-scroll-proportion="-6.5384617" vertical-offset="646" max-vertical-offset="1887" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/router.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="27" selection-start="963" selection-end="963" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1122" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="101" selection-start="890" selection-end="890" vertical-scroll-proportion="0.0" vertical-offset="231" max-vertical-offset="901" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="63" selection-start="1302" selection-end="1302" vertical-scroll-proportion="-9.730769" vertical-offset="240" max-vertical-offset="935" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/admin.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="25" selection-start="1321" selection-end="1321" vertical-scroll-proportion="0.7553957" vertical-offset="172" max-vertical-offset="867" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/admin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="45" selection-start="1098" selection-end="1098" vertical-scroll-proportion="0.63527656" vertical-offset="0" max-vertical-offset="669" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/CarCureMissingRule.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="60" selection-start="2515" selection-end="2515" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3230">
+          <folding>
+            <element signature="e#0#6247#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="129" column="14" selection-start="4346" selection-end="4346" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4692">
+        <state line="180" column="27" selection-start="6570" selection-end="6570" vertical-scroll-proportion="0.0" vertical-offset="2466" max-vertical-offset="4692">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2022,144 +1716,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="115" column="59" selection-start="4224" selection-end="4224" vertical-scroll-proportion="0.0" vertical-offset="1224" max-vertical-offset="2346">
+        <state line="61" column="46" selection-start="2495" selection-end="2495" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="2346">
           <folding>
-            <marker date="1395757149473" expanded="true" signature="-1:-1" placeholder="select max(i..vehicles..." />
-            <marker date="1395757149473" expanded="true" signature="-1:-1" placeholder="select id fr..vehicles..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/controller.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="47" selection-start="384" selection-end="396" vertical-scroll-proportion="0.26275116" vertical-offset="0" max-vertical-offset="1394">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nadeef.conf">
-      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="31" selection-start="52" selection-end="52" vertical-scroll-proportion="-1.1724138" vertical-offset="0" max-vertical-offset="561">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/src/public/js/requester.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="163" column="0" selection-start="4955" selection-end="4955" vertical-scroll-proportion="0.0" vertical-offset="2727" max-vertical-offset="3808">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/editor.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="58" selection-start="2797" selection-end="2797" vertical-scroll-proportion="0.5146831" vertical-offset="942" max-vertical-offset="1666">
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="7" selection-start="985" selection-end="985" vertical-scroll-proportion="0.19196428" vertical-offset="262" max-vertical-offset="935">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/tableentry.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="50" selection-start="212" selection-end="212" vertical-scroll-proportion="0.10119048" vertical-offset="0" max-vertical-offset="672">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/home.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="26" selection-start="494" selection-end="494" vertical-scroll-proportion="0.3153014" vertical-offset="0" max-vertical-offset="647">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefServiceHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="0" selection-start="2157" selection-end="2157" vertical-scroll-proportion="0.02526003" vertical-offset="646" max-vertical-offset="4658">
-          <folding>
-            <element signature="e#0#10107#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.6062407" vertical-offset="408" max-vertical-offset="1394">
-          <folding>
-            <element signature="e#0#2888#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/node-editor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="174" column="24" selection-start="5157" selection-end="5157" vertical-scroll-proportion="0.3409742" vertical-offset="2720" max-vertical-offset="6749">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
+            <marker date="1396527377093" expanded="true" signature="2811:2837" placeholder="select max(i..vehicles..." />
+            <marker date="1396527377093" expanded="true" signature="3766:3823" placeholder="select id fr..vehicles..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="543" column="0" selection-start="20413" selection-end="20413" vertical-scroll-proportion="0.3209169" vertical-offset="8633" max-vertical-offset="14841">
+        <state line="778" column="0" selection-start="29792" selection-end="29792" vertical-scroll-proportion="1.2411873" vertical-offset="10721" max-vertical-offset="13362">
           <folding>
-            <element signature="e#0#33022#0" expanded="true" />
-            <element signature="e#2330#2360#0" expanded="true" />
-            <element signature="e#9226#9256#0" expanded="true" />
-            <element signature="e#10974#11004#0" expanded="true" />
-            <element signature="e#31750#31780#0" expanded="true" />
-            <element signature="e#32631#32661#0" expanded="true" />
-            <element signature="e#32819#32849#0" expanded="true" />
+            <element signature="method#setupProject#0;class#Dashboard#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/postgresConfig.conf">
-      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="2" selection-end="156" vertical-scroll-proportion="0.17787743" vertical-offset="0" max-vertical-offset="669">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/template/table.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="46" selection-start="199" selection-end="199" vertical-scroll-proportion="0.12648809" vertical-offset="0" max-vertical-offset="672">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/mvc/EditorView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="181" column="44" selection-start="5667" selection-end="5667" vertical-scroll-proportion="0.5687679" vertical-offset="2680" max-vertical-offset="3621">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/ERRuleBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="31" selection-start="2656" selection-end="2656" vertical-scroll-proportion="0.2679083" vertical-offset="561" max-vertical-offset="1853">
-          <folding />
         </state>
       </provider>
     </entry>

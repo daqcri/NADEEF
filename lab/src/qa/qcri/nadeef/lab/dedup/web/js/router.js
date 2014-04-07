@@ -19,8 +19,10 @@ define([], function() {
         ];
     var currentHash = '';
     var currentState = null;
+    var defaultRoot = "#home";
 
-    function start() {
+    function start(root) {
+        defaultRoot = root;
         setInterval(hashCheck, 200);
     }
 
@@ -58,7 +60,7 @@ define([], function() {
     }
 
     function redirectToRoot() {
-        window.history.pushState(null, null, "#editor");
+        window.history.pushState(null, null, defaultRoot);
     }
 
     return {

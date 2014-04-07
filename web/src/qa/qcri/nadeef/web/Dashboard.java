@@ -750,7 +750,6 @@ public final class Dashboard {
                 return result;
             }
         });
-
     }
     //</editor-fold>
 

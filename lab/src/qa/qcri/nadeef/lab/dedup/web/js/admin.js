@@ -49,10 +49,8 @@ require([
     'underscore',
     'bootstrap',
     'd3'
-], function(
-    Router
-) {
-    Router.start("#home");
-    Router.redirect('#home');
+], function(Router) {
+    Router.start("#editor");
+    Router.redirect("#editor");
 });
 
