@@ -34,6 +34,47 @@ public enum Operation {
         return value;
     }
 	
+		public Operation getRevertedOpertion(){
+		switch (this){
+			case EQ:
+				return EQ;
+			case LT:
+				return GT;
+			case GT:
+				return LT;
+			case NEQ:
+				return NEQ;
+			case LTE:
+				return GTE;
+			case GTE:
+				return LTE;
+			case CEQ:
+				return CEQ;
+		}
+		return null;
+	}
+	
+	public Operation getInvertedOperation(){
+		switch (this){
+			case EQ:
+				return NEQ;
+			case LT:
+				return GTE;
+			case GT:
+				return LTE;
+			case NEQ:
+				return EQ;
+			case LTE:
+				return GT;
+			case GTE:
+				return LT;
+			case CEQ:
+				return CEQ;
+		}
+		return null;
+	}
+
+	
 	public String toLinquistics(){
 		switch (this){
 			case EQ:

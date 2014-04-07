@@ -123,7 +123,7 @@ public class DCRuleBuilder extends RuleBuilder {
         predicates = predicatesStr.split("&");
         String tableName = tableNames.get(0);
         for (int i = 0; i < predicates.length; i++) {
-             predicateList.add(Predicate.valueOf(predicates[i], tableName));
+			predicateList.add(Predicate.valueOf(predicates[i].trim(), tableName));
         }
     }
 }
