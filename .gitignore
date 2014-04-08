@@ -1,2 +1,4 @@
 nadeefdb/
 out/
+bin/
+**/.idea/workspace.xml
