@@ -5,7 +5,23 @@
     <option name="ANALYSIS_IN_BACKGROUND" value="true" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="Clean workspace." />
+=======
+    <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="- Implicitly use dcdemo as the project name.">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/console/console.iml" afterPath="$PROJECT_DIR$/console/console.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/core.iml" afterPath="$PROJECT_DIR$/core/core.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/findbugs-idea.xml" afterPath="$PROJECT_DIR$/.idea/findbugs-idea.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/lab.iml" afterPath="$PROJECT_DIR$/lab/lab.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/ruleext.iml" afterPath="$PROJECT_DIR$/ruleext/ruleext.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/service/service.iml" afterPath="$PROJECT_DIR$/service/service.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.iml" afterPath="$PROJECT_DIR$/test/test.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/tools.iml" afterPath="$PROJECT_DIR$/tools/tools.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/web.iml" afterPath="$PROJECT_DIR$/web/web.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
+    <list id="7dfe3abb-6c8d-4df6-aeda-0f7935f305d5" name="lab" comment="" />
+>>>>>>> - Update Intellij project files.
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +187,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" line="559" class="qa.qcri.nadeef.web.Dashboard$18" package="qa.qcri.nadeef.web">
+      <breakpoint url="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" line="563" class="qa.qcri.nadeef.web.Dashboard$18" package="qa.qcri.nadeef.web">
         <option name="ENABLED" value="false" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -435,6 +451,35 @@
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java" />
         <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/DCRuleBuilder.java" />
+<<<<<<< HEAD
+=======
+        <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java" />
+        <option value="$PROJECT_DIR$/web/src/public/js/requester.js" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java" />
+        <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/CSVTools.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/SQLTableTest.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/CleanPlan1.json" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/CleanPlan3.json" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/CleanPlan4.json" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/AdultRule3.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule3.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule4.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule40k.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule8.java" />
+        <option value="$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java" />
+        <option value="$PROJECT_DIR$/out/MyDC1.java" />
+        <option value="$PROJECT_DIR$/web/src/public/js/mvc/template/cleanplan.template.html" />
+        <option value="$PROJECT_DIR$/web/src/public/index.html" />
+        <option value="$PROJECT_DIR$/web/src/public/js/mvc/CleanPlanView.js" />
+        <option value="$PROJECT_DIR$/web/src/public/js/mvc/ControllerView.js" />
+        <option value="$PROJECT_DIR$/web/src/public/js/mvc/template/controller.template.html" />
+        <option value="$PROJECT_DIR$/web/src/public/js/router.js" />
+        <option value="$PROJECT_DIR$/web/src/public/js/mvc/NavbarView.js" />
+        <option value="$PROJECT_DIR$/web/src/public/js/mvc/template/navbar.template.html" />
+        <option value="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" />
+        <option value="$PROJECT_DIR$/nadeef.conf" />
+>>>>>>> - Update Intellij project files.
       </list>
     </option>
   </component>
@@ -516,13 +561,152 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="NADEEF" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qcri" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nadeef" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sql" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NADEEF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mvc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -602,6 +786,7 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1339,7 +1524,7 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="" />
-      <changelist id="d763a6a4-3fac-4bf4-a3a5-2672c971d002" name="New changelist" comment="" />
+      <changelist id="" name="New changelist" comment="" />
       <changelist id="7dfe3abb-6c8d-4df6-aeda-0f7935f305d5" name="lab" comment="" />
       <created>1372596526573</created>
       <updated>1372596526573</updated>
@@ -1382,7 +1567,16 @@
       <workItem from="1394618192458" duration="9982000" />
       <workItem from="1394704080628" duration="16000" />
       <workItem from="1394704245115" duration="7844000" />
+<<<<<<< HEAD
       <workItem from="1395559556516" duration="668000" />
+=======
+      <workItem from="1395559556516" duration="1386000" />
+      <workItem from="1395560962822" duration="13559000" />
+      <workItem from="1395651028415" duration="16000" />
+      <workItem from="1395744220327" duration="950000" />
+      <workItem from="1396871962781" duration="1179000" />
+      <workItem from="1396873258238" duration="968000" />
+>>>>>>> - Update Intellij project files.
     </task>
     <task id="LOCAL-00001" summary="- fix git setup.">
       <created>1372597206357</created>
@@ -1496,11 +1690,43 @@
       <created>1389792324485</created>
       <updated>1389792324485</updated>
     </task>
+<<<<<<< HEAD
     <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="395303000" />
+=======
+    <task id="LOCAL-00029" summary="- Adds Delete rule button in the dashboard.&#10;- Integration with Ruleminer. Adapt naming convention of TB_ table name.">
+      <created>1395573372103</created>
+      <updated>1395573372103</updated>
+    </task>
+    <task id="LOCAL-00030" summary="- Adds table filtering with TB_ prefix.">
+      <created>1395574075218</created>
+      <updated>1395574075218</updated>
+    </task>
+    <task id="LOCAL-00031" summary="- Showing the code instead of rule  name in the Dashboard.">
+      <created>1395581156813</created>
+      <updated>1395581156813</updated>
+    </task>
+    <task id="LOCAL-00032" summary="- Bug fix on select input.">
+      <created>1395586191616</created>
+      <updated>1395586191616</updated>
+    </task>
+    <task id="LOCAL-00033" summary="- Implicitly use dcdemo as the project name.">
+      <created>1395745005062</created>
+      <updated>1395745005062</updated>
+    </task>
+    <task id="LOCAL-00034" summary="- Restore default nadeef config.">
+      <created>1396873356375</created>
+      <updated>1396873356375</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="412693000" />
+>>>>>>> - Update Intellij project files.
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1582,12 +1808,15 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+<<<<<<< HEAD
     <MESSAGE value="- Unittest fix.&#10;- Adds Dashboard launcher.&#10;- Updates copyright for Web files.&#10;- Modify the build and launch script to make it one click show." />
     <MESSAGE value="- Regression test fixes.&#10;- Batch improvement on options." />
     <MESSAGE value="- Adds MySQL / Postgres support for Dashboard&#10;- Improve stability of Dashboard experience." />
     <MESSAGE value="- Unit test fix." />
     <MESSAGE value="- table pagination&#10;- table ui fixes." />
     <MESSAGE value="- Adds @author." />
+=======
+>>>>>>> - Update Intellij project files.
     <MESSAGE value="- adds initial design / implementation of project association." />
     <MESSAGE value="- Initial version of project association.&#10;- CSV upload functionality." />
     <MESSAGE value="- Fix regression test." />
@@ -1607,7 +1836,17 @@
     <MESSAGE value="- Adds dedup service." />
     <MESSAGE value="- Adds initial framework for test app of qatar car sales.&#10;- Adds Guava 15.0 support.&#10;- Clean the project deps.&#10;- Adds exception handler for rule detect / repair  itself.&#10;- Adds better Log4j support (-Ddebug).&#10;- Minor bug fixes." />
     <MESSAGE value="- Merge from master." />
+<<<<<<< HEAD
     <option name="LAST_COMMIT_MESSAGE" value="- Merge from master." />
+=======
+    <MESSAGE value="- Adds Delete rule button in the dashboard.&#10;- Integration with Ruleminer. Adapt naming convention of TB_ table name." />
+    <MESSAGE value="- Adds table filtering with TB_ prefix." />
+    <MESSAGE value="- Showing the code instead of rule  name in the Dashboard." />
+    <MESSAGE value="- Bug fix on select input." />
+    <MESSAGE value="- Implicitly use dcdemo as the project name." />
+    <MESSAGE value="- Restore default nadeef config." />
+    <option name="LAST_COMMIT_MESSAGE" value="- Restore default nadeef config." />
+>>>>>>> - Update Intellij project files.
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1730,17 +1969,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="66" column="5" selection-start="2348" selection-end="2348" vertical-scroll-proportion="0.77922076" vertical-offset="642" max-vertical-offset="1258" />
+=======
+        <state line="10" column="26" selection-start="248" selection-end="248" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="357" />
+>>>>>>> - Update Intellij project files.
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Updater.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="816" max-vertical-offset="2635" />
+=======
+        <state line="11" column="26" selection-start="271" selection-end="271" vertical-scroll-proportion="-7.1923075" vertical-offset="0" max-vertical-offset="391" />
+>>>>>>> - Update Intellij project files.
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Violation.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="44" column="0" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2074" />
+=======
+        <state line="10" column="26" selection-start="249" selection-end="249" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="357" />
+>>>>>>> - Update Intellij project files.
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/SatSolver.java">
@@ -1794,6 +2045,7 @@
         <state line="212" column="9" selection-start="7048" selection-end="7048" vertical-scroll-proportion="0.0" vertical-offset="3008" max-vertical-offset="4029" />
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="33" selection-start="166" selection-end="166" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
@@ -1802,6 +2054,9 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg">
+=======
+    <entry file="file://$PROJECT_DIR$/nadeef.sh">
+>>>>>>> - Update Intellij project files.
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377" />
       </provider>
@@ -1811,12 +2066,16 @@
         <state line="20" column="13" selection-start="784" selection-end="784" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612" />
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2261" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule40k.java">
+=======
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/CleanPlanView.js">
+>>>>>>> - Update Intellij project files.
       <provider selected="true" editor-type-id="text-editor">
         <state line="26" column="13" selection-start="911" selection-end="911" vertical-scroll-proportion="0.0" vertical-offset="1837" max-vertical-offset="2414" />
       </provider>
@@ -1856,6 +2115,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.44646272" vertical-offset="467" max-vertical-offset="1513">
@@ -1880,10 +2140,40 @@
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="0" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="3111">
+=======
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/ControllerView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="58" selection-start="1488" selection-end="1488" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="4216" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/controller.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="25" selection-start="2383" selection-end="2383" vertical-scroll-proportion="0.44019607" vertical-offset="571" max-vertical-offset="1632" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/navbar.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="19" selection-start="853" selection-end="853" vertical-scroll-proportion="0.21666667" vertical-offset="102" max-vertical-offset="1122" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/DBInstaller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="71" column="0" selection-start="2615" selection-end="2615" vertical-scroll-proportion="0.0" vertical-offset="535" max-vertical-offset="1581">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/project.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="61" selection-start="435" selection-end="435" vertical-scroll-proportion="-5.8846154" vertical-offset="0" max-vertical-offset="391">
+>>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="24" column="13" selection-start="1065" selection-end="1065" vertical-scroll-proportion="0.1873805" vertical-offset="212" max-vertical-offset="1258">
@@ -1899,38 +2189,93 @@
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="101" column="0" selection-start="4007" selection-end="4007" vertical-scroll-proportion="0.82695985" vertical-offset="495" max-vertical-offset="1564">
+=======
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/HomeView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3077">
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="314" max-vertical-offset="1360">
+>>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="27" column="43" selection-start="1075" selection-end="1075" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="986">
           <folding>
             <element signature="imports" expanded="true" />
+=======
+        <state line="35" column="11" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.0" vertical-offset="246" max-vertical-offset="1292">
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+>>>>>>> - Update Intellij project files.
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="78" column="0" selection-start="2822" selection-end="2934" vertical-scroll-proportion="0.5286807" vertical-offset="433" max-vertical-offset="1479">
+=======
+        <state line="66" column="41" selection-start="2708" selection-end="2708" vertical-scroll-proportion="0.0" vertical-offset="664" max-vertical-offset="1853">
+>>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="0" selection-start="765" selection-end="765" vertical-scroll-proportion="0.09751434" vertical-offset="0" max-vertical-offset="1046">
+=======
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/requester.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="181" column="13" selection-start="5434" selection-end="5434" vertical-scroll-proportion="0.0" vertical-offset="2630" max-vertical-offset="3774">
+>>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/DCRuleBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="128" column="1" selection-start="4324" selection-end="4324" vertical-scroll-proportion="0.90248567" vertical-offset="807" max-vertical-offset="1853">
+=======
+    <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="802" column="26" selection-start="30463" selection-end="30463" vertical-scroll-proportion="-0.22106633" vertical-offset="13804" max-vertical-offset="15793">
+          <folding>
+            <element signature="e#0#33892#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#2384#2414#0" expanded="true" />
+            <element signature="e#10106#10136#0" expanded="true" />
+            <element signature="e#11914#11944#0" expanded="true" />
+            <element signature="e#32620#32650#0" expanded="true" />
+            <element signature="e#33501#33531#0" expanded="true" />
+            <element signature="e#33689#33719#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nadeef.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="32" selection-start="621" selection-end="621" vertical-scroll-proportion="0.41789576" vertical-offset="0" max-vertical-offset="1017">
+>>>>>>> - Update Intellij project files.
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
   </component>
