@@ -46,10 +46,6 @@ public class DCRuleBuilder extends RuleBuilder {
         predicateList = Lists.newArrayList();
     }
 
-	public List<Predicate> getPredicateList(){
-		return predicateList;
-	}
-	
     @Override
     public Collection<File> compile() throws Exception {
         File inputFile = generate().iterator().next();
