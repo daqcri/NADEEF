@@ -1,27 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AnalysisUIOptions">
-    <option name="CUSTOM_SCOPE_NAME" value="Project Files" />
-    <option name="ANALYSIS_IN_BACKGROUND" value="true" />
-  </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="Clean workspace." />
-=======
     <list default="true" id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="- Implicitly use dcdemo as the project name.">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/console/console.iml" afterPath="$PROJECT_DIR$/console/console.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/core.iml" afterPath="$PROJECT_DIR$/core/core.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/findbugs-idea.xml" afterPath="$PROJECT_DIR$/.idea/findbugs-idea.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lab/lab.iml" afterPath="$PROJECT_DIR$/lab/lab.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ruleext/ruleext.iml" afterPath="$PROJECT_DIR$/ruleext/ruleext.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/service/service.iml" afterPath="$PROJECT_DIR$/service/service.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.iml" afterPath="$PROJECT_DIR$/test/test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/tools.iml" afterPath="$PROJECT_DIR$/tools/tools.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/web.iml" afterPath="$PROJECT_DIR$/web/web.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
-    <list id="7dfe3abb-6c8d-4df6-aeda-0f7935f305d5" name="lab" comment="" />
->>>>>>> - Update Intellij project files.
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,11 +11,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
-  <component name="Commander">
-    <leftPanel />
-    <rightPanel />
-    <splitter proportion="0.5" />
-  </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/NADEEF$NadeefStart.coverage" NAME="NadeefStart Coverage Results" MODIFIED="1389252293621" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/NADEEF$Dashboard.coverage" NAME="Dashboard Coverage Results" MODIFIED="1379314992702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
@@ -187,7 +164,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" line="563" class="qa.qcri.nadeef.web.Dashboard$18" package="qa.qcri.nadeef.web">
+      <breakpoint url="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" line="564" class="qa.qcri.nadeef.web.Dashboard$18" package="qa.qcri.nadeef.web">
         <option name="ENABLED" value="false" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -292,81 +269,6 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java" line="37" class="qa.qcri.nadeef.lab.holisticCleaning.test.JOptimizerTest" package="qa.qcri.nadeef.lab.holisticCleaning.test">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" line="32" class="qa.qcri.nadeef.lab.holisticCleaning.GurobiSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java" line="159" class="qa.qcri.nadeef.lab.holisticCleaning.GurobiSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" line="32" class="qa.qcri.nadeef.lab.holisticCleaning.VFMSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" line="68" class="qa.qcri.nadeef.lab.holisticCleaning.VFMSolver" package="qa.qcri.nadeef.lab.holisticCleaning">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
     </line_breakpoints>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <exception_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
@@ -397,7 +299,20 @@
     <favorites_list name="NADEEF" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="Dashboard.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="258" column="27" selection-start="9692" selection-end="9692" vertical-scroll-proportion="0.35181645" vertical-offset="4018" max-vertical-offset="15810">
+              <folding>
+                <element signature="e#0#33916#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -415,12 +330,6 @@
       <map>
         <entry key="$PROJECT_DIR$" value="master" />
       </map>
-    </option>
-  </component>
-  <component name="GitLogSettings">
-    <option name="myStructureFilterPaths" />
-    <option name="myDateState">
-      <MyDateState />
     </option>
   </component>
   <component name="IdeDocumentHistory">
@@ -451,8 +360,6 @@
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java" />
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java" />
         <option value="$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/DCRuleBuilder.java" />
-<<<<<<< HEAD
-=======
         <option value="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java" />
         <option value="$PROJECT_DIR$/web/src/public/js/requester.js" />
         <option value="$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java" />
@@ -479,7 +386,6 @@
         <option value="$PROJECT_DIR$/web/src/public/js/mvc/template/navbar.template.html" />
         <option value="$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java" />
         <option value="$PROJECT_DIR$/nadeef.conf" />
->>>>>>> - Update Intellij project files.
       </list>
     </option>
   </component>
@@ -490,43 +396,6 @@
     <option name="x" value="1919" />
     <option name="width" value="1922" />
     <option name="height" value="1201" />
-  </component>
-  <component name="ProjectInspectionProfilesVisibleTreeState">
-    <entry key="Project Default">
-      <profile-state>
-        <expanded-state>
-          <State>
-            <id />
-          </State>
-          <State>
-            <id>Declaration redundancy</id>
-          </State>
-          <State>
-            <id>Error handling</id>
-          </State>
-          <State>
-            <id>General</id>
-          </State>
-          <State>
-            <id>Imports</id>
-          </State>
-          <State>
-            <id>Plugin DevKit</id>
-          </State>
-          <State>
-            <id>Portability issues</id>
-          </State>
-          <State>
-            <id>Properties Files</id>
-          </State>
-        </expanded-state>
-        <selected-state>
-          <State>
-            <id>UNUSED_IMPORT</id>
-          </State>
-        </selected-state>
-      </profile-state>
-    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -541,13 +410,6 @@
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
   </component>
-  <component name="ProjectStructureProblems">
-    <ignored-problems>
-      <problem id="library-invalid-classes-path(library:project:org.apache.thrift:libthrift:0.8.0)" />
-      <problem id="unused-library(library:project:org.slf4j:slf4j-log4j12:1.7.5)" />
-      <problem id="unused-library(library:project:org.slf4j:slf4j-log4j13:1.0.1)" />
-    </ignored-problems>
-  </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
       <flattenPackages ProjectPane="false" />
@@ -561,6 +423,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -749,44 +613,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NADEEF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qcri" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nadeef" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pipeline" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -802,7 +630,7 @@
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/gurobi562/linux64/lib" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/out/MyDC1.java" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="267" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1059" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1061" />
@@ -833,32 +661,14 @@
     <property name="OverrideImplement.overriding.sorted" value="false" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/lab/src" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
-    <property name="SearchEverywhereHistory" value="&#10;d。" />
+    <property name="SearchEverywhereHistory" value="test.&#10;d。" />
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/web/src/public/js/lib" />
-    </key>
-    <key name="MoveMembersDialog.RECENTS_KEY">
-      <recent name="qa.qcri.nadeef.tools.sql.SQLDialectTools" />
-      <recent name="qa.qcri.nadeef.tools.SQLDialectManagerBase" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template" />
-      <recent name="$PROJECT_DIR$/web/src/qa/qcri/nadeef/lab/dedup/web" />
-      <recent name="$PROJECT_DIR$/web/src/public/js/mvc/template" />
-      <recent name="$PROJECT_DIR$/web/src/public/images" />
-      <recent name="$PROJECT_DIR$/web/src" />
-    </key>
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="qa.qcri.nadeef.lab" />
-      <recent name="qa.qcri.nadeef" />
-      <recent name="qa.qcri.nadeef.web.lab.dedup" />
-      <recent name="qa.qcri.nadeef.tools" />
-      <recent name="qa.qcri.nadeef.core.util" />
-    </key>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings />
+    </option>
   </component>
-  <component name="RunManager" selected="JUnit.VFMTest.simpleTest">
+  <component name="RunManager" selected="Application.NadeefStart">
     <configuration default="false" name="FlowTest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -1318,12 +1128,6 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
-      <option name="VM_PARAMETERS" value="" />
-      <option name="USER_CFG_CLASS" />
-      <option name="CONTEXT_PROVIDER" />
-      <method />
-    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -1341,6 +1145,12 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
       <method />
     </configuration>
     <configuration default="false" name="NadeefService" type="Application" factoryName="Application">
@@ -1501,31 +1311,10 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
-  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="true">
-    <option name="USER" value="" />
-    <option name="PASSWORD" value="" />
-    <option name="mySSHConnectionTimeout" value="30000" />
-    <option name="mySSHReadTimeout" value="30000" />
-    <option name="LAST_MERGED_REVISION" />
-    <option name="MERGE_DRY_RUN" value="false" />
-    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
-    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
-    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
-    <option name="DETECT_NESTED_COPIES" value="true" />
-    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
-    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
-    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
-    <option name="FORCE_UPDATE" value="false" />
-    <option name="IGNORE_EXTERNALS" value="false" />
-    <configuration useDefault="false">$USER_HOME$/.subversion</configuration>
-    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
-    <supportedVersion>125</supportedVersion>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="473ea295-18d1-42a0-be5d-846fb0b97f97" name="Default" comment="" />
-      <changelist id="" name="New changelist" comment="" />
-      <changelist id="7dfe3abb-6c8d-4df6-aeda-0f7935f305d5" name="lab" comment="" />
+      <changelist id="" name="lab" comment="" />
       <created>1372596526573</created>
       <updated>1372596526573</updated>
       <workItem from="1388644097192" duration="51000" />
@@ -1567,16 +1356,14 @@
       <workItem from="1394618192458" duration="9982000" />
       <workItem from="1394704080628" duration="16000" />
       <workItem from="1394704245115" duration="7844000" />
-<<<<<<< HEAD
-      <workItem from="1395559556516" duration="668000" />
-=======
       <workItem from="1395559556516" duration="1386000" />
       <workItem from="1395560962822" duration="13559000" />
       <workItem from="1395651028415" duration="16000" />
       <workItem from="1395744220327" duration="950000" />
       <workItem from="1396871962781" duration="1179000" />
       <workItem from="1396873258238" duration="968000" />
->>>>>>> - Update Intellij project files.
+      <workItem from="1396941003489" duration="743000" />
+      <workItem from="1396943061711" duration="62000" />
     </task>
     <task id="LOCAL-00001" summary="- fix git setup.">
       <created>1372597206357</created>
@@ -1690,13 +1477,6 @@
       <created>1389792324485</created>
       <updated>1389792324485</updated>
     </task>
-<<<<<<< HEAD
-    <option name="localTasksCounter" value="29" />
-    <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="395303000" />
-=======
     <task id="LOCAL-00029" summary="- Adds Delete rule button in the dashboard.&#10;- Integration with Ruleminer. Adapt naming convention of TB_ table name.">
       <created>1395573372103</created>
       <updated>1395573372103</updated>
@@ -1725,58 +1505,36 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="412693000" />
->>>>>>> - Update Intellij project files.
-  </component>
-  <component name="TodoView" selected-index="0">
-    <todo-panel id="selected-file">
-      <are-packages-shown value="false" />
-      <are-modules-shown value="false" />
-      <flatten-packages value="false" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <are-modules-shown value="false" />
-      <flatten-packages value="false" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="default-changelist">
-      <are-packages-shown value="false" />
-      <are-modules-shown value="false" />
-      <flatten-packages value="false" />
-      <is-autoscroll-to-source value="false" />
-    </todo-panel>
+    <option name="totallyTimeSpent" value="413498000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1919" y="0" width="1922" height="1201" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2648699" sideWeight="0.4108858" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25743493" sideWeight="0.4108858" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29275092" sideWeight="0.50426894" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" x="2535" y="165" width="393" height="548" />
       <window_info id="Ant Build" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24919957" sideWeight="0.6644487" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37081784" sideWeight="0.5090715" order="4" side_tool="false" content_ui="tabs" x="11" y="291" width="1257" height="217" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30111524" sideWeight="0.5090715" order="4" side_tool="false" content_ui="tabs" x="11" y="291" width="1257" height="217" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22411953" sideWeight="0.2905983" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27230483" sideWeight="0.4909285" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15865384" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806692" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32620817" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18215613" sideWeight="0.53681964" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32899627" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22251868" sideWeight="0.6951567" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.40032414" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.19530416" sideWeight="0.7217474" order="0" side_tool="false" content_ui="combo" x="1310" y="64" width="516" height="995" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.19530416" sideWeight="0.7217474" order="0" side_tool="false" content_ui="combo" x="851" y="26" width="512" height="937" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31877324" sideWeight="0.41607" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="1990" y="284" width="1722" height="731" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298479" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924226" sideWeight="0.78612167" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298479" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32922202" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32992566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1784,6 +1542,7 @@
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.8043685" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23048328" sideWeight="0.4375667" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18215613" sideWeight="0.53681964" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="RESTClient" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32953465" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981008" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -1791,9 +1550,6 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.conf" />
-  </component>
-  <component name="UpdateCopyrightCheckinHandler">
-    <option name="UPDATE_COPYRIGHT" value="true" />
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -1808,15 +1564,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-<<<<<<< HEAD
-    <MESSAGE value="- Unittest fix.&#10;- Adds Dashboard launcher.&#10;- Updates copyright for Web files.&#10;- Modify the build and launch script to make it one click show." />
-    <MESSAGE value="- Regression test fixes.&#10;- Batch improvement on options." />
-    <MESSAGE value="- Adds MySQL / Postgres support for Dashboard&#10;- Improve stability of Dashboard experience." />
-    <MESSAGE value="- Unit test fix." />
-    <MESSAGE value="- table pagination&#10;- table ui fixes." />
-    <MESSAGE value="- Adds @author." />
-=======
->>>>>>> - Update Intellij project files.
     <MESSAGE value="- adds initial design / implementation of project association." />
     <MESSAGE value="- Initial version of project association.&#10;- CSV upload functionality." />
     <MESSAGE value="- Fix regression test." />
@@ -1836,9 +1583,6 @@
     <MESSAGE value="- Adds dedup service." />
     <MESSAGE value="- Adds initial framework for test app of qatar car sales.&#10;- Adds Guava 15.0 support.&#10;- Clean the project deps.&#10;- Adds exception handler for rule detect / repair  itself.&#10;- Adds better Log4j support (-Ddebug).&#10;- Minor bug fixes." />
     <MESSAGE value="- Merge from master." />
-<<<<<<< HEAD
-    <option name="LAST_COMMIT_MESSAGE" value="- Merge from master." />
-=======
     <MESSAGE value="- Adds Delete rule button in the dashboard.&#10;- Integration with Ruleminer. Adapt naming convention of TB_ table name." />
     <MESSAGE value="- Adds table filtering with TB_ prefix." />
     <MESSAGE value="- Showing the code instead of rule  name in the Dashboard." />
@@ -1846,7 +1590,6 @@
     <MESSAGE value="- Implicitly use dcdemo as the project name." />
     <MESSAGE value="- Restore default nadeef config." />
     <option name="LAST_COMMIT_MESSAGE" value="- Restore default nadeef config." />
->>>>>>> - Update Intellij project files.
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1861,244 +1604,9 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="0" selection-start="2476" selection-end="2476" vertical-scroll-proportion="0.0" vertical-offset="1173" max-vertical-offset="3536">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="13" selection-start="1065" selection-end="1065" vertical-scroll-proportion="0.0" vertical-offset="408" max-vertical-offset="1258">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="0" selection-start="2822" selection-end="2934" vertical-scroll-proportion="0.0" vertical-offset="1326" max-vertical-offset="1819">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="39" selection-start="2861" selection-end="2861" vertical-scroll-proportion="0.0" vertical-offset="333" max-vertical-offset="2567" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="6.6923075" vertical-offset="174" max-vertical-offset="884" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/template/home.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="32" selection-start="868" selection-end="868" vertical-scroll-proportion="-17.0" vertical-offset="0" max-vertical-offset="629" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/ViolationRepair.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="64" selection-start="1103" selection-end="1103" vertical-scroll-proportion="0.13001911" vertical-offset="0" max-vertical-offset="1046" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/DedupRestServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="142" column="61" selection-start="5011" selection-end="5011" vertical-scroll-proportion="1.7081339" vertical-offset="51" max-vertical-offset="3468" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/web/js/HomeView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="24" selection-start="1647" selection-end="1647" vertical-scroll-proportion="0.66698563" vertical-offset="0" max-vertical-offset="1045" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/CleanPlan.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5576" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nadeef.conf">
-      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="53" selection-start="338" selection-end="338" vertical-scroll-proportion="0.27868852" vertical-offset="0" max-vertical-offset="732" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/NadeefConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="33" selection-start="3699" selection-end="3699" vertical-scroll-proportion="0.7941176" vertical-offset="902" max-vertical-offset="4437" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/VehicleRule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="58" selection-start="2847" selection-end="2847" vertical-scroll-proportion="0.36136663" vertical-offset="881" max-vertical-offset="2125">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/SatSolverTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="0" selection-start="2945" selection-end="2945" vertical-scroll-proportion="0.0" vertical-offset="416" max-vertical-offset="1462">
-          <folding>
-            <element signature="e#0#3001#0" expanded="true" />
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/buildThrift.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="21" selection-start="237" selection-end="237" vertical-scroll-proportion="0.14627151" vertical-offset="0" max-vertical-offset="1046" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/dedup/service.thrift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="187" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/junit-4.11.jar!/org/junit/runners/ParentRunner.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="25" selection-start="2400" selection-end="2400" vertical-scroll-proportion="0.34569734" vertical-offset="498" max-vertical-offset="1224" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/junit-4.11.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="40" selection-start="388" selection-end="388" vertical-scroll-proportion="0.25222552" vertical-offset="0" max-vertical-offset="674" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/FlowTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="66" column="5" selection-start="2348" selection-end="2348" vertical-scroll-proportion="0.77922076" vertical-offset="642" max-vertical-offset="1258" />
-=======
-        <state line="10" column="26" selection-start="248" selection-end="248" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="357" />
->>>>>>> - Update Intellij project files.
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/Updater.java">
-      <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="816" max-vertical-offset="2635" />
-=======
-        <state line="11" column="26" selection-start="271" selection-end="271" vertical-scroll-proportion="-7.1923075" vertical-offset="0" max-vertical-offset="391" />
->>>>>>> - Update Intellij project files.
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Violation.java">
-      <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="44" column="0" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2074" />
-=======
-        <state line="10" column="26" selection-start="249" selection-end="249" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="357" />
->>>>>>> - Update Intellij project files.
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/SatSolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="49" selection-start="2139" selection-end="2139" vertical-scroll-proportion="0.0" vertical-offset="867" max-vertical-offset="4879" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/vendors/guava-15.0.jar!/com/google/common/collect/Multisets.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="19" selection-start="219" selection-end="219" vertical-scroll-proportion="0.099902056" vertical-offset="0" max-vertical-offset="3621" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/UpdateExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2159" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/pipeline/EquivalentClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="137" column="26" selection-start="5296" selection-end="5296" vertical-scroll-proportion="0.0" vertical-offset="1606" max-vertical-offset="2652" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Cell.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="11" selection-start="2434" selection-end="2439" vertical-scroll-proportion="0.0" vertical-offset="699" max-vertical-offset="2278">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="0" selection-start="1998" selection-end="1998" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1207">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefServiceHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="13" selection-start="1571" selection-end="1571" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4471">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/IteratorStream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="13" selection-start="991" selection-end="991" vertical-scroll-proportion="-0.6044177" vertical-offset="772" max-vertical-offset="1768" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/src/qa/qcri/nadeef/service/NadeefJobScheduler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="212" column="9" selection-start="7048" selection-end="7048" vertical-scroll-proportion="0.0" vertical-offset="3008" max-vertical-offset="4029" />
-      </provider>
-    </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/log4j.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="33" selection-start="166" selection-end="166" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/SingleDCRuleBuilder.stg">
-=======
-    <entry file="file://$PROJECT_DIR$/nadeef.sh">
->>>>>>> - Update Intellij project files.
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyTestRule1.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="13" selection-start="784" selection-end="784" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612" />
-      </provider>
-    </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2261" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule40k.java">
-=======
-    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/CleanPlanView.js">
->>>>>>> - Update Intellij project files.
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="13" selection-start="911" selection-end="911" vertical-scroll-proportion="0.0" vertical-offset="1837" max-vertical-offset="2414" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule8.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="13" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2431">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/GurobiSolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="0" selection-start="2476" selection-end="2476" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3179">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan3.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="836">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="836" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/DCCleanPlan2.json">
@@ -2115,32 +1623,159 @@
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/template/PairDCRuleBuilder.stg">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.44646272" vertical-offset="467" max-vertical-offset="1513">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.44646272" vertical-offset="467" max-vertical-offset="1513" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule7.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="22" selection-start="3259" selection-end="3259" vertical-scroll-proportion="0.0" vertical-offset="575" max-vertical-offset="1785">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/HolisticCleaning.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="166" column="33" selection-start="5652" selection-end="5652" vertical-scroll-proportion="0.0" vertical-offset="2822" max-vertical-offset="2992">
-          <folding />
-        </state>
+        <state line="87" column="22" selection-start="3259" selection-end="3259" vertical-scroll-proportion="0.0" vertical-offset="575" max-vertical-offset="1785" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Fix.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="3111">
-=======
+        <state line="21" column="0" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="3111" />
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="40" selection-start="388" selection-end="388" vertical-scroll-proportion="0.20961775" vertical-offset="0" max-vertical-offset="811" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/DCRuleBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="128" column="1" selection-start="4324" selection-end="4324" vertical-scroll-proportion="0.90248567" vertical-offset="807" max-vertical-offset="1853" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="42" selection-start="1817" selection-end="1824" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="3774" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Column.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="65" selection-start="2665" selection-end="2665" vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="2074" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Tuple.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="177" column="61" selection-start="5349" selection-end="5349" vertical-scroll-proportion="0.0" vertical-offset="2369" max-vertical-offset="4029" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/util/CSVTools.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="219" column="31" selection-start="7684" selection-end="7684" vertical-scroll-proportion="0.0" vertical-offset="2947" max-vertical-offset="5151" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/core/SQLTableTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="145" column="41" selection-start="5171" selection-end="5171" vertical-scroll-proportion="0.0" vertical-offset="1650" max-vertical-offset="2448" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/CleanPlan1.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="26" selection-start="248" selection-end="248" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="357" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/CleanPlan3.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="26" selection-start="271" selection-end="271" vertical-scroll-proportion="-7.1923075" vertical-offset="0" max-vertical-offset="391" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/CleanPlan4.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="26" selection-start="249" selection-end="249" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="357" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/AdultRule3.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="45" selection-start="1757" selection-end="1757" vertical-scroll-proportion="0.0" vertical-offset="193" max-vertical-offset="2091" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule3.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="40" selection-start="1269" selection-end="1269" vertical-scroll-proportion="0.0" vertical-offset="6" max-vertical-offset="2261" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule4.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="40" selection-start="1230" selection-end="1230" vertical-scroll-proportion="0.0" vertical-offset="6" max-vertical-offset="2329" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule40k.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="40" selection-start="1323" selection-end="1323" vertical-scroll-proportion="0.0" vertical-offset="57" max-vertical-offset="2414" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule8.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="40" selection-start="1216" selection-end="1216" vertical-scroll-proportion="0.0" vertical-offset="6" max-vertical-offset="2431" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/udf/MyRule80k.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="40" selection-start="1231" selection-end="1231" vertical-scroll-proportion="0.31954888" vertical-offset="0" max-vertical-offset="2261" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="105" column="70" selection-start="4335" selection-end="4353" vertical-scroll-proportion="0.41541353" vertical-offset="1564" max-vertical-offset="5219">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/css/bootstrap-responsive.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="18666" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="29" selection-start="806" selection-end="806" vertical-scroll-proportion="0.39637306" vertical-offset="0" max-vertical-offset="772" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nadeef.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="42" selection-start="572" selection-end="572" vertical-scroll-proportion="0.24378586" vertical-offset="0" max-vertical-offset="1046" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/qa/qcri/nadeef/core/datamodel/Predicate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="42" selection-start="1676" selection-end="1676" vertical-scroll-proportion="0.1625239" vertical-offset="255" max-vertical-offset="5746" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/CleanPlanView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="17" selection-start="867" selection-end="867" vertical-scroll-proportion="0.2543021" vertical-offset="125" max-vertical-offset="2720" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/sql/PostgresSQLDialect.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="129" column="62" selection-start="3863" selection-end="3863" vertical-scroll-proportion="0.21128108" vertical-offset="1887" max-vertical-offset="3077" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/sql/template/PostgresTemplate.stg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="32" selection-start="785" selection-end="785" vertical-scroll-proportion="0.5014749" vertical-offset="0" max-vertical-offset="1037" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/cleanplan.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="62" selection-start="1090" selection-end="1090" vertical-scroll-proportion="-5.8846154" vertical-offset="272" max-vertical-offset="1292" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/qa/qcri/nadeef/test/input/config/postgresConfig.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="0" selection-start="2" selection-end="155" vertical-scroll-proportion="0.023224045" vertical-offset="0" max-vertical-offset="732" />
+      </provider>
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/ControllerView.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="58" selection-start="1488" selection-end="1488" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="4216" />
@@ -2168,28 +1803,10 @@
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/template/project.template.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="61" selection-start="435" selection-end="435" vertical-scroll-proportion="-5.8846154" vertical-offset="0" max-vertical-offset="391">
->>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/JOptimizerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="13" selection-start="1065" selection-end="1065" vertical-scroll-proportion="0.1873805" vertical-offset="212" max-vertical-offset="1258">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="40" selection-start="388" selection-end="388" vertical-scroll-proportion="0.20961775" vertical-offset="0" max-vertical-offset="811" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/VFMSolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="0" selection-start="4007" selection-end="4007" vertical-scroll-proportion="0.82695985" vertical-offset="495" max-vertical-offset="1564">
-=======
     <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/HomeView.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3077">
@@ -2202,75 +1819,36 @@
     <entry file="file://$PROJECT_DIR$/web/src/public/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="314" max-vertical-offset="1360">
->>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/VFMTest.java">
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/router.js">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="27" column="43" selection-start="1075" selection-end="1075" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="986">
-          <folding>
-            <element signature="imports" expanded="true" />
-=======
         <state line="35" column="11" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.0" vertical-offset="246" max-vertical-offset="1292">
           <folding>
             <element signature="n#!!doc" expanded="false" />
->>>>>>> - Update Intellij project files.
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/test/GurobiSolverTest.java">
+    <entry file="file://$PROJECT_DIR$/web/src/public/js/mvc/NavbarView.js">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="78" column="0" selection-start="2822" selection-end="2934" vertical-scroll-proportion="0.5286807" vertical-offset="433" max-vertical-offset="1479">
-=======
         <state line="66" column="41" selection-start="2708" selection-end="2708" vertical-scroll-proportion="0.0" vertical-offset="664" max-vertical-offset="1853">
->>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/lab/src/qa/qcri/nadeef/lab/holisticCleaning/ISolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="765" selection-end="765" vertical-scroll-proportion="0.09751434" vertical-offset="0" max-vertical-offset="1046">
-=======
     <entry file="file://$PROJECT_DIR$/web/src/public/js/requester.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="181" column="13" selection-start="5434" selection-end="5434" vertical-scroll-proportion="0.0" vertical-offset="2630" max-vertical-offset="3774">
->>>>>>> - Update Intellij project files.
           <folding />
-        </state>
-      </provider>
-    </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/ruleext/src/qa/qcri/nadeef/ruleext/DCRuleBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="1" selection-start="4324" selection-end="4324" vertical-scroll-proportion="0.90248567" vertical-offset="807" max-vertical-offset="1853">
-=======
-    <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="802" column="26" selection-start="30463" selection-end="30463" vertical-scroll-proportion="-0.22106633" vertical-offset="13804" max-vertical-offset="15793">
-          <folding>
-            <element signature="e#0#33892#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-            <element signature="e#2384#2414#0" expanded="true" />
-            <element signature="e#10106#10136#0" expanded="true" />
-            <element signature="e#11914#11944#0" expanded="true" />
-            <element signature="e#32620#32650#0" expanded="true" />
-            <element signature="e#33501#33531#0" expanded="true" />
-            <element signature="e#33689#33719#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nadeef.conf">
       <provider selected="true" editor-type-id="text-editor">
         <state line="25" column="32" selection-start="621" selection-end="621" vertical-scroll-proportion="0.41789576" vertical-offset="0" max-vertical-offset="1017">
->>>>>>> - Update Intellij project files.
           <folding />
         </state>
       </provider>
@@ -2278,105 +1856,16 @@
         <state />
       </provider>
     </entry>
-  </component>
-  <component name="masterDetails">
-    <states>
-      <state key="ArtifactsStructureConfigurable.UI">
-        <settings>
-          <artifact-editor />
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.26914153" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="Copyright.UI">
-        <settings>
-          <last-edited>QCRI</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="FacetStructureConfigurable.UI">
-        <settings>
-          <last-edited>No facets are configured</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.26914153" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="GlobalLibrariesConfigurable.UI">
-        <settings>
-          <last-edited>junit:junit-dep:4.10</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.26914153" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="JdkListConfigurable.UI">
-        <settings>
-          <last-edited>1.7</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.26914153" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="ModuleStructureConfigurable.UI">
-        <settings>
-          <last-edited>lab</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.26914153" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="ProjectLibrariesConfigurable.UI">
-        <settings>
-          <last-edited>gurobi</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.26914153" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="ScopeChooserConfigurable.UI">
-        <settings>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-    </states>
+    <entry file="file://$PROJECT_DIR$/web/src/qa/qcri/nadeef/web/Dashboard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="258" column="27" selection-start="9692" selection-end="9692" vertical-scroll-proportion="0.35181645" vertical-offset="4018" max-vertical-offset="15810">
+          <folding>
+            <element signature="e#0#33916#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>
 
