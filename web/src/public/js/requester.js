@@ -25,7 +25,7 @@ define(['router'], function(Router) {
             url: '/project',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -34,7 +34,7 @@ define(['router'], function(Router) {
             url: '/' + getProjectName() + '/table/violation',
             type: "DELETE",
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -43,7 +43,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/data/source',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -52,7 +52,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/data/rule',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -61,7 +61,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/data/rule/' + ruleName,
             type: 'DELETE',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -70,7 +70,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/data/rule/' + ruleName,
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -79,7 +79,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/table/' + tableName + '/schema',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -88,7 +88,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/overview',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -97,7 +97,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/attribute',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -106,7 +106,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/violation_relation',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -115,7 +115,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/rule',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -124,7 +124,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/top10',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -137,7 +137,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -150,7 +150,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -163,7 +163,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -175,7 +175,7 @@ define(['router'], function(Router) {
             type: 'POST',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -188,7 +188,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -199,7 +199,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: { project : projectName },
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 

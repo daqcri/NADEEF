@@ -11,32 +11,50 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(
-	['text!mvc/template/progressbar.template.html'], 
-	function(ProgressBarTemplate) {
+define([
+    'state',
+    'text!mvc/template/progressbar.template.html'],
+    function(State, ProgressBarTemplate) {
 		var isSubscribed = false;
+
+        function info(msg) {
+            $('#home-alert').html([
+                ['<div class="alert alert-success" id="home-alert-info">'],
+                ['<button type="button" class="close" data-dismiss="alert">'],
+                ['&times;</button>'],
+                ['<span><h3>' + msg + '</h3></span></div>']].join(''));
+
+            window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
+        }
+
+        function updateProgress(id) {
+            $.getJSON('/progress', function(data) {
+                var values = [];
+                var jobList = State.getJob();
+                if (jobList && jobList.length > data['data'].length)
+                    info("There are Job(s) finished, please do refresh to see the result.");
+                jobList = data['data'];
+                State.setJob(jobList);
+
+                _.each(jobList, function(job) {
+                    var name = job['key'] ? job['key'] : 'Unknown';
+                    values.push({
+                        name : name,
+                        value : job['overallProgress']
+                    });
+                });
+                var html =
+                    _.template(ProgressBarTemplate)({ progress: values });
+                $('#' + id).html(html);
+            }).fail(function(request, status, err) {
+                console.log("Requesting progress failed : " + request.responseText);
+            });
+        }
+
 		function start(id) {
 			if (!isSubscribed) {
-				setInterval(function() {
-					$.getJSON('/progress', function(data) {
-						var values = new Array();
-						_.each(data['data'], function(v) {
-							var name = 
-								localStorage[v['key']] ? 
-                                localStorage[v['key']] : 'Unknown';
-							values.push({ 
-								name : name,
-								value : v['overallProgress'] 
-							});
-						});
-					    var html = 
-                            _.template(ProgressBarTemplate)({ progress: values });
-						$('#' + id).html(html);
-					})
-                    .fail(function(request, status, err) {
-                        console.log("Requesting progress failed : " + request.responseText);
-                    });
-				}, 1000);
+                updateProgress(id);
+				setInterval(function() {updateProgress(id)}, 5000);
 				isSubscribed = true;
 			}
 		}

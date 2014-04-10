@@ -59,26 +59,9 @@ require.config({
     }
 });
 
-// render the first page
-require([
-    'router',
-    'jquery',
-    'text',
-    'underscore',
-    'bootstrap',
-    'd3',
-    'nvd3',
-    'table'
-], function(
-    Router,
-    JQuery,
-    Text,
-    Underscore,
-    Bootstrap,
-    D3,
-    Nvd3,
-    Table
-) {
+// main start
+require(['router', 'table', 'state', 'underscore'], function(Router, Table, State) {
+    State.init();
     Router.start();
     Table.init();
     Router.redirect('#project');

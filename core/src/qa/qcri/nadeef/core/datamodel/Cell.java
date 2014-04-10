@@ -1,4 +1,4 @@
-/*
+/**
  * QCRI, NADEEF LICENSE
  * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
  * NADEEF means "Clean" in Arabic
@@ -16,7 +16,6 @@ package qa.qcri.nadeef.core.datamodel;
 /**
  * A Cell represents a basic unit in a data table. A Cell
  * contains a <code>Column</code> and a Value with an unique TupleId.
- *
  */
 public class Cell {
     //<editor-fold desc="Private fields">
@@ -74,18 +73,15 @@ public class Cell {
     }
     //</editor-fold>
 
-		/**
+    /**
      * Sets the column value. 
      * @return void.
      */
     public void setValue(Object obj) {
         value = obj;
     }
-	
 
-	
     //<editor-fold desc="Getter and Setters">
-
     /**
      * Gets the column.
      * @return column.

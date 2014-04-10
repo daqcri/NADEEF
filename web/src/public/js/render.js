@@ -35,19 +35,15 @@ define([
                 ];
             }
 
-            var pie_data = [{
-                key: "Cumulative Return",
-                values: values
-            }];
-
             nv.addGraph(function() {
                 var chart = nv.models.pieChart()
                     .x(function(d) { return d.label })
                     .y(function(d) { return d.value })
+                    .color(d3.scale.category10().range())
                     .showLabels(true);
 
                 d3.select("#" + id + " svg")
-                    .datum(pie_data)
+                    .datum(values)
                     .transition().duration(500)
                     .call(chart);
                 return chart;
@@ -82,8 +78,14 @@ define([
                     .y(function(d) { return d.value })
                     .staggerLabels(false)
                     .tooltips(true)
-                    .showValues(true);
+                    .showValues(true)
+                    .valueFormat(d3.format('d'));
 
+                chart.xAxis.axisLabel("Attribute");
+                chart.yAxis
+                    .axisLabel("Number of Violation")
+                    .axisLabelDistance(50)
+                    .tickFormat(d3.format('d'));
                 d3.select("#" + id + " svg")
                     .datum(graph_data)
                     .transition().duration(500)

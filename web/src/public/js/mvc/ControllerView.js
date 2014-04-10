@@ -15,6 +15,7 @@ define([
     'requester',
     'table',
     'jquery.filedrop',
+    'state',
     'mvc/CleanPlanView',
     'mvc/ProgressbarView',
     'mvc/SourceEditorView',
@@ -24,6 +25,7 @@ define([
     Requester,
     Table,
     FileDrop,
+    State,
     CleanPlanView,
     ProgressBarView,
     SourceEditorView,
@@ -37,9 +39,9 @@ define([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ['<span><h3>' + msg + '</h3></span></div>']].join(''));
 
-        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
+        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 5000);
     }
 
     function err(msg) {
@@ -47,11 +49,10 @@ define([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
     }
 
     function render(id) {
-        ProgressBarView.start('progressbar');
         domId = id;
         refreshList();
     }
@@ -68,17 +69,21 @@ define([
         Requester.getSource(
             function(source) {
                 var sources = source['data'];
+                State.setSource(sources);
                 Requester.getRule(
                     function(data) {
-                        var plans = data['data'];
+                        var rules = data['data'];
+                        State.setRule(rules);
                         var html =
                             _.template(ControllerTemplate)
-                                ({ sources: sources, plans: plans});
+                                ({ sources: sources, plans: []});
                         $('#' + domId).html(html);
 
                         // render the source modal
+                        // TODO: put to on shown
                         SourceEditorView.start('source-editor-modal');
                         bindEvent();
+                        ProgressBarView.start('progressbar');
                     }
                 );
             }
@@ -110,9 +115,8 @@ define([
 
     function renderRuleDetail() {
         var selectedPlan = getSelectedPlan();
-        if (_.isUndefined(selectedPlan) || _.isNull(selectedPlan)) {
+        if (_.isUndefined(selectedPlan) || _.isNull(selectedPlan))
             return;
-        }
 
         if (_.isArray(selectedPlan) && selectedPlan.length != 1) {
             $('#detail').html('');
@@ -121,12 +125,7 @@ define([
                 selectedPlan,
                 function (data) {
                     var plan = arrayToPlan(data['data'][0]);
-                    var html =
-                        _.template(
-                            DetailTemplate,
-                            plan
-                        );
-                    $('#detail').html(html);
+                    $('#detail').html(_.template(DetailTemplate, plan));
             });
         }
     }
@@ -136,6 +135,17 @@ define([
         if (activeTable == 'tab_source') {
             Table.load(getSelectedSource());
         }
+    }
+
+    function renderRuleList(source) {
+        var ruleList = State.getRule();
+        var selectedRule =
+            _.filter(ruleList, function(x) { return x[3] === source || x[4] === source; })
+        var selectedHtml = _.template(
+            "<% _.each(rules, function(rule) { %>" +
+            "<option value='<%= rule[0] %>'><%= rule[0] %></option>" +
+            "<% }); %>", { rules : selectedRule });
+        $('#selected_rule').html(selectedHtml);
     }
 
     function repair(rules) {
@@ -152,11 +162,13 @@ define([
                         var key = data['data'];
                         console.log('Received job key : ' + key);
                         if (key != null) {
-                            window.localStorage[key] = rule.name;
+                            var jobList = State.getJob();
+                            jobList.push({ key : rule.name });
                         }
                     },
                     error: function(data, status) {
-                        err("<strong>Error</strong>: " + data.responseText);
+                        var json = JSON.parse(data.responseText);
+                        err("<strong>Error</strong>: " + json['error']);
                     }
                 });
             });
@@ -178,13 +190,13 @@ define([
                                     info("A job is successfully submitted.");
                                     var key = data['data'];
                                     console.log('Received job key : ' + key);
-                                    if (key != null) {
-                                        window.localStorage[key] = plan.name;
-                                    }
+                                    if (key != null)
+                                        State.addJob({ key : plan.name });
                                 },
 
                                 function(data, status) {
-                                    err("<strong>Error</strong>: " + data.responseText);
+                                    var json = JSON.parse(data.responseText);
+                                    err("<strong>Error</strong>: " + json['error']);
                                 }
                             )
                         }
@@ -212,7 +224,6 @@ define([
 
         $('#cleanPlanPopup').on('hidden', function(e) {
             refreshList();
-            // info('You just successfully updated a rule.');
         });
 
         $('#edit_plan').on('click', function(e) {
@@ -243,6 +254,7 @@ define([
 
         $('#selected_source').on('change', function(e) {
             renderTable();
+            renderRuleList(getSelectedSource());
         });
 
         $('#detect').on('click', function(e) {

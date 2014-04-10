@@ -52,9 +52,7 @@
         </div>
         <div class="control-group">
             <select multiple id="selected_rule" class="selectbox fullwidth" size="10">
-                <% _.each(plans, function(plan) { %>
-                <option value="<%= plan[0] %>"><%= plan[2].substring(0, 20) %></option>
-                <% }); %>
+
             </select>
         </div>
         <label>Details</label>
@@ -62,7 +60,7 @@
             <div class="well well-small"><span>No detail is available.</span></div>
         </div>
     </div>
-    <div class="modal hide fade" id="cleanPlanPopup">
+    <div class="modal hide" id="cleanPlanPopup">
         <div class="modal-header">
             <button type="button"
                     class="close"

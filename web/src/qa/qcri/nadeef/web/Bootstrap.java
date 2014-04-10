@@ -24,8 +24,6 @@ import java.nio.file.Path;
 
 /**
  * Bootstrap class which initialize the Database and Configuration.
- *
- *
  */
 public final class Bootstrap {
     /**

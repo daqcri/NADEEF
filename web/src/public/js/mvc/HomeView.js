@@ -34,7 +34,7 @@ define([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ["<span>" + msg + "</span></div>"]].join(''));
+            ["<span><h4>" + msg + "</h4></span></div>"]].join(''));
     
         window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
     }
@@ -151,9 +151,9 @@ define([
 
         var tableTabs = {
             tabs: [
-                {tag : "violation", head : "Violation", isActive : true},
+                {tag : "source", head : "Source", isActive : true},
+                {tag : "violation", head : "Violation", isActive : false},
                 {tag : "audit", head : "Audit", isActive : false},
-                {tag : "source", head : "Source", isActive : false}
             ]};
 
         var homeHtml = _.template(
