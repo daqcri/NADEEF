@@ -129,16 +129,13 @@ public final class Dashboard {
                             );
 
                         JsonObject countJson =
-                            query(
-                                project,
-                                dialectInstance.countTable(tableName),
-                                true
-                            );
+                            query(project, dialectInstance.countTable(tableName), true);
                         JsonArray dataArray = countJson.getAsJsonArray("data");
                         int count = dataArray.get(0).getAsInt();
                         queryJson.add("iTotalRecords", new JsonPrimitive(count));
                         queryJson.add("iTotalDisplayRecords", new JsonPrimitive(count));
-                        queryJson.add("sEcho", new JsonPrimitive(request.queryParams("sEcho")));
+                        if (request.queryParams("sEcho") != null)
+                            queryJson.add("sEcho", new JsonPrimitive(request.queryParams("sEcho")));
                         return queryJson;
                     }
                 });
@@ -394,7 +391,7 @@ public final class Dashboard {
                         try {
                             DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
                             dbConfig.switchDatabase(project);
-                            conn = DBConnectionPool.createConnection(dbConfig);
+                            conn = DBConnectionPool.createConnection(dbConfig, true);
                             stat = conn.createStatement();
                             rs = stat.executeQuery(dialectInstance.queryDistinctTable());
                             List<String> tableNames = Lists.newArrayList();
@@ -516,6 +513,7 @@ public final class Dashboard {
             }
         });
     }
+    //</editor-fold>
 
     //<editor-fold desc="Do actions">
     private static void setupAction() {

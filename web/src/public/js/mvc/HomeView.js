@@ -30,6 +30,7 @@ define([
     ControllerView
 ) {
     function info(msg) {
+        $('home-alert-info').alert('close');
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
@@ -52,9 +53,9 @@ define([
             renderWidget(e.currentTarget.id);
         });
 
-        $('#tables').find("ul li").on('click', function(e) {
-            renderTable(e.currentTarget.id);
-        });
+        $('#table-tabs a[data-toggle="tab"]').on('click', function (e) {
+            console.log('second');
+        })
 
         $('#clear').on('click', function() {
             Requester.deleteViolation(
@@ -149,17 +150,10 @@ define([
             ]
         };
 
-        var tableTabs = {
-            tabs: [
-                {tag : "source", head : "Source", isActive : true},
-                {tag : "violation", head : "Violation", isActive : false},
-                {tag : "audit", head : "Audit", isActive : false},
-            ]};
-
         var homeHtml = _.template(
             HomeTemplate, {
                 placeholder1 : _.template(WidgetTemplate)(widgetTabs),
-                placeholder2 : _.template(TableTemplate)(tableTabs)
+                placeholder2 : _.template(TableTemplate)()
             });
 
         $("#container").html(homeHtml);         

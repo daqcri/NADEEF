@@ -13,11 +13,13 @@
 
 define([
     'state',
+    'requester',
     'text!mvc/template/progressbar.template.html'],
-    function(State, ProgressBarTemplate) {
+    function(State, Requester, ProgressBarTemplate) {
 		var isSubscribed = false;
 
         function info(msg) {
+            $('#home-alert-info').alert('close');
             $('#home-alert').html([
                 ['<div class="alert alert-success" id="home-alert-info">'],
                 ['<button type="button" class="close" data-dismiss="alert">'],
@@ -28,9 +30,17 @@ define([
         }
 
         function updateProgress(id) {
-            $.getJSON('/progress', function(data) {
+            var jobList = State.getJob();
+            if (jobList.length == 0) {
+                var html =
+                    _.template(ProgressBarTemplate)({ progress: [] });
+                $('#' + id).html(html);
+                return;
+            }
+
+            Requester.getProgress(
+            function(data) {
                 var values = [];
-                var jobList = State.getJob();
                 if (jobList && jobList.length > data['data'].length)
                     info("There are Job(s) finished, please do refresh to see the result.");
                 jobList = data['data'];
@@ -46,15 +56,15 @@ define([
                 var html =
                     _.template(ProgressBarTemplate)({ progress: values });
                 $('#' + id).html(html);
-            }).fail(function(request, status, err) {
-                console.log("Requesting progress failed : " + request.responseText);
+            }, function(response) {
+                console.log("Requesting progress failed : " + response.responseText);
             });
         }
 
 		function start(id) {
 			if (!isSubscribed) {
                 updateProgress(id);
-				setInterval(function() {updateProgress(id)}, 5000);
+				setInterval(function() {updateProgress(id)}, 3000);
 				isSubscribed = true;
 			}
 		}

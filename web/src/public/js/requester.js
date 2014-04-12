@@ -11,22 +11,52 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(['router'], function(Router) {
-    function getProjectName() {
-        var state = window.history.state;
-        if (state == null || _.isUndefined(state.name) || state.name == '') {
-            Router.redirectToRoot();
+define(['router', 'state'], function(Router, State) {
+    var PROGRESS = 'progress';
+    var PROJECT  = 'project';
+    var cache = {};
+
+    function get(call) {
+        var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
+        var promise = cache[key];
+        if (!promise) {
+            promise = $.ajax(call);
+            cache[key] = promise;
+        } else {
+            console.log("Reusing cache " + key);
         }
-        return state.name;
+        return promise;
+    }
+
+    function request(promise, successCallback, failureCallback) {
+        var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
+        $.when(promise).done(function (data) {
+            successCallback(data);
+        }).fail(function (data) {
+            failureCallback(data);
+        }).always(function () {
+            delete cache[key];
+        });
+    }
+
+    function getProjectName() {
+        return State.getProject();
+    }
+
+    function getProgress(successCallback, failureCallback) {
+        request(
+            get({ url : "/progress", type: "GET" }),
+            successCallback,
+            failureCallback
+        );
     }
 
     function getProject(successCallback, failureCallback) {
-        $.ajax({
-            url: '/project',
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+        request(
+            get({ url : "/project", type: "GET" }),
+            successCallback,
+            failureCallback
+        );
     }
 
     function deleteViolation(successCallback, failureCallback) {
@@ -75,12 +105,14 @@ define(['router'], function(Router) {
     }
 
     function getTableSchema(tableName, successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/table/' + tableName + '/schema',
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+        request(
+            get({
+                url : '/' + getProjectName() + '/table/' + tableName + '/schema',
+                type: 'GET'
+            }),
+            successCallback,
+            failureCallback
+        );
     }
 
     function getOverview(successCallback, failureCallback) {
@@ -214,6 +246,7 @@ define(['router'], function(Router) {
         createProject: createProject,
         createRule: createRule,
         deleteRule: deleteRule,
+        getProgress : getProgress,
         getProject: getProject,
         getSource: getSource,
         getRule: getRule,

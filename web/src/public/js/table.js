@@ -11,9 +11,11 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(["requester"], function(Requester) {
+define(["requester", "state"], function(Requester, State) {
     var instance = null;
     function load(tablename) {
+        if (_.isNull(tablename) || _.isEmpty(tablename))
+            return;
         if (instance != null) {
             try {
                 instance.fnDestroy();
@@ -34,8 +36,8 @@ define(["requester"], function(Requester) {
                     columns.push( { sTitle : schema[i] } );
                 }
 
-                var lastIndex = this.url.lastIndexOf("/");
-                var dataUrl = this.url.substring(0, lastIndex);
+                var project = State.getProject();
+                var url = "http://localhost:4567/" + project + "/table/" + tablename;
                 /* Add a select menu for each TH element in the table footer */
                 instance = $('#table').dataTable({
                     "bAutoWidth" : false,
@@ -43,7 +45,7 @@ define(["requester"], function(Requester) {
                     "bProcessing" : true,
                     "bDestroy": true,
                     "bServerSide": true,
-                    "sAjaxSource": dataUrl,
+                    "sAjaxSource": url,
                     "sAjaxDataProp": 'data',
                     "sWrapper" : "dataTables_wrapper form-inline",
                     "aoColumns" : columns
