@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.util.ArrayList;
+
 /**
  * MySQL Dialect.
  */
@@ -75,30 +77,31 @@ public class MySQLDialect extends SQLDialectBase {
         int start,
         int interval,
         String firstNViolation,
+        ArrayList columns,
         String filter
     ) {
+        tableName = tableName.toLowerCase();
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         String result;
         if (Strings.isNullOrEmpty(filter)) {
-            ST instance = template.getInstanceOf("QueryViolation");
+            ST instance = template.getInstanceOf("QueryTable");
             instance.add("tablename", tableName);
             instance.add("start", start);
             instance.add("interval", interval);
-            instance.add("ruleFilter", filter);
             result = instance.render();
         } else {
-            ST instance = template.getInstanceOf("QueryViolationWithFilter");
+            ST instance = template.getInstanceOf("QueryTableWithFilter");
             instance.add("tablename", tableName);
             instance.add("start", start);
             instance.add("interval", interval);
             instance.add("firstNViolation", firstNViolation);
-            instance.add("ruleFilter", filter);
+            instance.add("columns", columns);
+            instance.add("filter", "%");
             result = instance.render();
         }
 
         return result;
     }
-
 
     /**
      * {@inheritDoc}

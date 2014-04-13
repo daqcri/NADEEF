@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 define([
-    "router",
+    "state",
     "render",
     "table",
     "requester",
@@ -20,7 +20,7 @@ define([
     "text!mvc/template/tab.template.html",
     "mvc/ControllerView"
 ], function(
-    Router,
+    State,
     Renderer,
     Table,
     Requester,
@@ -54,8 +54,9 @@ define([
         });
 
         $('#table-tabs a[data-toggle="tab"]').on('click', function (e) {
-            console.log('second');
-        })
+            var tableName = e.target.text.toLowerCase();
+            renderTable(tableName);
+        });
 
         $('#clear').on('click', function() {
             Requester.deleteViolation(
@@ -86,32 +87,23 @@ define([
         var defaultWidget = $('#widget').find('li.active');
         if (defaultWidget != null && defaultWidget.length > 0) {
             renderWidget(defaultWidget[0].id);
-        } else {
+        } else
             renderWidget("overview");
-        }
-
-        var defaultTable = $('#tables').find('li.active');
-        if (defaultTable != null && defaultTable.length > 0) {
-            renderTable(defaultTable[0].id);
-        } else {
-            renderTable("violation");
-        }
     }
 
     function renderTable(id) {
         console.log('Load table ' + id);
         switch(id) {
-        case 'tab_violation':
-            Table.load('violation');
+        case 'violation':
+            Table.load({domId : 'violation-table', table : 'violation'});
             break;
-        case 'tab_audit':
-            Table.load('audit');
+        case 'audit':
+            Table.load({domId : 'audit-table', table : 'audit'});
             break;
-        case 'tab_source':
+        case 'source':
             var sourceTable = $("#selected_source").val();
-            if (!_.isEmpty(sourceTable)) {
-                Table.load(sourceTable);
-            }
+            if (!_.isEmpty(sourceTable))
+                Table.load({domId: 'source-table', table : sourceTable});
             break;
         }
     }

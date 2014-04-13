@@ -12,8 +12,6 @@
  */
 
 define(['router', 'state'], function(Router, State) {
-    var PROGRESS = 'progress';
-    var PROJECT  = 'project';
     var cache = {};
 
     function get(call) {
@@ -40,7 +38,7 @@ define(['router', 'state'], function(Router, State) {
     }
 
     function getProjectName() {
-        return State.getProject();
+        return State.get('project');
     }
 
     function getProgress(successCallback, failureCallback) {

@@ -32,6 +32,7 @@ import spark.Route;
 
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static spark.Spark.*;
@@ -101,19 +102,28 @@ public final class Dashboard {
                         String start_ = request.queryParams("iDisplayStart");
                         String interval_ = request.queryParams("iDisplayLength");
                         String firstNViolation = request.queryParams("firstNViolation");
-                        String ruleFilter = request.queryParams("rule");
+
 
                         if (!(
                             SQLUtil.isValidInteger(start_) &&
                             SQLUtil.isValidInteger(interval_) &&
-                            SQLUtil.isValidInteger(firstNViolation) &&
-                            SQLUtil.isValidTableName(ruleFilter)
+                            SQLUtil.isValidInteger(firstNViolation)
                         )) throw new IllegalArgumentException("Input is not valid.");
 
                         int start = Strings.isNullOrEmpty(start_) ? 0 : Integer.parseInt(start_);
                         int interval =
                             Strings.isNullOrEmpty(interval_) ? 10 : Integer.parseInt(interval_);
-                        ruleFilter = Strings.isNullOrEmpty(ruleFilter) ? "%" : ruleFilter;
+                        String filter = request.queryParams("sSearch");
+                        ArrayList columns = null;
+                        if (filter != null) {
+                            JsonObject objSchema =
+                                query(project, dialectInstance.querySchema(tableName), true);
+                            columns =
+                                new Gson().fromJson(
+                                    objSchema.getAsJsonArray("schema"),
+                                    ArrayList.class
+                                );
+                        }
 
                         queryJson =
                             query(
@@ -123,7 +133,8 @@ public final class Dashboard {
                                     start,
                                     interval,
                                     firstNViolation,
-                                    ruleFilter
+                                    columns,
+                                    filter
                                 ),
                                 true
                             );

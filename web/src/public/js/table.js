@@ -13,17 +13,34 @@
 
 define(["requester", "state"], function(Requester, State) {
     var instance = null;
-    function load(tablename) {
-        if (_.isNull(tablename) || _.isEmpty(tablename))
+    var cache = {};
+
+    function load(table) {
+        if (_.isNull(table) || _.isNaN(table)) {
+            console.log("Table name is null or empty.");
             return;
-        if (instance != null) {
+        }
+
+        var domId = table.domId;
+        var tablename = table.table;
+
+        if (cache[domId] != null) {
+            if (domId != 'source-table' ||
+                (domId == 'source-table' && cache[domId].source == tablename)) {
+                console.log('cache hit on table ' + domId);
+                return;
+            }
+
             try {
-                instance.fnDestroy();
+                cache[domId].instance.fnDestroy();
             } catch (e) {
                 console.log(e);
-            } finally {
-                instance = null;
             }
+        }
+
+        if (domId == 'source-table') {
+            $("#source-table-info").addClass('hide');
+            $('#source-table').removeClass('hide');
         }
 
         Requester.getTableSchema(
@@ -31,15 +48,15 @@ define(["requester", "state"], function(Requester, State) {
             function(data) {
                 var schema = data['schema'];
                 var columns = [];
-                $('#table').empty().append('<thead><tr></tr></thead>');
+                $('#' + domId).empty().append('<thead><tr></tr></thead>');
                 for (var i = 0; i < schema.length; i ++) {
                     columns.push( { sTitle : schema[i] } );
                 }
 
-                var project = State.getProject();
-                var url = "http://localhost:4567/" + project + "/table/" + tablename;
+                var project = State.get('project');
+                var url = "/" + project + "/table/" + tablename;
                 /* Add a select menu for each TH element in the table footer */
-                instance = $('#table').dataTable({
+                instance = $('#' + domId).dataTable({
                     "bAutoWidth" : false,
                     "bSort": false,
                     "bProcessing" : true,
@@ -50,6 +67,11 @@ define(["requester", "state"], function(Requester, State) {
                     "sWrapper" : "dataTables_wrapper form-inline",
                     "aoColumns" : columns
                 });
+
+                if (domId != 'source-table')
+                    cache[domId] = instance;
+                else
+                    cache[domId] = { instance : instance, source : tablename };
             }
         );
     }

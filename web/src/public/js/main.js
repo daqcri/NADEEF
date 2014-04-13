@@ -22,7 +22,8 @@ require.config({
         "d3" : "lib/d3.v3",
         "nvd3" : "lib/nv.d3",
         "ace" : "lib/ace-min/ace",
-        "jquery.filedrop" : "lib/jquery.filedrop"
+        "jquery.filedrop" : "lib/jquery.filedrop",
+        "blockUI" : "lib/jquery.blockUI"
     },
 
     shim: {
@@ -62,7 +63,7 @@ require.config({
 // main start
 require(['router', 'table', 'state', 'underscore'], function(Router, Table, State) {
     State.init();
-    Router.start();
     Table.init();
+    Router.start();
     Router.redirect('#project');
 });

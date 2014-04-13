@@ -69,11 +69,11 @@ define([
         Requester.getSource(
             function(source) {
                 var sources = source['data'];
-                State.setSource(sources);
+                State.set('source', sources);
                 Requester.getRule(
                     function(data) {
                         var rules = data['data'];
-                        State.setRule(rules);
+                        State.set('rule', rules);
                         var html =
                             _.template(ControllerTemplate)
                                 ({ sources: sources, plans: []});
@@ -104,9 +104,8 @@ define([
         _.each(rules, function(rule) {
             Requester.deleteRule(
                 rule,
-                function(data) {
+                function() {
                     info("Selected rules are deleted.");
-                    // force a refresh
                     refreshList();
                 }
             );
@@ -130,15 +129,8 @@ define([
         }
     }
 
-    function renderTable() {
-        var activeTable = $('#tables').find('li.active')[0].id;
-        if (activeTable == 'tab_source') {
-            Table.load(getSelectedSource());
-        }
-    }
-
     function renderRuleList(source) {
-        var ruleList = State.getRule();
+        var ruleList = State.get('rule');
         var selectedRule =
             _.filter(ruleList, function(x) { return x[3] === source || x[4] === source; })
         var selectedHtml = _.template(
@@ -207,26 +199,22 @@ define([
     }
 
     function bindEvent() {
-        $('#refresh_rule').on('click', function(e) {
+        $('#refresh_source').on('click', function() {
             refreshList();
         });
 
-        $('#refresh_source').on('click', function(e) {
-            refreshList();
-        });
-
-        $('#new_plan').on('click', function(e) {
+        $('#new_plan').on('click', function() {
             CleanPlanView.render(
                 'cleanPlanView',
                 {name: null, type: 'FD', source: null, tablename: null}
             );
         });
 
-        $('#cleanPlanPopup').on('hidden', function(e) {
+        $('#cleanPlanPopup').on('hidden', function() {
             refreshList();
         });
 
-        $('#edit_plan').on('click', function(e) {
+        $('#edit_plan').on('click', function() {
             var selectedPlan = getSelectedPlan();
             if (selectedPlan == null) {
                 err('No rule is selected.');
@@ -244,20 +232,21 @@ define([
             });
         });
 
-        $('#new-source').on('click', function(e) {
+        $('#new-source').on('click', function() {
             $('#source-editor').modal('show');
         });
 
-        $('#selected_rule').on('change', function(e) {
+        $('#selected_rule').on('change', function() {
             renderRuleDetail();
         });
 
-        $('#selected_source').on('change', function(e) {
-            renderTable();
-            renderRuleList(getSelectedSource());
+        $('#selected_source').on('change', function() {
+            var newSource = getSelectedSource();
+            renderRuleList(newSource);
+            Table.load({ domId: 'source-table', table: newSource });
         });
 
-        $('#detect').on('click', function(e) {
+        $('#detect').on('click', function() {
             var selectedPlan = getSelectedPlan();
             if (selectedPlan == null || !_.isArray(selectedPlan)) {
                 err('No rule is selected.');
@@ -267,7 +256,7 @@ define([
             detect(selectedPlan);
         });
 
-        $('#delete').on('click', function(e) {
+        $('#delete').on('click', function() {
             var selectedPlan = getSelectedPlan();
             if (selectedPlan == null || !_.isArray(selectedPlan)) {
                 err('No rule is selected.');
@@ -277,7 +266,7 @@ define([
             deleteRule(selectedPlan);
         });
 
-        $('#repair').on('click', function(e) {
+        $('#repair').on('click', function() {
             var selectedPlan = getSelectedPlan();
             if (selectedPlan == null || !_.isArray(selectedPlan)) {
                 err('No rule is selected.');

@@ -16,6 +16,8 @@ package qa.qcri.nadeef.web.sql;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
+import java.util.ArrayList;
+
 /**
  * Abstract class for cross-vendor DB compatibility.
  */
@@ -71,7 +73,8 @@ public abstract class SQLDialectBase {
      * @param start start index.
      * @param interval interval.
      * @param firstNViolation first N violation.
-     * @param ruleFilter filter on rule.
+     * @param columns table columns.
+     * @param filter filter string.
      * @return query SQL.
      */
     public abstract String queryTable(
@@ -79,7 +82,8 @@ public abstract class SQLDialectBase {
         int start,
         int interval,
         String firstNViolation,
-        String ruleFilter
+        ArrayList columns,
+        String filter
     );
 
     /**

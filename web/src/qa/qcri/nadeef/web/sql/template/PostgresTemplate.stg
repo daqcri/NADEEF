@@ -30,26 +30,10 @@ insert into RULE (name, type, code, table1, table2, last_edit_timestamp)
   ruletype x where x.name = '$type$'
 >>
 
-QueryTable(tablename, start, interval) ::= <<
-    select
-        *
-    from
-        $tablename$
-    limit $interval$ offset $start$
+match(column, filter) ::= <<
+    $column$ like "%%"
 >>
 
-QueryViolation(tablename, start, interval, ruleFilter) ::= <<
-    select
-        *
-    from violation
-    where rid like '$ruleFilter$'
-    limit $interval$ offset $start$
->>
-
-QueryViolationWithFilter(tablename, start, interval, firstNViolation, ruleFilter) ::= <<
-    select
-        *
-    from violation
-    where vid < $firstNViolation$ and rid like '$ruleFilter$'
-    limit $interval$ offset $start$
+QueryTable(tablename, start, interval, filter) ::= <<
+    select * from $tablename$ where $filter$ limit $interval$ offset $start$
 >>

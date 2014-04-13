@@ -13,12 +13,13 @@
 
 define([
     "router",
+    "state",
     "requester",
     "state",
     "text!mvc/template/navbar.template.html",
     "text!mvc/template/project.template.html",
     "mvc/HomeView"
-], function(Router, Requester, State, NavbarTemplate, ProjectTemplate, HomeView) {
+], function(Router, State, Requester, State, NavbarTemplate, ProjectTemplate, HomeView) {
     function err(msg) {
         $('#projectModal-alert').html([
             ['<div class="alert alert-error">'],
@@ -33,11 +34,24 @@ define([
             $(this).parent.addClass('active');
         });
 
+        $('#project-modal-close').on('click', function() {
+            var oldProject = State.get('project');
+            if (oldProject != null)
+                $('#projectModal').modal('hide');
+            else
+                err("No project is selected.");
+        });
+
         $("#refresh").on('click', HomeView.refresh);
 
         $("#change").on("click", function() {
             $('#projectModal').find('.modal-body').remove();
-            selectProject('projectModal');
+            Requester.getProject(function(data) {
+                var projectList = _.flatten(data['data']);
+                selectProject('projectModal', projectList);
+            }, function() {
+                console.log("Getting project failed.");
+            });
         });
 
         $("#project-button").on("click", function() {
@@ -92,7 +106,7 @@ define([
     function enterProject(selectedProject) {
         $("#projectModal").modal('hide');
         $("#projectName").text(selectedProject);
-        State.setProject(selectedProject);
+        State.set('project', selectedProject);
         Router.redirect('#home', { name : selectedProject });
     }
 
@@ -103,7 +117,7 @@ define([
         // start project selection process
         Requester.getProject(function(data) {
             var projectList = _.flatten(data['data']);
-            var oldProject = State.getProject();
+            var oldProject = State.get('project');
             if (oldProject && _.indexOf(projectList, oldProject) > -1)
                 enterProject(oldProject);
             else

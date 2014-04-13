@@ -30,7 +30,7 @@ define([
         }
 
         function updateProgress(id) {
-            var jobList = State.getJob();
+            var jobList = State.get('job');
             if (jobList.length == 0) {
                 var html =
                     _.template(ProgressBarTemplate)({ progress: [] });
@@ -44,7 +44,7 @@ define([
                 if (jobList && jobList.length > data['data'].length)
                     info("There are Job(s) finished, please do refresh to see the result.");
                 jobList = data['data'];
-                State.setJob(jobList);
+                State.set('job', jobList);
 
                 _.each(jobList, function(job) {
                     var name = job['key'] ? job['key'] : 'Unknown';

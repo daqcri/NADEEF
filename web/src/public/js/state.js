@@ -12,74 +12,78 @@
  */
 
 define([], function() {
+    var keyList = [ "project", "job", "source", "currentSource", "rule"];
+    var changeHandler = {};
 
-    var PROJECT = "project";
-    var JOB     = "job";
-    var SOURCE  = "source";
-    var RULE    = "rule";
+    function set(key, value) {
+        if (_.indexOf(keyList, key) == -1) {
+            console.log("Key is not found.");
+            return;
+        }
 
-    function setProject(projectName) {
-        window.localStorage.setItem(PROJECT, projectName);
+        if (_.isObject(value) && !_.isArray(value))
+            window.localStorage.setItem(key, JSON.stringify(value));
+        else
+            set(key, { _ : value});
+
+        if (key in changeHandler) {
+            var fs = changeHandler[key];
+            _.each(fs, function(f) { f(); })
+        }
     }
 
-    function getProject() {
-        if (_.isUndefined(window.localStorage.getItem(PROJECT)))
+    function get(key) {
+        if (_.indexOf(keyList, key) == -1) {
+            console.log("Key is not found.");
+            return;
+        }
+
+        var item = window.localStorage.getItem(key);
+        if (_.isUndefined(item) || _.isNull(item))
             return null;
-        return window.localStorage.getItem(PROJECT);
+        var obj = JSON.parse(window.localStorage.getItem(key));
+        if ('_' in obj)
+            return obj['_'];
+        return obj;
     }
 
-    function setJob(jobList) {
-        window.localStorage.setItem(JOB, JSON.stringify(jobList));
+    function containsKey(key) {
+        return _.indexOf(keyList, key) > -1;
     }
 
-    function addJob(job) {
-        var jobList = getJob();
-        jobList.push(job);
-        setJob(jobList);
+    function subscribe(key, f) {
+        if (!containsKey(key)) {
+            console.log("Key is not found.");
+            return;
+        }
+
+        if (key in changeHandler) {
+            var subscriber = changeHandler[key];
+            subscriber.push(f);
+        } else {
+            changeHandler[key] = [f];
+        }
     }
 
-    function getJob() {
-        if (_.isUndefined(window.localStorage.getItem(JOB)))
-            return null;
-        return JSON.parse(window.localStorage.getItem(JOB));
-    }
-
-    function setSource(sourceList) {
-        window.localStorage.setItem(SOURCE, JSON.stringify(sourceList));
-    }
-
-    function getSource() {
-        if (_.isUndefined(window.localStorage.getItem(SOURCE)))
-            return null;
-        return JSON.parse(window.localStorage.getItem(SOURCE));
-    }
-
-    function getRule() {
-        if (_.isUndefined(window.localStorage.getItem(RULE)))
-            return null;
-        return JSON.parse(window.localStorage.getItem(RULE));
-    }
-
-    function setRule(ruleList) {
-        window.localStorage.setItem(RULE, JSON.stringify(ruleList));
+    function clear(key) {
+        if (!containsKey(key)) {
+            console.log("Key is not found.");
+            return;
+        }
+        delete window.localStorage[key];
     }
 
     function init() {
-        setJob([]);
-        setRule([]);
-        setSource([]);
+        set('job', []);
+        set('rule', []);
+        set('source', []);
     }
 
     return {
         init : init,
-        setProject : setProject,
-        getProject : getProject,
-        getJob : getJob,
-        setJob : setJob,
-        addJob : addJob,
-        setSource : setSource,
-        getSource : getSource,
-        getRule : getRule,
-        setRule : setRule
+        get : get,
+        set : set,
+        clear : clear,
+        subscribe : subscribe
     };
 })

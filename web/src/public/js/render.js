@@ -251,13 +251,14 @@ define([
                 var chart = nv.models.multiBarHorizontalChart()
                     .x(function(d) { return d.label })
                     .y(function(d) { return d.value })
-                    .margin({top: 30, right: 20, bottom: 50, left: 175})
                     .showValues(true)
-                    .tooltips(false)
-                    .showControls(false);
+                    .tooltips(true)
+                    .showControls(false)
+                    .valueFormat(d3.format('d'));
 
                 chart.yAxis
-                    .tickFormat(d3.format(',.2f'));
+                    .tickFormat(d3.format('d'))
+                    .axisLabel("Number of violation");
 
                 d3.select("#" + id + " svg")
                     .datum(distribution_data)
@@ -296,7 +297,16 @@ define([
                     .y(function(d) { return d.value })
                     .staggerLabels(false)
                     .tooltips(true)
-                    .showValues(true);
+                    .showValues(true)
+                    .valueFormat(d3.format('d'));
+
+                chart.yAxis
+                    .tickFormat(d3.format('d'))
+                    .axisLabelDistance(50)
+                    .axisLabel("Number of violation");
+
+                chart.xAxis
+                    .axisLabel("Tuple Id in violation rank");
 
                 d3.select("#" + id + " svg")
                     .attr("width", 400)
