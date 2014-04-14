@@ -62,17 +62,18 @@ public class FixDecisionMakerTest {
         try {
             List<Fix> fixes = loadFix(TestDataRepository.getFixTestData1());
             FixDecisionMaker eq = new EquivalentClass(null);
-            Collection<Fix> result = (Collection<Fix>)eq.decide(fixes);
-            Assert.assertEquals(3, result.size());
+            Collection<Fix> result = eq.decide(fixes);
+            Assert.assertEquals(4, result.size());
             for (Fix fix : result) {
                 Cell left = fix.getLeft();
                 String value = fix.getRightValue();
                 switch (left.getTid()) {
                     case 2:
-                    case 1:
-                        Assert.assertEquals("a3", value);
+                    case 3:
+                    case 4:
+                        Assert.assertEquals("a1", value);
                         break;
-                    case 6:
+                    case 6 :
                         Assert.assertEquals("b1", value);
                         break;
                     default:

@@ -89,16 +89,15 @@ public class ViolationRepairTest extends NadeefTestBase {
             Cell left2 = fix2.getLeft();
             Cell right2 = fix2.getRight();
 
-            Assert.assertEquals("test.c", left1.getColumn().getFullColumnName());
-            Assert.assertEquals(8, left1.getTid());
-            Assert.assertEquals("test.c", right1.getColumn().getFullColumnName());
-            Assert.assertEquals(6, right1.getTid());
+            if (left1.getColumn().getColumnName().equals("c"))
+                Assert.assertEquals("c", right1.getColumn().getColumnName());
+            else if (left1.getColumn().getColumnName().equals("a"))
+                Assert.assertEquals("a", right1.getColumn().getColumnName());
 
-            Assert.assertEquals("test.a", left2.getColumn().getFullColumnName());
-            Assert.assertEquals(8, left2.getTid());
-            Assert.assertEquals("test.a", right2.getColumn().getFullColumnName());
-            Assert.assertEquals(6, right2.getTid());
-
+            if (left2.getColumn().getColumnName().equals("c"))
+                Assert.assertEquals("c", right2.getColumn().getColumnName());
+            else if (left2.getColumn().getColumnName().equals("a"))
+                Assert.assertEquals("a", right2.getColumn().getColumnName());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

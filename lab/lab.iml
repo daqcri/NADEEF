@@ -14,7 +14,6 @@
     <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
     <orderEntry type="library" name="com.sparkjava:spark-core:1.1" level="project" />
     <orderEntry type="module" module-name="tools" />
-    <orderEntry type="library" name="joptimizer-3.2.0" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -62,6 +61,7 @@
         <entry key="CheckCalls" value="false" />
         <entry key="CheckExpectedWarnings" value="false" />
         <entry key="CheckImmutableAnnotation" value="true" />
+        <entry key="CheckRelaxingNullnessAnnotation" value="true" />
         <entry key="CheckTypeQualifiers" value="true" />
         <entry key="CloneIdiom" value="true" />
         <entry key="ComparatorIdiom" value="true" />

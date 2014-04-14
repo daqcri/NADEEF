@@ -39,12 +39,18 @@ public class TNadeefService {
      * @param rule Rule.
      * @param tableName target table name.
      * @return generated code.
+     * 
+     * @param rule
+     * @param tableName
+     * @param dbname
      */
     public String generate(TRule rule, String tableName, String dbname) throws TNadeefRemoteException, org.apache.thrift.TException;
 
     /**
      * Verify the given rule.
      * @param rule input rule.
+     * 
+     * @param rule
      */
     public boolean verify(TRule rule) throws org.apache.thrift.TException;
 
@@ -55,7 +61,11 @@ public class TNadeefService {
      * @param table2 table 2 name.
      * @param outputdb output database name.
      * @return job key.
-     *
+     * 
+     * @param rule
+     * @param table1
+     * @param table2
+     * @param outputdb
      */
     public String detect(TRule rule, String table1, String table2, String outputdb) throws TNadeefRemoteException, org.apache.thrift.TException;
 
@@ -66,13 +76,20 @@ public class TNadeefService {
      * @param table2 table 2 name.
      * @param outputdb output database name.
      * @return job key.
+     * 
+     * @param rule
+     * @param table1
+     * @param table2
+     * @param outputdb
      */
     public String repair(TRule rule, String table1, String table2, String outputdb) throws TNadeefRemoteException, org.apache.thrift.TException;
 
     /**
      * Gets status of a specific job.
-     * @param key input job key.
+     * @param rule input rule.
      * @return job status.
+     * 
+     * @param key
      */
     public TJobStatus getJobStatus(String key) throws org.apache.thrift.TException;
 

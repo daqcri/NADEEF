@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -31,9 +31,9 @@
     <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="org.slf4j:slf4j-log4j12:1.6.5" level="project" />
-    <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
+    <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
@@ -71,6 +71,7 @@
         <entry key="CheckCalls" value="false" />
         <entry key="CheckExpectedWarnings" value="false" />
         <entry key="CheckImmutableAnnotation" value="true" />
+        <entry key="CheckRelaxingNullnessAnnotation" value="true" />
         <entry key="CheckTypeQualifiers" value="true" />
         <entry key="CloneIdiom" value="true" />
         <entry key="ComparatorIdiom" value="true" />
