@@ -56,6 +56,10 @@ require.config({
         'ace' : {
             deps : ['jquery'],
             exports: 'ace'
+        },
+
+        'blockUI' : {
+            deps : ['jquery']
         }
     }
 });

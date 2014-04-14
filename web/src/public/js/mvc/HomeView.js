@@ -74,9 +74,14 @@ define([
             renderWidget(defaultWidget[0].id);
         }
 
-        var defaultTable = $('#tables').find('li.active');
-        if (defaultTable != null) {
-            renderTable(defaultTable[0].id);
+        var activeTable = $('#tables .tab-content').find('div.active table')[0].id;
+        if (activeTable != null) {
+            if (activeTable.indexOf('violation') > -1)
+                renderTable('violation', true);
+            if (activeTable.indexOf('audit') > -1)
+                renderTable('audit', true);
+            if (activeTable.indexOf('source') > -1)
+                renderTable('source', true);
         }           
     }
     
@@ -91,19 +96,19 @@ define([
             renderWidget("overview");
     }
 
-    function renderTable(id) {
+    function renderTable(id, reload) {
         console.log('Load table ' + id);
         switch(id) {
         case 'violation':
-            Table.load({domId : 'violation-table', table : 'violation'});
+            Table.load({domId : 'violation-table', table : 'violation'}, reload);
             break;
         case 'audit':
-            Table.load({domId : 'audit-table', table : 'audit'});
+            Table.load({domId : 'audit-table', table : 'audit'}, reload);
             break;
         case 'source':
             var sourceTable = $("#selected_source").val();
             if (!_.isEmpty(sourceTable))
-                Table.load({domId: 'source-table', table : sourceTable});
+                Table.load({domId: 'source-table', table : sourceTable}, reload);
             break;
         }
     }
@@ -135,9 +140,7 @@ define([
                 {tag : "overview", head : "Overview", isActive : true},
                 {tag : "attribute", head : "Rule Attribute", isActive : false},
                 {tag : "distribution", head : "Rule Distribution", isActive : false},
-                {tag : "violationRelation",
-                 head : "Violation Relation",
-                 isActive : false},
+                {tag : "violationRelation", head : "Violation Relation", isActive : false},
                 {tag : "tupleRank", head : "Tuple Rank", isActive : false}
             ]
         };

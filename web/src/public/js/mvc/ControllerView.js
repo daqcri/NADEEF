@@ -178,15 +178,18 @@ define([
                             var plan = arrayToPlan(data['data'][0]);
                             Requester.doDetect(
                                 plan,
-                                function(data, status) {
+                                function(data) {
                                     info("A job is successfully submitted.");
                                     var key = data['data'];
                                     console.log('Received job key : ' + key);
-                                    if (key != null)
-                                        State.addJob({ key : plan.name });
+                                    if (key != null) {
+                                        var jobList = State.get("job");
+                                        jobList.push({ name : plan.name, key : key });
+                                        State.set("job", jobList);
+                                    }
                                 },
 
-                                function(data, status) {
+                                function(data) {
                                     var json = JSON.parse(data.responseText);
                                     err("<strong>Error</strong>: " + json['error']);
                                 }

@@ -15,16 +15,17 @@ define(["requester", "state"], function(Requester, State) {
     var instance = null;
     var cache = {};
 
-    function load(table) {
+    function load(table, reload) {
         if (_.isNull(table) || _.isNaN(table)) {
             console.log("Table name is null or empty.");
             return;
         }
 
+        reload = _.isUndefined(reload) ? true : reload;
         var domId = table.domId;
         var tablename = table.table;
 
-        if (cache[domId] != null) {
+        if (cache[domId] != null && !reload) {
             if (domId != 'source-table' ||
                 (domId == 'source-table' && cache[domId].source == tablename)) {
                 console.log('cache hit on table ' + domId);

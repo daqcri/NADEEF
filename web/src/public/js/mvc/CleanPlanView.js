@@ -15,8 +15,9 @@ define([
     'requester',
     'state',
     'ace',
+    'blockUI',
     'text!mvc/template/cleanplan.template.html'
-], function(Requester, State, Ace, CleanPlanTemplate) {
+], function(Requester, State, Ace, BlockUI, CleanPlanTemplate) {
     var editor;
     var rules;
 
@@ -39,7 +40,7 @@ define([
             return null;
         }
 
-        var ruleName = $('rule_name').val();
+        var ruleName = $('#rule_name').val();
         if (_.isNull(ruleName) || _.isEmpty(ruleName)) {
             err({ error : "Rule name cannot be empty."});
             return null;
@@ -61,7 +62,7 @@ define([
     }
 
     function render(id, rule) {
-        var sources = State.getSource();
+        var sources = State.get("source");
         var cleanPlanHtml =
             _.template(CleanPlanTemplate) ({
                 name: rule.name,
@@ -87,48 +88,62 @@ define([
     }
 
     function bindEvent() {
-        $('#save').on('click', function(e) {
+        $('#save').on('click', function() {
             var rule = getRule();
             if (rule != null) {
+                $.blockUI();
                 Requester.createRule(
                     rule,
                     function() {
+                        $.unblockUI();
                         $('#cleanPlanPopup').modal('hide');
                         info("You have successfully created a rule.");
-                    }, function(data) { err(data.responseText); }
+                    }, function(data) { $.unblockUI(); err(data.responseText); }
                 );
             }
         });
 
-        $('#generate').on('click', function(e) {
+        $('#generate').on('click', function() {
             var rule = getRule();
             if (!_.isNull(rule)) {
+                $.blockUI();
                 Requester.doGenerate(
                     rule,
-                    function(data) { editor.setValue(data['data'], -1); },
-                    function(data) { err(data.responseText); }
+                    function(data) {
+                        editor.setValue(data['data'], -1);
+                        $.unblockUI();
+                    },
+                    function(data) {
+                        $.unblockUI();
+                        err(data.responseText);
+                    }
                 );
             }
         });
 
-        $('#verify').on('click', function(e) {
+        $('#verify').on('click', function() {
             var rule = getRule();
             if (!_.isNull(rule)) {
+                $.blockUI();
                 Requester.doVerify(
                     rule,
-                    function() { info("Verification succeeded."); },
-                    function(data) { err(data.responseText); }
+                    function() {
+                        $.unblockUI();
+                        info("Verification succeeded.");
+                    },
+                    function(data) { $.unblockUI(); err(data.responseText); }
                 );
             }
         });
     }
 
     function info(msg) {
+        $('#cleanPlanView-alert-info').alert('close');
         $('#cleanPlanView-alert').html([
             ['<div class="alert alert-success" id="cleanPlanView-alert-info>'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
         window.setTimeout(function() { $('#cleanPlanView-alert-info').alert('close'); }, 2000);
     }
 
