@@ -144,7 +144,7 @@ public class PerfReport {
         sb.append("\n");
         sb.append(formatEntry(Metric.EQTime, "EQ time", "ms"));
         sb.append("\n");
-        sb.append("----------------------------------------------------------------");
+        sb.append("----------------------------------------------------------------\n");
 
         Collection<Long> totalChangedCells = PerfReport.get(Metric.UpdatedCellNumber);
 
