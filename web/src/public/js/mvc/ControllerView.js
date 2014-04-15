@@ -30,10 +30,9 @@ define([
     ProgressBarView,
     SourceEditorView,
     ControllerTemplate,
-    DetailTemplate
-) {
+    DetailTemplate) {
     var domId;
-
+    var discoverInstance = null;
     function info(msg) {
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
@@ -41,10 +40,15 @@ define([
             ['&times;</button>'],
             ['<span><h3>' + msg + '</h3></span></div>']].join(''));
 
-        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 5000);
+        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 3000);
     }
 
     function err(msg) {
+        if (_.isObject(msg) && 'responseText' in msg) {
+            var json = JSON.parse(data.responseText);
+            msg = json['error'];
+        }
+
         $('#home-alert').html([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
@@ -54,40 +58,140 @@ define([
 
     function render(id) {
         domId = id;
-        refreshList();
+        refresh();
+        SourceEditorView.start('source-editor-modal');
+        window.addEventListener("message", function(event) {
+            if (event.origin.indexOf(".action") > -1) {
+                console.log('received: ' + event.data);
+                refreshRuleList();
+            }
+        }, false);
+
+        window.addEventListener('beforeunload', function() {
+            if (discoverInstance != null && !discoverInstance.closed)
+                discoverInstance.close();
+        });
     }
 
-    function getSelectedPlan() {
-        return $("#selected_rule").val();
+    function refresh() {
+        refreshSourceList();
+        refreshRuleList();
     }
 
-    function getSelectedSource() {
-        return $("#selected_source").val();
-    }
-
-    function refreshList() {
-        Requester.getSource(
-            function(source) {
+    function refreshSourceList() {
+        Requester.getSource({
+            before: function() { $.blockUI(); },
+            success: function(source) {
                 var sources = source['data'];
                 State.set('source', sources);
-                Requester.getRule(
-                    function(data) {
-                        var rules = data['data'];
-                        State.set('rule', rules);
-                        var html =
-                            _.template(ControllerTemplate)
-                                ({ sources: sources, plans: []});
-                        $('#' + domId).html(html);
+                var html =
+                    _.template(ControllerTemplate)
+                    ({ sources: sources, plans: []});
+                $('#' + domId).html(html);
+                $('#refresh_source').on('click', function() {
+                    refresh();
+                });
 
-                        // render the source modal
-                        // TODO: put to on shown
-                        SourceEditorView.start('source-editor-modal');
-                        bindEvent();
-                        ProgressBarView.start('progressbar');
-                    }
-                );
+                $('#selected_source').on('change', function() {
+                    var newSource = $("#selected_source").val();
+                    State.set("currentSource", newSource);
+                    renderRuleList(newSource);
+                    Table.load({ domId: 'source-table', table: newSource });
+                });
+
+                $('#new-source').on('click', function() {
+                    $('#source-editor').modal('show');
+                });
+            },
+            failure: err,
+            always: function() {
+                // TODO: to move
+                if ($("#progressbar-content").length == 0)
+                    ProgressBarView.start('progressbar');
+                $.unblockUI();
             }
-        );
+        });
+    }
+
+    function refreshRuleList() {
+        Requester.getRule({
+            before: function() { $.blockUI(); },
+            success: function(data) {
+                State.set('rule', data['data']);
+                $('#btn-discover').on('click', function() {
+                    if (Requester.isRuleMinerRunning()) {
+                        if (discoverInstance == null || discoverInstance.closed) {
+                            var url = "http://www.google.com";
+                            discoverInstance =
+                                window.open(
+                                    "http://www.google.com",
+                                    "Rule Miner",
+                                    'width=800,height=600');
+                            discoverInstance.postMessage("ping", url);
+                        } else
+                            info("Discover window is already opened.");
+                    } else {
+                        info("Rule Miner is not available.");
+                    }
+                });
+
+                $('#new_plan').on('click', function() {
+                    CleanPlanView.render(
+                        'cleanPlanView',
+                        {name: null, type: 'FD', source: null, tablename: null}
+                    );
+                });
+
+                $('#edit_plan').on('click', function() {
+                    var selectedRule = State.get('currentRule');
+                    if (selectedRule == null) {
+                        err('No rule is selected.');
+                        return;
+                    }
+
+                    if (_.isArray(selectedRule) && selectedRule.length != 1) {
+                        err('Can not edit multiple clean plans.');
+                        return;
+                    }
+
+                    Requester.getRuleDetail(selectedRule[0], function(data) {
+                        var plan = data['data'][0];
+                        CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
+                    });
+                });
+
+                $('#selected_rule').on('change', function() {
+                    State.set('currentRule', $("#selected_rule").val());
+                    renderRuleDetail();
+                });
+
+                $('#detect').on('click', function() {
+                    var selectedPlan = State.get("currentRule");
+                    if (selectedPlan == null || !_.isArray(selectedPlan)) {
+                        err('No rule is selected.');
+                        return;
+                    }
+
+                    detect(selectedPlan);
+                });
+
+                $('#delete').on('click', function() {
+                    var selectedRule = State.get("currentRule");
+                    if (selectedRule == null || !_.isArray(selectedRule)) {
+                        err('No rule is selected.');
+                        return;
+                    }
+
+                    deleteRule(selectedRule);
+                });
+
+                if (State.get("currentSource"))
+                    renderRuleList(State.get("currentSource"));
+            }, failure: err,
+            always: function() {
+                $.unblockUI()
+            }
+        });
     }
 
     function arrayToPlan(v) {
@@ -106,22 +210,22 @@ define([
                 rule,
                 function() {
                     info("Selected rules are deleted.");
-                    refreshList();
+                    refreshRuleList();
                 }
             );
         });
     }
 
     function renderRuleDetail() {
-        var selectedPlan = getSelectedPlan();
-        if (_.isUndefined(selectedPlan) || _.isNull(selectedPlan))
+        var selectedRule = State.get('currentRule');
+        if (_.isUndefined(selectedRule) || _.isNull(selectedRule))
             return;
 
-        if (_.isArray(selectedPlan) && selectedPlan.length != 1) {
+        if (_.isArray(selectedRule) && selectedRule.length != 1) {
             $('#detail').html('');
         } else {
             Requester.getRuleDetail(
-                selectedPlan,
+                selectedRule,
                 function (data) {
                     var plan = arrayToPlan(data['data'][0]);
                     $('#detail').html(_.template(DetailTemplate, plan));
@@ -138,33 +242,6 @@ define([
             "<option value='<%= rule[0] %>'><%= rule[0] %></option>" +
             "<% }); %>", { rules : selectedRule });
         $('#selected_rule').html(selectedHtml);
-    }
-
-    function repair(rules) {
-        _.each(rules, function(ruleName) {
-            $.getJSON('/data/rule/' + ruleName, function(data) {
-                var rule = arrayToPlan(data['data'][0]);
-                $.ajax({
-                    url : '/do/repair',
-                    type : 'POST',
-                    dataType : 'json',
-                    data: rule,
-                    success: function(data, status) {
-                        info("A repair job is successfully submitted.");
-                        var key = data['data'];
-                        console.log('Received job key : ' + key);
-                        if (key != null) {
-                            var jobList = State.getJob();
-                            jobList.push({ key : rule.name });
-                        }
-                    },
-                    error: function(data, status) {
-                        var json = JSON.parse(data.responseText);
-                        err("<strong>Error</strong>: " + json['error']);
-                    }
-                });
-            });
-        });
     }
 
     function detect(plans) {
@@ -187,97 +264,13 @@ define([
                                         jobList.push({ name : plan.name, key : key });
                                         State.set("job", jobList);
                                     }
-                                },
-
-                                function(data) {
-                                    var json = JSON.parse(data.responseText);
-                                    err("<strong>Error</strong>: " + json['error']);
-                                }
+                                }, err
                             )
                         }
                      );
                 });
             }
         );
-    }
-
-    function bindEvent() {
-        $('#refresh_source').on('click', function() {
-            refreshList();
-        });
-
-        $('#new_plan').on('click', function() {
-            CleanPlanView.render(
-                'cleanPlanView',
-                {name: null, type: 'FD', source: null, tablename: null}
-            );
-        });
-
-        $('#cleanPlanPopup').on('hidden', function() {
-            refreshList();
-        });
-
-        $('#edit_plan').on('click', function() {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null) {
-                err('No rule is selected.');
-                return;
-            }
-
-            if (_.isArray(selectedPlan) && selectedPlan.length != 1) {
-                err('Can not edit multiple clean plans.');
-                return;
-            }
-
-            Requester.getRuleDetail(selectedPlan[0], function(data) {
-                var plan = data['data'][0];
-                CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
-            });
-        });
-
-        $('#new-source').on('click', function() {
-            $('#source-editor').modal('show');
-        });
-
-        $('#selected_rule').on('change', function() {
-            renderRuleDetail();
-        });
-
-        $('#selected_source').on('change', function() {
-            var newSource = getSelectedSource();
-            renderRuleList(newSource);
-            Table.load({ domId: 'source-table', table: newSource });
-        });
-
-        $('#detect').on('click', function() {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null || !_.isArray(selectedPlan)) {
-                err('No rule is selected.');
-                return;
-            }
-
-            detect(selectedPlan);
-        });
-
-        $('#delete').on('click', function() {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null || !_.isArray(selectedPlan)) {
-                err('No rule is selected.');
-                return;
-            }
-
-            deleteRule(selectedPlan);
-        });
-
-        $('#repair').on('click', function() {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null || !_.isArray(selectedPlan)) {
-                err('No rule is selected.');
-                return;
-            }
-
-            repair(selectedPlan);
-        });
     }
 
     return {

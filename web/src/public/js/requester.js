@@ -11,11 +11,13 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(['router', 'state'], function(Router, State) {
+define(['router', 'state', 'config'], function(Router, State, Config) {
     var cache = {};
 
     function get(call) {
         var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
+        if (!('type' in call))
+            call['type'] = 'GET';
         var promise = cache[key];
         if (!promise) {
             promise = $.ajax(call);
@@ -26,13 +28,19 @@ define(['router', 'state'], function(Router, State) {
         return promise;
     }
 
-    function request(promise, successCallback, failureCallback) {
+    function request(promise, callbacks) {
         var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
+        if (callbacks.before)
+            callbacks.before();
         $.when(promise).done(function (data) {
-            successCallback(data);
+            if (callbacks.success)
+                callbacks.success(data);
         }).fail(function (data) {
-            failureCallback(data);
-        }).always(function () {
+            if (callbacks.failure)
+                callbacks.failure(data);
+        }).always(function (data) {
+            if (callbacks.always)
+                callbacks.always(data);
             delete cache[key];
         });
     }
@@ -41,20 +49,17 @@ define(['router', 'state'], function(Router, State) {
         return State.get('project');
     }
 
-    function getProgress(successCallback, failureCallback) {
-        request(
-            get({ url : "/progress", type: "GET" }),
-            successCallback,
-            failureCallback
-        );
+    function getProgress(x) {
+        request(get({ url : "/progress", type: "GET" }), x);
     }
 
-    function getProject(successCallback, failureCallback) {
-        request(
-            get({ url : "/project", type: "GET" }),
-            successCallback,
-            failureCallback
-        );
+    function getProject(x) {
+        request(get({ url : "/project"}), x);
+    }
+
+    function isRuleMinerRunning() {
+        // request(get({ url : Config.RuleMinerHostName}))
+        return true;
     }
 
     function deleteViolation(successCallback, failureCallback) {
@@ -66,22 +71,12 @@ define(['router', 'state'], function(Router, State) {
         });
     }
 
-    function getSource(successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/data/source',
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+    function getSource(x) {
+        request(get({ url : '/' + getProjectName() + '/data/source'}), x);
     }
 
-    function getRule(successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/data/rule',
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+    function getRule(x) {
+        request(get({ url : '/' + getProjectName() + '/data/rule'}), x);
     }
 
     function deleteRule(ruleName, successCallback, failureCallback) {
@@ -102,15 +97,8 @@ define(['router', 'state'], function(Router, State) {
         });
     }
 
-    function getTableSchema(tableName, successCallback, failureCallback) {
-        request(
-            get({
-                url : '/' + getProjectName() + '/table/' + tableName + '/schema',
-                type: 'GET'
-            }),
-            successCallback,
-            failureCallback
-        );
+    function getTableSchema(tableName, x) {
+        request(get({url : '/' + getProjectName() + '/table/' + tableName + '/schema',}), x);
     }
 
     function getOverview(successCallback, failureCallback) {
@@ -238,12 +226,10 @@ define(['router', 'state'], function(Router, State) {
         doVerify : doVerify,
         doRepair : doRepair,
         doGenerate : doGenerate,
-
         deleteViolation : deleteViolation,
-
+        deleteRule: deleteRule,
         createProject: createProject,
         createRule: createRule,
-        deleteRule: deleteRule,
         getProgress : getProgress,
         getProject: getProject,
         getSource: getSource,
@@ -254,6 +240,7 @@ define(['router', 'state'], function(Router, State) {
         getAttribute: getAttribute,
         getViolationRelation: getViolationRelation,
         getRuleDistribution: getRuleDistribution,
-        getTupleRank: getTupleRank
+        getTupleRank: getTupleRank,
+        isRuleMinerRunning: isRuleMinerRunning
     };
 });

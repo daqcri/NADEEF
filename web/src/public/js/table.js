@@ -32,6 +32,9 @@ define(["requester", "state"], function(Requester, State) {
                 return;
             }
 
+        }
+
+        if (cache[domId] != null) {
             try {
                 cache[domId].instance.fnDestroy();
             } catch (e) {
@@ -46,7 +49,7 @@ define(["requester", "state"], function(Requester, State) {
 
         Requester.getTableSchema(
             tablename,
-            function(data) {
+            { success: function(data) {
                 var schema = data['schema'];
                 var columns = [];
                 $('#' + domId).empty().append('<thead><tr></tr></thead>');
@@ -69,11 +72,8 @@ define(["requester", "state"], function(Requester, State) {
                     "aoColumns" : columns
                 });
 
-                if (domId != 'source-table')
-                    cache[domId] = instance;
-                else
-                    cache[domId] = { instance : instance, source : tablename };
-            }
+                cache[domId] = { instance : instance, source : tablename };
+            }}
         );
     }
 

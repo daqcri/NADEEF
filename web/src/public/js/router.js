@@ -38,7 +38,7 @@ define([], function() {
                     loadController(currentRoute.controller);
 
                     if (window.history.state == null) {
-                        window.history.pushState(currentState);
+                        window.history.pushState(currentState, null, this.url);
                     } else {
                         currentState = window.history.state;
                     }

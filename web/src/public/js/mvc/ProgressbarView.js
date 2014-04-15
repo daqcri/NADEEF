@@ -38,35 +38,34 @@ define([
                 return;
             }
 
-            Requester.getProgress(
-            function(data) {
-                var values = [];
-                if (jobList && jobList.length > data['data'].length)
-                    info("There are Job(s) finished, please do refresh to see the result.");
-                jobList = data['data'];
-                State.set('job', jobList);
+            Requester.getProgress({
+                success: function(data) {
+                    var values = [];
+                    if (jobList && jobList.length > data['data'].length)
+                        info("There are Job(s) finished, please do refresh to see the result.");
+                    jobList = data['data'];
+                    State.set('job', jobList);
 
-                _.each(jobList, function(job) {
-                    var name = job['key'] ? job['key'] : 'Unknown';
-                    values.push({
-                        name : name,
-                        value : job['overallProgress']
+                    _.each(jobList, function(job) {
+                        var name = job['key'] ? job['key'] : 'Unknown';
+                        values.push({
+                            name : name,
+                            value : job['overallProgress']
+                        });
                     });
-                });
-                var html =
-                    _.template(ProgressBarTemplate)({ progress: values });
-                $('#' + id).html(html);
-            }, function(response) {
-                console.log("Requesting progress failed : " + response.responseText);
-            });
+                    var html =
+                        _.template(ProgressBarTemplate)({ progress: values });
+                    $('#' + id).html(html);
+                },
+                failure: function(response) {
+                    console.log("Requesting progress failed : " + response.responseText);
+                }}
+            );
         }
 
 		function start(id) {
-			if (!isSubscribed) {
-                updateProgress(id);
-				setInterval(function() {updateProgress(id)}, 3000);
-				isSubscribed = true;
-			}
+            updateProgress(id);
+            setInterval(function() {updateProgress(id)}, 3000);
 		}
 
 		return {

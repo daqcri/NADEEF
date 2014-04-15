@@ -40,11 +40,12 @@ define([
                     .x(function(d) { return d.label })
                     .y(function(d) { return d.value })
                     .color(d3.scale.category10().range())
-                    .showLabels(true);
+                    .showLabels(true)
+                    .valueFormat(d3.format('d'));
 
                 d3.select("#" + id + " svg")
                     .datum(values)
-                    .transition().duration(500)
+                    .transition(10)
                     .call(chart);
                 return chart;
             });
@@ -88,7 +89,7 @@ define([
                     .tickFormat(d3.format('d'));
                 d3.select("#" + id + " svg")
                     .datum(graph_data)
-                    .transition().duration(500)
+                    .transition().duration(10)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);
@@ -262,7 +263,7 @@ define([
 
                 d3.select("#" + id + " svg")
                     .datum(distribution_data)
-                    .transition().duration(500)
+                    .transition(10)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);
@@ -312,7 +313,7 @@ define([
                     .attr("width", 400)
                     .attr("height", 300)
                     .datum(graph_data)
-                    .transition().duration(500)
+                    .transition().duration(10)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);

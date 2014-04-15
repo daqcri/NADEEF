@@ -44,15 +44,24 @@
 <div class="tab-content">
     <div class="tab-pane in active">
         <div class="control-group">
-            <button class="btn" id="new_plan">New</button>
-            <button class="btn" id="edit_plan">Edit</button>
-            <button class="btn" id="delete">Delete</button>
+            <button class="btn btn-primary" id="btn-discover">Discover</button>
             <button class="btn" id="detect">Detect</button>
-            <button class="btn" id="repair">Repair</button>
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Action
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" id="new_plan">New</a></li>
+                    <li><a href="#" id="edit_plan">Edit</a></li>
+                    <li><a href="#" id="delete">Delete</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" id="repair">Repair</a></li>
+                </ul>
+            </div>
         </div>
         <div class="control-group">
             <select multiple id="selected_rule" class="selectbox fullwidth" size="10">
-
             </select>
         </div>
         <label>Details</label>
@@ -74,7 +83,6 @@
     </div>
 </div>
 <p>
-
 <ul class="nav nav-tabs">
     <li class="active">
         <a data-toggle="tab"><i class="icon-tasks" style="margin-right: 10px;">

@@ -12,7 +12,7 @@
  */
 
 define([], function() {
-    var keyList = [ "project", "job", "source", "rule"];
+    var keyList = [ "project", "job", "source", "currentSource", "rule", "currentRule"];
     var changeHandler = {};
 
     function set(key, value) {

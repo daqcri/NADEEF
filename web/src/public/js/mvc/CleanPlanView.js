@@ -88,7 +88,8 @@ define([
     }
 
     function bindEvent() {
-        $('#save').on('click', function() {
+        $('#save').on('click', function(e) {
+            e.preventDefault();
             var rule = getRule();
             if (rule != null) {
                 $.blockUI();
@@ -103,7 +104,8 @@ define([
             }
         });
 
-        $('#generate').on('click', function() {
+        $('#generate').on('click', function(e) {
+            e.preventDefault();
             var rule = getRule();
             if (!_.isNull(rule)) {
                 $.blockUI();
@@ -121,7 +123,8 @@ define([
             }
         });
 
-        $('#verify').on('click', function() {
+        $('#verify').on('click', function(e) {
+            e.preventDefault();
             var rule = getRule();
             if (!_.isNull(rule)) {
                 $.blockUI();

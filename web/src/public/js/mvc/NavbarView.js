@@ -31,7 +31,7 @@ define([
     function bindEvent() {
         $('#navbar').find("li a").on('click', function() {
             $('#navbar').find('.active').removeClass('active');
-            $(this).parent.addClass('active');
+            $(this).addClass('active');
         });
 
         $('#project-modal-close').on('click', function() {
@@ -46,12 +46,13 @@ define([
 
         $("#change").on("click", function() {
             $('#projectModal').find('.modal-body').remove();
-            Requester.getProject(function(data) {
+            Requester.getProject({
+                success: function(data) {
                 var projectList = _.flatten(data['data']);
                 selectProject('projectModal', projectList);
-            }, function() {
+            }, failure: function() {
                 console.log("Getting project failed.");
-            });
+            }});
         });
 
         $("#project-button").on("click", function() {
@@ -115,15 +116,17 @@ define([
 		bindEvent();
 
         // start project selection process
-        Requester.getProject(function(data) {
-            var projectList = _.flatten(data['data']);
-            var oldProject = State.get('project');
-            if (oldProject && _.indexOf(projectList, oldProject) > -1)
-                enterProject(oldProject);
-            else
-                selectProject('projectModal', projectList);
-        }, function() {
-            console.log("Getting project failed.");
+        Requester.getProject({
+            success: function(data) {
+                var projectList = _.flatten(data['data']);
+                var oldProject = State.get('project');
+                if (oldProject && _.indexOf(projectList, oldProject) > -1)
+                    enterProject(oldProject);
+                else
+                    selectProject('projectModal', projectList);
+            }, failure: function() {
+                console.log("Getting project failed.");
+            }
         });
 	}
 	
