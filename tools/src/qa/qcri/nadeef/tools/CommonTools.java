@@ -211,7 +211,7 @@ public final class CommonTools {
         });
         System.out.print("Start embedded database...");
         String cmd = String.format(
-            "java -Dderby.drda.portNumber=%d -jar out/bin/derbyrun.jar server start",
+            "java -Dderby.drda.portNumber=%d -jar out/bin/derbyrun.jar server start -noSecurityManager",
             port
         );
         derbyProcess = runtime.exec(cmd);
