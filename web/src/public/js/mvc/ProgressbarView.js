@@ -41,16 +41,26 @@ define([
                     var values = [];
                     if (jobList && jobList.length > data['data'].length)
                         info("There are Job(s) finished, please do refresh to see the result.");
-                    jobList = data['data'];
-                    State.set('job', jobList);
-
-                    _.each(jobList, function(job) {
-                        var name = job['key'] ? job['key'] : 'Unknown';
-                        values.push({
-                            name : name,
-                            value : job['overallProgress']
-                        });
+                    var runningList = data['data'];
+                    var runningKeySet = {};
+                    _.each(runningList, function(job) {
+                        runningKeySet[job['key']] = job;
                     });
+
+                    var newJobList = [];
+                    for (var i = 0; i < jobList; i ++) {
+                        var job = jobList[i];
+                        if (job.key in runningKeySet) {
+                            var v = runningKeySet[job.key];
+                            values.push({
+                                name : job.name,
+                                value : v['overallProgress']
+                            });
+                            newJobList.push(job);
+                        }
+                    }
+
+                    State.set('job', newJobList);
                     var html =
                         _.template(ProgressBarTemplate)({ progress: values });
                     $('#' + id).html(html);

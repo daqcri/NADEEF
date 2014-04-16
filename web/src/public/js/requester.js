@@ -73,7 +73,8 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
 
     function deleteViolation(x) {
         return request(
-            get({ url : "/" + getProjectName() + "/table/violation", type: "DELETE"}, x)
+            get({ url : "/" + getProjectName() + "/table/violation", type: "DELETE"}),
+            x
         );
     }
 

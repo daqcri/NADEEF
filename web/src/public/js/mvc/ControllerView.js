@@ -45,7 +45,7 @@ define([
 
     function err(msg) {
         if (_.isObject(msg) && 'responseText' in msg) {
-            var json = JSON.parse(data.responseText);
+            var json = JSON.parse(msg.responseText);
             msg = json['error'];
         }
 

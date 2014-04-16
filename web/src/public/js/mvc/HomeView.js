@@ -59,12 +59,15 @@ define([
         });
 
         $('#clear').on('click', function() {
-            Requester.deleteViolation(
-                function() {
+            Requester.deleteViolation({
+                success: function() {
                     info('Violations are removed');
                     refresh();
+                },
+                failure: function() {
+                    err("Removing violations failed.");
                 }
-            );
+            });
         });
     }
 
