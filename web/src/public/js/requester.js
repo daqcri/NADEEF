@@ -18,6 +18,8 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
         if (!('type' in call))
             call['type'] = 'GET';
+        if (!('dataType' in call))
+            call['dataType'] = 'json';
         var promise = cache[key];
         if (!promise) {
             promise = $.ajax(call);
@@ -30,19 +32,26 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
 
     function request(promise, callbacks) {
         var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
-        if (callbacks.before)
-            callbacks.before();
-        $.when(promise).done(function (data) {
-            if (callbacks.success)
-                callbacks.success(data);
-        }).fail(function (data) {
-            if (callbacks.failure)
-                callbacks.failure(data);
-        }).always(function (data) {
-            if (callbacks.always)
-                callbacks.always(data);
-            delete cache[key];
-        });
+        if (_.isNull(callbacks) || _.isUndefined(callbacks)) {
+            $.when(promise).always(function () {
+                delete cache[key];
+            });
+        } else {
+            if (callbacks.before)
+                callbacks.before();
+            $.when(promise).done(function (data) {
+                if (callbacks.success)
+                    callbacks.success(data);
+            }).fail(function (data) {
+                if (callbacks.failure)
+                    callbacks.failure(data);
+            }).always(function (data) {
+                if (callbacks.always)
+                    callbacks.always(data);
+                delete cache[key];
+            });
+        }
+        return promise;
     }
 
     function getProjectName() {
@@ -50,11 +59,11 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
     }
 
     function getProgress(x) {
-        request(get({ url : "/progress", type: "GET" }), x);
+        return request(get({ url : "/progress", type: "GET" }), x);
     }
 
     function getProject(x) {
-        request(get({ url : "/project"}), x);
+        return request(get({ url : "/project"}), x);
     }
 
     function isRuleMinerRunning() {
@@ -62,21 +71,18 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         return true;
     }
 
-    function deleteViolation(successCallback, failureCallback) {
-        $.ajax({
-            url: '/' + getProjectName() + '/table/violation',
-            type: "DELETE",
-            success: successCallback,
-            error: failureCallback
-        });
+    function deleteViolation(x) {
+        return request(
+            get({ url : "/" + getProjectName() + "/table/violation", type: "DELETE"}, x)
+        );
     }
 
     function getSource(x) {
-        request(get({ url : '/' + getProjectName() + '/data/source'}), x);
+        return request(get({ url : '/' + getProjectName() + '/data/source'}), x);
     }
 
     function getRule(x) {
-        request(get({ url : '/' + getProjectName() + '/data/rule'}), x);
+        return request(get({ url : '/' + getProjectName() + '/data/rule'}), x);
     }
 
     function deleteRule(ruleName, successCallback, failureCallback) {
@@ -88,13 +94,8 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         });
     }
 
-    function getRuleDetail(ruleName, successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/data/rule/' + ruleName,
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+    function getRuleDetail(ruleName, x) {
+        return request(get({url : '/' + getProjectName() + '/data/rule/' + ruleName}), x);
     }
 
     function getTableSchema(tableName, x) {
@@ -152,7 +153,6 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         $.ajax({
             url : '/do/detect',
             type: 'POST',
-            dataType: 'json',
             data: data,
             success: successCallback,
             error: failureCallback

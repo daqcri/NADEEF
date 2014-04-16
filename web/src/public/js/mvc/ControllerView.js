@@ -59,7 +59,6 @@ define([
     function render(id) {
         domId = id;
         refresh();
-        SourceEditorView.start('source-editor-modal');
         window.addEventListener("message", function(event) {
             if (event.origin.indexOf(".action") > -1) {
                 console.log('received: ' + event.data);
@@ -85,8 +84,7 @@ define([
                 var sources = source['data'];
                 State.set('source', sources);
                 var html =
-                    _.template(ControllerTemplate)
-                    ({ sources: sources, plans: []});
+                    _.template(ControllerTemplate)({ sources: sources});
                 $('#' + domId).html(html);
                 $('#refresh_source').on('click', function() {
                     refresh();
@@ -102,12 +100,18 @@ define([
                 $('#new-source').on('click', function() {
                     $('#source-editor').modal('show');
                 });
+
+                State.clear("currentSource");
             },
             failure: err,
             always: function() {
                 // TODO: to move
                 if ($("#progressbar-content").length == 0)
                     ProgressBarView.start('progressbar');
+
+                if ($("#source-editor").length == 0)
+                    SourceEditorView.start('source-editor-modal');
+
                 $.unblockUI();
             }
         });
@@ -136,10 +140,16 @@ define([
                 });
 
                 $('#new_plan').on('click', function() {
+                    $("#cleanPlanPopup").on('hidden', function() {
+                        refreshRuleList();
+                    });
+
                     CleanPlanView.render(
-                        'cleanPlanView',
-                        {name: null, type: 'FD', source: null, tablename: null}
-                    );
+                        'cleanPlanView', {
+                            name: null,
+                            type: 'FD',
+                            table1: State.get("currentSource")
+                        });
                 });
 
                 $('#edit_plan').on('click', function() {
@@ -154,9 +164,11 @@ define([
                         return;
                     }
 
-                    Requester.getRuleDetail(selectedRule[0], function(data) {
-                        var plan = data['data'][0];
-                        CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
+                    Requester.getRuleDetail(selectedRule[0], {
+                        success: function(data) {
+                            var plan = data['data'][0];
+                            CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
+                        }
                     });
                 });
 
@@ -205,6 +217,7 @@ define([
     }
 
     function deleteRule(rules) {
+        // TODO; to delete in batch
         _.each(rules, function(rule) {
             Requester.deleteRule(
                 rule,
@@ -226,10 +239,10 @@ define([
         } else {
             Requester.getRuleDetail(
                 selectedRule,
-                function (data) {
+                {success: function (data) {
                     var plan = arrayToPlan(data['data'][0]);
                     $('#detail').html(_.template(DetailTemplate, plan));
-            });
+            }});
         }
     }
 
@@ -242,16 +255,16 @@ define([
             "<option value='<%= rule[0] %>'><%= rule[0] %></option>" +
             "<% }); %>", { rules : selectedRule });
         $('#selected_rule').html(selectedHtml);
+        State.clear("currentRule");
     }
 
     function detect(plans) {
         // clean the violation before start new detection.
-        Requester.deleteViolation(
+        $.when(Requester.deleteViolation()).then(
             function() {
                 _.each(plans, function(planName) {
-                    Requester.getRuleDetail(
-                        planName,
-                        function(data) {
+                    Requester.getRuleDetail(planName, {
+                        success: function(data) {
                             var plan = arrayToPlan(data['data'][0]);
                             Requester.doDetect(
                                 plan,
@@ -266,11 +279,10 @@ define([
                                     }
                                 }, err
                             )
-                        }
+                        }}
                      );
                 });
-            }
-        );
+            });
     }
 
     return {

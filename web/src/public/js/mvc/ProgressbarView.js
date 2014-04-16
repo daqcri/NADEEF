@@ -16,8 +16,6 @@ define([
     'requester',
     'text!mvc/template/progressbar.template.html'],
     function(State, Requester, ProgressBarTemplate) {
-		var isSubscribed = false;
-
         function info(msg) {
             $('#home-alert-info').alert('close');
             $('#home-alert').html([
