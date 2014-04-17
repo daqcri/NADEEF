@@ -48,7 +48,7 @@ define([
                     });
 
                     var newJobList = [];
-                    for (var i = 0; i < jobList; i ++) {
+                    for (var i = 0; i < jobList.length; i ++) {
                         var job = jobList[i];
                         if (job.key in runningKeySet) {
                             var v = runningKeySet[job.key];

@@ -154,6 +154,7 @@ public final class NadeefClient {
             JsonObject obj = new JsonObject();
             obj.add("status", new JsonPrimitive(status.getStatus().toString()));
             obj.add("overallProgress", new JsonPrimitive(status.getOverallProgress()));
+            obj.add("key", new JsonPrimitive(status.getKey()));
             JsonArray array = new JsonArray();
             for (Integer progress : status.getProgress())
                 array.add(new JsonPrimitive(progress));

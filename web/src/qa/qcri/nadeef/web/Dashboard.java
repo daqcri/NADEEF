@@ -132,7 +132,6 @@ public final class Dashboard {
                                     tableName,
                                     start,
                                     interval,
-                                    firstNViolation,
                                     columns,
                                     filter
                                 ),

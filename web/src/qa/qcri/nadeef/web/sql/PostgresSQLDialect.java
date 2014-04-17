@@ -90,7 +90,6 @@ public class PostgresSQLDialect extends SQLDialectBase {
         String tableName,
         int start,
         int interval,
-        String firstNViolation,
         ArrayList columns,
         String filter
     ) {

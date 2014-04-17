@@ -11,15 +11,16 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(['router', 'state', 'config'], function(Router, State, Config) {
+define(['router', 'state', 'ruleminer'], function(Router, State) {
     var cache = {};
 
     function get(call) {
-        var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
         if (!('type' in call))
             call['type'] = 'GET';
         if (!('dataType' in call))
             call['dataType'] = 'json';
+
+        var key = 'key' in call ? call['key'] : call.url + call.type;
         var promise = cache[key];
         if (!promise) {
             promise = $.ajax(call);
@@ -27,11 +28,12 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         } else {
             console.log("Reusing cache " + key);
         }
-        return promise;
+        return { key: key, promise: promise };
     }
 
-    function request(promise, callbacks) {
-        var key = arguments.callee.caller.toString().match(/function ([^\(]+)/)[1];
+    function request(obj, callbacks) {
+        var key = obj.key;
+        var promise = obj.promise;
         if (_.isNull(callbacks) || _.isUndefined(callbacks)) {
             $.when(promise).always(function () {
                 delete cache[key];
@@ -66,9 +68,16 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         return request(get({ url : "/project"}), x);
     }
 
-    function isRuleMinerRunning() {
-        // request(get({ url : Config.RuleMinerHostName}))
-        return true;
+    function doDetect(data, x) {
+        // inject project name
+        data.project = getProjectName();
+        return request(get(
+            {
+                url : "/do/detect",
+                type : "POST",
+                data: data,
+                key: "detect-" + data.project + "-" + data.name
+        }), x);
     }
 
     function deleteViolation(x) {
@@ -100,7 +109,7 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
     }
 
     function getTableSchema(tableName, x) {
-        request(get({url : '/' + getProjectName() + '/table/' + tableName + '/schema',}), x);
+        request(get({url : '/' + getProjectName() + '/table/' + tableName + '/schema'}), x);
     }
 
     function getOverview(successCallback, failureCallback) {
@@ -143,18 +152,6 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         $.ajax({
             url : '/' + getProjectName() + '/widget/top10',
             type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
-    }
-
-    function doDetect(data, successCallback, failureCallback) {
-        // inject project name
-        data.project = getProjectName();
-        $.ajax({
-            url : '/do/detect',
-            type: 'POST',
-            data: data,
             success: successCallback,
             error: failureCallback
         });
@@ -241,7 +238,6 @@ define(['router', 'state', 'config'], function(Router, State, Config) {
         getAttribute: getAttribute,
         getViolationRelation: getViolationRelation,
         getRuleDistribution: getRuleDistribution,
-        getTupleRank: getTupleRank,
-        isRuleMinerRunning: isRuleMinerRunning
+        getTupleRank: getTupleRank
     };
 });

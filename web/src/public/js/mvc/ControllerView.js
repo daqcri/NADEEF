@@ -16,6 +16,7 @@ define([
     'table',
     'jquery.filedrop',
     'state',
+    'ruleminer',
     'mvc/CleanPlanView',
     'mvc/ProgressbarView',
     'mvc/SourceEditorView',
@@ -26,13 +27,13 @@ define([
     Table,
     FileDrop,
     State,
+    RuleMiner,
     CleanPlanView,
     ProgressBarView,
     SourceEditorView,
     ControllerTemplate,
     DetailTemplate) {
     var domId;
-    var discoverInstance = null;
     function info(msg) {
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
@@ -60,15 +61,15 @@ define([
         domId = id;
         refresh();
         window.addEventListener("message", function(event) {
-            if (event.origin.indexOf(".action") > -1) {
+            var hostname = window.location.hostname;
+            if (event.origin.indexOf(hostname) > -1 && event.data.indexOf("inserted") > -1) {
                 console.log('received: ' + event.data);
                 refreshRuleList();
             }
         }, false);
 
         window.addEventListener('beforeunload', function() {
-            if (discoverInstance != null && !discoverInstance.closed)
-                discoverInstance.close();
+            RuleMiner.close();
         });
     }
 
@@ -101,42 +102,22 @@ define([
                     $('#source-editor').modal('show');
                 });
 
-                State.clear("currentSource");
-            },
-            failure: err,
-            always: function() {
-                // TODO: to move
-                if ($("#progressbar-content").length == 0)
-                    ProgressBarView.start('progressbar');
-
-                if ($("#source-editor").length == 0)
-                    SourceEditorView.start('source-editor-modal');
-
-                $.unblockUI();
-            }
-        });
-    }
-
-    function refreshRuleList() {
-        Requester.getRule({
-            before: function() { $.blockUI(); },
-            success: function(data) {
-                State.set('rule', data['data']);
                 $('#btn-discover').on('click', function() {
-                    if (Requester.isRuleMinerRunning()) {
-                        if (discoverInstance == null || discoverInstance.closed) {
-                            var url = "http://www.google.com";
-                            discoverInstance =
-                                window.open(
-                                    "http://www.google.com",
-                                    "Rule Miner",
-                                    'width=800,height=600');
-                            discoverInstance.postMessage("ping", url);
-                        } else
-                            info("Discover window is already opened.");
-                    } else {
-                        info("Rule Miner is not available.");
-                    }
+                    if (RuleMiner.isAvailable()) {
+                        if (RuleMiner.isWindowOpened())
+                            info("Rule Miner window is already opened.");
+                        else {
+                            var project = State.get("project");
+                            var table = State.get("currentSource");
+                            if (_.isNull(project) || _.isNull(table)) {
+                                err("No table is selected.");
+                                return false;
+                            }
+                            if (!RuleMiner.start(project, table))
+                                err("Starting Rule Miner failed.");
+                        }
+                    } else
+                        err("Rule Miner is not available.");
                 });
 
                 $('#new_plan').on('click', function() {
@@ -196,6 +177,28 @@ define([
 
                     deleteRule(selectedRule);
                 });
+
+                State.clear("currentSource");
+            },
+            failure: err,
+            always: function() {
+                // TODO: to move
+                if ($("#progressbar-content").length == 0)
+                    ProgressBarView.start('progressbar');
+
+                if ($("#source-editor").length == 0)
+                    SourceEditorView.start('source-editor-modal');
+
+                $.unblockUI();
+            }
+        });
+    }
+
+    function refreshRuleList() {
+        Requester.getRule({
+            before: function() { $.blockUI(); },
+            success: function(data) {
+                State.set('rule', data['data']);
 
                 if (State.get("currentSource"))
                     renderRuleList(State.get("currentSource"));
@@ -265,22 +268,28 @@ define([
                 _.each(plans, function(planName) {
                     Requester.getRuleDetail(planName, {
                         success: function(data) {
+                            $.blockUI();
                             var plan = arrayToPlan(data['data'][0]);
                             Requester.doDetect(
                                 plan,
-                                function(data) {
-                                    info("A job is successfully submitted.");
-                                    var key = data['data'];
-                                    console.log('Received job key : ' + key);
-                                    if (key != null) {
-                                        var jobList = State.get("job");
-                                        jobList.push({ name : plan.name, key : key });
-                                        State.set("job", jobList);
-                                    }
-                                }, err
-                            )
-                        }}
-                     );
+                                {
+                                    success: function(data) {
+                                        info("A job is successfully submitted.");
+                                        var key = data['data'];
+                                        console.log('Received job key : ' + key);
+                                        if (key != null) {
+                                            var jobList = State.get("job");
+                                            jobList.push({ name : plan.name, key : key });
+                                            State.set("job", jobList);
+                                        }
+                                    },
+                                    failure: err,
+                                    always: function() {$.unblockUI();}
+                                }
+                            );
+                        },
+                        failure: err
+                    });
                 });
             });
     }

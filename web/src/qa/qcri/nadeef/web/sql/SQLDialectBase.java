@@ -72,7 +72,6 @@ public abstract class SQLDialectBase {
      * @param tableName table name.
      * @param start start index.
      * @param interval interval.
-     * @param firstNViolation first N violation.
      * @param columns table columns.
      * @param filter filter string.
      * @return query SQL.
@@ -81,7 +80,6 @@ public abstract class SQLDialectBase {
         String tableName,
         int start,
         int interval,
-        String firstNViolation,
         ArrayList columns,
         String filter
     );

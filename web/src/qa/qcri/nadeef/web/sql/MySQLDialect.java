@@ -76,7 +76,6 @@ public class MySQLDialect extends SQLDialectBase {
         String tableName,
         int start,
         int interval,
-        String firstNViolation,
         ArrayList columns,
         String filter
     ) {
@@ -94,7 +93,6 @@ public class MySQLDialect extends SQLDialectBase {
             instance.add("tablename", tableName);
             instance.add("start", start);
             instance.add("interval", interval);
-            instance.add("firstNViolation", firstNViolation);
             instance.add("columns", columns);
             instance.add("filter", "%");
             result = instance.render();
