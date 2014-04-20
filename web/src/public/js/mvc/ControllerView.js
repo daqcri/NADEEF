@@ -61,8 +61,7 @@ define([
         domId = id;
         refresh();
         window.addEventListener("message", function(event) {
-            var hostname = window.location.hostname;
-            if (event.origin.indexOf(hostname) > -1 && event.data.indexOf("inserted") > -1) {
+            if (event.origin.indexOf("ruleminer") > -1 && event.data.indexOf("inserted") > -1) {
                 console.log('received: ' + event.data);
                 refreshRuleList();
             }

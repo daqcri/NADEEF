@@ -27,7 +27,7 @@
         <div class="control-group">
             <select id="selected_source" class="selectbox fullwidth" size="5">
                 <% _.each(sources, function(source) { %>
-                <option value="<%= source %>"><%= source %></option>
+                <option value="<%= source %>"><%= source.substr(3) %></option>
                 <% }); %>
             </select>
         </div>
