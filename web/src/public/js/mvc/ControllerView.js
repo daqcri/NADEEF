@@ -199,13 +199,10 @@ define([
             before: function() { $.blockUI(); },
             success: function(data) {
                 State.set('rule', data['data']);
-
                 if (State.get("currentSource"))
                     renderRuleList(State.get("currentSource"));
             }, failure: err,
-            always: function() {
-                $.unblockUI()
-            }
+            always: function() { $.unblockUI() }
         });
     }
 
