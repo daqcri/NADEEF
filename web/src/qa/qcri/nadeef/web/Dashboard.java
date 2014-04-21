@@ -86,11 +86,9 @@ public final class Dashboard {
          * Gets violation table with pagination support.
          */
         get(new Route("/:project/table/:tablename") {
-            @Override
-            public Object handle(Request request, Response response) {
+            @Override public Object handle(Request request, Response response) {
                 return doIt(request, response, new Ido() {
-                    @Override
-                    public JsonObject ido(Request request) throws Exception {
+                    @Override public JsonObject ido(Request request) throws Exception {
                         String tableName = request.params("tablename");
                         String project = request.params("project");
 

@@ -94,6 +94,7 @@ public class Tracer {
                 );
             logFile.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
             Logger.getRootLogger().addAppender(logFile);
+            Logger.getRootLogger().setLevel(Level.INFO);
             // BasicConfigurator.configure(logFile);
 
         } catch (IOException e) {
