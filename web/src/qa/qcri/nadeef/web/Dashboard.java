@@ -73,7 +73,6 @@ public final class Dashboard {
         get(new Route("/") {
             @Override
             public Object handle(Request request, Response response) {
-                response.type("text/html");
                 response.redirect("/index.html");
                 return success(0);
             }
@@ -376,6 +375,13 @@ public final class Dashboard {
                         String project = request.params("project");
                         if (Strings.isNullOrEmpty(project))
                             throw new IllegalArgumentException("Input is not valid.");
+
+                        JsonObject countJson =
+                            query(project, dialectInstance.countTable("violation"), true);
+                        JsonArray dataArray = countJson.getAsJsonArray("data");
+                        int count = dataArray.get(0).getAsInt();
+                        if (count > 10000)
+                            return success(1);
                         return query(project, dialectInstance.queryViolationRelation(), true);
                     }
                 });
