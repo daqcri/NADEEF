@@ -1,5 +1,3 @@
 <component name="CopyrightManager">
-  <settings default="QCRI">
-    <module2copyright />
-  </settings>
+  <settings default="QCRI" />
 </component>
