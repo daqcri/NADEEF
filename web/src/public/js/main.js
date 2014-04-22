@@ -13,16 +13,18 @@
 
 require.config({
     baseUri: '.',
+    waitSeconds: 0,
     paths: {
         "text" : "lib/text",
-        "jquery" : "lib/jquery-1.10.2",
-        "underscore" : "lib/underscore",
-        "bootstrap" : "lib/bootstrap",
-        "datatable" : "lib/jquery.dataTables",
-        "d3" : "lib/d3.v3",
-        "nvd3" : "lib/nv.d3",
+        "jquery" : "lib/jquery-1.10.2.min",
+        "underscore" : "lib/underscore.min",
+        "bootstrap" : "lib/bootstrap.min",
+        "datatable" : "lib/jquery.dataTables.min",
+        "d3" : "lib/d3.v3.min",
+        "nvd3" : "lib/nv.d3.min",
         "ace" : "lib/ace-min/ace",
-        "jquery.filedrop" : "lib/jquery.filedrop"
+        "jquery.filedrop" : "lib/jquery.filedrop",
+        "blockUI" : "lib/jquery.blockUI"
     },
 
     shim: {
@@ -55,31 +57,18 @@ require.config({
         'ace' : {
             deps : ['jquery'],
             exports: 'ace'
+        },
+
+        'blockUI' : {
+            deps : ['jquery']
         }
     }
 });
 
-// render the first page
-require([
-    'router',
-    'jquery',
-    'text',
-    'underscore',
-    'bootstrap',
-    'd3',
-    'nvd3',
-    'table'
-], function(
-    Router,
-    JQuery,
-    Text,
-    Underscore,
-    Bootstrap,
-    D3,
-    Nvd3,
-    Table
-) {
-    Router.start();
+// main start
+require(['router', 'table', 'state', 'underscore'], function(Router, Table, State) {
+    State.init();
     Table.init();
+    Router.start();
     Router.redirect('#project');
 });

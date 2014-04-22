@@ -217,7 +217,7 @@ public class CSVTools {
 
         try {
             // overwrites existing tables if necessary
-            fullTableName = "CSV_" + tableName;
+            fullTableName = "tb_" + tableName;
 
             boolean hasTableExist = DBMetaDataTool.isTableExist(dbConfig, fullTableName);
 

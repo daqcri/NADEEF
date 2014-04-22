@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.util.ArrayList;
+
 /**
  * Postgres SQLDialect.
  */
@@ -88,27 +90,36 @@ public class PostgresSQLDialect extends SQLDialectBase {
         String tableName,
         int start,
         int interval,
-        String firstNViolation,
+        ArrayList columns,
         String filter
     ) {
         tableName = tableName.toLowerCase();
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
-        String result;
+        ST instance = template.getInstanceOf("QueryTable");
+        instance.add("tablename", tableName);
+        instance.add("start", start);
+        instance.add("interval", interval);
 
-        // TODO: special treat for violation table, make it generic filter
-        if (tableName.equalsIgnoreCase("violation")) {
-            result = queryViolation(start, interval, firstNViolation, filter);
-        } else {
-            ST instance = template.getInstanceOf("QueryTable");
-            instance.add("start", start);
-            instance.add("interval", interval);
-            instance.add("tablename", tableName);
-            result = instance.render();
+        if (Strings.isNullOrEmpty(filter))
+            instance.add("filter", "true");
+        else {
+            StringBuffer buf = new StringBuffer();
+            int i = 0;
+            for (Object column : columns) {
+                if (i != 0)
+                    buf.append(" or ");
+                buf.append("cast(")
+                    .append((String)column)
+                    .append(" as text) like '%")
+                    .append(filter)
+                    .append("%'");
+                i ++;
+            }
+
+            instance.add("filter", buf.toString());
         }
-
-        return result;
+        return instance.render();
     }
-
 
     /**
      * {@inheritDoc}
@@ -151,30 +162,5 @@ public class PostgresSQLDialect extends SQLDialectBase {
     @Override
     public String hasDatabase(String databaseName) {
         return "SELECT 1 FROM pg_database WHERE datname = '" + databaseName + "'";
-    }
-
-    private String queryViolation(
-        int start,
-        int interval,
-        String firstNViolation,
-        String filter
-    ) {
-        STGroupFile template = Preconditions.checkNotNull(getTemplate());
-        String result;
-        if (Strings.isNullOrEmpty(firstNViolation)) {
-            ST instance = template.getInstanceOf("QueryViolation");
-            instance.add("start", start);
-            instance.add("interval", interval);
-            instance.add("ruleFilter", filter);
-            result = instance.render();
-        } else {
-            ST instance = template.getInstanceOf("QueryViolationWithFilter");
-            instance.add("start", start);
-            instance.add("interval", interval);
-            instance.add("firstNViolation", firstNViolation);
-            instance.add("ruleFilter", filter);
-            result = instance.render();
-        }
-        return result;
     }
 }

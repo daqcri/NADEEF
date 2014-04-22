@@ -12,21 +12,17 @@
   -->
 
 <!-- ==================== CleanPlan ======================== -->
+<div id="cleanPlanView-alert"></div>
 <form>
   <div class="row-fluid">
     <div class="span12">
       <div class="control-group">
-        <label for="rule_name">Rule Name</label>  
+        <label>Rule Name</label>
         <div>
-          <input type="text"
-                 id="rule_name"
-                 placeholder="Type here to create new rule" 
-                 <% if (name != null) {%>
-                 value="<%= name %>"
-                 <% } %> />
+          <input type="text" id="rule_name" value = "<%= name %>" />
         </div>
         <div class="control-group">       
-          <label for="select_source">Data Soure</label>
+          <label for="select_source">Data Sources</label>
           <select id="select_source" class="selectbox" multiple="multiple">
             <% _.each(sources, function(source) { %>
             <option <% if (source == table1 || source == table2) { %>
@@ -66,5 +62,4 @@
     </div>
   </div>
 </form>
-<div id="cleanPlanView-alert"></div>
 <!-- End of CleanPlan -->

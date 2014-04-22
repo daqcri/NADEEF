@@ -37,14 +37,15 @@ public class DCRuleBuilder extends RuleBuilder {
     protected STGroupFile singleSTGroup;
     protected STGroupFile pairSTGroup;
 
+    
+    public List<Predicate> getPredicateList(){
+    	return predicateList;
+    }
+    
     public DCRuleBuilder() {
         predicateList = Lists.newArrayList();
     }
 
-	public List<Predicate> getPredicateList(){
-		return predicateList;
-	}
-	
     @Override
     public Collection<File> compile() throws Exception {
         File inputFile = generate().iterator().next();
@@ -123,7 +124,7 @@ public class DCRuleBuilder extends RuleBuilder {
         predicates = predicatesStr.split("&");
         String tableName = tableNames.get(0);
         for (int i = 0; i < predicates.length; i++) {
-             predicateList.add(Predicate.valueOf(predicates[i], tableName));
+			predicateList.add(Predicate.valueOf(predicates[i].trim(), tableName));
         }
     }
 }

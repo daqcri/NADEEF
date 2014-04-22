@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.util.ArrayList;
+
 /**
  * Derby SQL Dialect.
  */
@@ -77,20 +79,25 @@ public class DerbySQLDialect extends SQLDialectBase {
         String tableName,
         int start,
         int interval,
-        String firstNViolation,
+        ArrayList columns,
         String filter
     ) {
+        tableName = tableName.toLowerCase();
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         String result;
-
-        // TODO: special treat for violation table, make it generic filter
-        if (tableName.equalsIgnoreCase("violation")) {
-            result = queryViolation(start, interval, firstNViolation, filter);
-        } else {
+        if (Strings.isNullOrEmpty(filter)) {
             ST instance = template.getInstanceOf("QueryTable");
+            instance.add("tablename", tableName);
             instance.add("start", start);
             instance.add("interval", interval);
+            result = instance.render();
+        } else {
+            ST instance = template.getInstanceOf("QueryTableWithFilter");
             instance.add("tablename", tableName);
+            instance.add("start", start);
+            instance.add("interval", interval);
+            instance.add("columns", columns);
+            instance.add("filter", "%");
             result = instance.render();
         }
 

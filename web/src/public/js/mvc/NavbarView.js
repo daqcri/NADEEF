@@ -13,11 +13,13 @@
 
 define([
     "router",
+    "state",
     "requester",
+    "state",
     "text!mvc/template/navbar.template.html",
     "text!mvc/template/project.template.html",
     "mvc/HomeView"
-], function(Router, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
+], function(Router, State, Requester, State, NavbarTemplate, ProjectTemplate, HomeView) {
     function err(msg) {
         $('#projectModal-alert').html([
             ['<div class="alert alert-error">'],
@@ -29,14 +31,28 @@ define([
     function bindEvent() {
         $('#navbar').find("li a").on('click', function() {
             $('#navbar').find('.active').removeClass('active');
-            $(this).parent().addClass('active');
+            $(this).addClass('active');
+        });
+
+        $('#project-modal-close').on('click', function() {
+            var oldProject = State.get('project');
+            if (oldProject != null)
+                $('#projectModal').modal('hide');
+            else
+                err("No project is selected.");
         });
 
         $("#refresh").on('click', HomeView.refresh);
 
         $("#change").on("click", function() {
             $('#projectModal').find('.modal-body').remove();
-            startProject('projectModal');
+            Requester.getProject({
+                success: function(data) {
+                var projectList = _.flatten(data['data']);
+                selectProject('projectModal', projectList);
+            }, failure: function() {
+                console.log("Getting project failed.");
+            }});
         });
 
         $("#project-button").on("click", function() {
@@ -53,11 +69,12 @@ define([
                 }
             }
 
-            // TODO: project validation here
             if (newProject != null && newProject != "") {
+                $.blockUI();
                 Requester.createProject(newProject, function() {
                     $("#projectModal").modal('hide');
                     $("#projectName").text(newProject);
+                    $.unblockUI();
                     Router.redirect('#home', { name : newProject });
                 });
             } else {
@@ -67,9 +84,7 @@ define([
                     return;
                 }
 
-                $("#projectModal").modal('hide');
-                $("#projectName").text(selectedProject);
-                Router.redirect('#home', { name : selectedProject });
+                enterProject(selectedProject);
             }
         });
     }
@@ -78,31 +93,43 @@ define([
         $('body').append(_.template(NavbarTemplate)());
     }
 
-    function startProject(id) {
-        Requester.getProject(function(data) {
-            var projects = data['data'];
-            var modalHtml = _.template(ProjectTemplate) (
-                {
-                    projects: projects
-                }
-            );
-            $('#' + id).find(".modal-footer").before(modalHtml);
+    function selectProject(id, projectList) {
+        var modalHtml = _.template(ProjectTemplate) ({projects: projectList});
+        $('#' + id).find(".modal-footer").before(modalHtml);
 
-            // event handler for modal
-            $("#create-new-project").keypress(function() {
-                $("#project-input").removeClass("error");
-                $("#project-input").find("span").text("");
-            });
-
-            $('#' + id).modal('show');
+        // event handler for modal
+        $("#create-new-project").keypress(function() {
+            $("#project-input").removeClass("error");
+            $("#project-input").find("span").text("");
         });
+
+        $('#' + id).modal('show');
+    }
+
+    function enterProject(selectedProject) {
+        $("#projectModal").modal('hide');
+        $("#projectName").text(selectedProject);
+        State.set('project', selectedProject);
+        Router.redirect('#home', { name : selectedProject });
     }
 
 	function start() {
 		render();
 		bindEvent();
 
-        startProject('projectModal');
+        // start project selection process
+        Requester.getProject({
+            success: function(data) {
+                var projectList = _.flatten(data['data']);
+                var oldProject = State.get('project');
+                if (oldProject && _.indexOf(projectList, oldProject) > -1)
+                    enterProject(oldProject);
+                else
+                    selectProject('projectModal', projectList);
+            }, failure: function() {
+                console.log("Getting project failed.");
+            }
+        });
 	}
 	
     return {

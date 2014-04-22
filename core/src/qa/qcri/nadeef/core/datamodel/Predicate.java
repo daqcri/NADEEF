@@ -68,8 +68,13 @@ public class Predicate {
             return this;
         }
 
+		public PredicateBuilder isSingle(boolean isSingle) {
+            this.isSingle = isSingle;
+            return this;
+        }
+
+
         public PredicateBuilder right(Column column) {
-            Preconditions.checkNotNull(column);
             right = column;
             return this;
         }

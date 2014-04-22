@@ -11,44 +11,69 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(["requester"], function(Requester) {
+define(["requester", "state"], function(Requester, State) {
     var instance = null;
-    function load(tablename) {
-        if (instance != null) {
+    var cache = {};
+
+    function load(table, reload) {
+        if (_.isNull(table) || _.isNaN(table)) {
+            console.log("Table name is null or empty.");
+            return;
+        }
+
+        reload = _.isUndefined(reload) ? true : reload;
+        var domId = table.domId;
+        var tablename = table.table;
+
+        if (cache[domId] != null && !reload) {
+            if (domId != 'source-table' ||
+                (domId == 'source-table' && cache[domId].source == tablename)) {
+                console.log('cache hit on table ' + domId);
+                return;
+            }
+
+        }
+
+        if (cache[domId] != null) {
             try {
-                instance.fnDestroy();
+                cache[domId].instance.fnDestroy();
             } catch (e) {
                 console.log(e);
-            } finally {
-                instance = null;
             }
+        }
+
+        if (domId == 'source-table') {
+            $("#source-table-info").addClass('hide');
+            $('#source-table').removeClass('hide');
         }
 
         Requester.getTableSchema(
             tablename,
-            function(data) {
+            { success: function(data) {
                 var schema = data['schema'];
                 var columns = [];
-                $('#table').empty().append('<thead><tr></tr></thead>');
+                $('#' + domId).empty().append('<thead><tr></tr></thead>');
                 for (var i = 0; i < schema.length; i ++) {
                     columns.push( { sTitle : schema[i] } );
                 }
 
-                var lastIndex = this.url.lastIndexOf("/");
-                var dataUrl = this.url.substring(0, lastIndex);
+                var project = State.get('project');
+                var url = "/" + project + "/table/" + tablename;
                 /* Add a select menu for each TH element in the table footer */
-                instance = $('#table').dataTable({
+                instance = $('#' + domId).dataTable({
                     "bAutoWidth" : false,
                     "bSort": false,
                     "bProcessing" : true,
                     "bDestroy": true,
                     "bServerSide": true,
-                    "sAjaxSource": dataUrl,
+                    "sAjaxSource": url,
                     "sAjaxDataProp": 'data',
                     "sWrapper" : "dataTables_wrapper form-inline",
                     "aoColumns" : columns
                 });
-            }
+
+                cache[domId] = { instance : instance, source : tablename };
+            }}
         );
     }
 

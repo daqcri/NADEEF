@@ -12,8 +12,9 @@
  */
 
 define([
+    'state',
     'text!mvc/template/sourceeditor.template.html'
-], function(SourceEditorTemplate) {
+], function(State, SourceEditorTemplate) {
     function start(id) {
         var html =
             _.template(SourceEditorTemplate)();
@@ -26,9 +27,7 @@ define([
             queuefiles: 1,
             url: "/do/upload",
             allowedfileextensions: ['.csv'],
-            data: {
-                project: window.history.state.name
-            },
+            data: { project: State.get("project") },
             error: function(err, file) {
                 switch(err) {
                     case 'BrowserNotSupported':

@@ -14,14 +14,15 @@
 package qa.qcri.nadeef.web;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TNadeefService;
 import qa.qcri.nadeef.service.thrift.TRule;
@@ -61,7 +62,6 @@ public final class NadeefClient {
 
     private NadeefClient() {}
 
-    @SuppressWarnings("unchecked")
     public String generate(
         String type,
         String name,
@@ -75,30 +75,28 @@ public final class NadeefClient {
         TNadeefService.Client client = new TNadeefService.Client(protocol);
 
         TRule rule = new TRule(name, type, code);
-        JSONObject result = new JSONObject();
+        JsonObject result = new JsonObject();
         String gen = client.generate(rule, table1, dbname);
-        result.put("data", gen);
+        result.add("data", new JsonPrimitive(gen));
 
         transport.close();
-        return result.toJSONString();
+        return result.toString();
     }
 
-    @SuppressWarnings("unchecked")
     public String verify(String type, String name, String code) throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
         TProtocol protocol = new TBinaryProtocol(transport);
         TNadeefService.Client client = new TNadeefService.Client(protocol);
 
-        JSONObject json = new JSONObject();
+        JsonObject json = new JsonObject();
         boolean result = client.verify(new TRule(name, type, code));
-        json.put("data", result);
+        json.add("data", new JsonPrimitive(result));
 
         transport.close();
-        return json.toJSONString();
+        return json.toString();
     }
 
-    @SuppressWarnings("unchecked")
     public String detect(
         String type,
         String name,
@@ -113,15 +111,14 @@ public final class NadeefClient {
         TNadeefService.Client client = new TNadeefService.Client(protocol);
 
         TRule rule = new TRule(name, type, code);
-        JSONObject json = new JSONObject();
+        JsonObject json = new JsonObject();
         String result = client.detect(rule, table1, table2, dbname);
-        json.put("data", result);
+        json.add("data", new JsonPrimitive(result));
 
         transport.close();
-        return json.toJSONString();
+        return json.toString();
     }
 
-    @SuppressWarnings("unchecked")
     public String repair(
         String type,
         String name,
@@ -136,36 +133,39 @@ public final class NadeefClient {
         TNadeefService.Client client = new TNadeefService.Client(protocol);
 
         TRule rule = new TRule(name, type, code);
-        JSONObject result = new JSONObject();
-        result.put("data", client.repair(rule, table1, table2, dbname));
+        JsonObject result = new JsonObject();
+        result.add("data", new JsonPrimitive(client.repair(rule, table1, table2, dbname)));
 
         transport.close();
-        return result.toJSONString();
+        return result.toString();
     }
 
-    @SuppressWarnings("unchecked")
     public String getJobStatus() throws TException {
         TTransport transport = new TSocket(url, port);
         transport.open();
         TProtocol protocol = new TBinaryProtocol(transport);
         TNadeefService.Client client = new TNadeefService.Client(protocol);
 
-        JSONObject result = new JSONObject();
+        JsonObject result = new JsonObject();
         List<TJobStatus> statusList = client.getAllJobStatus();
-        JSONArray jsonArray = new JSONArray();
+        JsonArray jsonArray = new JsonArray();
 
         for (TJobStatus status : statusList) {
-            JSONObject obj = new JSONObject();
-            obj.put("status", status.getStatus().toString());
-            obj.put("overallProgress", status.getOverallProgress());
-            obj.put("key", status.getKey());
-            obj.put("progress", status.getProgress());
-            obj.put("name", status.getNames());
+            JsonObject obj = new JsonObject();
+            obj.add("status", new JsonPrimitive(status.getStatus().toString()));
+            obj.add("overallProgress", new JsonPrimitive(status.getOverallProgress()));
+            obj.add("key", new JsonPrimitive(status.getKey()));
+            JsonArray array = new JsonArray();
+            for (Integer progress : status.getProgress())
+                array.add(new JsonPrimitive(progress));
+            obj.add("progress", array);
+            // Add progress stage
+            // obj.add("name", status.getNames());
             jsonArray.add(obj);
         }
 
-        result.put("data", jsonArray);
+        result.add("data", jsonArray);
         transport.close();
-        return result.toJSONString();
+        return result.toString();
     }
 }

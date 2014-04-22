@@ -143,7 +143,7 @@ public class SQLTableTest extends NadeefTestBase {
     // @Test
     public void testSize() throws InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        SQLTable table = new SQLTable("csv_test60m", connectionFactory);
+        SQLTable table = new SQLTable("tb_test60m", connectionFactory);
         table.get(0);
 
         long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);

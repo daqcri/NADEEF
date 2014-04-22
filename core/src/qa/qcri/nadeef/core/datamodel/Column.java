@@ -81,8 +81,8 @@ public class Column {
             return true;
         }
 
-        if (this.tableName.startsWith("csv_")) {
-            String originalTableName = this.tableName.substring(4);
+        if (this.tableName.startsWith("tb_")) {
+            String originalTableName = this.tableName.substring(3);
             return originalTableName.equalsIgnoreCase(tableName);
         }
         return false;

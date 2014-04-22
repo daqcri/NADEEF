@@ -11,34 +11,73 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(
-	['text!mvc/template/progressbar.template.html'], 
-	function(ProgressBarTemplate) {
-		var isSubscribed = false;
-		function start(id) {
-			if (!isSubscribed) {
-				setInterval(function() {
-					$.getJSON('/progress', function(data) {
-						var values = new Array();
-						_.each(data['data'], function(v) {
-							var name = 
-								localStorage[v['key']] ? 
-                                localStorage[v['key']] : 'Unknown';
-							values.push({ 
-								name : name,
-								value : v['overallProgress'] 
-							});
-						});
-					    var html = 
-                            _.template(ProgressBarTemplate)({ progress: values });
-						$('#' + id).html(html);
-					})
-                    .fail(function(request, status, err) {
-                        console.log("Requesting progress failed : " + request.responseText);
+define([
+    'state',
+    'requester',
+    'text!mvc/template/progressbar.template.html'],
+    function(State, Requester, ProgressBarTemplate) {
+        var intervalId = null;
+
+        function info(msg) {
+            $('#home-alert-info').alert('close');
+            $('#home-alert').html([
+                ['<div class="alert alert-success" id="home-alert-info">'],
+                ['<button type="button" class="close" data-dismiss="alert">'],
+                ['&times;</button>'],
+                ['<span><h3>' + msg + '</h3></span></div>']].join(''));
+
+            window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
+        }
+
+        function updateProgress(id) {
+            var jobList = State.get('job');
+            if (jobList.length == 0) {
+                var html =
+                    _.template(ProgressBarTemplate)({ progress: [] });
+                $('#' + id).html(html);
+                return;
+            }
+
+            Requester.getProgress({
+                success: function(data) {
+                    var values = [];
+                    if (jobList && jobList.length > data['data'].length)
+                        info("There are Job(s) finished, please do refresh to see the result.");
+                    var runningList = data['data'];
+                    var runningKeySet = {};
+                    _.each(runningList, function(job) {
+                        runningKeySet[job['key']] = job;
                     });
-				}, 1000);
-				isSubscribed = true;
-			}
+
+                    var newJobList = [];
+                    for (var i = 0; i < jobList.length; i ++) {
+                        var job = jobList[i];
+                        if (job.key in runningKeySet) {
+                            var v = runningKeySet[job.key];
+                            values.push({
+                                name : job.name,
+                                value : v['overallProgress']
+                            });
+                            newJobList.push(job);
+                        }
+                    }
+
+                    State.set('job', newJobList);
+                    var html =
+                        _.template(ProgressBarTemplate)({ progress: values });
+                    $('#' + id).html(html);
+                },
+                failure: function(response) {
+                    console.log("Requesting progress failed : " + response.responseText);
+                }}
+            );
+        }
+
+		function start(id) {
+            if (intervalId != null)
+                clearInterval(intervalId);
+            updateProgress(id);
+            intervalId = setInterval(function() { updateProgress(id); }, 3000);
 		}
 
 		return {

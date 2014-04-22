@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 define([
-    "router",
+    "state",
     "render",
     "table",
     "requester",
@@ -20,7 +20,7 @@ define([
     "text!mvc/template/tab.template.html",
     "mvc/ControllerView"
 ], function(
-    Router,
+    State,
     Renderer,
     Table,
     Requester,
@@ -30,11 +30,12 @@ define([
     ControllerView
 ) {
     function info(msg) {
+        $('home-alert-info').alert('close');
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ["<span>" + msg + "</span></div>"]].join(''));
+            ["<span><h4>" + msg + "</h4></span></div>"]].join(''));
     
         window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
     }
@@ -52,17 +53,21 @@ define([
             renderWidget(e.currentTarget.id);
         });
 
-        $('#tables').find("ul li").on('click', function(e) {
-            renderTable(e.currentTarget.id);
+        $('#table-tabs a[data-toggle="tab"]').on('click', function (e) {
+            var tableName = e.target.text.toLowerCase();
+            renderTable(tableName);
         });
 
         $('#clear').on('click', function() {
-            Requester.deleteViolation(
-                function() {
+            Requester.deleteViolation({
+                success: function() {
                     info('Violations are removed');
                     refresh();
+                },
+                failure: function() {
+                    err("Removing violations failed.");
                 }
-            );
+            });
         });
     }
 
@@ -72,9 +77,14 @@ define([
             renderWidget(defaultWidget[0].id);
         }
 
-        var defaultTable = $('#tables').find('li.active');
-        if (defaultTable != null) {
-            renderTable(defaultTable[0].id);
+        var activeTable = $('#tables .tab-content').find('div.active table')[0].id;
+        if (activeTable != null) {
+            if (activeTable.indexOf('violation') > -1)
+                renderTable('violation', true);
+            if (activeTable.indexOf('audit') > -1)
+                renderTable('audit', true);
+            if (activeTable.indexOf('source') > -1)
+                renderTable('source', true);
         }           
     }
     
@@ -85,32 +95,23 @@ define([
         var defaultWidget = $('#widget').find('li.active');
         if (defaultWidget != null && defaultWidget.length > 0) {
             renderWidget(defaultWidget[0].id);
-        } else {
+        } else
             renderWidget("overview");
-        }
-
-        var defaultTable = $('#tables').find('li.active');
-        if (defaultTable != null && defaultTable.length > 0) {
-            renderTable(defaultTable[0].id);
-        } else {
-            renderTable("violation");
-        }
     }
 
-    function renderTable(id) {
+    function renderTable(id, reload) {
         console.log('Load table ' + id);
         switch(id) {
-        case 'tab_violation':
-            Table.load('violation');
+        case 'violation':
+            Table.load({domId : 'violation-table', table : 'violation'}, reload);
             break;
-        case 'tab_audit':
-            Table.load('audit');
+        case 'audit':
+            Table.load({domId : 'audit-table', table : 'audit'}, reload);
             break;
-        case 'tab_source':
+        case 'source':
             var sourceTable = $("#selected_source").val();
-            if (!_.isEmpty(sourceTable)) {
-                Table.load(sourceTable);
-            }
+            if (!_.isEmpty(sourceTable))
+                Table.load({domId: 'source-table', table : sourceTable}, reload);
             break;
         }
     }
@@ -142,24 +143,15 @@ define([
                 {tag : "overview", head : "Overview", isActive : true},
                 {tag : "attribute", head : "Rule Attribute", isActive : false},
                 {tag : "distribution", head : "Rule Distribution", isActive : false},
-                {tag : "violationRelation",
-                 head : "Violation Relation",
-                 isActive : false},
+                {tag : "violationRelation", head : "Violation Relation", isActive : false},
                 {tag : "tupleRank", head : "Tuple Rank", isActive : false}
             ]
         };
 
-        var tableTabs = {
-            tabs: [
-                {tag : "violation", head : "Violation", isActive : true},
-                {tag : "audit", head : "Audit", isActive : false},
-                {tag : "source", head : "Source", isActive : false}
-            ]};
-
         var homeHtml = _.template(
             HomeTemplate, {
                 placeholder1 : _.template(WidgetTemplate)(widgetTabs),
-                placeholder2 : _.template(TableTemplate)(tableTabs)
+                placeholder2 : _.template(TableTemplate)()
             });
 
         $("#container").html(homeHtml);         

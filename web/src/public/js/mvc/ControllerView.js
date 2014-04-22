@@ -15,6 +15,8 @@ define([
     'requester',
     'table',
     'jquery.filedrop',
+    'state',
+    'ruleminer',
     'mvc/CleanPlanView',
     'mvc/ProgressbarView',
     'mvc/SourceEditorView',
@@ -24,65 +26,183 @@ define([
     Requester,
     Table,
     FileDrop,
+    State,
+    RuleMiner,
     CleanPlanView,
     ProgressBarView,
     SourceEditorView,
     ControllerTemplate,
-    DetailTemplate
-) {
+    DetailTemplate) {
     var domId;
-
     function info(msg) {
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ['<span><h3>' + msg + '</h3></span></div>']].join(''));
 
-        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
+        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 3000);
     }
 
     function err(msg) {
+        if (_.isObject(msg) && 'responseText' in msg) {
+            var json = JSON.parse(msg.responseText);
+            msg = json['error'];
+        }
+
         $('#home-alert').html([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
     }
 
     function render(id) {
-        ProgressBarView.start('progressbar');
         domId = id;
-        renderSourceList();
-    }
-
-    function getSelectedPlan() {
-        return $("#selected_rule").val();
-    }
-
-    function getSelectedSource() {
-        return $("#selected_source").val();
-    }
-
-    function renderSourceList() {
-        Requester.getSource(
-            function(source) {
-                var sources = source['data'];
-                Requester.getRule(
-                    function(data) {
-                        var plans = data['data'];
-                        var html =
-                            _.template(ControllerTemplate)
-                                ({ sources: sources, plans: plans});
-                        $('#' + domId).html(html);
-
-                        // render the source modal
-                        SourceEditorView.start('source-editor-modal');
-                        bindEvent();
-                    }
-                );
+        refresh();
+        window.addEventListener("message", function(event) {
+            if (event.origin.indexOf("ruleminer") > -1 && event.data.indexOf("inserted") > -1) {
+                console.log('received: ' + event.data);
+                refreshRuleList();
             }
-        );
+        }, false);
+
+        window.addEventListener('beforeunload', function() {
+            RuleMiner.close();
+        });
+    }
+
+    function refresh() {
+        refreshSourceList();
+        refreshRuleList();
+    }
+
+    function refreshSourceList() {
+        Requester.getSource({
+            before: function() { $.blockUI(); },
+            success: function(source) {
+                var sources = source['data'];
+                State.set('source', sources);
+                var html =
+                    _.template(ControllerTemplate)({ sources: sources});
+                $('#' + domId).html(html);
+                $('#refresh_source').on('click', function() {
+                    refresh();
+                });
+
+                $('#selected_source').on('change', function() {
+                    var newSource = $("#selected_source").val();
+                    State.set("currentSource", newSource);
+                    renderRuleList(newSource);
+                    Table.load({ domId: 'source-table', table: newSource });
+                });
+
+                $('#new-source').on('click', function() {
+                    $('#source-editor').modal('show');
+                });
+
+                $('#btn-discover').on('click', function() {
+                    if (RuleMiner.isAvailable()) {
+                        if (RuleMiner.isWindowOpened())
+                            info("Rule Miner window is already opened.");
+                        else {
+                            var project = State.get("project");
+                            var table = State.get("currentSource");
+                            if (_.isNull(project) || _.isNull(table)) {
+                                err("No table is selected.");
+                                return false;
+                            }
+                            if (!RuleMiner.start(project, table))
+                                err("Starting Rule Miner failed.");
+                        }
+                    } else
+                        err("Rule Miner is not available.");
+                });
+
+                $('#new_plan').on('click', function() {
+                    $("#cleanPlanPopup").on('hidden', function() {
+                        refreshRuleList();
+                    });
+
+                    CleanPlanView.render(
+                        'cleanPlanView', {
+                            name: null,
+                            type: 'FD',
+                            table1: State.get("currentSource")
+                        });
+                });
+
+                $('#edit_plan').on('click', function() {
+                    var selectedRule = State.get('currentRule');
+                    if (selectedRule == null) {
+                        err('No rule is selected.');
+                        return;
+                    }
+
+                    if (_.isArray(selectedRule) && selectedRule.length != 1) {
+                        err('Can not edit multiple clean plans.');
+                        return;
+                    }
+
+                    Requester.getRuleDetail(selectedRule[0], {
+                        success: function(data) {
+                            var plan = data['data'][0];
+                            CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
+                        }
+                    });
+                });
+
+                $('#selected_rule').on('change', function() {
+                    State.set('currentRule', $("#selected_rule").val());
+                    renderRuleDetail();
+                });
+
+                $('#detect').on('click', function() {
+                    var selectedPlan = State.get("currentRule");
+                    if (selectedPlan == null || !_.isArray(selectedPlan)) {
+                        err('No rule is selected.');
+                        return;
+                    }
+
+                    detect(selectedPlan);
+                });
+
+                $('#delete').on('click', function() {
+                    var selectedRule = State.get("currentRule");
+                    if (selectedRule == null || !_.isArray(selectedRule)) {
+                        err('No rule is selected.');
+                        return;
+                    }
+
+                    deleteRule(selectedRule);
+                });
+
+                State.clear("currentSource");
+            },
+            failure: err,
+            always: function() {
+                // TODO: to move
+                if ($("#progressbar-content").length == 0)
+                    ProgressBarView.start('progressbar');
+
+                if ($("#source-editor").length == 0)
+                    SourceEditorView.start('source-editor-modal');
+
+                $.unblockUI();
+            }
+        });
+    }
+
+    function refreshRuleList() {
+        Requester.getRule({
+            before: function() { $.blockUI(); },
+            success: function(data) {
+                State.set('rule', data['data']);
+                if (State.get("currentSource"))
+                    renderRuleList(State.get("currentSource"));
+            }, failure: err,
+            always: function() { $.unblockUI() }
+        });
     }
 
     function arrayToPlan(v) {
@@ -95,162 +215,79 @@ define([
         };
     }
 
-    function renderRuleDetail() {
-        var selectedPlan = getSelectedPlan();
-        if (_.isUndefined(selectedPlan) || _.isNull(selectedPlan)) {
-            return;
-        }
+    function deleteRule(rules) {
+        // TODO; to delete in batch
+        _.each(rules, function(rule) {
+            Requester.deleteRule(
+                rule,
+                function() {
+                    info("Selected rules are deleted.");
+                    refreshRuleList();
+                }
+            );
+        });
+    }
 
-        if (_.isArray(selectedPlan) && selectedPlan.length != 1) {
+    function renderRuleDetail() {
+        var selectedRule = State.get('currentRule');
+        if (_.isUndefined(selectedRule) || _.isNull(selectedRule))
+            return;
+
+        if (_.isArray(selectedRule) && selectedRule.length != 1) {
             $('#detail').html('');
         } else {
             Requester.getRuleDetail(
-                selectedPlan,
-                function (data) {
+                selectedRule,
+                {success: function (data) {
                     var plan = arrayToPlan(data['data'][0]);
-                    var html =
-                        _.template(
-                            DetailTemplate,
-                            plan
-                        );
-                    $('#detail').html(html);
-            });
+                    $('#detail').html(_.template(DetailTemplate, plan));
+            }});
         }
     }
 
-    function renderTable() {
-        var activeTable = $('#tables').find('li.active')[0].id;
-        if (activeTable == 'tab_source') {
-            Table.load(getSelectedSource());
-        }
-    }
-
-    function repair(rules) {
-        _.each(rules, function(ruleName) {
-            $.getJSON('/data/rule/' + ruleName, function(data) {
-                var rule = arrayToPlan(data['data'][0]);
-                $.ajax({
-                    url : '/do/repair',
-                    type : 'POST',
-                    dataType : 'json',
-                    data: rule,
-                    success: function(data, status) {
-                        info("A repair job is successfully submitted.");
-                        var key = data['data'];
-                        console.log('Received job key : ' + key);
-                        if (key != null) {
-                            window.localStorage[key] = rule.name;
-                        }
-                    },
-                    error: function(data, status) {
-                        err("<strong>Error</strong>: " + data.responseText);
-                    }
-                });
-            });
-        });
+    function renderRuleList(source) {
+        var ruleList = State.get('rule');
+        var selectedRule =
+            _.filter(ruleList, function(x) { return x[3] === source || x[4] === source; })
+        var selectedHtml = _.template(
+            "<% _.each(rules, function(rule) { %>" +
+            "<option value='<%= rule[0] %>'><%= rule[0] %></option>" +
+            "<% }); %>", { rules : selectedRule });
+        $('#selected_rule').html(selectedHtml);
+        State.clear("currentRule");
     }
 
     function detect(plans) {
         // clean the violation before start new detection.
-        Requester.deleteViolation(
+        $.when(Requester.deleteViolation()).then(
             function() {
                 _.each(plans, function(planName) {
-                    Requester.getRuleDetail(
-                        planName,
-                        function(data) {
+                    Requester.getRuleDetail(planName, {
+                        success: function(data) {
+                            $.blockUI();
                             var plan = arrayToPlan(data['data'][0]);
                             Requester.doDetect(
                                 plan,
-                                function(data, status) {
-                                    info("A job is successfully submitted.");
-                                    var key = data['data'];
-                                    console.log('Received job key : ' + key);
-                                    if (key != null) {
-                                        window.localStorage[key] = plan.name;
-                                    }
-                                },
-
-                                function(data, status) {
-                                    err("<strong>Error</strong>: " + data.responseText);
+                                {
+                                    success: function(data) {
+                                        info("A job is successfully submitted.");
+                                        var key = data['data'];
+                                        console.log('Received job key : ' + key);
+                                        if (key != null) {
+                                            var jobList = State.get("job");
+                                            jobList.push({ name : plan.name, key : key });
+                                            State.set("job", jobList);
+                                        }
+                                    },
+                                    failure: err,
+                                    always: function() {$.unblockUI();}
                                 }
-                            )
-                        }
-                     );
+                            );
+                        },
+                        failure: err
+                    });
                 });
-            }
-        );
-    }
-
-    function bindEvent() {
-        $('#refresh_rule').on('click', function(e) {
-            renderSourceList();
-        });
-
-        $('#refresh_source').on('click', function(e) {
-            renderSourceList();
-        });
-
-        $('#new_plan').on('click', function(e) {
-            CleanPlanView.render(
-                'cleanPlanView',
-                {name: null, type: 'FD', source: null, tablename: null}
-            );
-        });
-
-        $('#cleanPlanPopup').on('hidden', function(e) {
-            renderSourceList();
-            // info('You just successfully updated a rule.');
-        });
-
-        $('#edit_plan').on('click', function(e) {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null) {
-                err('No CleanPlan is selected.');
-                return;
-            }
-
-            if (_.isArray(selectedPlan) && selectedPlan.length != 1) {
-                err('Can not edit multiple clean plans.');
-                return;
-            }
-
-            Requester.getRuleDetail(selectedPlan[0], function(data) {
-                var plan = data['data'][0];
-                CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
             });
-        });
-
-        $('#new-source').on('click', function(e) {
-            $('#source-editor').modal('show');
-        });
-
-        $('#selected_rule').on('change', function(e) {
-            renderRuleDetail();
-        });
-
-        $('#selected_source').on('change', function(e) {
-            renderTable();
-        });
-
-        $('#detect').on('click', function(e) {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null || !_.isArray(selectedPlan)) {
-                err('No rule is selected.');
-                return;
-            }
-
-            detect(selectedPlan);
-        });
-
-        $('#repair').on('click', function(e) {
-            var selectedPlan = getSelectedPlan();
-            if (selectedPlan == null || !_.isArray(selectedPlan)) {
-                err('No rule is selected.');
-                return;
-            }
-
-            repair(selectedPlan);
-        });
     }
 
     return {

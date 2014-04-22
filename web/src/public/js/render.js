@@ -35,20 +35,17 @@ define([
                 ];
             }
 
-            var pie_data = [{
-                key: "Cumulative Return",
-                values: values
-            }];
-
             nv.addGraph(function() {
                 var chart = nv.models.pieChart()
                     .x(function(d) { return d.label })
                     .y(function(d) { return d.value })
-                    .showLabels(true);
+                    .color(d3.scale.category10().range())
+                    .showLabels(true)
+                    .valueFormat(d3.format('d'));
 
                 d3.select("#" + id + " svg")
-                    .datum(pie_data)
-                    .transition().duration(500)
+                    .datum(values)
+                    .transition(10)
                     .call(chart);
                 return chart;
             });
@@ -82,11 +79,17 @@ define([
                     .y(function(d) { return d.value })
                     .staggerLabels(false)
                     .tooltips(true)
-                    .showValues(true);
+                    .showValues(true)
+                    .valueFormat(d3.format('d'));
 
+                chart.xAxis.axisLabel("Attribute");
+                chart.yAxis
+                    .axisLabel("Number of Violation")
+                    .axisLabelDistance(50)
+                    .tickFormat(d3.format('d'));
                 d3.select("#" + id + " svg")
                     .datum(graph_data)
-                    .transition().duration(500)
+                    .transition().duration(10)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);
@@ -108,7 +111,7 @@ define([
             $("#" + id + " svg").empty();
             var result = data['data'];
             // TODO: find a better pattern
-            if (result.length == 1 && result[0] == -1) {
+            if (result === 1) {
                 d3.select("#" + id + " svg")
                     .append("text")
                     .attr("x", 200)
@@ -249,17 +252,18 @@ define([
                 var chart = nv.models.multiBarHorizontalChart()
                     .x(function(d) { return d.label })
                     .y(function(d) { return d.value })
-                    .margin({top: 30, right: 20, bottom: 50, left: 175})
                     .showValues(true)
-                    .tooltips(false)
-                    .showControls(false);
+                    .tooltips(true)
+                    .showControls(false)
+                    .valueFormat(d3.format('d'));
 
                 chart.yAxis
-                    .tickFormat(d3.format(',.2f'));
+                    .tickFormat(d3.format('d'))
+                    .axisLabel("Number of violation");
 
                 d3.select("#" + id + " svg")
                     .datum(distribution_data)
-                    .transition().duration(500)
+                    .transition(10)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);
@@ -294,13 +298,22 @@ define([
                     .y(function(d) { return d.value })
                     .staggerLabels(false)
                     .tooltips(true)
-                    .showValues(true);
+                    .showValues(true)
+                    .valueFormat(d3.format('d'));
+
+                chart.yAxis
+                    .tickFormat(d3.format('d'))
+                    .axisLabelDistance(50)
+                    .axisLabel("Number of violation");
+
+                chart.xAxis
+                    .axisLabel("Tuple Id in violation rank");
 
                 d3.select("#" + id + " svg")
                     .attr("width", 400)
                     .attr("height", 300)
                     .datum(graph_data)
-                    .transition().duration(500)
+                    .transition().duration(10)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);

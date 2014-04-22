@@ -11,67 +11,105 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define(['router'], function(Router) {
-    function getProjectName() {
-        var state = window.history.state;
-        if (state == null || _.isUndefined(state.name) || state.name == '') {
-            Router.redirectToRoot();
+define(['router', 'state', 'ruleminer'], function(Router, State) {
+    var cache = {};
+
+    function get(call) {
+        if (!('type' in call))
+            call['type'] = 'GET';
+        if (!('dataType' in call))
+            call['dataType'] = 'json';
+
+        var key = 'key' in call ? call['key'] : call.url + call.type;
+        var promise = cache[key];
+        if (!promise) {
+            promise = $.ajax(call);
+            cache[key] = promise;
+        } else {
+            console.log("Reusing cache " + key);
         }
-        return state.name;
+        return { key: key, promise: promise };
     }
 
-    function getProject(successCallback, failureCallback) {
-        $.ajax({
-            url: '/project',
-            type: 'GET',
-            success: successCallback,
-            fail: failureCallback
-        });
+    function request(obj, callbacks) {
+        var key = obj.key;
+        var promise = obj.promise;
+        if (_.isNull(callbacks) || _.isUndefined(callbacks)) {
+            $.when(promise).always(function () {
+                delete cache[key];
+            });
+        } else {
+            if (callbacks.before)
+                callbacks.before();
+            $.when(promise).done(function (data) {
+                if (callbacks.success)
+                    callbacks.success(data);
+            }).fail(function (data) {
+                if (callbacks.failure)
+                    callbacks.failure(data);
+            }).always(function (data) {
+                if (callbacks.always)
+                    callbacks.always(data);
+                delete cache[key];
+            });
+        }
+        return promise;
     }
 
-    function deleteViolation(successCallback, failureCallback) {
-        $.ajax({
-            url: '/' + getProjectName() + '/table/violation',
-            type: "DELETE",
-            success: successCallback,
-            fail: failureCallback
-        });
+    function getProjectName() {
+        return State.get('project');
     }
 
-    function getSource(successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/data/source',
-            type: 'GET',
-            success: successCallback,
-            fail: failureCallback
-        });
+    function getProgress(x) {
+        return request(get({ url : "/progress", type: "GET" }), x);
     }
 
-    function getRule(successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/data/rule',
-            type: 'GET',
-            success: successCallback,
-            fail: failureCallback
-        });
+    function getProject(x) {
+        return request(get({ url : "/project"}), x);
     }
 
-    function getRuleDetail(ruleName, successCallback, failureCallback) {
+    function doDetect(data, x) {
+        // inject project name
+        data.project = getProjectName();
+        return request(get(
+            {
+                url : "/do/detect",
+                type : "POST",
+                data: data,
+                key: "detect-" + data.project + "-" + data.name
+        }), x);
+    }
+
+    function deleteViolation(x) {
+        return request(
+            get({ url : "/" + getProjectName() + "/table/violation", type: "DELETE"}),
+            x
+        );
+    }
+
+    function getSource(x) {
+        return request(get({ url : '/' + getProjectName() + '/data/source'}), x);
+    }
+
+    function getRule(x) {
+        return request(get({ url : '/' + getProjectName() + '/data/rule'}), x);
+    }
+
+    function deleteRule(ruleName, successCallback, failureCallback) {
         $.ajax({
             url : '/' + getProjectName() + '/data/rule/' + ruleName,
-            type: 'GET',
+            type: 'DELETE',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
-    function getTableSchema(tableName, successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/table/' + tableName + '/schema',
-            type: 'GET',
-            success: successCallback,
-            fail: failureCallback
-        });
+    function getRuleDetail(ruleName, x) {
+        return request(get({url : '/' + getProjectName() + '/data/rule/' + ruleName}), x);
+    }
+
+    function getTableSchema(tableName, x) {
+        request(get({url : '/' + getProjectName() + '/table/' + tableName + '/schema'}), x);
     }
 
     function getOverview(successCallback, failureCallback) {
@@ -79,7 +117,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/overview',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -88,7 +126,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/attribute',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -97,7 +135,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/violation_relation',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -106,7 +144,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/rule',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -115,20 +153,7 @@ define(['router'], function(Router) {
             url : '/' + getProjectName() + '/widget/top10',
             type: 'GET',
             success: successCallback,
-            fail: failureCallback
-        });
-    }
-
-    function doDetect(data, successCallback, failureCallback) {
-        // inject project name
-        data.project = getProjectName();
-        $.ajax({
-            url : '/do/detect',
-            type: 'POST',
-            dataType: 'json',
-            data: data,
-            success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -141,7 +166,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -154,7 +179,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -166,7 +191,7 @@ define(['router'], function(Router) {
             type: 'POST',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -179,7 +204,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: data,
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -190,7 +215,7 @@ define(['router'], function(Router) {
             dataType: 'json',
             data: { project : projectName },
             success: successCallback,
-            fail: failureCallback
+            error: failureCallback
         });
     }
 
@@ -199,12 +224,11 @@ define(['router'], function(Router) {
         doVerify : doVerify,
         doRepair : doRepair,
         doGenerate : doGenerate,
-
         deleteViolation : deleteViolation,
-
+        deleteRule: deleteRule,
         createProject: createProject,
         createRule: createRule,
-
+        getProgress : getProgress,
         getProject: getProject,
         getSource: getSource,
         getRule: getRule,
