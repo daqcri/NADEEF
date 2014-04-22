@@ -13,7 +13,7 @@
 
 package qa.qcri.nadeef.lab.hc.test;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;

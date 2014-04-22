@@ -6,34 +6,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.0" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../vendors/log4j-1.2.17.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../out" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../out" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="ruleext" />
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="org.slf4j:slf4j-log4j12:1.6.5" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
-    <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
