@@ -70,9 +70,11 @@ define([
             }
 
             if (newProject != null && newProject != "") {
+                $.blockUI();
                 Requester.createProject(newProject, function() {
                     $("#projectModal").modal('hide');
                     $("#projectName").text(newProject);
+                    $.unblockUI();
                     Router.redirect('#home', { name : newProject });
                 });
             } else {

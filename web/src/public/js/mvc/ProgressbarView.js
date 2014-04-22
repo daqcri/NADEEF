@@ -16,6 +16,8 @@ define([
     'requester',
     'text!mvc/template/progressbar.template.html'],
     function(State, Requester, ProgressBarTemplate) {
+        var intervalId = null;
+
         function info(msg) {
             $('#home-alert-info').alert('close');
             $('#home-alert').html([
@@ -72,8 +74,10 @@ define([
         }
 
 		function start(id) {
+            if (intervalId != null)
+                clearInterval(intervalId);
             updateProgress(id);
-            setInterval(function() {updateProgress(id)}, 3000);
+            intervalId = setInterval(function() { updateProgress(id); }, 3000);
 		}
 
 		return {
