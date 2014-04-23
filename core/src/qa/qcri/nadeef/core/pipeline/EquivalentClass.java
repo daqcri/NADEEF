@@ -47,7 +47,6 @@ public class EquivalentClass extends FixDecisionMaker {
         // Clustering all the fixes.
         int count = 0;
         for (Fix fix : fixes) {
-            setPercentage(count / (fixes.size() * 2));
             Cell leftCell = fix.getLeft();
             fixMap.put(leftCell, fix);
 
@@ -151,7 +150,6 @@ public class EquivalentClass extends FixDecisionMaker {
                 result.add(newFix);
             }
             count ++;
-            setPercentage(count / (2 * clusters.size()) + 0.5);
         }
 
         // collect the remaining constant assign fix.
@@ -160,6 +158,8 @@ public class EquivalentClass extends FixDecisionMaker {
             Fix newFix = fixBuilder.left(entry.getKey()).right(entry.getValue()).build();
             result.add(newFix);
         }
+
+        setPercentage(1.0f);
         return result;
     }
 }

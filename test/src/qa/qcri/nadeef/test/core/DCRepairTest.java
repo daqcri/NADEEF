@@ -101,7 +101,7 @@ public class DCRepairTest extends NadeefTestBase {
         }
     }
 
-    @Test
+    @org.junit.Ignore
     public void cleanExecutorFloatDCTest(){
         CleanExecutor executor = null;
         try{

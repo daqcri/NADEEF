@@ -13,11 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashMap;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import qa.qcri.nadeef.core.datamodel.Operation;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Cell;
@@ -30,7 +25,7 @@ import qa.qcri.nadeef.core.datamodel.Violation;
 public class $DCName$ extends SingleTupleRule {
     private List<Predicate> predicates;
 
-    public $DCName$() throws ParseException{
+    public $DCName$() {
         String tableName = "$tableName$";
         predicates = new ArrayList<>();
 

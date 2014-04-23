@@ -17,10 +17,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 import org.apache.thrift.TException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -32,6 +34,7 @@ import spark.Route;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,8 +71,8 @@ public class DedupRestServer {
         }
     }
 
-    private static JSONArray flatResult(List<List<Integer>> input) {
-        JSONArray result = new JSONArray();
+    private static JsonArray flatResult(List<List<Integer>> input) {
+        JsonArray result = new JsonArray();
         HashMap<Integer, HashSet<Integer>> maps = Maps.newHashMap();
         List<HashSet<Integer>> record = Lists.newArrayList();
         for (List<Integer> x : input) {
@@ -97,10 +100,10 @@ public class DedupRestServer {
 
         int i = 0;
         for (HashSet<Integer> x : record) {
-            JSONArray group = new JSONArray();
-            group.add(i ++);
+            JsonArray group = new JsonArray();
+            group.add(new JsonPrimitive(i ++));
             for (int y : x) {
-                group.add(y);
+                group.add(new JsonPrimitive(y));
             }
             result.add(group);
         }
@@ -113,18 +116,14 @@ public class DedupRestServer {
             public Object handle(Request request, Response response) {
                 response.type("application/json");
                 String jsonString = request.body();
-                JSONArray array = (JSONArray) JSONValue.parse(jsonString);
-                if (array == null) {
+                Gson gson = new Gson();
+                List<Integer> input =
+                    gson.fromJson(jsonString, new TypeToken<List<Integer>>(){}.getType());
+                if (input.size() == 0)
                     return "[]";
-                }
-
-                List<Integer> input = Lists.newArrayList();
-                for (Object t : array) {
-                    input.add(Ints.checkedCast((Long)t));
-                }
 
                 List<List<Integer>> dedupPairs = null;
-                JSONArray result = new JSONArray();
+                JsonArray result = new JsonArray();
                 try {
                     dedupPairs = dedupClient.incrementalDedup(input);
                     result = flatResult(dedupPairs);
@@ -162,40 +161,38 @@ public class DedupRestServer {
         });
     }
 
-    @SuppressWarnings("unchecked")
-    private static JSONObject fail(String err) {
-        JSONObject obj = new JSONObject();
-        obj.put("error", err);
+    private static JsonObject fail(String err) {
+        JsonObject obj = new JsonObject();
+        obj.add("error", new JsonPrimitive(err));
         return obj;
     }
 
-    @SuppressWarnings("unchecked")
     private static String queryToJson(
         ResultSet rs,
         boolean includeHeader
     ) throws SQLException {
-        JSONObject result = new JSONObject();
+        JsonObject result = new JsonObject();
         ResultSetMetaData metaData = rs.getMetaData();
         int ncol = metaData.getColumnCount();
 
         if (includeHeader) {
-            JSONArray columns = new JSONArray();
+            JsonArray columns = new JsonArray();
             for (int i = 1; i <= ncol; i ++) {
-                columns.add(metaData.getColumnName(i));
+                columns.add(new JsonPrimitive(metaData.getColumnName(i)));
             }
-            result.put("schema", columns);
+            result.add("schema", columns);
         }
 
-        JSONArray data = new JSONArray();
+        JsonArray data = new JsonArray();
         while (rs.next()) {
-            JSONArray entry = new JSONArray();
+            JsonArray entry = new JsonArray();
             for (int i = 1; i <= ncol; i ++) {
-                entry.add(rs.getObject(i));
+                entry.add(new JsonPrimitive(rs.getObject(i).toString()));
             }
             data.add(entry);
         }
 
-        return data.toJSONString();
+        return data.toString();
     }
 
     private static String query(
@@ -212,7 +209,7 @@ public class DedupRestServer {
             rs = stat.executeQuery(sql);
             return queryToJson(rs, includeHeader);
         } catch (Exception ex) {
-            return fail(ex.getMessage()).toJSONString();
+            return fail(ex.getMessage()).toString();
         } finally {
             try {
                 if (rs != null) {

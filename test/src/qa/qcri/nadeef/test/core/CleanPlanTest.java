@@ -71,7 +71,7 @@ public class CleanPlanTest extends NadeefTestBase {
     public void createFromJSONTest() {
         try {
             List<CleanPlan> cleanPlans =
-                CleanPlan.createCleanPlanFromJSON(
+                CleanPlan.create(
                     new FileReader(TestDataRepository.getTestFile1()),
                     NadeefConfiguration.getDbConfig()
                 );
@@ -96,7 +96,7 @@ public class CleanPlanTest extends NadeefTestBase {
     public void createFromJSONTest2() {
         thrown.expect(IllegalArgumentException.class);
         try {
-            CleanPlan.createCleanPlanFromJSON(
+            CleanPlan.create(
                 new FileReader(TestDataRepository.getFailurePlanFile1()),
                 NadeefConfiguration.getDbConfig()
             );
@@ -109,7 +109,7 @@ public class CleanPlanTest extends NadeefTestBase {
     public void createFromJSONTest3() {
         thrown.expect(IllegalArgumentException.class);
         try {
-            CleanPlan.createCleanPlanFromJSON(
+            CleanPlan.create(
                 new FileReader(TestDataRepository.getFailurePlanFile2()),
                 NadeefConfiguration.getDbConfig()
             );

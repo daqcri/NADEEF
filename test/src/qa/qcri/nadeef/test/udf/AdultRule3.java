@@ -41,15 +41,15 @@ public class AdultRule3 extends SingleTupleRule {
         rightFilterExpressions = new ArrayList<>();
         filterCache = new HashMap<>();
 
-        lhs.add(new Column("tb_ADULT_1K.relationship"));
+        lhs.add(new Column("TB_ADULT_1K.relationship"));
 
-        rhs.add(new Column("tb_ADULT_1K.sex"));
+        rhs.add(new Column("TB_ADULT_1K.sex"));
 
         leftFilterExpressions.add(
-            Predicate.createEq(new Column("tb_ADULT_1K.relationship"), "Wife"));
+            Predicate.createEq(new Column("TB_ADULT_1K.relationship"), "Wife"));
 
         rightFilterExpressions.add(
-            Predicate.createEq(new Column("tb_ADULT_1K.sex"), "Female"));
+            Predicate.createEq(new Column("TB_ADULT_1K.sex"), "Female"));
     }
 
     /**

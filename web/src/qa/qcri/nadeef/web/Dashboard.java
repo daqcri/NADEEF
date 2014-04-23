@@ -41,7 +41,7 @@ import static spark.Spark.*;
  * Start class for launching dashboard.
  */
 public final class Dashboard {
-    private static final String TABLE_PREFIX = "tb_";
+    private static final String TABLE_PREFIX = "TB_";
     private static Tracer tracer;
     private static SQLDialectBase dialectInstance;
     private static SQLDialect dialect;

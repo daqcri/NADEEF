@@ -81,7 +81,7 @@ public class Column {
             return true;
         }
 
-        if (this.tableName.startsWith("tb_")) {
+        if (this.tableName.startsWith("TB_")) {
             String originalTableName = this.tableName.substring(3);
             return originalTableName.equalsIgnoreCase(tableName);
         }

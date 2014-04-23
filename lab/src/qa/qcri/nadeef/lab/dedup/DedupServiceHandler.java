@@ -33,7 +33,7 @@ public class DedupServiceHandler implements TDedupService.Iface {
         List<List<Integer>> result = Lists.newArrayList();
         try {
             CleanPlan cleanPlan =
-                CleanPlan.createCleanPlanFromJSON(
+                CleanPlan.create(
                     new FileReader("lab/src/qa/qcri/nadeef/lab/dedup/DedupPlan.json"),
                     NadeefConfiguration.getDbConfig()
                 ).get(0);

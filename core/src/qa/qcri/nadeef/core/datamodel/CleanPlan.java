@@ -14,13 +14,11 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.GsonBuilder;
 import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
@@ -56,77 +54,48 @@ public class CleanPlan {
     }
 
     // </editor-fold>
-    /**
-     * Creates a {@link CleanPlan} from JSON string.
-     *
-     * @param reader JSON object string reader.
-     * @param dbConfig Nadeef DB config.
-     * @return instance.
-     */
-    @SuppressWarnings("unchecked")
-    public static List<CleanPlan> createCleanPlanFromJSON(Reader reader, DBConfig dbConfig)
-    throws Exception {
-        return createCleanPlanFromJSON((JSONObject)JSONValue.parse(reader), dbConfig);
-    }
 
     /**
      * Creates a {@link CleanPlan} from JSON object.
      *
-     * @param jsonObject JSON object.
+     * @param reader JSON string reader.
      * @param nadeefDbConfig Nadeef DB config.
      * @return instance.
      */
     @SuppressWarnings("unchecked")
-    public static List<CleanPlan> createCleanPlanFromJSON(
-        JSONObject jsonObject,
+    public static List<CleanPlan> create(
+        Reader reader,
         DBConfig nadeefDbConfig
     ) throws Exception {
-        Preconditions.checkNotNull(jsonObject);
+        Preconditions.checkNotNull(reader);
+
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(CleanPlanJsonAdapter.class, new CleanPlanJsonDeserializer());
+        gson.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        CleanPlanJsonAdapter adapter =
+            gson.create().fromJson(reader, CleanPlanJsonAdapter.class);
 
         // a set which prevents generating new tables whenever encounters among
         // multiple rules.
         List<CleanPlan> result = Lists.newArrayList();
-        boolean isCSV = false;
         List<Schema> schemas = Lists.newArrayList();
-        SQLDialectBase dialectManager = null;
+        SQLDialectBase dialectManager;
 
         // ----------------------------------------
         // parsing the source config
         // ----------------------------------------
-        JSONObject src = (JSONObject) jsonObject.get("source");
-
-        String type = "derby";
-        DBConfig dbConfig = null;
-        String username = "";
-        String password = "";
-
-        if (src.containsKey("type")) {
-            type = (String)src.get("type");
-        }
-
-        if (src.containsKey("username")) {
-            username = (String)src.get("username");
-        }
-
-        if (src.containsKey("password")) {
-            password = (String)src.get("password");
-        }
-
-        SQLDialect sqlDialect = null;
-        if (type.equalsIgnoreCase("csv")) {
-            isCSV = true;
+        DBConfig dbConfig;
+        SQLDialect sqlDialect;
+        if (adapter.dbConfig.isCSV()) {
             dbConfig = NadeefConfiguration.getDbConfig();
             sqlDialect = dbConfig.getDialect();
         } else {
-            sqlDialect = SQLDialectTools.getSQLDialect(type);
-        }
-
-        if (dbConfig == null) {
+            sqlDialect = SQLDialectTools.getSQLDialect(adapter.dbConfig.type);
             dbConfig =
                 new DBConfig.Builder()
-                    .username(username)
-                    .password(password)
-                    .url((String) src.get("url"))
+                    .username(adapter.dbConfig.username)
+                    .password(adapter.dbConfig.password)
+                    .url(adapter.dbConfig.url)
                     .dialect(sqlDialect)
                     .build();
         }
@@ -136,55 +105,26 @@ public class CleanPlan {
         // ----------------------------------------
         // parsing the rules
         // ----------------------------------------
-        JSONArray ruleArray = (JSONArray) jsonObject.get("rule");
         ArrayList<Rule> rules = Lists.newArrayList();
         List<String> targetTableNames;
         List<String> fileNames = Lists.newArrayList();
         HashMap<String, String> copiedTables = Maps.newHashMap();
 
-        for (int i = 0; i < ruleArray.size(); i++) {
+        for (RuleJsonAdapter ruleJson : adapter.rules) {
             schemas.clear();
             fileNames.clear();
-            JSONObject ruleObj = (JSONObject) ruleArray.get(i);
-            if (isCSV) {
+            if (adapter.dbConfig.isCSV()) {
                 // working with CSV
-                List<String> fullFileNames = (List<String>) src.get("file");
-                for (String fullFileName : fullFileNames) {
+                List<String> fullFileNames = adapter.dbConfig.file;
+                for (String fullFileName : adapter.dbConfig.file)
                     fileNames.add(Files.getNameWithoutExtension(fullFileName));
-                }
 
-                if (ruleObj.containsKey("table")) {
-                    targetTableNames = (List<String>) ruleObj.get("table");
-                    Preconditions.checkArgument(
-                        targetTableNames.size() <= 2,
-                        "NADEEF only supports MAX 2 tables per rule."
-                    );
-
-                    // check table whether it already exists.
-                    for (String targetTableName : targetTableNames) {
-                        boolean isFound = false;
-                        for (String fileName : fileNames) {
-                            if (fileName.equalsIgnoreCase(targetTableName)) {
-                                isFound = true;
-                                break;
-                            }
-                        }
-
-                        if (!isFound) {
-                            throw new IllegalArgumentException("Unknown table name.");
-                        }
-                    }
-                } else {
+                if (ruleJson.hasTable())
+                    targetTableNames = ruleJson.table;
+                else
                     // if the target table names does not exist, we use
                     // default naming and only the first two tables are touched.
-                    targetTableNames = Lists.newArrayList();
-                    for (String fileName : fileNames) {
-                        targetTableNames.add(fileName);
-                        if (targetTableNames.size() == 2) {
-                            break;
-                        }
-                    }
-                }
+                    targetTableNames = fileNames;
 
                 // convert all table names to Upper case for cross db compatibility.
                 targetTableNames = toUppercase(targetTableNames);
@@ -213,22 +153,20 @@ public class CleanPlan {
                 }
             } else {
                 // working with database
-                List<String> sourceTableNames = (List<String>) ruleObj.get("table");
+                List<String> sourceTableNames = ruleJson.table;
                 // convert all table names to Upper case for cross db compatibility
                 sourceTableNames = toUppercase(sourceTableNames);
 
-                for (String tableName : sourceTableNames) {
-                    if (!DBMetaDataTool.isTableExist(dbConfig, tableName)) {
+                for (String tableName : sourceTableNames)
+                    if (!DBMetaDataTool.isTableExist(dbConfig, tableName))
                         throw new IllegalArgumentException(
                             "The specified table " +
                             tableName +
                             " cannot be found in the source database.");
-                    }
-                }
 
-                if (ruleObj.containsKey("target")) {
-                    targetTableNames = (List<String>) ruleObj.get("target");
-                } else {
+                if (ruleJson.hasTarget())
+                    targetTableNames = ruleJson.target;
+                else {
                     // when user doesn't provide target tables we create a
                     // copy for them with default table names.
                     targetTableNames = Lists.newArrayList();
@@ -239,13 +177,6 @@ public class CleanPlan {
 
                 // convert all table names to Upper case for cross db compatibility
                 targetTableNames = toUppercase(targetTableNames);
-
-                Preconditions.checkArgument(
-                    sourceTableNames.size() == targetTableNames.size() &&
-                    sourceTableNames.size() <= 2 &&
-                    sourceTableNames.size() >= 1,
-                    "Invalid Rule property, rule needs to have one or two tables.");
-
                 for (int j = 0; j < sourceTableNames.size(); j++) {
                     String sourceTable = sourceTableNames.get(j);
 
@@ -269,26 +200,23 @@ public class CleanPlan {
                 }
             }
 
-            type = (String) ruleObj.get("type");
             Rule rule;
-            JSONArray value;
-            value = (JSONArray) ruleObj.get("value");
-            String ruleName = (String) ruleObj.get("name");
-            if (Strings.isNullOrEmpty(ruleName)) {
+            String ruleName = ruleJson.name;
+            if (!ruleJson.hasName())
                 // generate default rule name when it is not provided by the user, and
                 // distinguished by the value of the rule.
-                ruleName = "Rule" + CommonTools.toHashCode(value.get(0) + targetTableNames.get(0));
-            }
-            switch (type) {
+                ruleName =
+                    "Rule" +
+                    CommonTools.toHashCode(ruleJson.value.get(0) + targetTableNames.get(0));
+
+            switch (ruleJson.type) {
             case "udf":
-                value = (JSONArray) ruleObj.get("value");
                 Class udfClass =
-                    CommonTools.loadClass((String) value.get(0));
-                if (!Rule.class.isAssignableFrom(udfClass)) {
+                    CommonTools.loadClass(ruleJson.value.get(0));
+                if (!Rule.class.isAssignableFrom(udfClass))
                     throw new IllegalArgumentException(
                         "The specified class is not a Rule class."
                     );
-                }
 
                 rule = (Rule) udfClass.newInstance();
                 // call internal initialization on the rule.
@@ -296,25 +224,23 @@ public class CleanPlan {
                 rules.add(rule);
                 break;
             default:
-                RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(type);
-                if (ruleBuilder != null) {
+                RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(ruleJson.type);
+                if (ruleBuilder != null)
                     rules.addAll(
                         ruleBuilder.name(ruleName)
                             .schema(schemas)
                             .table(targetTableNames)
-                            .value(value)
+                            .value(ruleJson.value)
                             .build()
                     );
-                } else {
-                    tracer.err("Unknown Rule type: " + type, null);
-                }
+                else
+                    tracer.err("Unknown Rule type: " + ruleJson.type, null);
                 break;
             }
         }
 
-        for (Rule rule_ : rules) {
-            result.add(new CleanPlan(dbConfig, rule_));
-        }
+        for (Rule rule : rules)
+            result.add(new CleanPlan(dbConfig, rule));
         return result;
     }
 
@@ -339,11 +265,10 @@ public class CleanPlan {
     }
     // </editor-fold>
 
-    private static List<String> toUppercase(List<String> vals) {
+    private static List<String> toUppercase(List<String> values) {
         List<String> tmp = Lists.newArrayList();
-        for (String val : vals) {
+        for (String val : values)
             tmp.add(val == null ? null : val.toUpperCase());
-        }
         return tmp;
     }
 }

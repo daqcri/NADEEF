@@ -74,12 +74,12 @@ public abstract class Operator<TInput, TOutput> {
      * Gets the current progress percentage of this operator [0 - 1].
      * @return percentage in integer.
      */
-    synchronized double getPercentage() { return percentage; }
+    double getPercentage() { return percentage; }
 
     /**
      * Reset is called before operator starts to function.
      */
-    synchronized void reset() {
+    void reset() {
         this.percentage = 0.0f;
     }
 
@@ -91,7 +91,7 @@ public abstract class Operator<TInput, TOutput> {
     /**
      * Sets the percentage.
      */
-    synchronized void setPercentage(double percentage) {
+    void setPercentage(double percentage) {
         Preconditions.checkArgument(percentage >= 0.0f && percentage <= 1.0f);
         this.percentage = percentage;
     }

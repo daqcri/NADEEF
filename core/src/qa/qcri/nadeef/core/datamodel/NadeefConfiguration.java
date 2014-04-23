@@ -16,8 +16,6 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -27,123 +25,64 @@ import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 import java.io.File;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * NADEEF configuration class.
  */
-public class NadeefConfiguration {
+public final class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
 
-    private static boolean testMode = false;
     private static DBConfig dbConfig;
-    private static int maxIterationNumber = 1;
-    private static boolean alwaysCompile = false;
-    private static boolean alwaysOverrideTable = true;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
     private static Optional<Class> decisionMakerClass;
     private static Path outputPath;
-    private static String serverUrl = "localhost";
-    private static int serverPort = 9000;
-    private static int derbyPort = 45000;
+    private static Properties properties;
 
-    //<editor-fold desc="Public methods">
-
-    /**
-     * Initialize NADEEF with JSON object.
-     * @param jsonObject json input.
-     */
     @SuppressWarnings("unchecked")
-    public synchronized static void initialize(JSONObject jsonObject) throws Exception {
-        Preconditions.checkNotNull(jsonObject);
-        JSONObject database = (JSONObject)jsonObject.get("database");
-        String url = (String)database.get("url");
-        String username = "";
-        if (database.containsKey("username")) {
-            username = (String)database.get("username");
-        }
-
-        String password = "";
-        if (database.containsKey("password")) {
-            password = (String)database.get("password");
-        }
-
-        String type;
-        if (database.containsKey("type")) {
-            type = (String)database.get("type");
-        } else {
-            type = "derby";
-        }
-
-        if (type.equals("derby") && database.containsKey("port")) {
-            derbyPort = ((Long)database.get("port")).intValue();
-        }
-
+    private static void initialize() throws Exception {
         dbConfig =
             new DBConfig.Builder()
-                .url(url)
-                .username(username)
-                .password(password)
-                .dialect(SQLDialectTools.getSQLDialect(type))
+                .url(properties.getProperty("database.url"))
+                .username(properties.getProperty("database.username"))
+                .password(properties.getProperty("database.password"))
+                .dialect(
+                    SQLDialectTools.getSQLDialect(
+                        properties.getProperty("database.type", "database.derby")))
                 .build();
 
-        JSONObject general = (JSONObject)jsonObject.get("general");
-        if (general.containsKey("testmode")) {
-            testMode = (Boolean)general.get("testmode");
-            Tracer.setVerbose(testMode);
-        }
-
-        if (general.containsKey("maxIterationNumber")) {
-            maxIterationNumber = ((Long)general.get("maxIterationNumber")).intValue();
-        }
-
-        if (general.containsKey("alwaysCompile")) {
-            alwaysCompile = (Boolean)(general.get("alwaysCompile"));
-        }
-
-        if (general.containsKey("alwaysOverwriteTable")) {
-            alwaysOverrideTable = (Boolean)(general.get("alwaysOverwriteTable"));
-        }
-
-        if (general.containsKey("fixdecisionmaker")) {
-            String className = (String)general.get("fixdecisionmaker");
+        if (properties.containsKey("general.fixdecisionmaker")) {
+            String className = properties.getProperty("general.fixdecisionmaker");
             Class customizedClass = CommonTools.loadClass(className);
             decisionMakerClass = Optional.of(customizedClass);
-        } else {
+        } else
             decisionMakerClass = Optional.absent();
-        }
 
-        if (general.containsKey("outputPath")) {
-            String outputPathString = (String)general.get("outputPath");
+        if (properties.containsKey("general.outputPath")) {
+            String outputPathString = properties.getProperty("general.outputPath");
             File tmpPath = new File(outputPathString);
-            if (tmpPath.exists() && tmpPath.isDirectory()) {
+            if (tmpPath.exists() && tmpPath.isDirectory())
                 outputPath = tmpPath.toPath();
-            } else {
+            else {
                 outputPathString = System.getProperty("user.dir");
                 tracer.info(
                     "Cannot find directory " + outputPathString +
                         ", we change to working directory " + outputPathString
                 );
-
                 outputPath = new File(outputPathString).toPath();
             }
         }
 
-        JSONObject ruleext = (JSONObject)jsonObject.get("ruleext");
-        Set<Map.Entry> entries = ruleext.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-            String builderClassName = entry.getValue();
-            Class builderClass = CommonTools.loadClass(builderClassName);
-            RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
-            ruleExtension.put(entry.getKey(), writer);
-        }
-
-        if (jsonObject.containsKey("thrift")) {
-            JSONObject thrift = (JSONObject)jsonObject.get("thrift");
-            serverUrl = (String)thrift.get("url");
-            serverPort = ((Long)thrift.get("port")).intValue();
+        Enumeration<?> enumeration = properties.propertyNames();
+        while (enumeration.hasMoreElements()) {
+            String property = (String)enumeration.nextElement();
+            if (property.startsWith("ruleext.")) {
+                String key = property.substring("ruleext.".length());
+                String builderClassName = properties.getProperty(property);
+                Class builderClass = CommonTools.loadClass(builderClassName);
+                RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
+                ruleExtension.put(key, writer);
+            }
         }
     }
 
@@ -151,10 +90,11 @@ public class NadeefConfiguration {
      * Initialize configuration from string.
      * @param reader configuration string.
      */
-    @SuppressWarnings("unchecked")
-    public synchronized static void initialize(Reader reader) throws Exception {
+    public static void initialize(Reader reader) throws Exception {
         Preconditions.checkNotNull(reader);
-        initialize((JSONObject)JSONValue.parse(reader));
+        properties = System.getProperties();
+        properties.load(reader);
+        initialize();
     }
 
     /**
@@ -162,7 +102,7 @@ public class NadeefConfiguration {
      * @return server url.
      */
     public static String getServerUrl() {
-        return serverUrl;
+        return properties.getProperty("thrift.server.url");
     }
 
     /**
@@ -170,40 +110,21 @@ public class NadeefConfiguration {
      * @return port number
      */
     public static int getServerPort() {
-        return serverPort;
+        return Integer.parseInt(properties.getProperty("thrift.server.port"));
     }
 
-    /**
-     * Sets the test mode.
-     * @param isTestMode test mode.
-     */
-    public static void setTestMode(boolean isTestMode) {
-        testMode = isTestMode;
-    }
-
-    /**
-     * Sets AlwaysOverrideTable.
-     * @param isAlwaysOverride alwaysOverride mode.
-     */
     public static void setAlwaysOverride(boolean isAlwaysOverride) {
-        alwaysOverrideTable = isAlwaysOverride;
+        properties.setProperty("general.alwaysOverride", Boolean.toString(isAlwaysOverride));
     }
 
-    /**
-     * Sets MaxIterationNumber.
-     * @param maxIterationNumber_ Max iteration number.
-     */
-    public static void setMaxIterationNumber(int maxIterationNumber_) {
-        maxIterationNumber = maxIterationNumber_;
+    public static void setMaxIterationNumber(int maxIterationNumber) {
+        properties.setProperty("general.maxIterationNumber", Integer.toString(maxIterationNumber));
     }
 
-    /**
-     * Is Nadeef running in TestMode.
-     * @return True when Nadeef is running in test mode.
-     */
-    public static boolean isTestMode() {
-        return testMode;
+    public static void setAlwaysCompile(boolean isAlwaysCompile) {
+        properties.setProperty("general.alwaysCompile", Boolean.toString(isAlwaysCompile));
     }
+
 
     /**
      * Gets the NADEEF output path. Output path is used for writing logs,
@@ -214,7 +135,9 @@ public class NadeefConfiguration {
         return outputPath;
     }
 
-    public static int getDerbyPort() { return derbyPort; }
+    public static int getDerbyPort() {
+        return Integer.parseInt(properties.getProperty("general.derby.port", "45000"));
+    }
 
     /**
      * Gets the {@link qa.qcri.nadeef.tools.DBConfig} of Nadeef metadata database.
@@ -242,7 +165,9 @@ public class NadeefConfiguration {
      * @return Nadeef DB schema name.
      */
     public static int getMaxIterationNumber() {
-        return maxIterationNumber;
+        return Integer.parseInt(
+            properties.getProperty("general.maxIterationNumber", "10")
+        );
     }
 
     /**
@@ -262,19 +187,12 @@ public class NadeefConfiguration {
     }
 
     /**
-     * Sets AlwaysCompile value.
-     * @param alwaysCompile_ alwaysCompile value.
-     */
-    public static void setAlwaysCompile(boolean alwaysCompile_) {
-        alwaysCompile = alwaysCompile_;
-    }
-
-    /**
      * Gets AlwaysCompile option.
      * @return alwaysCompile value.
      */
     public static boolean getAlwaysCompile() {
-        return alwaysCompile;
+        return Boolean.parseBoolean(
+            properties.getProperty("general.alwaysCompile", "false"));
     }
 
     /**
@@ -282,7 +200,8 @@ public class NadeefConfiguration {
      * @return OverwriteTable value.
      */
     public static boolean getAlwaysOverrideTable() {
-        return alwaysOverrideTable;
+        return Boolean.parseBoolean(
+            properties.getProperty("general.alwaysOverrideTable", "false"));
     }
 
     /**
@@ -300,5 +219,4 @@ public class NadeefConfiguration {
     public static Optional<Class> getDecisionMakerClass() {
         return decisionMakerClass;
     }
-    //</editor-fold>
 }

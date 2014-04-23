@@ -153,7 +153,7 @@ public class TestDataRepository {
 
     public static List<CleanPlan> getHolisticTestPlan1()
         throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getHolisticPlan1File()), NadeefConfiguration.getDbConfig());
     }
 
@@ -194,107 +194,107 @@ public class TestDataRepository {
 
     public static CleanPlan getCleanPlan()
         throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getTestFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan2()
         throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getTestFile2()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan3()
         throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getTestFile3()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan4()
         throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getTestFile4()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static List<CleanPlan> getCleanPlan5()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getTestFile5()), NadeefConfiguration.getDbConfig());
     }
 
     public static CleanPlan getCleanPlan6()
         throws Exception {
 
-            return CleanPlan.createCleanPlanFromJSON(
+            return CleanPlan.create(
                 new FileReader(getCleanPlan6File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan7()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getCleanPlan7File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan8()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getCleanPlan8File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan9()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getCleanPlan9File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan10k() throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getStressPlan10kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan30k()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getStressPlan30kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan40k()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getStressPlan40kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan80k()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getStressPlan80kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan90k()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getStressPlan90kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getPairCleanPlan1()
         throws Exception {
 
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getPairCleanPlanFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getDCTestPlan()
         throws Exception {
 
-      return CleanPlan.createCleanPlanFromJSON(
+      return CleanPlan.create(
           new FileReader(getDCTestFile()),
           NadeefConfiguration.getDbConfig()
       ).get(0);
@@ -303,7 +303,7 @@ public class TestDataRepository {
     public static CleanPlan getConstantDCTestPlan()
         throws Exception {
 
-      return CleanPlan.createCleanPlanFromJSON(
+      return CleanPlan.create(
           new FileReader(getConstantDCTestFile()),
           NadeefConfiguration.getDbConfig()).get(0);
     }
@@ -311,31 +311,31 @@ public class TestDataRepository {
     public static CleanPlan getSingleTupleDCTestPlan()
         throws Exception {
 
-      return CleanPlan.createCleanPlanFromJSON(
+      return CleanPlan.create(
           new FileReader(getSingleTupleDCTestFile()),
           NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getFloatDCTestPlan() throws Exception {
-      return CleanPlan.createCleanPlanFromJSON(
+      return CleanPlan.create(
           new FileReader(getFloatDCTestFile()),
           NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getDCGeneratedCleanPlan() throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getDCGeneratedFile()),
             NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getIncCleanPlan1() throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getIncCleanPlanFile()),
             NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getIncCleanPlan2() throws Exception {
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(getIncCleanPlanFile2()),
             NadeefConfiguration.getDbConfig()).get(0);
     }
@@ -343,7 +343,7 @@ public class TestDataRepository {
     public static List<CleanPlan> getPlan(String relativeFileName) throws Exception {
         final String filePath = "test*src*qa*qcri*nadeef*test*input*" + relativeFileName;
         File inputFile = new File(filePath.replace('*', File.separatorChar));
-        return CleanPlan.createCleanPlanFromJSON(
+        return CleanPlan.create(
             new FileReader(inputFile),
             NadeefConfiguration.getDbConfig());
     }

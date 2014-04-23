@@ -15,7 +15,6 @@ package qa.qcri.nadeef.tools;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import org.json.simple.JSONObject;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
@@ -70,14 +69,6 @@ public class DBConfig {
     //</editor-fold>
 
     //<editor-fold desc="Constructor">
-
-    /**
-     * DBConfig copy constructor.
-     * @param jsonObject JSON object.
-     */
-    public DBConfig(JSONObject jsonObject) {
-        Preconditions.checkNotNull(jsonObject);
-    }
 
     /**
      * DBConfig copy constructor.

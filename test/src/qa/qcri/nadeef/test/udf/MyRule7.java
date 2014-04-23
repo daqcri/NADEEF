@@ -12,7 +12,6 @@
  */
 package qa.qcri.nadeef.test.udf;
 
-import org.json.simple.parser.ParseException;
 import qa.qcri.nadeef.core.datamodel.*;
 
 import java.util.*;
@@ -20,7 +19,7 @@ import java.util.*;
 public class MyRule7 extends SingleTupleRule {
     private List<Predicate> predicates;
 
-    public MyRule7() throws ParseException{
+    public MyRule7() {
         predicates = new ArrayList<>();
     }
 

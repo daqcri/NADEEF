@@ -40,7 +40,6 @@ public class DBInstallerTest extends NadeefTestBase {
     public void setUp() {
         try {
             Bootstrap.start(testConfig);
-            NadeefConfiguration.setTestMode(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

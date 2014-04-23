@@ -196,7 +196,7 @@ public class Tuple {
             return true;
         }
 
-        if (tableName_.startsWith("tb_")) {
+        if (tableName_.startsWith("TB_")) {
             String originalTableName = tableName_.substring(3);
             return originalTableName.equalsIgnoreCase(tableName);
         }

@@ -226,11 +226,7 @@ public class Console {
         executors.clear();
         try {
             DBConfig dbConfig = NadeefConfiguration.getDbConfig();
-            cleanPlans =
-                CleanPlan.createCleanPlanFromJSON(
-                    new FileReader(file),
-                    dbConfig
-                );
+            cleanPlans = CleanPlan.create(new FileReader(file), dbConfig);
             for (CleanPlan cleanPlan : cleanPlans) {
                 executors.add(new CleanExecutor(cleanPlan, dbConfig));
             }

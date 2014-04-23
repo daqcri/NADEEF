@@ -10,7 +10,6 @@
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
-    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="org.antlr:stringtemplate:4.0.2" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
