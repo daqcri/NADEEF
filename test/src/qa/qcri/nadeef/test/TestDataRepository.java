@@ -25,130 +25,94 @@ import java.util.List;
  */
 public class TestDataRepository {
     public static String DerbyConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*derbyConfig.conf".replace(
-                '*', File.separatorChar);
-
+        "test/src/qa/qcri/nadeef/test/input/config/derbyConfig.conf";
     public static String PostgresConfig =
-        "test*src*qa*qcri*nadeef*test*input*config*postgresConfig.conf".replace(
-                '*', File.separatorChar);
-
+        "test/src/qa/qcri/nadeef/test/input/config/postgresConfig.conf";
     public static String MySQLConfig =
-            "test*src*qa*qcri*nadeef*test*input*config*mysqlConfig.conf".replace(
-                '*', File.separatorChar);
+            "test/src/qa/qcri/nadeef/test/input/config/mysqlConfig.conf";
 
     public static File getDumpTestCSVFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*dumptest.csv";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/dumptest.csv");
     }
 
     public static File getPairCleanPlanFile1() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*PairTableCleanPlan1.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/PairTableCleanPlan1.json");
     }
 
     public static File getFailurePlanFile1() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*FailurePlan1.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/FailurePlan1.json");
     }
 
     public static File getFailurePlanFile2() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*FailurePlan2.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/FailurePlan2.json");
     }
 
     public static File getTestFile1() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan1.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan1.json");
     }
 
     public static File getTestFile2() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan2.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan2.json");
     }
 
     public static File getTestFile3() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan3.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan3.json");
     }
 
     public static File getTestFile4() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan4.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan4.json");
     }
 
     public static File getTestFile5() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan5.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan5.json");
     }
 
     public static File getViolationTestData1() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*violation1.csv";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/violation1.csv");
     }
 
     public static File getFixTestData1() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*Fix1.csv";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/Fix1.csv");
     }
 
     public static File getLocationData1() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*locations.csv";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/locations.csv");
     }
 
     public static File getCleanPlan6File() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan6.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan6.json");
     }
 
     public static File getCleanPlan7File() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan7.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan7.json");
     }
 
     public static File getCleanPlan8File() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan8.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan8.json");
     }
 
     public static File getCleanPlan9File() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*CleanPlan9.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/CleanPlan9.json");
     }
 
     public static File getHolisticPlan1File() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*HolisticTestPlan1.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/HolisticTestPlan1.json");
     }
 
     public static File getStressPlan10kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan10k.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/StressPlan10k.json");
     }
 
     public static File getStressPlan30kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan30k.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/StressPlan30k.json");
     }
 
     public static File getStressPlan40kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan40k.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/StressPlan40k.json");
     }
 
     public static File getStressPlan80kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan80k.json";
-        return new File(filePath.replace('*', File.separatorChar));
-    }
-
-    public static File getStressPlan90kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan90k.json";
-        return new File(filePath.replace('*', File.separatorChar));
-    }
-
-    public static File getStressPlan100kFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*StressPlan100k.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/StressPlan80k.json");
     }
 
     public static List<CleanPlan> getHolisticTestPlan1()
@@ -158,38 +122,31 @@ public class TestDataRepository {
     }
 
     public static File getDCTestFile(){
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan3.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/DCCleanPlan3.json");
     }
 
     public static File getConstantDCTestFile(){
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan2.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/DCCleanPlan2.json");
     }
 
     public static File getSingleTupleDCTestFile(){
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan1.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/DCCleanPlan1.json");
     }
 
     public static File getFloatDCTestFile(){
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan4.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/DCCleanPlan4.json");
     }
 
     public static File getDCGeneratedFile(){
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*DCCleanPlan5.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/DCCleanPlan5.json");
     }
 
     public static File getIncCleanPlanFile() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*IncCleanPlan1.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/IncCleanPlan1.json");
     }
 
     public static File getIncCleanPlanFile2() {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*IncCleanPlan2.json";
-        return new File(filePath.replace('*', File.separatorChar));
+        return new File("test/src/qa/qcri/nadeef/test/input/IncCleanPlan2.json");
     }
 
     public static CleanPlan getCleanPlan()
@@ -218,28 +175,24 @@ public class TestDataRepository {
 
     public static List<CleanPlan> getCleanPlan5()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getTestFile5()), NadeefConfiguration.getDbConfig());
     }
 
     public static CleanPlan getCleanPlan6()
         throws Exception {
-
             return CleanPlan.create(
                 new FileReader(getCleanPlan6File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan7()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getCleanPlan7File()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getCleanPlan8()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getCleanPlan8File()), NadeefConfiguration.getDbConfig()).get(0);
     }
@@ -258,42 +211,30 @@ public class TestDataRepository {
 
     public static CleanPlan getStressPlan30k()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getStressPlan30kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan40k()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getStressPlan40kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getStressPlan80k()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getStressPlan80kFile()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
-    public static CleanPlan getStressPlan90k()
-        throws Exception {
-
-        return CleanPlan.create(
-            new FileReader(getStressPlan90kFile()), NadeefConfiguration.getDbConfig()).get(0);
-    }
-
     public static CleanPlan getPairCleanPlan1()
         throws Exception {
-
         return CleanPlan.create(
             new FileReader(getPairCleanPlanFile1()), NadeefConfiguration.getDbConfig()).get(0);
     }
 
     public static CleanPlan getDCTestPlan()
         throws Exception {
-
       return CleanPlan.create(
           new FileReader(getDCTestFile()),
           NadeefConfiguration.getDbConfig()
@@ -302,7 +243,6 @@ public class TestDataRepository {
 
     public static CleanPlan getConstantDCTestPlan()
         throws Exception {
-
       return CleanPlan.create(
           new FileReader(getConstantDCTestFile()),
           NadeefConfiguration.getDbConfig()).get(0);
@@ -341,11 +281,8 @@ public class TestDataRepository {
     }
 
     public static List<CleanPlan> getPlan(String relativeFileName) throws Exception {
-        final String filePath = "test*src*qa*qcri*nadeef*test*input*" + relativeFileName;
-        File inputFile = new File(filePath.replace('*', File.separatorChar));
-        return CleanPlan.create(
-            new FileReader(inputFile),
-            NadeefConfiguration.getDbConfig());
+        File inputFile = new File("test/src/qa/qcri/nadeef/test/input/" + relativeFileName);
+        return CleanPlan.create(new FileReader(inputFile), NadeefConfiguration.getDbConfig());
     }
 }
 

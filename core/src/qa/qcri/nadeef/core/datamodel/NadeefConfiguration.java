@@ -39,7 +39,6 @@ public final class NadeefConfiguration {
     private static Path outputPath;
     private static Properties properties;
 
-    @SuppressWarnings("unchecked")
     private static void initialize() throws Exception {
         dbConfig =
             new DBConfig.Builder()
@@ -80,6 +79,7 @@ public final class NadeefConfiguration {
                 String key = property.substring("ruleext.".length());
                 String builderClassName = properties.getProperty(property);
                 Class builderClass = CommonTools.loadClass(builderClassName);
+                @SuppressWarnings("unchecked")
                 RuleBuilder writer = (RuleBuilder)(builderClass.getConstructor().newInstance());
                 ruleExtension.put(key, writer);
             }
@@ -201,7 +201,7 @@ public final class NadeefConfiguration {
      */
     public static boolean getAlwaysOverrideTable() {
         return Boolean.parseBoolean(
-            properties.getProperty("general.alwaysOverrideTable", "false"));
+            properties.getProperty("general.alwaysOverwriteTable", "false"));
     }
 
     /**
