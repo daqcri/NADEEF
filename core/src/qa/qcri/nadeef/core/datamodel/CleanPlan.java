@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import qa.qcri.nadeef.core.util.CSVTools;
 import qa.qcri.nadeef.core.util.RuleBuilder;
 import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
@@ -59,22 +60,68 @@ public class CleanPlan {
      * Creates a {@link CleanPlan} from JSON object.
      *
      * @param reader JSON string reader.
-     * @param nadeefDbConfig Nadeef DB config.
+     * @param dbConfig Nadeef DB config.
      * @return instance.
      */
-    @SuppressWarnings("unchecked")
-    public static List<CleanPlan> create(
-        Reader reader,
-        DBConfig nadeefDbConfig
-    ) throws Exception {
+    public static List<CleanPlan> create(Reader reader, DBConfig dbConfig) throws Exception {
         Preconditions.checkNotNull(reader);
-
         GsonBuilder gson = new GsonBuilder();
         gson.registerTypeAdapter(CleanPlanJsonAdapter.class, new CleanPlanJsonDeserializer());
         gson.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
         CleanPlanJsonAdapter adapter =
             gson.create().fromJson(reader, CleanPlanJsonAdapter.class);
+        return create(adapter, dbConfig);
+    }
 
+    /**
+     * Creates a {@link CleanPlan} from JSON object.
+     *
+     * @param json JSON object.
+     * @param dbConfig Nadeef DB config.
+     * @return instance.
+     */
+    public static List<CleanPlan> create(JsonObject json, DBConfig dbConfig) throws Exception {
+        Preconditions.checkNotNull(json);
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(CleanPlanJsonAdapter.class, new CleanPlanJsonDeserializer());
+        gson.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        CleanPlanJsonAdapter adapter =
+            gson.create().fromJson(json, CleanPlanJsonAdapter.class);
+        return create(adapter, dbConfig);
+    }
+
+    // <editor-fold desc="Property Getters">
+
+    /**
+     * Gets the {@link DBConfig} for the clean source.
+     *
+     * @return {@link DBConfig}.
+     */
+    public DBConfig getSourceDBConfig() {
+        return source;
+    }
+
+    /**
+     * Gets the rule.
+     *
+     * @return rule.
+     */
+    public Rule getRule() {
+        return rule;
+    }
+    // </editor-fold>
+
+    private static List<String> toUppercase(List<String> values) {
+        List<String> tmp = Lists.newArrayList();
+        for (String val : values)
+            tmp.add(val == null ? null : val.toUpperCase());
+        return tmp;
+    }
+
+    private static List<CleanPlan> create(
+        CleanPlanJsonAdapter adapter,
+        DBConfig nadeefDbConfig
+    ) throws Exception {
         // a set which prevents generating new tables whenever encounters among
         // multiple rules.
         List<CleanPlan> result = Lists.newArrayList();
@@ -161,8 +208,8 @@ public class CleanPlan {
                     if (!DBMetaDataTool.isTableExist(dbConfig, tableName))
                         throw new IllegalArgumentException(
                             "The specified table " +
-                            tableName +
-                            " cannot be found in the source database.");
+                                tableName +
+                                " cannot be found in the source database.");
 
                 if (ruleJson.hasTarget())
                     targetTableNames = ruleJson.target;
@@ -183,8 +230,8 @@ public class CleanPlan {
                     // when target table is as the same as the original table, skip copy
                     if (
                         !copiedTables.containsKey(sourceTable) &&
-                        !sourceTableNames.get(j).equalsIgnoreCase(targetTableNames.get(j))
-                    ) {
+                            !sourceTableNames.get(j).equalsIgnoreCase(targetTableNames.get(j))
+                        ) {
                         DBMetaDataTool.copy(
                             dbConfig,
                             dialectManager,
@@ -207,68 +254,40 @@ public class CleanPlan {
                 // distinguished by the value of the rule.
                 ruleName =
                     "Rule" +
-                    CommonTools.toHashCode(ruleJson.value.get(0) + targetTableNames.get(0));
+                        CommonTools.toHashCode(ruleJson.value.get(0) + targetTableNames.get(0));
 
             switch (ruleJson.type) {
-            case "udf":
-                Class udfClass =
-                    CommonTools.loadClass(ruleJson.value.get(0));
-                if (!Rule.class.isAssignableFrom(udfClass))
-                    throw new IllegalArgumentException(
-                        "The specified class is not a Rule class."
-                    );
+                case "udf":
+                    Class udfClass =
+                        CommonTools.loadClass(ruleJson.value.get(0));
+                    if (!Rule.class.isAssignableFrom(udfClass))
+                        throw new IllegalArgumentException(
+                            "The specified class is not a Rule class."
+                        );
 
-                rule = (Rule) udfClass.newInstance();
-                // call internal initialization on the rule.
-                rule.initialize(ruleName, targetTableNames);
-                rules.add(rule);
-                break;
-            default:
-                RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(ruleJson.type);
-                if (ruleBuilder != null)
-                    rules.addAll(
-                        ruleBuilder.name(ruleName)
-                            .schema(schemas)
-                            .table(targetTableNames)
-                            .value(ruleJson.value)
-                            .build()
-                    );
-                else
-                    tracer.err("Unknown Rule type: " + ruleJson.type, null);
-                break;
+                    rule = (Rule) udfClass.newInstance();
+                    // call internal initialization on the rule.
+                    rule.initialize(ruleName, targetTableNames);
+                    rules.add(rule);
+                    break;
+                default:
+                    RuleBuilder ruleBuilder = NadeefConfiguration.tryGetRuleBuilder(ruleJson.type);
+                    if (ruleBuilder != null)
+                        rules.addAll(
+                            ruleBuilder.name(ruleName)
+                                .schema(schemas)
+                                .table(targetTableNames)
+                                .value(ruleJson.value)
+                                .build()
+                        );
+                    else
+                        tracer.err("Unknown Rule type: " + ruleJson.type, null);
+                    break;
             }
         }
 
         for (Rule rule : rules)
             result.add(new CleanPlan(dbConfig, rule));
         return result;
-    }
-
-    // <editor-fold desc="Property Getters">
-
-    /**
-     * Gets the {@link DBConfig} for the clean source.
-     *
-     * @return {@link DBConfig}.
-     */
-    public DBConfig getSourceDBConfig() {
-        return source;
-    }
-
-    /**
-     * Gets the rule.
-     *
-     * @return rule.
-     */
-    public Rule getRule() {
-        return rule;
-    }
-    // </editor-fold>
-
-    private static List<String> toUppercase(List<String> values) {
-        List<String> tmp = Lists.newArrayList();
-        for (String val : values)
-            tmp.add(val == null ? null : val.toUpperCase());
-        return tmp;
     }
 }

@@ -125,6 +125,9 @@ public final class NadeefConfiguration {
         properties.setProperty("general.alwaysCompile", Boolean.toString(isAlwaysCompile));
     }
 
+    public static void setDecisionMakerClass(Class decisionMaker) {
+        decisionMakerClass = Optional.of(decisionMaker);
+    }
 
     /**
      * Gets the NADEEF output path. Output path is used for writing logs,

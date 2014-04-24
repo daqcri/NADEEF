@@ -11,38 +11,40 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.test.core;
+package qa.qcri.nadeef.lab.hc.test;
 
+import com.google.gson.JsonObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.CleanPlanJsonBuilder;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
-import qa.qcri.nadeef.test.NadeefTestBase;
-import qa.qcri.nadeef.test.TestDataRepository;
+import qa.qcri.nadeef.lab.hc.HolisticCleaning;
+import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
-@RunWith(Parameterized.class)
-public class DCRepairTest extends NadeefTestBase {
-    public DCRepairTest(String testConfig_) {
-        super(testConfig_);
-    }
+import java.io.StringReader;
+
+public class DCRepairTest {
+    private DBConfig dbConfig;
 
     @Before
     public void setup() {
         try {
-            Bootstrap.start(testConfig);
+            Bootstrap.start();
             Tracer.setVerbose(true);
             NadeefConfiguration.setMaxIterationNumber(1);
             NadeefConfiguration.setAlwaysOverride(true);
+            NadeefConfiguration.setDecisionMakerClass(HolisticCleaning.class);
+            dbConfig = NadeefConfiguration.getDbConfig();
+
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -58,7 +60,13 @@ public class DCRepairTest extends NadeefTestBase {
     @Test
     public void cleanExecutorConstantDCTest(){
         try{
-            CleanPlan cleanPlan = TestDataRepository.getConstantDCTestPlan();
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                .csv("test/src/qa/qcri/nadeef/test/input/dumptest.csv")
+                .type("dc")
+                .value("not(t1.B!=b1)").build();
+
+            CleanPlan cleanPlan = CleanPlan.create(obj, dbConfig).get(0);
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(5);
@@ -79,33 +87,13 @@ public class DCRepairTest extends NadeefTestBase {
     public void cleanExecutorDCTest(){
         CleanExecutor executor = null;
         try{
-            CleanPlan cleanPlan = TestDataRepository.getDCTestPlan();
-            executor = new CleanExecutor(cleanPlan);
-            executor.detect();
-            verifyViolationResult(48);
-            executor.repair();
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                    .csv("test/src/qa/qcri/nadeef/test/input/dumptest3.csv")
+                    .type("dc")
+                    .value("not(t1.A>t1.B&t1.B=2)").build();
 
-            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan);
-            updateExecutor.run();
-
-            int updatedCount = updateExecutor.getUpdateCellCount();
-            Assert.assertEquals(3, updatedCount);
-
-        } catch (Exception e){
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        } finally {
-            if (executor != null) {
-                executor.shutdown();
-            }
-        }
-    }
-
-    @org.junit.Ignore
-    public void cleanExecutorFloatDCTest(){
-        CleanExecutor executor = null;
-        try{
-            CleanPlan cleanPlan = TestDataRepository.getFloatDCTestPlan();
+            CleanPlan cleanPlan = CleanPlan.create(obj, dbConfig).get(0);
             executor = new CleanExecutor(cleanPlan);
             executor.detect();
             verifyViolationResult(6);
@@ -116,6 +104,7 @@ public class DCRepairTest extends NadeefTestBase {
 
             int updatedCount = updateExecutor.getUpdateCellCount();
             Assert.assertEquals(3, updatedCount);
+
         } catch (Exception e){
             e.printStackTrace();
             Assert.fail(e.getMessage());

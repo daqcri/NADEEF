@@ -24,6 +24,7 @@
     <orderEntry type="library" name="org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4" level="project" />
     <orderEntry type="library" name="org.antlr:stringtemplate:4.0.2" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.2.4" level="project" />
+    <orderEntry type="library" name="com.intellij:annotations:12.0" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="com.intellij:annotations:12.0" type="repository">
+    <properties maven-id="com.intellij:annotations:12.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/vendors/annotations-12.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
