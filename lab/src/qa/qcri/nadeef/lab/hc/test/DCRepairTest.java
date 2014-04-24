@@ -115,6 +115,39 @@ public class DCRepairTest {
         }
     }
 
+    @Test
+    public void cleanExecutorDCTest2(){
+        CleanExecutor executor = null;
+        try{
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                    .csv("test/src/qa/qcri/nadeef/test/input/employee.csv")
+                    .type("udf")
+                    .value("qa.qcri.nadeef.test.udf.MyRule1").build();
+
+            CleanPlan cleanPlan = CleanPlan.create(obj, dbConfig).get(0);
+            executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(4);
+            executor.repair();
+
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan);
+            updateExecutor.run();
+
+            int updatedCount = updateExecutor.getUpdateCellCount();
+            Assert.assertEquals(1, updatedCount);
+
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
+        }
+    }
+
+
     private void verifyViolationResult(int expectRow)
         throws Exception {
         int rowCount = Violations.getViolationRowCount(NadeefConfiguration.getDbConfig());
