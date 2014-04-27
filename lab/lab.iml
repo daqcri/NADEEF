@@ -16,6 +16,15 @@
     <orderEntry type="library" name="gurobi" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.2.4" level="project" />
     <orderEntry type="library" name="junit:junit:4.11" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../out/production/test" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

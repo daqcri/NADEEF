@@ -29,14 +29,15 @@ public class GurobiSolver extends SolverBase {
     private Tracer tracer = Tracer.getTracer(GurobiSolver.class);
 
     public List<Fix> solve(HashSet<Fix> repairContext, HashSet<Cell> changedCell) {
-        tracer.info("Probing: ");
+        tracer.verbose("Probing: ");
         for (Cell cell : changedCell)
-            tracer.info(cell.getColumn().getFullColumnName());
+            tracer.verbose(cell.getColumn().getFullColumnName() + ":" + cell.getTid());
 
         GRBEnv env = null;
         GRBModel model = null;
         try {
             env = new GRBEnv();
+            env.set(GRB.IntParam.LogToConsole, 0);
             model = new GRBModel(env);
 
             // encoding QP
@@ -61,7 +62,7 @@ public class GurobiSolver extends SolverBase {
                                 Integer.MIN_VALUE,
                                 Integer.MAX_VALUE,
                                 0.0,
-                                GRB.CONTINUOUS,
+                                GRB.INTEGER,
                                 cell.getColumn().getColumnName()
                             );
                         cellIndex.put(cell, var1);
@@ -84,7 +85,7 @@ public class GurobiSolver extends SolverBase {
                                     Integer.MIN_VALUE,
                                     Integer.MAX_VALUE,
                                     0.0,
-                                    GRB.CONTINUOUS,
+                                    GRB.INTEGER,
                                     cell.getColumn().getColumnName()
                                 );
                             cellIndex.put(cell, var2);
@@ -102,25 +103,37 @@ public class GurobiSolver extends SolverBase {
                 // update the model terms
                 model.update();
 
+                StringBuffer exp = new StringBuffer();
                 // constraint construction
                 GRBLinExpr constraint = new GRBLinExpr();
                 if (var1 != null && var2 != null) {
                     // left and right can both be modified.
                     constraint.addTerm(1.0, var1);
                     constraint.addTerm(-1.0, var2);
+                    exp.append(var1.get(GRB.StringAttr.VarName))
+                        .append(" - ")
+                        .append(var2.get(GRB.StringAttr.VarName));
                 } else if (var1 == null) {
                     // left can not be modified, but right can be modified
                     constraint.addConstant(v1);
                     constraint.addTerm(-1.0, var2);
+                    exp.append("-")
+                        .append(var2.get(GRB.StringAttr.VarName))
+                        .append(" + ")
+                        .append(v1);
                 } else {
                     // left can be modified, but right cannot.
                     constraint.addTerm(1.0, var1);
                     constraint.addConstant(-1.0 * v2);
+                    exp.append(var1.get(GRB.StringAttr.VarName))
+                        .append(" - ")
+                        .append(v2);
                 }
 
                 switch (fix.getOperation()) {
                     case EQ:
                         model.addConstr(constraint, GRB.EQUAL, 0.0, "c" + fixIndex);
+                        exp.append(" = 0.0");
                         break;
                     // TODO: for a NEQ solution it actually can has both GT and LT,
                     // how to make this fit a QP problem?
@@ -128,19 +141,27 @@ public class GurobiSolver extends SolverBase {
                     // http://stackoverflow.com/questions/17257314/integer-programming-unequal-constraint
                     case NEQ:
                     case GT:
-                        model.addConstr(constraint, GRB.GREATER_EQUAL, 1.0, "c" + fixIndex);
+                        model.addConstr(constraint, GRB.GREATER_EQUAL, 0.5, "c" + fixIndex);
+                        exp.append("> 0.5");
                         break;
                     case GTE:
-                        model.addConstr(constraint, GRB.GREATER_EQUAL, 0.1, "c" + fixIndex);
+                        model.addConstr(constraint, GRB.GREATER_EQUAL, 0, "c" + fixIndex);
+                        exp.append(">= 0.0");
                         break;
                     case LT:
-                        model.addConstr(constraint, GRB.LESS_EQUAL, -1.0, "c" + fixIndex);
+                        model.addConstr(constraint, GRB.LESS_EQUAL, -0.5, "c" + fixIndex);
+                        exp.append("< 0.5");
                         break;
                     case LTE:
-                        model.addConstr(constraint, GRB.LESS_EQUAL, -0.1, "c" + fixIndex);
+                        model.addConstr(constraint, GRB.LESS_EQUAL, 0, "c" + fixIndex);
+                        exp.append("<= 0");
                         break;
                 }
+                tracer.verbose(exp.toString());
             }
+
+            // Start optimizing
+            model.update();
 
             // Apply Numerical Distance Minimality
             GRBQuadExpr numMinDistance = new GRBQuadExpr();
@@ -173,13 +194,12 @@ public class GurobiSolver extends SolverBase {
             */
 
             model.setObjective(numMinDistance, GRB.MINIMIZE);
-            // Start optimizing
-            model.update();
+
 
             // Sometimes the model itself has no solution, we need to
             // setup relaxation conditions to achieve maximum constraints.
             // model = model.presolve();
-            model.feasRelax(1, true, true, true);
+            // model.feasRelax(1, true, true, true);
             model.optimize();
 
             int status = model.get(GRB.IntAttr.Status);

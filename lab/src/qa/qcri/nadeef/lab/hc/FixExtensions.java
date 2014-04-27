@@ -77,10 +77,10 @@ class FixExtensions {
             }
 
             // inverse the result to break constraints
-            if (result)
-                return true;
+            if (!result)
+                return false;
         }
-        return false;
+        return true;
     }
 
     private static double getValue(Object v) {

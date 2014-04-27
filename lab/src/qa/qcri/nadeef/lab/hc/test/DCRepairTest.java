@@ -22,6 +22,7 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.CleanPlanJsonBuilder;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
+import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
@@ -40,7 +41,7 @@ public class DCRepairTest {
         try {
             Bootstrap.start();
             Tracer.setVerbose(true);
-            NadeefConfiguration.setMaxIterationNumber(1);
+            NadeefConfiguration.setMaxIterationNumber(2);
             NadeefConfiguration.setAlwaysOverride(true);
             NadeefConfiguration.setDecisionMakerClass(HolisticCleaning.class);
             dbConfig = NadeefConfiguration.getDbConfig();
@@ -122,8 +123,8 @@ public class DCRepairTest {
             JsonObject obj =
                 new CleanPlanJsonBuilder()
                     .csv("test/src/qa/qcri/nadeef/test/input/employee.csv")
-                    .type("udf")
-                    .value("qa.qcri.nadeef.test.udf.MyRule1").build();
+                    .type("dc")
+                    .value("not(t1.ID=t2.ManagerID&t1.Salary<t2.Salary)").build();
 
             CleanPlan cleanPlan = CleanPlan.create(obj, dbConfig).get(0);
             executor = new CleanExecutor(cleanPlan);
@@ -147,6 +148,68 @@ public class DCRepairTest {
         }
     }
 
+    @Test
+    public void cleanExecutorDCTest3(){
+        CleanExecutor executor = null;
+        try{
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                    .csv("test/src/qa/qcri/nadeef/test/input/employee.csv")
+                    .type("dc")
+                    .value("not(t1.ID=t2.ManagerID&t1.Tax<t2.Tax)").build();
+
+            CleanPlan cleanPlan = CleanPlan.create(obj, dbConfig).get(0);
+            executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(4);
+            executor.repair();
+
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan);
+            updateExecutor.run();
+
+            int updatedCount = updateExecutor.getUpdateCellCount();
+            Assert.assertEquals(1, updatedCount);
+
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
+        }
+    }
+
+    @Test
+    public void cleanExecutorDCTest4(){
+        CleanExecutor executor = null;
+        try{
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                    .csv("test/src/qa/qcri/nadeef/test/input/salary.csv")
+                    .type("dc")
+                    .value("not(t1.Salary>t2.Salary&t1.Tax<t2.Tax)").build();
+
+            CleanPlan cleanPlan = CleanPlan.create(obj, dbConfig).get(0);
+            executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(172);
+            executor.repair();
+
+            UpdateExecutor updateExecutor = new UpdateExecutor(cleanPlan);
+            updateExecutor.run();
+
+            int updatedCount = updateExecutor.getUpdateCellCount();
+            Assert.assertEquals(5, updatedCount);
+
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        } finally {
+            if (executor != null)
+                executor.shutdown();
+        }
+    }
 
     private void verifyViolationResult(int expectRow)
         throws Exception {

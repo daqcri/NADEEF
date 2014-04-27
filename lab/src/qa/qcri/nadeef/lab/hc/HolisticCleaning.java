@@ -104,18 +104,22 @@ public class HolisticCleaning extends FixDecisionMaker {
                     vids.add(fix.getVid());
             }
 
-            result.addAll(determine(repairContext, frontier, topCell.cell));
+            List<Fix> possibleFixes = determine(repairContext, frontier, topCell.cell);
+            if (possibleFixes.size() > 0) {
+                // remove hyper-edges when there is a solution
+                result.addAll(possibleFixes);
 
-            // remove hyper-edges
-            for (Fix fix : fixes) {
-                int vid = fix.getVid();
-                if (vids.contains(vid)) {
-                    Cell cell = fix.getLeft();
-                    if (heapIndex.containsKey(cell))
-                        maxHeap.remove(heapIndex.get(cell));
-                    cell = fix.getRight();
-                    if (!fix.isRightConstant() && heapIndex.containsKey(cell))
-                        maxHeap.remove(heapIndex.get(cell));
+                for (Fix fix : fixes) {
+                    int vid = fix.getVid();
+                    if (vids.contains(vid)) {
+                        Cell cell = fix.getLeft();
+                        if (heapIndex.containsKey(cell))
+                            maxHeap.remove(heapIndex.get(cell));
+                        if (!fix.isRightConstant() && heapIndex.containsKey(cell)) {
+                            cell = fix.getRight();
+                            maxHeap.remove(heapIndex.get(cell));
+                        }
+                    }
                 }
             }
         }
@@ -185,7 +189,9 @@ public class HolisticCleaning extends FixDecisionMaker {
         List<Fix> result = null;
         while (trail != null) {
             result = solver.solve(repairContext, trail);
-            if (result != null && FixExtensions.isValidFix(repairContext, result))
+            if (result != null &&
+                result.size() > 0 &&
+                FixExtensions.isValidFix(repairContext, result))
                 break;
             trail = gen.getNext();
         }
@@ -198,7 +204,10 @@ public class HolisticCleaning extends FixDecisionMaker {
         if (result == null) {
             result = Lists.newArrayList();
             Fix fix =
-                new Fix.Builder().left(topCell).right(topCell.getValue()).op(Operation.EQ).build();
+                new Fix.Builder()
+                .left(topCell)
+                .right(topCell.getValue())
+                .op(Operation.EQ).build();
             result.add(fix);
         }
 

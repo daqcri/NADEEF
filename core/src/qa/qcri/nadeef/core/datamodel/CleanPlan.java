@@ -118,6 +118,7 @@ public class CleanPlan {
         return tmp;
     }
 
+    @SuppressWarnings("unchecked")
     private static List<CleanPlan> create(
         CleanPlanJsonAdapter adapter,
         DBConfig nadeefDbConfig

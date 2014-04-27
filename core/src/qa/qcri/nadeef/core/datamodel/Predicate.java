@@ -300,6 +300,15 @@ public class Predicate {
         return validResult(compareResult);
     }
 
+    // TODO: to improve
+    @SuppressWarnings("unchecked")
+    public boolean isValid(Cell left, Cell right) {
+        Object leftValue = left.getValue();
+        Comparable leftComparable = (Comparable)leftValue;
+        int compareResult = leftComparable.compareTo(right.getValue());
+        return validResult(compareResult);
+    }
+
     /**
      * Gets the {@link Operation}.
      * @return operation.

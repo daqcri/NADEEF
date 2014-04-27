@@ -79,6 +79,9 @@ public class $DCName$ extends PairTupleRule{
         }
 
         for (Predicate predicate : predicates) {
+            // TODO: we don't know how to solve NEQ problem.
+            if (predicate.getOperation().equals(Operation.NEQ))
+                continue;
             Column leftColumn = predicate.getLeft();
             if (predicate.isRightConstant()) {
                 List<Cell> cellList = columnMap.get(leftColumn);
@@ -100,19 +103,29 @@ public class $DCName$ extends PairTupleRule{
                 // on the cells again!
                 if (leftColumn.equals(rightColumn)) {
                     assert cellListLeft.size() > 1;
-                    result.add(
-                        builder
-                        .left(cellListLeft.get(0))
-                        .op(repairOperation(predicate.getOperation()))
-                        .right(cellListLeft.get(1))
-                        .build()
-                    );
+                    Cell c0 = cellListLeft.get(0);
+                    Cell c1 = cellListLeft.get(1);
+
+                    if (predicate.isValid(c0, c1))
+                        result.add(
+                            builder
+                                .left(c0)
+                                .op(repairOperation(predicate.getOperation()))
+                                .right(c1)
+                                .build());
+                    else
+                        result.add(
+                            builder
+                                .left(c1)
+                                .op(repairOperation(predicate.getOperation()))
+                                .right(c0)
+                                .build());
                 } else {
                     result.add(
                         builder
                         .left(cellListLeft.get(0))
                         .op(repairOperation(predicate.getOperation()))
-                        .right(cellListRight.get(1))
+                        .right(cellListRight.get(0))
                         .build()
                     );
                 }
