@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
     <orderEntry type="library" name="jline:jline:2.11" level="project" />
+    <orderEntry type="library" name="com.google.code.gson:gson:2.2.4" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
