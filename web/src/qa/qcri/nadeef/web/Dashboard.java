@@ -33,6 +33,7 @@ import spark.Route;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static spark.Spark.*;
@@ -224,19 +225,25 @@ public final class Dashboard {
             }
         });
 
-        delete(new Route("/:project/data/rule/:ruleName") {
+        delete(new Route("/:project/data/rule") {
             @Override
             public Object handle(Request request, Response response) {
                 return doIt(request, response, new Ido() {
                     @Override
                     public JsonObject ido(Request request) throws Exception {
-                        String ruleName = request.params("ruleName");
-                        String project = request.params("project");
+                        HashMap<String, Object> json = HTTPPostJsonParser.parse(request.body());
+                        @SuppressWarnings("unchecked")
+                        List<String> ruleNames = (List<String>)json.get("rules");
+                        String project = (String)json.get("project");
 
-                        if (Strings.isNullOrEmpty(project) || Strings.isNullOrEmpty(ruleName))
+                        if (Strings.isNullOrEmpty(project) ||
+                            ruleNames == null ||
+                            ruleNames.size() == 0)
                             throw new IllegalArgumentException("Input is not valid.");
 
-                        return update(project, dialectInstance.deleteRule(ruleName), "delete rule");
+                        for (String ruleName : ruleNames)
+                            update(project, dialectInstance.deleteRule(ruleName), "delete rule");
+                        return success(0);
                     }
                 });
             }
@@ -305,7 +312,7 @@ public final class Dashboard {
                                 !tableName.equalsIgnoreCase("RULETYPE") &&
                                 !tableName.equalsIgnoreCase("REPAIR") &&
                                 !tableName.equalsIgnoreCase("PROJECT") &&
-                                tableName.startsWith(TABLE_PREFIX))
+                                tableName.toUpperCase().startsWith(TABLE_PREFIX))
                             result.add(new JsonPrimitive(tableName));
                         json.add("data", result);
                         return json;

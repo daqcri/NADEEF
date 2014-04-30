@@ -1,3 +1,20 @@
 <component name="CopyrightManager">
-  <settings default="QCRI" />
+  <settings default="QCRI">
+    <LanguageOptions name="ActionScript">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
+    <LanguageOptions name="CSS">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
+    <LanguageOptions name="Clojure">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
+    <LanguageOptions name="HTML">
+      <option name="fileTypeOverride" value="1" />
+      <option name="prefixLines" value="false" />
+    </LanguageOptions>
+    <LanguageOptions name="JavaScript">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
+  </settings>
 </component>

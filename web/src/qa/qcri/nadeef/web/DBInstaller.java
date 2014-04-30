@@ -83,6 +83,7 @@ class DBInstaller {
                 stat.execute("INSERT INTO RULETYPE VALUES (1, 'FD', true)");
                 stat.execute("INSERT INTO RULETYPE VALUES (2, 'CFD', true)");
                 stat.execute("INSERT INTO RULETYPE VALUES (3, 'DC', true)");
+                stat.execute("INSERT INTO RULETYPE VALUES (4, 'ER', true)");
             }
         } finally {
             if (stat != null) {

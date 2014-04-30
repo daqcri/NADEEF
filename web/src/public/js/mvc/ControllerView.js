@@ -17,7 +17,7 @@ define([
     'jquery.filedrop',
     'state',
     'ruleminer',
-    'mvc/CleanPlanView',
+    'mvc/RuleEditorView',
     'mvc/ProgressbarView',
     'mvc/SourceEditorView',
     'text!mvc/template/controller.template.html',
@@ -28,18 +28,19 @@ define([
     FileDrop,
     State,
     RuleMiner,
-    CleanPlanView,
+    RuleEditorView,
     ProgressBarView,
     SourceEditorView,
     ControllerTemplate,
     DetailTemplate) {
     var domId;
     function info(msg) {
+        $('#home-alert-info').alert('close');
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span><h3>' + msg + '</h3></span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
 
         window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 3000);
     }
@@ -79,7 +80,6 @@ define([
 
     function refreshSourceList() {
         Requester.getSource({
-            before: function() { $.blockUI(); },
             success: function(source) {
                 var sources = source['data'];
                 State.set('source', sources);
@@ -120,16 +120,15 @@ define([
                 });
 
                 $('#new_plan').on('click', function() {
-                    $("#cleanPlanPopup").on('hidden', function() {
+                    $("#rule-editor-modal").one('hidden', function() {
                         refreshRuleList();
                     });
 
-                    CleanPlanView.render(
-                        'cleanPlanView', {
-                            name: null,
-                            type: 'FD',
-                            table1: State.get("currentSource")
-                        });
+                    RuleEditorView.render({
+                        name: null,
+                        type: 'FD',
+                        table1: State.get("currentSource")
+                    });
                 });
 
                 $('#edit_plan').on('click', function() {
@@ -147,7 +146,7 @@ define([
                     Requester.getRuleDetail(selectedRule[0], {
                         success: function(data) {
                             var plan = data['data'][0];
-                            CleanPlanView.render('cleanPlanView', arrayToPlan(plan));
+                            RuleEditorView.render(arrayToPlan(plan));
                         }
                     });
                 });
@@ -174,7 +173,13 @@ define([
                         return;
                     }
 
-                    deleteRule(selectedRule);
+                    Requester.deleteRule({ rules: selectedRule }, {
+                        success: function() {
+                            // info("Selected rules are deleted.");
+                            refreshRuleList();
+                        },
+                        failure: err
+                    });
                 });
 
                 State.clear("currentSource");
@@ -187,21 +192,17 @@ define([
 
                 if ($("#source-editor").length == 0)
                     SourceEditorView.start('source-editor-modal');
-
-                $.unblockUI();
             }
         });
     }
 
     function refreshRuleList() {
         Requester.getRule({
-            before: function() { $.blockUI(); },
             success: function(data) {
                 State.set('rule', data['data']);
                 if (State.get("currentSource"))
                     renderRuleList(State.get("currentSource"));
-            }, failure: err,
-            always: function() { $.unblockUI() }
+            }, failure: err
         });
     }
 
@@ -215,19 +216,6 @@ define([
         };
     }
 
-    function deleteRule(rules) {
-        // TODO; to delete in batch
-        _.each(rules, function(rule) {
-            Requester.deleteRule(
-                rule,
-                function() {
-                    info("Selected rules are deleted.");
-                    refreshRuleList();
-                }
-            );
-        });
-    }
-
     function renderRuleDetail() {
         var selectedRule = State.get('currentRule');
         if (_.isUndefined(selectedRule) || _.isNull(selectedRule))
@@ -237,11 +225,12 @@ define([
             $('#detail').html('');
         } else {
             Requester.getRuleDetail(
-                selectedRule,
-                {success: function (data) {
+                selectedRule, {
+                success: function (data) {
                     var plan = arrayToPlan(data['data'][0]);
                     $('#detail').html(_.template(DetailTemplate, plan));
-            }});
+                }
+            });
         }
     }
 
@@ -264,7 +253,6 @@ define([
                 _.each(plans, function(planName) {
                     Requester.getRuleDetail(planName, {
                         success: function(data) {
-                            $.blockUI();
                             var plan = arrayToPlan(data['data'][0]);
                             Requester.doDetect(
                                 plan,
@@ -279,8 +267,7 @@ define([
                                             State.set("job", jobList);
                                         }
                                     },
-                                    failure: err,
-                                    always: function() {$.unblockUI();}
+                                    failure: err
                                 }
                             );
                         },

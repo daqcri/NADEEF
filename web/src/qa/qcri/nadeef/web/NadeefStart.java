@@ -15,16 +15,18 @@ package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.tools.CommonTools;
 
+import java.io.FileReader;
+
 /**
  * Nadeef Dashboard launcher.
  */
 public final class NadeefStart {
     private static Process thriftProcess;
-    private static final int THRIFT_PORT = 9091;
     private static final int WEB_PORT = 4567;
 
     public static void main(String[] args) {
         try {
+            System.getProperties().load(new FileReader("nadeef.conf"));
             Runtime runtime = Runtime.getRuntime();
             runtime.addShutdownHook(new Thread() {
                 public void run() {
@@ -34,7 +36,8 @@ public final class NadeefStart {
             });
 
             if (CommonTools.isPortOccupied(WEB_PORT)) {
-                System.err.println("Web port 4567 is occupied, please clear the port first.");
+                System.err.println(
+                    "Web port " + WEB_PORT + " is occupied, please clear the port first.");
                 System.exit(1);
             }
 
@@ -51,10 +54,12 @@ public final class NadeefStart {
                     );
             }
 
-            if (!CommonTools.waitForService(THRIFT_PORT)) {
+            int thriftPort = Integer.parseInt(System.getProperty("thrift.port", "9091"));
+            if (!CommonTools.waitForService(thriftPort)) {
                 System.out.println("FAILED");
                 System.exit(1);
-            };
+            }
+
             System.out.println("OK");
 
             System.out.println("NADEEF Dashboard is live at http://localhost:4567/index.html");

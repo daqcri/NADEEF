@@ -25,7 +25,9 @@ import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 import java.io.File;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * NADEEF configuration class.
@@ -102,7 +104,7 @@ public final class NadeefConfiguration {
      * @return server url.
      */
     public static String getServerUrl() {
-        return properties.getProperty("thrift.server.url");
+        return properties.getProperty("thrift.url", "localhost");
     }
 
     /**
@@ -110,7 +112,7 @@ public final class NadeefConfiguration {
      * @return port number
      */
     public static int getServerPort() {
-        return Integer.parseInt(properties.getProperty("thrift.server.port"));
+        return Integer.parseInt(properties.getProperty("thrift.port", "9091"));
     }
 
     public static void setAlwaysOverride(boolean isAlwaysOverride) {

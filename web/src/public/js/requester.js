@@ -1,17 +1,4 @@
-/*
- * QCRI, NADEEF LICENSE
- * NADEEF is an extensible, generalized and easy-to-deploy data cleaning platform built at QCRI.
- * NADEEF means "Clean" in Arabic
- *
- * Copyright (c) 2011-2013, Qatar Foundation for Education, Science and Community Development (on
- * behalf of Qatar Computing Research Institute) having its principle place of business in Doha,
- * Qatar with the registered address P.O box 5825 Doha, Qatar (hereinafter referred to as "QCRI")
- *
- * NADEEF has patent pending nevertheless the following is granted.
- * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
- */
-
-define(['router', 'state', 'ruleminer'], function(Router, State) {
+define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, BlockUI) {
     var cache = {};
 
     function get(call) {
@@ -39,8 +26,11 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
                 delete cache[key];
             });
         } else {
-            if (callbacks.before)
+            if (callbacks.before) {
+                if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true)
+                    $.blockUI();
                 callbacks.before();
+            }
             $.when(promise).done(function (data) {
                 if (callbacks.success)
                     callbacks.success(data);
@@ -51,6 +41,8 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
                 if (callbacks.always)
                     callbacks.always(data);
                 delete cache[key];
+                if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true)
+                    $.unblockUI();
             });
         }
         return promise;
@@ -82,9 +74,7 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
 
     function deleteViolation(x) {
         return request(
-            get({ url : "/" + getProjectName() + "/table/violation", type: "DELETE"}),
-            x
-        );
+            get({ url : "/" + getProjectName() + "/table/violation", type: "DELETE"}), x);
     }
 
     function getSource(x) {
@@ -95,13 +85,13 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
         return request(get({ url : '/' + getProjectName() + '/data/rule'}), x);
     }
 
-    function deleteRule(ruleName, successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/data/rule/' + ruleName,
-            type: 'DELETE',
-            success: successCallback,
-            error: failureCallback
-        });
+    function deleteRule(data, x) {
+        data.project = getProjectName();
+        return request(get({
+            url : "/" + getProjectName() + "/data/rule",
+            type: "DELETE",
+            data: data
+        }), x);
     }
 
     function getRuleDetail(ruleName, x) {
@@ -109,7 +99,7 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
     }
 
     function getTableSchema(tableName, x) {
-        request(get({url : '/' + getProjectName() + '/table/' + tableName + '/schema'}), x);
+        return request(get({url : '/' + getProjectName() + '/table/' + tableName + '/schema'}), x);
     }
 
     function getOverview(successCallback, failureCallback) {
@@ -157,17 +147,11 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
         });
     }
 
-    function doVerify(data, successCallback, failureCallback) {
+    function doVerify(data, x) {
         // inject project name
         data.project = getProjectName();
-        $.ajax({
-            url : '/do/verify',
-            type: 'POST',
-            dataType: 'json',
-            data: data,
-            success: successCallback,
-            error: failureCallback
-        });
+        return request(
+            get({ url : "/do/verify", type: "POST", data : data }), x);
     }
 
     function doRepair(data, successCallback, failureCallback) {
@@ -183,29 +167,17 @@ define(['router', 'state', 'ruleminer'], function(Router, State) {
         });
     }
 
-    function doGenerate(data, successCallback, failureCallback) {
+    function doGenerate(data, x) {
         // inject project name
         data.project = getProjectName();
-        $.ajax({
-            url: "/do/generate",
-            type: 'POST',
-            data: data,
-            success: successCallback,
-            error: failureCallback
-        });
+        return request(get({ url : "/do/generate", type: "POST", data : data }), x);
     }
 
-    function createRule(data, successCallback, failureCallback) {
+    function createRule(data, x) {
         // inject project name
         data.project = getProjectName();
-        $.ajax({
-            url : "/" + getProjectName() + "/data/rule",
-            type: 'POST',
-            dataType: 'json',
-            data: data,
-            success: successCallback,
-            error: failureCallback
-        });
+        return request(
+            get({ url : "/" + getProjectName() + "/data/rule", type: "POST", data : data }), x);
     }
 
     function createProject(projectName, successCallback, failureCallback) {

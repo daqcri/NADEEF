@@ -65,19 +65,20 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 Schema schema =
                     DBMetaDataTool.getSchema(dbConfig, tableName);
                 RuleBuilder ruleBuilder =
-                    NadeefConfiguration.tryGetRuleBuilder(type.toString());
-                if (ruleBuilder != null) {
-                    Collection<File> javaFiles =
-                        ruleBuilder
-                            .name(name)
-                            .schema(schema)
-                            .table(tableName)
-                            .value(codes)
-                            .generate();
-                    // TODO: currently only picks the first generated file
-                    File codeFile = javaFiles.iterator().next();
-                    result = Files.toString(codeFile, Charset.defaultCharset());
-                }
+                    NadeefConfiguration.tryGetRuleBuilder(type);
+                if (ruleBuilder == null)
+                    throw new IllegalArgumentException("Type " + type + " is not supported.");
+
+                Collection<File> javaFiles =
+                    ruleBuilder
+                        .name(name)
+                        .schema(schema)
+                        .table(tableName)
+                        .value(codes)
+                        .generate();
+                // TODO: currently only picks the first generated file
+                File codeFile = javaFiles.iterator().next();
+                result = Files.toString(codeFile, Charset.defaultCharset());
             } catch (Exception ex) {
                 tracer.err("Code generation failed.", ex);
                 TNadeefRemoteException re = new TNadeefRemoteException();

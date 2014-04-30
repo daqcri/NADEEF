@@ -26,6 +26,19 @@ body {
 	box-shadow: 0 8px 6px -8px black;
 }
 
+#rule-editor-modal {
+    top: 5%;
+    height: 80%;
+    width: 80%;
+    max-height: 800px;
+    max-width: 1200px;
+    margin-left: -40%;
+}
+
+#rule-editor-modal .modal-body {
+    max-height: 100%;
+}
+
 #footer {
     margin-top: 40px;
     width:100%;
@@ -33,18 +46,18 @@ body {
     text-align: center;
 }
 
-.tab-content {
+#widget .tab-content, #controller .tab-content, #tables .tab-content {
+	padding: 10px;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
-	padding: 10px;
+    border-bottom: 1px solid #ccc;
 	background-color: #fff;
 	-webkit-box-shadow: 3px 4px 6px -4px black;
 	-moz-box-shadow: 3px 4px 6px -4px black;
 	box-shadow: 3px 4px 6px -4px black;
 }
 
-.modal-backdrop { 
+.modal-backdrop {
 	background: gray;
 }
 
@@ -56,26 +69,10 @@ body {
 	width: 95%;
 }
 
-#rule-editor {
-	width: 96%;
-  	min-height: 200px;
-}
-
-#cleanPlanPopup .modal-body {
-	max-height: 50%;
-}
-
-#cleanPlanPopup {
-    width: 48%;
-    left: 45%;
-    top: 5%;
-}
-
 .cont {
     overflow: hidden;
     max-width: 100px;
-    -o-text-overflow: ellipsis;  /* Opera */
-       text-overflow: ellipsis;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -85,17 +82,14 @@ body {
 	margin: 0;
 	color: #fff;
 	text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
-	background-image: linear-gradient(#888, #999);
-	background-repeat: repeat-x;
-	border: 1px solid #6e8290;
+    background: linear-gradient(#888, #999) repeat-x;
+    border: 1px solid #6e8290;
 	border-bottom-color: #586873;
 	border-radius: 4px 4px 0 0;
 }
 
 #dropbox{
-    border-style: solid;
-    border-width: 1px;
-    border-color: #aaaaaa;
+    border: 1px solid #aaaaaa;
     background-color: #eeeeee;
     border-radius:10px;
     position: relative;
@@ -111,6 +105,12 @@ body {
     text-align: center;
     display: block;
     font-size: large;
+}
+
+/* -------------------------- Playground --------------------------- */
+.g_main {
+    cursor:pointer;
+    pointer-events: all;
 }
 
 /* -------------------------- D3 Widget CSS ------------------------ */
@@ -138,13 +138,6 @@ body {
 	display: none;
 }
 
-.block {
-	border-style: solid;
-	border-width: 1px;
-	border-color: lightgray;
-	padding: 5px;
-}
-
 .row_selected {
 	font-weight: bold;
 }
@@ -157,11 +150,4 @@ body {
 .link {
 	stroke: #999;
 	stroke-opacity: .6;
-}
-
-.widget {
-	margin: 10px 20px 15px 20px;
-	display: block;
-	border: 1px solid #ddd;
-	border-radius: 4px;
 }
