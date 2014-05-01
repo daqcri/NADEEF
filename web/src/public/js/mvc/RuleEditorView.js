@@ -22,19 +22,86 @@ define([
     State,
     Ace,
     EREditor,
-    CleanPlanTemplate
+    RuleEditorTemplate
 ) {
-    var editor;
-    var editorView;
+    var types = {
+        'FD' : EREditor,
+        'UDF' : EREditor,
+        'ER' : EREditor,
+        'DC' : EREditor
+    };
 
-    function getRule() {
-        var type = $("#rule-type").val(),
-            table1 = $('#table1').val(),
-            table2 = $("#table2").val(),
+    function RuleEditorView(dom, rule) {
+        this.dom = dom;
+        this.rule = rule;
+        this.codeEditor = null;
+        this.ruleEditor = null;
+        var __ = this;
+        this.shownEvent = function () {
+            // render the graphical editor
+            // 138 is the space for header and footer, and padding of the body.
+            var height = $(__.dom).height() - 138;
+            __.ruleType.trigger('change');
+            $(__.dom).find('.modal-body').css({ height: height + 'px'});
+
+            // initialize the code editor
+            __.codeEditor = Ace.edit("ace-editor");
+            __.codeEditor.setFontSize(14);
+            __.codeEditor.session.setMode("ace/mode/java");
+            $(__.dom).find('#ace-editor').css({ height: (height - 100) + 'px'});
+        };
+
+        this.generateEvent = function() {
+            var rule = __.getRule();
+            if (!_.isNull(rule)) {
+                Requester.doGenerate(rule, {
+                    success: function(data) {
+                        info("Code generation succeeded.");
+                        __.codeEditor.setValue(data['data'], -1);
+                        $('#rule-editor-tab a[href="#code-editor"]').tab("show");
+                    },
+                    failure: err
+                });
+            }
+        };
+
+        this.verifyEvent = function () {
+            var rule = __.getRule();
+            if (!_.isNull(rule)) {
+                rule.code = __.codeEditor.getValue();
+                if (!_.isNull(rule.code) || _.isEmpty(rule.code)) {
+                    err("No Java code is found in the editor.");
+                    return;
+                }
+
+                Requester.doGenerate(rule, {
+                    success: function() { info("Verification succeeded."); },
+                    failure: err
+                });
+            }
+        };
+
+        this.saveEvent = function () {
+            var rule = __.getRule();
+            if (!_.isNull(rule)) {
+                Requester.createRule(rule, {
+                    success: function() {
+                        $('#cleanPlanModal').modal('hide');
+                        info("You have successfully created a rule.");
+                    }, failure: err
+                });
+            }
+        };
+    }
+
+    RuleEditorView.prototype.getRule = function() {
+        var type = this.ruleType.val(),
+            table1 = this.table1.val(),
+            table2 = this.table2.val(),
             ruleName = $('#rule-name').val();
 
         if (_.isNull(ruleName) || _.isEmpty(ruleName)) {
-            err({ error : "Rule name cannot be empty."});
+            err("Rule name cannot be empty.");
             return null;
         }
 
@@ -43,9 +110,9 @@ define([
             return null;
         }
 
-        var code = editorView !== null ? editorView.val() : editor.getValue();
+        var code = (this.type.val() === 'UDF') ? this.codeEditor.val() : this.ruleEditor.val();
         if (_.isNull(code) || _.isEmpty(code)) {
-            err({ error : "No content is found, you need to create something."});
+            err("No content is found, you need to create something.");
             return null;
         }
 
@@ -56,116 +123,49 @@ define([
             table1: table1,
             table2: table2
         };
-    }
+    };
 
-    function renderEditor() {
-        var type = $("#rule-type").val(),
-            table1 = $('#table1').val(),
-            table2 = $("#table2").val();
 
-        switch (type) {
-            case 'FD':
-                editorView = EREditor;
-                break;
-            case 'UDF':
-                break;
-            case 'DC':
-                break;
-            case 'ER':
-                editorView = EREditor;
-                break;
-        }
-
-        editorView.render('#advance-editor', table1, table2);
-    }
-
-    function render(rule) {
-        var dom = $('#rule-editor-modal');
+    RuleEditorView.prototype.render = function() {
         var sources = State.get("source");
-        var cleanPlanHtml =
-            _.template(CleanPlanTemplate) ({
-                name: rule.name,
+        $(this.dom).html(
+            _.template(RuleEditorTemplate) ({
+                name: this.rule.name,
                 sources : sources,
-                table1: rule.table1,
-                table2: rule.table2,
-                type: rule.type
-            });
-        dom.html(cleanPlanHtml);
+                table1: this.rule.table1,
+                table2: this.rule.table2,
+                type: this.rule.type
+            })
+        );
 
-        bindEvent();
+        this.ruleType = $(this.dom).find("#rule-type");
+        this.table1 = $(this.dom).find("#table1");
+        this.table2 = $(this.dom).find("#table2");
 
-        dom.one('shown', function() {
-            // render the graphical editor
-            // 138 is the space for header and footer, and padding of the body.
-            var height = $(this).height() - 138;
-            renderEditor(rule);
-            $(this).find('.modal-body').css({ height: height + 'px'});
+        $(this.dom).find('#save').on('click', this.saveEvent);
+        $(this.dom).find('#generate').on('click', this.generateEvent);
+        $(this.dom).find('#verify').on('click', this.verifyEvent);
 
-            // initialize the code editor
-            editor = Ace.edit("ace-editor");
-            $('#ace-editor').css({ height: (height - 100) + 'px'});
-            editor.setFontSize(14);
-            if (rule.code == null) {
-                editor.setValue("// Type your rule code here", -1);
-            } else
-                editor.setValue(rule.code, -1);
-            editor.session.setMode("ace/mode/java");
-        });
+        var __ = this;
+        var initEditor = function() {
+            __.ruleEditor = new types[__.ruleType.val()].Create(
+                $(__.dom).find("#advance-editor"),
+                __.table1.val(),
+                __.table2.val(),
+                __.rule
+            );
 
-        dom.modal();
-    }
+            __.ruleEditor.render();
+        };
 
-    function bindEvent() {
-        $('#save').on('click', function() {
-            var rule = getRule();
-            if (!_.isNull(rule)) {
-                Requester.createRule(rule, {
-                    success: function() {
-                        $('#cleanPlanModal').modal('hide');
-                        info("You have successfully created a rule.");
-                    },
-                    failure: function(data) { err(data.responseText); }
-                });
-            }
-        });
+        this.ruleType.change(initEditor);
+        this.table1.change(initEditor);
+        this.table2.change(initEditor);
 
-        $('#rule-type').change(function() {
-            renderEditor();
-        });
+        $(this.dom).one('shown', this.shownEvent);
+        $(this.dom).modal();
+    };
 
-        $('#generate').on('click', function(e) {
-            var rule = getRule();
-            if (!_.isNull(rule)) {
-                Requester.doGenerate(rule, {
-                    success: function(data) {
-                        info("Code generation succeeded.");
-                        editor.setValue(data['data'], -1);
-                        $('#rule-editor-tab a[href="#code-editor"]').tab("show");
-                    },
-                    failure: function(data) { err(data.responseText); }
-                });
-            }
-        });
-
-        $('#verify').on('click', function(e) {
-            var rule = getRule();
-            if (!_.isNull(rule)) {
-                rule.code = editor.getValue();
-                if (!_.isNull(code) || _.isEmpty(code)) {
-                    err("No Java code is found in the editor.");
-                    return;
-                }
-
-                Requester.doGenerate(rule, {
-                    success: function() { info("Verification succeeded."); },
-                    failure: function(data) { err(data.responseText); }
-                });
-            }
-        });
-
-        $('#table1').change(function() { renderEditor(); });
-        $('#table2').change(function() { renderEditor(); });
-    }
 
     function info(msg) {
         $('#cleanPlanView-alert-info').alert('close');
@@ -178,15 +178,15 @@ define([
     }
 
     function err(msg) {
-        var json = _.isString(msg) ? JSON.parse(msg) : msg;
+        var txt = _.isString(msg) ? msg : JSON.parse(msg.responseText)['error'];
         $('#cleanPlanView-alert').html([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span><h4>' + json["error"] + '</h4></span></div>']].join(''));
+            ['<span><h4>' + txt + '</h4></span></div>']].join(''));
     }
 
     return {
-        render: render
+        Create : RuleEditorView
     };
 });

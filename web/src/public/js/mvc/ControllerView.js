@@ -34,6 +34,7 @@ define([
     ControllerTemplate,
     DetailTemplate) {
     var domId;
+
     function info(msg) {
         $('#home-alert-info').alert('close');
         $('#home-alert').html([
@@ -124,11 +125,12 @@ define([
                         refreshRuleList();
                     });
 
-                    RuleEditorView.render({
+                    var editor = new RuleEditorView.Create($('#rule-editor-modal')[0], {
                         name: null,
                         type: 'FD',
                         table1: State.get("currentSource")
                     });
+                    editor.render();
                 });
 
                 $('#edit_plan').on('click', function() {

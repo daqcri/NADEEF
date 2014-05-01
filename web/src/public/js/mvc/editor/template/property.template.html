@@ -2,13 +2,11 @@
 <td><%= left %></td>
 <td>
     <select id="op<%=id%>" style="max-width: 100px;">
-        <option value="0" <% if (op == 0) { %>
-        selected="selected"
-        <% } %> > Equals</option>
+        <option value="0" <% if (op == 0) { %> selected="selected" <% } %> > Equals</option>
         <option value="1" <% if (op == 1) { %> selected="selected" <% } %> > Edit distance</option>
-        <option value="1" <% if (op == 2) { %> selected="selected" <% } %> > Levenshtein</option>
-        <option value="1" <% if (op == 3) { %> selected="selected" <% } %> > QGram</option>
-        <option value="1" <% if (op == 4) { %> selected="selected" <% } %> > Soundex</option>
+        <option value="2" <% if (op == 2) { %> selected="selected" <% } %> > Levenshtein</option>
+        <option value="3" <% if (op == 3) { %> selected="selected" <% } %> > QGram</option>
+        <option value="4" <% if (op == 4) { %> selected="selected" <% } %> > Soundex</option>
     </select>
 </td>
 <td><%= right %></td>

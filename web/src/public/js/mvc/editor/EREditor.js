@@ -12,104 +12,156 @@
  */
 
 define([
-    "mvc/editor/node-editor",
+    "mvc/editor/NodeEditor",
     "requester",
-    "text!mvc/editor/template/er.template.html"
-], function(NodeEditor, Requester, ERTemplate) {
-    var table1 = null;
-    var table2 = null;
+    "text!mvc/editor/template/er.template.html",
+    "text!mvc/editor/template/property.template.html"
+], function(NodeEditor, Requester, ERTemplate, TableTemplate) {
+    var int2op = {
+        0: 'EQ',
+        1: 'ED',
+        2: 'LS',
+        3: 'QG',
+        4: 'SD'
+    };
 
-    function render(id, tableName1, tableName2) {
+    var int2cmp = {
+        0: '=',
+        1: '>',
+        2: '<',
+        3: '>=',
+        4: '<=',
+        5: '!='
+    };
+
+    function EREditor(dom, table1, table2, rule) {
+        this.dom = dom;
+        this.tableName1 = table1;
+        this.tableName2 = table2;
+        this.rule = rule;
+        this.editor = null;
+        this.predicates = [];
+    }
+
+    EREditor.prototype.render = function () {
         var promise1 = null;
-        if (_.isEmpty(tableName1)) {
+        var __ = this;
+        if (_.isEmpty(this.tableName1)) {
             promise1 = null;
-            table1 = null;
-        } else
-            promise1 = Requester.getTableSchema(tableName1, {
-                success: function(data) {
-                    table1 = { name : tableName1.substr(3), columns: data['schema']};
+            this.tableName1 = null;
+        } else {
+            promise1 = Requester.getTableSchema(this.tableName1, {
+                success: function (data) {
+                    __.table1 = { name: __.tableName1.substr(3), columns: data['schema']};
                 }
             });
+        }
 
         var promise2 = null;
-        if (_.isEmpty(tableName2)) {
+        if (_.isEmpty(this.tableName2)) {
             promise2 = null;
-            tableName2 = null;
-        } else
-            promise2 = Requester.getTableSchema(tableName2, {
-                success: function(data) {
-                    table2 = { name : tableName2.substr(3), columns: data['schema']};
+            this.tableName2 = null;
+        } else {
+            promise2 = Requester.getTableSchema(this.tableName2, {
+                success: function (data) {
+                    __.table2 = { name: __.tableName2.substr(3), columns: data['schema']};
                 }
             });
+        }
 
         $.when(promise1, promise2).then(function() {
-            $(id).html(_.template(ERTemplate) ({}));
-            NodeEditor.start(table1, table2);
+            $(__.dom).html(_.template(ERTemplate) ({}));
+            __.nodeEditor = new NodeEditor.Create(
+                $(__.dom).find('#playground'),
+                __.table1,
+                __.table2
+            );
+
+            __.nodeEditor.onLineAdded(__.onLineAdded);
+            __.nodeEditor.render();
         });
-    }
+    };
 
-    function int2op(x) {
-        var op;
-        switch(x) {
-            default:
-            case 0:
-                op = 'EQ'; break;
-            case 1:
-                op = 'ED'; break;
-            case 2:
-                op = 'LS'; break;
-            case 3:
-                op = 'QG'; break;
-            case 4:
-                op = 'SD'; break;
-        }
-        return op;
-    }
+    EREditor.prototype.onLineAdded = function() {
+        this.update(this.nodeEditor.getConnection());
+        var __ = this;
 
-    function int2cmp(x) {
-        var cop;
-        switch(x) {
-            default:
-            case 0:
-                cop = '='; break;
-            case 1:
-                cop = '>'; break;
-            case 2:
-                cop = '<'; break;
-            case 3:
-                cop = '>='; break;
-            case 4:
-                cop = '<='; break;
-            case 5:
-                cop = '!='; break;
-        }
-        return cop;
-    }
+        var trs =
+            $(this.dom).find("#ruleTableBody")
+                .selectAll("tr")
+                .data(this.predicates);
 
-    function val() {
-        var conns = NodeEditor.getRule();
+        trs.exit().remove();
+        trs.enter().append("tr");
+        trs.html(function (d, i) {
+            return _.template(
+                TableTemplate, {
+                    id: i,
+                    left: d.conn.left.getName(),
+                    right: d.right.getName(),
+                    op: d.op,
+                    cmp: d.cmp,
+                    value: d.val
+                });
+        }).each(function(d, i) {
+            __.dom.find("#del" + i).on("click", function () {
+                __.predicates.splice(i, 1);
+                var conns = [];
+                _.each(conns, function (conn) { __.predicates.push(conn); });
+                __.nodeEditor.updateConnection(conns);
+            });
 
-        if (_.isNull(conns) || _.isEmpty(conns) || conns.length == 0)
+            __.dom.find("#op" + i).change(function () {
+                __.predicates[i].op = __.dom.find("#op" + i + " option:selected").val();
+            });
+
+            __.dom.find("#cmp" + i).change(function () {
+                __.predicates[i].cmp = __.dom.find("#cmp" + i + " option:selected").val();
+            });
+
+            __.dom.find("#v" + i).change(function () {
+                __.predicates[i].val = __.dom.find("#v" + i + " option:selected").val();
+            });
+        });
+    };
+
+    EREditor.prototype.update = function(conns) {
+        var toAdd = [];
+        _.each(conns, function (x) {
+            var found = _.find(this.predicates, function (p) { return x === p.conn; });
+            if (_.isUndefined(found))
+                toAdd.push(x);
+        });
+
+        _.each(toAdd, function (x) {
+            this.predicates.push({ conn : x, op : 0, cmp : 0, val : 1 });
+        });
+    };
+
+    EREditor.prototype.val = function() {
+        var conns = this.nodeEditor.getConnection();
+        if (_.isEmpty(conns))
             return null;
 
+        this.update(conns);
         var cmd = "";
+        var __ = this;
         _.each(conns, function(d) {
-            cmd += int2op(d[2]);
+            cmd += int2op[d.op];
             cmd += "(";
-            cmd += table1.name + "." + table1.columns[d[0].substr(1)];
+            cmd += d.conn.table1.name + "." + __.table1.columns[d[0].substr(1)];
             cmd += ",";
-            cmd += table2.name + "." + table2.columns[d[1].substr(1)];
+            cmd += __.table2.name + "." + __.table2.columns[d[1].substr(1)];
             cmd += ")";
-            cmd += int2cmp(parseInt(d[3]));
+            cmd += int2cmp[parseInt(d[3])];
             cmd += d[4];
             cmd += "\n";
         });
 
         return cmd;
-    }
+    };
 
     return {
-        render : render,
-        val : val
+        Create: EREditor
     };
 });
