@@ -86,8 +86,14 @@ define([
             if (!_.isNull(rule)) {
                 Requester.createRule(rule, {
                     success: function() {
-                        $('#cleanPlanModal').modal('hide');
-                        info("You have successfully created a rule.");
+                        $(__.dom).modal('hide');
+                        // TODO: change to event bubbling
+                        $("#controller")[0].dispatchEvent(
+                            new CustomEvent(
+                                "refreshRuleEvent", {
+                                    "detail" : { "info" : "You have successfully created a rule."}
+                            })
+                        );
                     }, failure: err
                 });
             }
@@ -106,11 +112,13 @@ define([
         }
 
         if (_.isEmpty(table1)) {
-            err({ error: 'No table is selected'});
+            err('No table is selected');
             return null;
         }
 
-        var code = (this.type.val() === 'UDF') ? this.codeEditor.val() : this.ruleEditor.val();
+        var code =
+            (this.ruleType.val() === 'UDF') ?
+                this.codeEditor.getValue() : this.ruleEditor.val();
         if (_.isNull(code) || _.isEmpty(code)) {
             err("No content is found, you need to create something.");
             return null;

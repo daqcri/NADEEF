@@ -61,7 +61,9 @@ define([
 
     function render(id) {
         domId = id;
+
         refresh();
+
         window.addEventListener("message", function(event) {
             if (event.origin.indexOf("ruleminer") > -1 && event.data.indexOf("inserted") > -1) {
                 console.log('received: ' + event.data);
@@ -72,6 +74,19 @@ define([
         window.addEventListener('beforeunload', function() {
             RuleMiner.close();
         });
+
+        $('#' + domId)[0].addEventListener('refreshRuleEvent', function(e) {
+            console.log("refreshRule event received.");
+            if ("detail" in e && "info" in e.detail) {
+                info(e.detail.info);
+            }
+            refreshRuleList();
+        });
+
+        $('#' + domId)[0].addEventListener('refreshSource', function() {
+            console.log("refreshSource event received.");
+            refreshSourceList();
+        });
     }
 
     function refresh() {
@@ -80,6 +95,7 @@ define([
     }
 
     function refreshSourceList() {
+        console.log("Refresh source list");
         Requester.getSource({
             success: function(source) {
                 var sources = source['data'];
@@ -121,10 +137,6 @@ define([
                 });
 
                 $('#new_plan').on('click', function() {
-                    $("#rule-editor-modal").one('hidden', function() {
-                        refreshRuleList();
-                    });
-
                     var editor = new RuleEditorView.Create($('#rule-editor-modal')[0], {
                         name: null,
                         type: 'FD',
@@ -148,7 +160,11 @@ define([
                     Requester.getRuleDetail(selectedRule[0], {
                         success: function(data) {
                             var plan = data['data'][0];
-                            RuleEditorView.render(arrayToPlan(plan));
+                            var editor = new RuleEditorView.Create(
+                                $('#rule-editor-modal')[0],
+                                arrayToPlan(plan)
+                            );
+                            editor.render();
                         }
                     });
                 });
@@ -177,7 +193,7 @@ define([
 
                     Requester.deleteRule({ rules: selectedRule }, {
                         success: function() {
-                            // info("Selected rules are deleted.");
+                            info("Selected rules are deleted.");
                             refreshRuleList();
                         },
                         failure: err
@@ -199,6 +215,7 @@ define([
     }
 
     function refreshRuleList() {
+        console.log("Refresh rule list");
         Requester.getRule({
             success: function(data) {
                 State.set('rule', data['data']);

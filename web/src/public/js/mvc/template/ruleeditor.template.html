@@ -19,7 +19,7 @@
                             <i class="icon-question-sign"></i>
                         </a>
                     </label>
-                    <input type="text" placeholder="Rule Name" id="rule-name">
+                    <input type="text" placeholder="Rule Name" id="rule-name" value="<%=name %>">
                     <label>Table 1
                     </label>
                     <select id="table1">
@@ -82,15 +82,15 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-info"
+    <button class="btn btn-info btn-large"
             id="generate"
             data-toggle="tooltip"
             title="Generate Java code">Generate</button>
-    <button class="btn btn-info"
+    <button class="btn btn-info btn-large"
             id="verify"
             data-toggle="tooltip"
             title="Verify the Java code">Verify</button>
-    <button class="btn btn-info"
+    <button class="btn btn-info btn-large "
             id="save"
             data-toggle="tooltip"
             title="Save the rule">Save</button>

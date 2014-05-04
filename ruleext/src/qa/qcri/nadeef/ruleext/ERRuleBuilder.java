@@ -70,6 +70,8 @@ public class ERRuleBuilder extends RuleBuilder  {
             String rightTable = matcher.group(4);
             String rightAttribute = matcher.group(5);
             String op = matcher.group(6);
+            if (op.equals("="))
+                op = "==";
             String threshold = matcher.group(7);
 
             StringBuilder sb = new StringBuilder();

@@ -22,10 +22,6 @@ define(["d3"], function () {
         return 'translate(' + (x) + ',' + (y) + ')';
     }
 
-    function clone(x) {
-        return JSON.parse(JSON.stringify(x));
-    }
-
     function Pin(table, index, id) {
         this.table = table;
         this.index = index;
@@ -33,12 +29,15 @@ define(["d3"], function () {
     }
 
     Pin.prototype.getPoint = function(left) {
+        if (_.isUndefined(left))
+            left = false;
         var x;
-        var y = this.table.y + this.table.boxHeight * index + this.table.boxHeight * 0.5;
+        var y =
+            this.table.y + this.table.boxHeight * (this.index + 1) + this.table.boxHeight * 0.5;
         if (left) {
             x = this.table.x + this.table.boxWidth + 10;
         } else {
-            x = this.table.x + this.table.boxWidth - 10;
+            x = this.table.x - 10;
         }
         return { x : x, y : y };
     };
@@ -47,7 +46,9 @@ define(["d3"], function () {
         return this.table.name + '.' + this.table.columns[this.index];
     };
 
-    function NodeEditor(dom, table1, table2) {
+    // node connection format
+    //      [{ from : table, findex : column index, to : table, tindex : column index }]
+    function NodeEditor(dom, table1, table2, conns) {
         this.dom = dom;
         this.svg = null;
         this.traceSvg = null;
@@ -57,6 +58,21 @@ define(["d3"], function () {
         this.pin1 = null;
         this.table1 = _.isEmpty(table1) ? null : new Table(table1, 10, 10, this);
         this.table2 = _.isEmpty(table2) ? null : new Table(table2, 200, 10, this);
+
+        if (!_.isEmpty(conns)) {
+            for (var i = 0; i < conns.length; i ++) {
+                var conn = conns[i];
+                var tmp = null;
+                if (conn.from === table1) {
+                    tmp = new Pin(table1, conn.index, "l" + conn.index);
+                } else {
+                    tmp = new Pin(table2, conn.index, "r" + conn.index);
+                }
+
+                this.conns.push(tmp);
+            }
+        }
+
         this.onLineAddedHandlers = [];
     }
 
@@ -260,27 +276,32 @@ define(["d3"], function () {
             })
             .on("click", function(d) {
                 if (this.id[0] === 'l') {
-                    if (!_.isEmpty(__.pin0)) {
+                    if (!_.isEmpty(__.nodeEditor.pin0)) {
                         console.log("Cannot pin the same table.");
-                        __.pin0 = null;
+                        __.nodeEditor.pin0 = null;
+                        return;
                     }
-                    __.pin0 = new Pin(__.nodeEditor.table1, this.id.substr(1), this.id);
+                    __.nodeEditor.pin0 =
+                        new Pin(__.nodeEditor.table1, parseInt(this.id.substr(1)), this.id);
                 } else {
-                    if (!_.isEmpty(__.pin1)) {
+                    if (!_.isEmpty(__.nodeEditor.pin1)) {
                         console.log("Cannot pin the same table.");
-                        __.pin1 = null;
+                        __.nodeEditor.pin1 = null;
+                        return;
                     }
-                    __.pin1 = new Pin(__.nodeEditor.table2, this.id.substr(2), this.id);
+                    __.nodeEditor.pin1 =
+                        new Pin(__.nodeEditor.table2, parseInt(this.id.substr(1)), this.id);
                 }
 
-                if (!_.isEmpty(__.pin0) && !_.isEmpty(__.pin1)) {
-                    __.conns.push(clone({ left : __.pin0, right : __.pin1 }));
+                if (!_.isEmpty(__.nodeEditor.pin0) &&
+                    !_.isEmpty(__.nodeEditor.pin1)) {
+                    __.nodeEditor.conns.push(
+                        { left : __.nodeEditor.pin0, right : __.nodeEditor.pin1 }
+                    );
                     __.nodeEditor.redrawLine();
-                    __.pin0 = null;
-                    __.pin1 = null;
-                    _.each(__.onLineAddedHandlers, function(f) { f(d); });
-                } else {
-                    __.nodeEditor.redrawTrace();
+                    __.nodeEditor.pin0 = null;
+                    __.nodeEditor.pin1 = null;
+                    _.each(__.nodeEditor.onLineAddedHandlers, function(f) { f.call(d); });
                 }
             }
         );
