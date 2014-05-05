@@ -57,13 +57,15 @@ define([
         if (reg.test(str)) {
             var matches = reg.exec(str);
             return {
-                op : matches[1],
                 table1 : matches[2],
                 column1 : matches[3],
                 table2 : matches[4],
                 column2 : matches[5],
-                cmp : matches[6],
-                val : matches[7]
+                property: {
+                    op: op2int[matches[1]],
+                    cmp: cmp2int[matches[6]],
+                    val: matches[7]
+                }
             };
         }
         return null;
@@ -104,44 +106,69 @@ define([
             });
         }
 
-        var conns = [];
-        if (this.rule.code) {
-            var ps = this.rule.code.split("\n");
-            for (var i = 0; i < ps.length; i ++) {
-                var tmp = parse(ps[i]);
-                if (tmp.table1 === this.table1.name) {
-                    tmp.from = this.table1;
-                    tmp.to = this.table2;
-                } else {
-                    tmp.from = this.table2;
-                    tmp.to = this.table1;
-                }
-                conns.push(tmp);
-            }
-        }
-
         $.when(promise1, promise2).then(function() {
+            var conns = [];
+            if (__.rule.code) {
+                var ps = __.rule.code.split("\n");
+                for (var i = 0; i < ps.length; i ++) {
+                    var tmp = parse(ps[i]);
+                    if (tmp) {
+                        var pin0, pin1;
+                        if (tmp.table1 === __.table1.name) {
+                            pin0 = new NodeEditor.CreatePin(
+                                __.table1.name,
+                                tmp.column1,
+                                _.indexOf(__.table1.columns, tmp.column1)
+                            );
+
+                            pin1 = new NodeEditor.CreatePin(
+                                __.table2.name,
+                                tmp.column2,
+                                _.indexOf(__.table1.columns, tmp.column2)
+                            );
+                        } else {
+                            pin0 = new NodeEditor.CreatePin(
+                                __.table2.name,
+                                tmp.column2,
+                                _.indexOf(__.table2.columns, tmp.column2)
+                            );
+
+                            pin1 = new NodeEditor.CreatePin(
+                                __.table1.name,
+                                tmp.column1,
+                                _.indexOf(__.table1.columns, tmp.column1)
+                            );
+                        }
+
+                        conns.push(new NodeEditor.CreateConnection(pin0, pin1, tmp.property));
+                    }
+                }
+            }
+
             $(__.dom).html(_.template(ERTemplate) ({}));
             __.nodeEditor = new NodeEditor.Create(
                 $(__.dom).find('#playground'),
                 __.table1,
                 __.table2,
-                conns
+                conns,
+                function () { return { op: 0, val: 1.0, cmp: 0 }; }
             );
 
             // wrap up the right closure
-            __.nodeEditor.onLineAdded(function(d) { __.onLineAdded(d); });
+            __.nodeEditor.onLineAdded(function(d) { __.drawProperty(d); });
             __.nodeEditor.render();
+            __.drawProperty();
         });
     };
 
-    EREditor.prototype.onLineAdded = function(d) {
-        this.update(this.nodeEditor.getConnection());
+    EREditor.prototype.drawProperty = function() {
+        this.predicates = this.nodeEditor.getConnection();
+
         var __ = this;
         var trs =
             d3.select("#ruleTableBody")
               .selectAll("tr")
-              .data(this.predicates);
+              .data(this.predicates, function(d) { return d.id; });
 
         trs.exit().remove();
         trs.enter().append("tr");
@@ -149,50 +176,37 @@ define([
             return _.template(
                 TableTemplate, {
                     id: i,
-                    left: d.conn.left.getName(),
-                    right: d.conn.right.getName(),
-                    op: d.op,
-                    cmp: d.cmp,
-                    value: d.val
+                    left: d.left.getName(),
+                    right: d.right.getName(),
+                    op: d.property.op,
+                    cmp: d.property.cmp,
+                    value: d.property.val
                 });
         }).each(function(d, i) {
             $(__.dom).find("#del" + i).on("click", function () {
                 console.log('del' + i);
                 __.predicates.splice(i, 1);
-                var conns = [];
-                _.each(__.predicates, function (p) { conns.push(p.conn); });
-                __.nodeEditor.updateConnection(conns);
+                __.nodeEditor.updateConnection(__.predicates);
                 __.onLineAdded(d);
             });
 
             $(__.dom).find("#op" + i).change(function () {
                 console.log('op' + i);
                 __.predicates[i].op = $(__.dom).find("#op" + i).val();
+                __.nodeEditor.updateConnection(__.predicates);
             });
 
             $(__.dom).find("#cmp" + i).change(function () {
                 console.log('cmp' + i);
                 __.predicates[i].cmp = $(__.dom).find("#cmp" + i).val();
+                __.nodeEditor.updateConnection(__.predicates);
             });
 
             $(__.dom).find("#v" + i).change(function () {
                 console.log('v' + i);
                 __.predicates[i].val = $(__.dom).find("#v" + i).val();
+                __.nodeEditor.updateConnection(__.predicates);
             });
-        });
-    };
-
-    EREditor.prototype.update = function(conns) {
-        var toAdd = [];
-        var __ = this;
-        _.each(conns, function (x) {
-            var found = _.find(__.predicates, function (p) { return x === p.conn; });
-            if (_.isUndefined(found))
-                toAdd.push(x);
-        });
-
-        _.each(toAdd, function (x) {
-            __.predicates.push({ conn : x, op : 0, cmp : 0, val : 1 });
         });
     };
 
@@ -202,14 +216,14 @@ define([
 
         var cmd = "";
         _.each(this.predicates, function(d) {
-            cmd += int2op[d.op];
+            cmd += int2op[d.property.op];
             cmd += "(";
-            cmd += d.conn.left.getName();
+            cmd += d.left.getName();
             cmd += ",";
-            cmd += d.conn.right.getName();
+            cmd += d.right.getName();
             cmd += ")";
-            cmd += int2cmp[d.cmp];
-            cmd += d.val;
+            cmd += int2cmp[d.property.cmp];
+            cmd += d.property.val;
             cmd += "\n";
         });
 

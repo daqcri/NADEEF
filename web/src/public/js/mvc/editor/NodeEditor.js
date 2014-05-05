@@ -22,57 +22,38 @@ define(["d3"], function () {
         return 'translate(' + (x) + ',' + (y) + ')';
     }
 
-    function Pin(table, index, id) {
-        this.table = table;
+    function Pin(tableName, column, index) {
+        this.tableName = tableName;
         this.index = index;
-        this.id = id;
+        this.column = column;
     }
 
-    Pin.prototype.getPoint = function(left) {
-        if (_.isUndefined(left))
-            left = false;
+    Pin.prototype.getName = function() {
+        return this.tableName + '.' + this.column;
+    };
+
+    Table.prototype.getPoint = function(pin, leftness) {
         var x;
-        var y =
-            this.table.y + this.table.boxHeight * (this.index + 1) + this.table.boxHeight * 0.5;
-        if (left) {
-            x = this.table.x + this.table.boxWidth + 10;
+        var y = this.y + this.boxHeight * (pin.index + 1) + this.boxHeight * 0.5;
+        if (leftness) {
+            x = this.x + this.boxWidth + 10;
         } else {
-            x = this.table.x - 10;
+            x = this.x - 10;
         }
         return { x : x, y : y };
     };
 
-    Pin.prototype.getName = function() {
-        return this.table.name + '.' + this.table.columns[this.index];
-    };
-
-    // node connection format
-    //      [{ from : table, findex : column index, to : table, tindex : column index }]
-    function NodeEditor(dom, table1, table2, conns) {
+    function NodeEditor(dom, table1, table2, conns, defaultProperty) {
         this.dom = dom;
         this.svg = null;
         this.traceSvg = null;
         this.invSvg = null;
-        this.conns = [];
+        this.conns = conns;
         this.pin0 = null;
         this.pin1 = null;
         this.table1 = _.isEmpty(table1) ? null : new Table(table1, 10, 10, this);
-        this.table2 = _.isEmpty(table2) ? null : new Table(table2, 200, 10, this);
-
-        if (!_.isEmpty(conns)) {
-            for (var i = 0; i < conns.length; i ++) {
-                var conn = conns[i];
-                var tmp = null;
-                if (conn.from === table1) {
-                    tmp = new Pin(table1, conn.index, "l" + conn.index);
-                } else {
-                    tmp = new Pin(table2, conn.index, "r" + conn.index);
-                }
-
-                this.conns.push(tmp);
-            }
-        }
-
+        this.table2 = _.isEmpty(table2) ? null : new Table(table2, 300, 10, this);
+        this.defaultProperty = defaultProperty;
         this.onLineAddedHandlers = [];
     }
 
@@ -107,6 +88,8 @@ define(["d3"], function () {
             this.table1.render(true);
         if (!_.isNull(this.table2))
             this.table2.render(false);
+
+        this.redrawLine();
     };
 
     NodeEditor.prototype.onLineAdded = function (f) {
@@ -123,8 +106,8 @@ define(["d3"], function () {
         var pathPoints = [];
         for (var i = 0; i < this.conns.length; i ++) {
             var conn = this.conns[i],
-                p0 = conn.left.getPoint(true),
-                p3 = conn.right.getPoint(),
+                p0 = this.table1.getPoint(conn.left, true),
+                p3 = this.table2.getPoint(conn.right),
                 p1 = { "x" : p0.x + 15, "y" : p3.y > p0.y ? p0.y + 23 : p0.y - 23},
                 p2 = { "x" : p3.x - 15, "y" : p3.y > p0.y ? p3.y - 23 : p3.y + 23},
                 points = [p0, p1, p2, p3],
@@ -171,16 +154,18 @@ define(["d3"], function () {
             return;
         }
 
-        var pin, leftness;
+        var pin, leftness, table;
         if (this.pin0) {
             pin = this.pin0;
             leftness = true;
+            table = this.table1;
         } else {
             pin = this.pin1;
             leftness = false;
+            table = this.table2;
         }
 
-        var traceData = [[pin.getPoint(leftness), { "x" : e.x, "y" : e.y }]];
+        var traceData = [[table.getPoint(pin, leftness), { "x" : e.x, "y" : e.y }]];
         var tracePath =
             this.traceSvg
                 .selectAll("path")
@@ -281,22 +266,35 @@ define(["d3"], function () {
                         __.nodeEditor.pin0 = null;
                         return;
                     }
-                    __.nodeEditor.pin0 =
-                        new Pin(__.nodeEditor.table1, parseInt(this.id.substr(1)), this.id);
+
+                    var index = parseInt(this.id.substr(1));
+                    __.nodeEditor.pin0 = new Pin(
+                        __.nodeEditor.table1.name,
+                        __.nodeEditor.table1.columns[index],
+                        index
+                    );
                 } else {
                     if (!_.isEmpty(__.nodeEditor.pin1)) {
                         console.log("Cannot pin the same table.");
                         __.nodeEditor.pin1 = null;
                         return;
                     }
-                    __.nodeEditor.pin1 =
-                        new Pin(__.nodeEditor.table2, parseInt(this.id.substr(1)), this.id);
+                    var index = parseInt(this.id.substr(1));
+                    __.nodeEditor.pin1 = new Pin(
+                        __.nodeEditor.table2.name,
+                        __.nodeEditor.table2.columns[index],
+                        index
+                    );
                 }
 
                 if (!_.isEmpty(__.nodeEditor.pin0) &&
                     !_.isEmpty(__.nodeEditor.pin1)) {
                     __.nodeEditor.conns.push(
-                        { left : __.nodeEditor.pin0, right : __.nodeEditor.pin1 }
+                        new Connection(
+                            __.nodeEditor.pin0,
+                            __.nodeEditor.pin1,
+                            __.nodeEditor.defaultProperty()
+                        )
                     );
                     __.nodeEditor.redrawLine();
                     __.nodeEditor.pin0 = null;
@@ -343,7 +341,16 @@ define(["d3"], function () {
         this.updateConnection([]);
     };
 
+    function Connection(pin0, pin1, property) {
+        this.left = pin0;
+        this.right = pin1;
+        this.property = property ? property : this.defaultProperty();
+        this.id = 'l' + pin0.index + 'r' + pin1.index
+    }
+
     return {
-        Create : NodeEditor
+        Create : NodeEditor,
+        CreatePin : Pin,
+        CreateConnection : Connection
     }
 });
