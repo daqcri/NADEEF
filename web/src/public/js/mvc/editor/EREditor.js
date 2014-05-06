@@ -89,7 +89,7 @@ define([
         } else {
             promise1 = Requester.getTableSchema(this.tableName1, {
                 success: function (data) {
-                    __.table1 = { name: __.tableName1.substr(3), columns: data['schema']};
+                    __.table1 = { name: __.tableName1, columns: data['schema']};
                 }
             });
         }
@@ -101,7 +101,7 @@ define([
         } else {
             promise2 = Requester.getTableSchema(this.tableName2, {
                 success: function (data) {
-                    __.table2 = { name: __.tableName2.substr(3), columns: data['schema']};
+                    __.table2 = { name: __.tableName2, columns: data['schema']};
                 }
             });
         }
@@ -187,24 +187,24 @@ define([
                 console.log('del' + i);
                 __.predicates.splice(i, 1);
                 __.nodeEditor.updateConnection(__.predicates);
-                __.onLineAdded(d);
+                __.drawProperty();
             });
 
             $(__.dom).find("#op" + i).change(function () {
                 console.log('op' + i);
-                __.predicates[i].op = $(__.dom).find("#op" + i).val();
+                __.predicates[i].property.op = $(__.dom).find("#op" + i).val();
                 __.nodeEditor.updateConnection(__.predicates);
             });
 
             $(__.dom).find("#cmp" + i).change(function () {
                 console.log('cmp' + i);
-                __.predicates[i].cmp = $(__.dom).find("#cmp" + i).val();
+                __.predicates[i].property.cmp = $(__.dom).find("#cmp" + i).val();
                 __.nodeEditor.updateConnection(__.predicates);
             });
 
             $(__.dom).find("#v" + i).change(function () {
                 console.log('v' + i);
-                __.predicates[i].val = $(__.dom).find("#v" + i).val();
+                __.predicates[i].property.val = $(__.dom).find("#v" + i).val();
                 __.nodeEditor.updateConnection(__.predicates);
             });
         });

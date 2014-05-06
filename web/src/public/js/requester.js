@@ -26,9 +26,10 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
                 delete cache[key];
             });
         } else {
+            if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true)
+                $.blockUI();
+
             if (callbacks.before) {
-                if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true)
-                    $.blockUI();
                 callbacks.before();
             }
             $.when(promise).done(function (data) {

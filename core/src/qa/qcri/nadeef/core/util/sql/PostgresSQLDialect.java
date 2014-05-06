@@ -23,9 +23,7 @@ import java.sql.*;
  */
 public class PostgresSQLDialect extends SQLDialectBase {
     public static STGroupFile template =
-        new STGroupFile(
-            "qa*qcri*nadeef*core*util*sql*template*PostgresTemplate.stg".replace(
-                "*", "/"), '$', '$');
+        new STGroupFile("qa/qcri/nadeef/core/util/sql/template/PostgresTemplate.stg", '$', '$');
 
     /**
      * {@inheritDoc}

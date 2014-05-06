@@ -34,6 +34,6 @@ match(column, filter) ::= <<
     $column$ like "%%"
 >>
 
-QueryTable(tablename, start, interval, filter) ::= <<
-    select * from $tablename$ where $filter$ limit $interval$ offset $start$
+QueryTable(tablename, start, interval, filter, order) ::= <<
+    select * from $tablename$ where $filter$ $order$ limit $interval$ offset $start$
 >>

@@ -20,19 +20,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ERRule1 extends PairTupleRule {
-
+public class DedupRule extends PairTupleRule {
     @Override
     public void initialize(String id, List<String> tableNames) {
         super.initialize(id, tableNames);
     }
 
+    @Override
+    public Collection<Table> block(Collection<Table> tables) {
+        Table table = tables.iterator().next();
+        return table.groupOn("brand_name");
+    }
 
-    /**
-     * Detect method.
-     * @param tuplePair tuple pair.
-     * @return violation set.
-     */
     @Override
     public Collection<Violation> detect(TuplePair tuplePair) {
         List<Violation> result = new ArrayList<>();
@@ -40,19 +39,10 @@ public class ERRule1 extends PairTupleRule {
         Tuple right = tuplePair.getRight();
 
         if (true
-            && Metrics.getEuclideanDistance(
-                getValue(tuplePair, "bank1", "ST", 0),
-                getValue(tuplePair, "tran1", "str", 1)
-            )>0.8
-            && Metrics.getEqual(
-                getValue(tuplePair, "bank1", "FirstName", 0),
-                getValue(tuplePair, "tran1", "FN", 1)
-            )==1.0
-            && Metrics.getEqual(
-                getValue(tuplePair, "bank1", "LastName", 0),
-                getValue(tuplePair, "tran1", "LN", 1)
-            )==1.0
-        ){
+            && Metrics.getEqual(getValue(tuplePair, "qcars", "model", 0), getValue(tuplePair, "qcars", "model", 1))==1
+            && Metrics.getEuclideanDistance(getValue(tuplePair, "qcars", "contact_number", 0),getValue(tuplePair, "qcars", "contact_number", 1))>0.8
+            && Metrics.getEqual(getValue(tuplePair, "qcars", "brand_name", 0),getValue(tuplePair, "qcars", "brand_name", 1))==1
+        ) {
             Violation violation = new Violation(getRuleName());
             violation.addTuple(left);
             violation.addTuple(right);
@@ -62,12 +52,6 @@ public class ERRule1 extends PairTupleRule {
         return result;
     }
 
-    /**
-     * Repair of this rule.
-     *
-     * @param violation violation input.
-     * @return a candidate fix.
-     */
     @Override
     public Collection<Fix> repair(Violation violation) {
         return new ArrayList<>();
@@ -79,15 +63,19 @@ public class ERRule1 extends PairTupleRule {
         String result;
         if (isLeft == 0) {
             if (left.isFromTable(tableName)) {
-                result = left.get(column).toString();
+                Object obj = left.get(column);
+                result = obj != null ? obj.toString() : null;
             } else {
-                result = right.get(column).toString();
+                Object obj = right.get(column);
+                result = obj != null ? obj.toString() : null;
             }
         } else {
             if (right.isFromTable(tableName)) {
-                result = right.get(column).toString();
+                Object obj = right.get(column);
+                result = obj != null ? obj.toString() : null;
             } else {
-                result = left.get(column).toString();
+                Object obj = left.get(column);
+                result = obj != null ? obj.toString() : null;
             }
         }
         return result;

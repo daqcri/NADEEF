@@ -30,20 +30,20 @@ insert into RULE (name, type, code, table1, table2, last_edit_timestamp)
   RULETYPE x where x.name = '$type$'
 >>
 
-QueryViolation(tablename, start, interval, ruleFilter) ::= <<
+QueryViolation(tablename, start, interval, ruleFilter, order) ::= <<
     select
         *
     from
         $tablename$
-    where rid like '$ruleFilter$'
+    where rid like '$ruleFilter$' $order$
     limit $interval$ offset $start$
 >>
 
-QueryViolationWithFilter(tablename, start, interval, firstNViolation, ruleFilter) ::= <<
+QueryViolationWithFilter(tablename, start, interval, firstNViolation, ruleFilter, order) ::= <<
     select
         *
     from
         $tablename$
-    where vid < $firstNViolation$ and rid like '$ruleFilter$'
+    where vid < $firstNViolation$ and rid like '$ruleFilter$' $order$
     limit $interval$ offset $start$
 >>

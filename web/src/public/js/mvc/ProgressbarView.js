@@ -39,6 +39,7 @@ define([
             }
 
             Requester.getProgress({
+                blockUI: false,
                 success: function(data) {
                     var values = [];
                     if (jobList && jobList.length > data['data'].length)

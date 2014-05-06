@@ -30,8 +30,8 @@ body {
     top: 5%;
     height: 80%;
     width: 80%;
-    max-height: 800px;
-    max-width: 1200px;
+    max-height: 1024px;
+    max-width: 1600px;
     margin-left: -40%;
 }
 

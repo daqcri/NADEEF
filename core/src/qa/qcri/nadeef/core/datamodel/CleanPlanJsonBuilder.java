@@ -14,8 +14,12 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.base.Strings;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class CleanPlanJsonBuilder {
     private String url;
@@ -83,6 +87,13 @@ public class CleanPlanJsonBuilder {
     public CleanPlanJsonBuilder value(String value) {
         this.value = new JsonArray();
         this.value.add(new JsonPrimitive(value));
+        return this;
+    }
+
+    public CleanPlanJsonBuilder value(List<String> value) {
+        this.value = new JsonArray();
+        for (String v : value)
+            this.value.add(new JsonPrimitive(v));
         return this;
     }
 

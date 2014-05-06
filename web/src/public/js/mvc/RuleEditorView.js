@@ -103,7 +103,7 @@ define([
     RuleEditorView.prototype.getRule = function() {
         var type = this.ruleType.val(),
             table1 = this.table1.val(),
-            table2 = this.table2.val(),
+            table2 = this.table2.val() === table1 ? null : this.table2.val(),
             ruleName = $('#rule-name').val();
 
         if (_.isNull(ruleName) || _.isEmpty(ruleName)) {

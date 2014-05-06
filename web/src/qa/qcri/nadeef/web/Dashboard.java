@@ -100,7 +100,7 @@ public final class Dashboard {
                         String start_ = request.queryParams("iDisplayStart");
                         String interval_ = request.queryParams("iDisplayLength");
                         String firstNViolation = request.queryParams("firstNViolation");
-
+                        String orderBy = request.queryParams("orderBy");
 
                         if (!(
                             SQLUtil.isValidInteger(start_) &&
@@ -859,6 +859,8 @@ public final class Dashboard {
                 Object obj = rs.getObject(i);
                 if (obj != null)
                     entry.add(new JsonPrimitive(obj.toString()));
+                else
+                    entry.add(JsonNull.INSTANCE);
             }
             data.add(entry);
         }

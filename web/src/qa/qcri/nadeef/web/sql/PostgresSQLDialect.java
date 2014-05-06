@@ -25,10 +25,7 @@ import java.util.ArrayList;
  */
 public class PostgresSQLDialect extends SQLDialectBase {
     private static STGroupFile template =
-        new STGroupFile(
-            "qa*qcri*nadeef*web*sql*template*PostgresTemplate.stg".replace(
-                "*", "/"
-            ), '$', '$');
+        new STGroupFile("qa/qcri/nadeef/web/sql/template/PostgresTemplate.stg", '$', '$');
 
     /**
      * {@inheritDoc}
@@ -96,6 +93,7 @@ public class PostgresSQLDialect extends SQLDialectBase {
         tableName = tableName.toLowerCase();
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         ST instance = template.getInstanceOf("QueryTable");
+
         instance.add("tablename", tableName);
         instance.add("start", start);
         instance.add("interval", interval);
@@ -118,6 +116,13 @@ public class PostgresSQLDialect extends SQLDialectBase {
 
             instance.add("filter", buf.toString());
         }
+
+        // TODO: move this magic out
+        if (tableName.equals("violation"))
+            instance.add("order", "order by vid, attribute");
+        else
+            instance.add("order", "");
+
         return instance.render();
     }
 

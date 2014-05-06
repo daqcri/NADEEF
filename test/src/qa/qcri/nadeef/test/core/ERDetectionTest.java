@@ -13,7 +13,7 @@
 
 package qa.qcri.nadeef.test.core;
 
-import com.google.common.io.Files;
+import com.google.gson.JsonObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,9 +21,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
+import qa.qcri.nadeef.core.datamodel.CleanPlanJsonBuilder;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
@@ -31,12 +31,11 @@ import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.Tracer;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class ERDetectionTest extends NadeefTestBase {
-    private static File workingDirectory;
-
     public ERDetectionTest(String testConfig_) {
         super(testConfig_);
     }
@@ -45,7 +44,6 @@ public class ERDetectionTest extends NadeefTestBase {
     public void setup() {
         try {
             Bootstrap.start(testConfig);
-            workingDirectory = Files.createTempDir();
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
             Tracer.setVerbose(true);
         } catch (Exception ex) {
@@ -56,12 +54,11 @@ public class ERDetectionTest extends NadeefTestBase {
     @After
     public void tearDown() {
         Bootstrap.shutdown();
-        workingDirectory.delete();
     }
 
     @Test
     public void erTest1() throws Exception {
-        try{
+        try {
             CleanPlan cleanPlan = TestDataRepository.getPlan("ERCleanPlan1.json").get(0);
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
@@ -74,15 +71,23 @@ public class ERDetectionTest extends NadeefTestBase {
 
     @Test
     public void erTest2() throws Exception {
-        try{
-            CleanPlan cleanPlan = TestDataRepository.getPlan("vehicles2.json").get(0);
+        try {
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                    .sqltype("postgres")
+                    .url("localhost/unittest")
+                    .username("tester")
+                    .password("tester")
+                    .table("tb_qcars")
+                    .target("tb_qcars")
+                    .type("udf")
+                    .value("qa.qcri.nadeef.test.udf.DedupRule")
+                    .build();
+
+            CleanPlan cleanPlan = CleanPlan.create(obj, NadeefConfiguration.getDbConfig()).get(0);
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            executor.repair();
-
-            UpdateExecutor updateExecutor =
-                new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
-            updateExecutor.run();
+            verifyViolationResult(25440);
         } catch (Exception e){
             e.printStackTrace();
             Assert.fail(e.getMessage());
@@ -91,31 +96,29 @@ public class ERDetectionTest extends NadeefTestBase {
 
     @Test
     public void erTest3() throws Exception {
-        try{
-            CleanPlan cleanPlan = TestDataRepository.getPlan("vehicles3.json").get(0);
-            CleanExecutor executor = new CleanExecutor(cleanPlan);
-            executor.detect();
-            executor.repair();
-            UpdateExecutor updateExecutor =
-                new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
-            updateExecutor.run();
-        } catch (Exception e){
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
-    }
+        try {
+            List<String> rule = new ArrayList<>();
+            rule.add("EQ(tb_qcars.model, tb_qcars.model)=1");
+            rule.add("ED(tb_qcars.contact_number, tb_qcars.contact_number)>0.8");
+            rule.add("EQ(tb_qcars.brand_name, tb_qcars.brand_name)=1");
 
-    @Test
-    public void erTest4() throws Exception {
-        try{
-            CleanPlan cleanPlan = TestDataRepository.getPlan("vehicles4.json").get(0);
+            JsonObject obj =
+                new CleanPlanJsonBuilder()
+                    .sqltype("postgres")
+                    .url("localhost/unittest")
+                    .username("tester")
+                    .password("tester")
+                    .table("tb_qcars")
+                    .target("tb_qcars")
+                    .type("er")
+                    .value(rule)
+                    .build();
+
+            CleanPlan cleanPlan = CleanPlan.create(obj, NadeefConfiguration.getDbConfig()).get(0);
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             executor.detect();
-            // executor.repair();
-            // UpdateExecutor updateExecutor =
-            //    new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
-            // updateExecutor.run();
-        } catch (Exception e) {
+            verifyViolationResult(25440);
+        } catch (Exception e){
             e.printStackTrace();
             Assert.fail(e.getMessage());
         }
