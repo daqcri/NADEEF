@@ -231,8 +231,8 @@ public class CleanPlan {
                     // when target table is as the same as the original table, skip copy
                     if (
                         !copiedTables.containsKey(sourceTable) &&
-                            !sourceTableNames.get(j).equalsIgnoreCase(targetTableNames.get(j))
-                        ) {
+                        !sourceTableNames.get(j).equalsIgnoreCase(targetTableNames.get(j))
+                    ) {
                         DBMetaDataTool.copy(
                             dbConfig,
                             dialectManager,
@@ -240,11 +240,9 @@ public class CleanPlan {
                             targetTableNames.get(j)
                         );
                         copiedTables.put(sourceTable, sourceTable);
-                        schemas.add(DBMetaDataTool.getSchema(
-                            dbConfig,
-                            targetTableNames.get(j)
-                        ));
                     }
+
+                    schemas.add(DBMetaDataTool.getSchema(dbConfig, targetTableNames.get(j)));
                 }
             }
 
