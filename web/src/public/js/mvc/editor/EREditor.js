@@ -74,7 +74,7 @@ define([
     function EREditor(dom, table1, table2, rule) {
         this.dom = dom;
         this.tableName1 = table1;
-        this.tableName2 = table2;
+        this.tableName2 = _.isEmpty(table2) ? table1 : table2;
         this.rule = rule;
         this.editor = null;
         this.predicates = [];
