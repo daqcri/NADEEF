@@ -48,7 +48,7 @@ service TNadeefService {
      * Verify the given rule.
      * @param rule input rule.
      */
-    bool verify(1: TRule rule),
+    bool verify(1: TRule rule) throws (1:TNadeefRemoteException re),
 
     /**
      * Detect with the given rule.

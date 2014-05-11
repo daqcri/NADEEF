@@ -88,12 +88,14 @@ public final class NadeefClient {
         transport.open();
         TProtocol protocol = new TBinaryProtocol(transport);
         TNadeefService.Client client = new TNadeefService.Client(protocol);
-
         JsonObject json = new JsonObject();
-        boolean result = client.verify(new TRule(name, type, code));
-        json.add("data", new JsonPrimitive(result));
+        try {
+            boolean result = client.verify(new TRule(name, type, code));
+            json.add("data", new JsonPrimitive(result));
+        } finally {
+            transport.close();
+        }
 
-        transport.close();
         return json.toString();
     }
 

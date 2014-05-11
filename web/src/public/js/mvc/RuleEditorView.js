@@ -48,7 +48,8 @@ define([
             __.codeEditor = Ace.edit("ace-editor");
             __.codeEditor.setFontSize(14);
             __.codeEditor.session.setMode("ace/mode/java");
-            $(__.dom).find('#ace-editor').css({ height: (height - 100) + 'px'});
+            __.codeEditor.setTheme("ace/theme/tomorrow");
+            $(__.dom).find('#ace-editor').css({ height: (height - 138) + 'px'});
         };
 
         this.generateEvent = function() {
@@ -69,12 +70,17 @@ define([
             var rule = __.getRule();
             if (!_.isNull(rule)) {
                 rule.code = __.codeEditor.getValue();
-                if (!_.isNull(rule.code) || _.isEmpty(rule.code)) {
+                if (_.isEmpty(rule.code)) {
                     err("No Java code is found in the editor.");
                     return;
                 }
 
-                Requester.doGenerate(rule, {
+                if (rule.type != 'UDF') {
+                    err("Please change the Type to Java first.");
+                    return;
+                }
+
+                Requester.doVerify(rule, {
                     success: function() { info("Verification succeeded."); },
                     failure: err
                 });
@@ -97,6 +103,32 @@ define([
                     }, failure: err
                 });
             }
+        };
+
+        this.jumpCode = function () {
+            var line = 1;
+            switch(this.id) {
+                case "horizontalScope":
+                    line = __.codeEditor.find("public Collection<Table> horizontalScope");
+                    break;
+                case "verticalScope":
+                    line = __.codeEditor.find("public Collection<Table> verticalScope");
+                    break;
+                case "block":
+                    line = __.codeEditor.find("public Collection<Table> block");
+                    break;
+                case "iterator":
+                    line = __.codeEditor.find("public void iterator");
+                    break;
+                case "detect":
+                    line = __.codeEditor.find("public Collection<Violation> detect");
+                    break;
+            }
+
+            if (!_.isUndefined(line))
+                __.codeEditor.gotoLine(line.start.row + 1, 1, true);
+            else
+                err(this.id + " interface is not found.");
         };
     }
 
@@ -153,7 +185,7 @@ define([
         $(this.dom).find('#save').on('click', this.saveEvent);
         $(this.dom).find('#generate').on('click', this.generateEvent);
         $(this.dom).find('#verify').on('click', this.verifyEvent);
-
+        $(this.dom).find("li a").on("click", this.jumpCode);
         var __ = this;
         var initEditor = function() {
             __.ruleEditor = new types[__.ruleType.val()].Create(
@@ -171,7 +203,7 @@ define([
         this.table2.change(initEditor);
 
         $(this.dom).one('shown', this.shownEvent);
-        $(this.dom).modal();
+        $(this.dom).modal({keyboard: false});
     };
 
 

@@ -94,11 +94,10 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
      * {@inheritDoc}
      */
     @Override
-    public boolean verify(TRule rule) {
+    public boolean verify(TRule rule) throws TNadeefRemoteException {
         String type = rule.getType();
         String code = rule.getCode();
         String name = rule.getName();
-        boolean result = true;
         try {
             if (type.equalsIgnoreCase("udf")) {
                 Path outputPath =
@@ -112,14 +111,25 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                     outputPath.toFile()
                 );
 
-                if (!CommonTools.compileFile(outputPath.toFile())) {
-                    result = false;
+                String msg = CommonTools.compileFile(outputPath.toFile());
+                if (msg != null) {
+                    TNadeefRemoteException ex = new TNadeefRemoteException();
+                    ex.setType(TNadeefExceptionType.COMPILE_ERROR);
+                    ex.setMessage(msg);
+                    throw ex;
                 }
+            } else {
+                TNadeefRemoteException ex = new TNadeefRemoteException();
+                ex.setType(TNadeefExceptionType.COMPILE_ERROR);
+                ex.setMessage("Rule type " + type + " is not verifiable.");
+                throw ex;
             }
         } catch (Exception ex) {
             tracer.err("Exception happens in verify.", ex);
+            if (ex instanceof TNadeefRemoteException)
+                throw (TNadeefRemoteException)ex;
         }
-        return result;
+        return true;
     }
 
     /**

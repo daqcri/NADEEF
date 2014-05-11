@@ -144,7 +144,7 @@ public class CFDRuleBuilder extends RuleBuilder {
             String fullPath = outputFile.getAbsolutePath();
             // skip compiling if the .class file already exists.
             File classFile = new File(fullPath.replace(".java", ".class"));
-            if (classFile.exists() || CommonTools.compileFile(outputFile)) {
+            if (classFile.exists() || CommonTools.compileFile(outputFile) != null) {
                 result.add(classFile);
             }
         }

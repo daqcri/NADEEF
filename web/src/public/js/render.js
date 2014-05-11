@@ -15,8 +15,8 @@
  * Render module which draws different visualization graphs.
  */
 define([
-    'hash', 'd3', 'nvd3', 'table', 'requester'],
-    function(HashMap, D3, NVD3, Table, Requester) {
+    'hash', 'nvd3', 'table', 'requester'],
+    function(HashMap, NVD3, Table, Requester) {
     function drawOverview(id) {
         Requester.getOverview(function(json) {
             $('#' + id + ' svg').empty();

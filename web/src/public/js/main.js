@@ -19,7 +19,7 @@ require.config({
         "jquery" : "lib/jquery-1.10.2.min",
         "underscore" : "lib/underscore.min",
         "bootstrap" : "lib/bootstrap.min",
-        "datatable" : "lib/jquery.dataTables.min",
+        "datatables" : "lib/jquery.dataTables.min", // has to be this name
         "d3" : "lib/d3.v3.min",
         "nvd3" : "lib/nv.d3.min",
         "ace" : "lib/ace-min/ace",
@@ -28,30 +28,8 @@ require.config({
     },
 
     shim: {
-        'jquery' : {
-            exports: '$'
-        },
-
         'underscore' : {
-            deps : ['jquery'],
             exports: '_'
-        },
-
-        'bootstrap' : {
-            deps : ['jquery']
-        },
-
-        'd3' : {
-            deps : ['jquery']
-        },
-
-        'nvd3' : {
-            deps : ['d3']
-        },
-
-        'table' : {
-            deps : ['jquery', 'bootstrap', 'datatable'],
-            exports: 'Table'
         },
 
         'ace' : {
@@ -59,16 +37,25 @@ require.config({
             exports: 'ace'
         },
 
-        'blockUI' : {
-            deps : ['jquery']
-        }
+        'd3'        : ['jquery'],
+        'nvd3'      : ['d3'],
+        'blockUI'   : ['jquery'],
+        'bootstrap' : ['jquery'],
+        "datatables-bootstrap" : ['jquery', 'datatables']
     }
 });
 
 // main start
-require(['router', 'table', 'state', 'underscore'], function(Router, Table, State) {
-    State.init();
-    Table.init();
-    Router.start();
-    Router.redirect('#project');
+
+require(
+    ['router', 'state', 'bootstrap', 'underscore', 'datatables'],
+    function(Router, State) {
+        // Check for datatable and bootstrap loading status
+        //
+        // console.log(jQuery.fn.DataTable);
+        // console.log((typeof $().modal == 'function'));
+        //
+        State.init();
+        Router.start();
+        Router.redirect('#project');
 });

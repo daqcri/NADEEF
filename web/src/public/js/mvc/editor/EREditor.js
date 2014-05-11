@@ -194,6 +194,7 @@ define([
                 console.log('op' + i);
                 __.predicates[i].property.op = $(__.dom).find("#op" + i).val();
                 __.nodeEditor.updateConnection(__.predicates);
+                __.drawProperty();
             });
 
             $(__.dom).find("#cmp" + i).change(function () {

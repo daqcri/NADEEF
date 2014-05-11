@@ -15,7 +15,7 @@
  * A simple map collection.
  */
 // TODO: change to a class object
-define(['underscore'], function() {
+define([], function() {
     function Map() {
         this.keys = [];
         this.values = [];

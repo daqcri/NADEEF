@@ -129,7 +129,7 @@ public final class CommonTools {
      * @param fullFilePath input .java file path.
      * @return class file path.
      */
-    public static boolean compileFile(File fullFilePath) throws IOException {
+    public static String compileFile(File fullFilePath) throws IOException {
         Preconditions.checkArgument(fullFilePath != null && fullFilePath.isFile());
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         Preconditions.checkNotNull(compiler);
@@ -143,17 +143,19 @@ public final class CommonTools {
         boolean result =
             compiler.getTask(null, fileManager, diagnostics, args, null, compilationUnit).call();
 
+        String msg = null;
         if (!result) {
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
-                System.out.format(
-                    "Error on line %d in %s%n",
-                    diagnostic.getLineNumber(),
-                    diagnostic.getMessage(null)
-                );
+                msg =
+                    String.format(
+                        "Error on line %d in %s%n",
+                            diagnostic.getLineNumber(),
+                            diagnostic.getMessage(null));
+                System.out.println(msg);
             }
         }
         fileManager.close();
-        return result;
+        return msg;
     }
 
     /**
