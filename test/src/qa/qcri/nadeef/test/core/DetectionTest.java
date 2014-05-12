@@ -74,7 +74,8 @@ public class DetectionTest extends NadeefTestBase {
 
     @After
     public void shutdown() {
-        executor.shutdown();
+        if (executor != null)
+            executor.shutdown();
         Bootstrap.shutdown();
     }
 

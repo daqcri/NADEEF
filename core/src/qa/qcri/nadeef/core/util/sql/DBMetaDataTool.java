@@ -187,12 +187,15 @@ public final class DBMetaDataTool {
             if (dialect == SQLDialect.DERBYMEMORY || dialect == SQLDialect.DERBY) {
                 String username = dbConfig.getUserName().toUpperCase();
                 result =
+                    meta.getTables(null, username, tableName, null).next() ||
                     meta.getTables(null, username, tableName.toUpperCase(), null).next() ||
                     meta.getTables(null, username, tableName.toLowerCase(), null).next();
-            } else {
+            } else if (dialect == SQLDialect.POSTGRES) {
                 result =
                     meta.getTables(null, null, tableName.toUpperCase(), null).next() ||
                     meta.getTables(null, null, tableName.toLowerCase(), null).next();
+            } else {
+                result = meta.getTables(null, null, tableName, null).next();
             }
             return result;
         } finally {
