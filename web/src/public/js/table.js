@@ -36,7 +36,7 @@ define(["requester", "state"], function(Requester, State) {
 
         if (cache[domId] != null) {
             try {
-                cache[domId].instance.fnDestroy();
+                cache[domId].instance.destroy();
             } catch (e) {
                 console.log(e);
             }

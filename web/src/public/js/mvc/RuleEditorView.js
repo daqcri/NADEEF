@@ -16,19 +16,25 @@ define([
     'state',
     'ace',
     'mvc/editor/EREditor',
+    'mvc/editor/FDEditor',
+    'mvc/editor/UDFEditor',
+    'mvc/editor/DCEditor',
     'text!mvc/template/ruleeditor.template.html'
 ], function(
     Requester,
     State,
     Ace,
     EREditor,
+    FDEditor,
+    UDFEditor,
+    DCEditor,
     RuleEditorTemplate
 ) {
     var types = {
-        'FD' : EREditor,
-        'UDF' : EREditor,
+        'FD' : FDEditor,
+        'UDF' : UDFEditor,
         'ER' : EREditor,
-        'DC' : EREditor
+        'DC' : DCEditor
     };
 
     function RuleEditorView(dom, rule) {
@@ -36,6 +42,7 @@ define([
         this.rule = rule;
         this.codeEditor = null;
         this.ruleEditor = null;
+        this.fontSize = 14;
         var __ = this;
         this.shownEvent = function () {
             // render the graphical editor
@@ -46,10 +53,18 @@ define([
 
             // initialize the code editor
             __.codeEditor = Ace.edit("ace-editor");
-            __.codeEditor.setFontSize(14);
+            __.codeEditor.setFontSize(this.fontSize);
             __.codeEditor.session.setMode("ace/mode/java");
             __.codeEditor.setTheme("ace/theme/tomorrow");
             $(__.dom).find('#ace-editor').css({ height: (height - 138) + 'px'});
+        };
+
+        this.enlargeFont = function() {
+            __.codeEditor.setFontSize(++ __.fontSize);
+        };
+
+        this.decreaseFont = function() {
+            __.codeEditor.setFontSize(-- __.fontSize);
         };
 
         this.generateEvent = function() {
@@ -106,7 +121,7 @@ define([
         };
 
         this.jumpCode = function () {
-            var line = 1;
+            var line = undefined;
             switch(this.id) {
                 case "horizontalScope":
                     line = __.codeEditor.find("public Collection<Table> horizontalScope");
@@ -182,10 +197,12 @@ define([
         this.table1 = $(this.dom).find("#table1");
         this.table2 = $(this.dom).find("#table2");
 
+        $(this.dom).find("#enlarge-font").on("click", this.enlargeFont);
+        $(this.dom).find("#decrease-font").on("click", this.decreaseFont);
         $(this.dom).find('#save').on('click', this.saveEvent);
         $(this.dom).find('#generate').on('click', this.generateEvent);
         $(this.dom).find('#verify').on('click', this.verifyEvent);
-        $(this.dom).find("li a").on("click", this.jumpCode);
+        $(this.dom).find(".breadcrumb a").on("click", this.jumpCode);
         var __ = this;
         var initEditor = function() {
             __.ruleEditor = new types[__.ruleType.val()].Create(
@@ -203,6 +220,9 @@ define([
         this.table2.change(initEditor);
 
         $(this.dom).one('shown', this.shownEvent);
+
+        // trigger the type change
+        $(this.dom).find("#rule-type").val(this.rule.type);
         $(this.dom).modal({keyboard: false});
     };
 
