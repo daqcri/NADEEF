@@ -13,16 +13,20 @@
     <div class="container-fluid">
         <div class="span3">
             <form>
-                <fieldset>
+                <fieldset style="min-width: inherit">
                     <label>Name &nbsp;
                         <a href="#" data-toggle="tooltip" title="e.g. MyRule, MyFD">
                             <i class="icon-question-sign"></i>
                         </a>
                     </label>
-                    <input type="text" placeholder="Rule Name" id="rule-name" value="<%=name %>">
+                    <input type="text"
+                           placeholder="Rule Name"
+                           id="rule-name"
+                           value="<%=name %>"
+                           style="max-width: 100%">
                     <label>Table 1
                     </label>
-                    <select id="table1">
+                    <select id="table1" style="max-width: 100%">
                         <option value=""></option>
                         <% _.each(sources, function(source) { %>
                         <option
@@ -38,7 +42,7 @@
                             <i class="icon-question-sign"></i>
                         </a>
                     </label>
-                    <select id="table2">
+                    <select id="table2" style="max-width: 100%">
                         <option value=""></option>
                         <% _.each(sources, function(source) { %>
                         <option
@@ -50,9 +54,9 @@
                     </select>
                     <label>Type
                     </label>
-                    <select id="rule-type">
-                        <option value="ER">ER</option>
+                    <select id="rule-type" style="max-width: 100%">
                         <option value="FD">FD</option>
+                        <option value="ER">ER</option>
                         <option value="DC">DC</option>
                         <option value="UDF">Java</option>
                     </select>

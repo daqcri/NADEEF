@@ -85,7 +85,6 @@ define([
         var __ = this;
         if (_.isEmpty(this.tableName1)) {
             promise1 = null;
-            this.tableName1 = null;
         } else {
             promise1 = Requester.getTableSchema(this.tableName1, {
                 success: function (data) {

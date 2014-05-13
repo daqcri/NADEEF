@@ -32,10 +32,12 @@ define([
         function updateProgress(id) {
             var jobList = State.get('job');
             // TODO: fix progressbar rendering twice problem
-            if (jobList.length == 0 && $('#' + id).length == 0) {
-                var html =
-                    _.template(ProgressBarTemplate)({ progress: [] });
-                $('#' + id).html(html);
+            if (jobList.length == 0) {
+                if ($('#' + id).find("#progressbar-content").length == 0) {
+                    var html =
+                        _.template(ProgressBarTemplate)({ progress: [] });
+                    $('#' + id).html(html);
+                }
                 return;
             }
 
