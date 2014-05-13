@@ -152,7 +152,7 @@ public class Predicate {
     }
 
     public static Predicate valueOf(String value, String tableName) {
-        final String patternRegx = "([^>=<!]+)(>|>=|=|<=|<|!=)([^>=<!]+)";
+        final String patternRegx = "([^>=<!\\s]+)\\s*(>|>=|=|<=|<|!=)\\s*([^>=<!\\s]+)";
         final Pattern pattern = Pattern.compile(patternRegx);
 
         Predicate result;

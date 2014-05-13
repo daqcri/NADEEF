@@ -224,16 +224,23 @@ public class Console {
             executor.shutdown();
         }
         executors.clear();
+
+        FileReader reader = null;
         try {
+            reader = new FileReader(file);
             DBConfig dbConfig = NadeefConfiguration.getDbConfig();
-            cleanPlans = CleanPlan.create(new FileReader(file), dbConfig);
+            cleanPlans = CleanPlan.create(reader, dbConfig);
             for (CleanPlan cleanPlan : cleanPlans) {
                 executors.add(new CleanExecutor(cleanPlan, dbConfig));
             }
         } catch (Exception ex) {
             tracer.err("Loading CleanPlan failed.", ex);
             return;
+        } finally {
+            if (reader != null)
+                reader.close();
         }
+
         console.println(
             cleanPlans.size()
                 + " rules loaded in "
