@@ -24,7 +24,7 @@ define([], function() {
         if (windowHostname.indexOf("localhost") > -1)
             return "http://localhost:8080";
         if (windowHostname.indexOf("qcridemos.org") > -1)
-            return "http://ruleminer.da.qcridemos.org";
+            return "http://ruleminer.da.qcridemos.org:1067";
         return "http://" + window.location.hostname + ":8080";
     }
 

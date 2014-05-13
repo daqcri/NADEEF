@@ -143,7 +143,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         String outputdb
     ) throws TNadeefRemoteException {
         tracer.info("Detect rule " + rule.getName() + "[" + rule.getType() + "]");
-        if (!verify(rule)) {
+        if (rule.getType().equals("udf") && !verify(rule)) {
             TNadeefRemoteException ex = new TNadeefRemoteException();
             ex.setType(TNadeefExceptionType.COMPILE_ERROR);
             throw ex;
