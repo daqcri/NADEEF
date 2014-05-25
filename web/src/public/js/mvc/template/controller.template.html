@@ -14,7 +14,7 @@
 <ul class="nav nav-tabs">
     <li class="active">
         <a data-toggle="tab"><i class="icon-folder-open" style="margin-right: 10px;">
-        </i>Data Sources</a>
+        </i>List of Tables</a>
     </li>
 </ul>
 <div class="tab-content">
@@ -27,7 +27,7 @@
         <div class="control-group">
             <select id="selected_source" class="selectbox fullwidth" size="5">
                 <% _.each(sources, function(source) { %>
-                <option value="<%= source %>"><%= source %></option>
+                <option value="<%= source %>"><%= source.substr(3) %></option>
                 <% }); %>
             </select>
         </div>
@@ -48,7 +48,7 @@
             <button class="btn" id="detect">Detect</button>
             <div class="btn-group">
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    Action
+                    More
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
@@ -56,7 +56,7 @@
                     <li><a href="#" id="edit_plan">Edit</a></li>
                     <li><a href="#" id="delete">Delete</a></li>
                     <li class="divider"></li>
-                    <li><a href="#" id="repair">Repair</a></li>
+                    <li><a href="#" id="repair" class="disabled">Repair</a></li>
                 </ul>
             </div>
         </div>

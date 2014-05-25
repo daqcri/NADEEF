@@ -15,9 +15,20 @@ define([], function() {
     var instance = null;
     var pingId = null;
     var MAX_PING = 20;
-    var hostname = "http://" + window.location.hostname;
-    var baseUrl = hostname + ":8080/DenialConstraintDemoUI/index.action?";
+    var hostname = getHostname();
+    var baseUrl = hostname + "/DenialConstraintDemoUI/index.action?";
 
+    // TODO: move to the backend.
+    function getHostname() {
+        var windowHostname = window.location.hostname;
+        if (windowHostname.indexOf("localhost") > -1)
+            return "http://localhost:8080";
+        if (windowHostname.indexOf("qcridemos.org") > -1)
+            return "http://ruleminer.da.qcridemos.org";
+        return "http://" + window.location.hostname + ":8080";
+    }
+
+    // TODO: move to the backend.
     function isAvailable() {
         return true;
     }

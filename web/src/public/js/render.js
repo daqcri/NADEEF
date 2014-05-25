@@ -111,7 +111,7 @@ define([
             $("#" + id + " svg").empty();
             var result = data['data'];
             // TODO: find a better pattern
-            if (result.length == 1 && result[0] == -1) {
+            if (result === 1) {
                 d3.select("#" + id + " svg")
                     .append("text")
                     .attr("x", 200)
