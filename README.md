@@ -1,5 +1,5 @@
-[![Stories in Ready](https://badge.waffle.io/qatar-computing-research-institute/nadeef.png?label=ready&title=Ready)](https://waffle.io/qatar-computing-research-institute/nadeef)
-# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" /> 
+
+# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" />  [![Stories in Ready](https://badge.waffle.io/qatar-computing-research-institute/nadeef.png?label=ready&title=Ready)](https://waffle.io/qatar-computing-research-institute/nadeef)
 
 ### What is NADEEF?
 
