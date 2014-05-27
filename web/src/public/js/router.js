@@ -14,10 +14,10 @@
 /* Simple routing system */
 define([], function() {
     var routes = [
-            {hash:'#home', controller:'HomeView'},
-            {hash:'#dashboard',  controller:'DashboardView'},
-            {hash:'#project', controller: 'NavbarView'}
-        ];
+        {hash:'#home', controller:'HomeView'},
+        {hash:'#dashboard',  controller:'DashboardView'},
+        {hash:'#project', controller: 'NavbarView'}
+    ];
     var currentHash = '';
     var currentState = null;
 
@@ -32,8 +32,6 @@ define([], function() {
         }
 
         if (window.location.hash != currentHash || window.history.state != currentState) {
-            console.log("old: " + (currentState !== null ? currentState.name : 'null'));
-            console.log("new: " + (window.history.state !== null ? window.history.state.name : 'null'));
             currentHash = window.location.hash;
             for (var i = 0, currentRoute; currentRoute = routes[i++];) {
                 if (window.location.hash == currentRoute.hash) {

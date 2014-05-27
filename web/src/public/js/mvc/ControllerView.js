@@ -111,7 +111,12 @@ define([
                     var newSource = $("#selected_source").val();
                     State.set("currentSource", newSource);
                     renderRuleList(newSource);
-                    Table.load({ domId: 'source-table', table: newSource });
+
+                    // only reload the violation table when the violation tab is active
+                    var activeTable = $('#tables .tab-content').find('div.active')[0].id;
+                    if (activeTable.indexOf("violation") > -1) {
+                        Table.load({ domId: 'source-table', table: newSource });
+                    }
                 });
 
                 $('#new-source').on('click', function() {

@@ -5,7 +5,7 @@
     <option bitwise="true" />
     <option boss="false" />
     <option browser="true" />
-    <option camelcase="false" />
+    <option camelcase="true" />
     <option couch="false" />
     <option curly="true" />
     <option debug="false" />
@@ -62,7 +62,7 @@
     <option undef="true" />
     <option unused="false" />
     <option validthis="false" />
-    <option white="false" />
+    <option white="true" />
     <option worker="false" />
     <option wsh="false" />
     <option yui="false" />
