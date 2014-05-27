@@ -15,11 +15,10 @@ define([
     "router",
     "state",
     "requester",
-    "state",
     "text!mvc/template/navbar.template.html",
     "text!mvc/template/project.template.html",
     "mvc/HomeView"
-], function(Router, State, Requester, State, NavbarTemplate, ProjectTemplate, HomeView) {
+], function(Router, State, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
     function err(msg) {
         $('#projectModal-alert').html([
             ['<div class="alert alert-error">'],
@@ -36,7 +35,7 @@ define([
 
         $('#project-modal-close').on('click', function() {
             var oldProject = State.get('project');
-            if (oldProject != null)
+            if (oldProject !== null)
                 $('#projectModal').modal('hide');
             else
                 err("No project is selected.");
@@ -48,16 +47,16 @@ define([
             $('#projectModal').find('.modal-body').remove();
             Requester.getProject({
                 success: function(data) {
-                var projectList = _.flatten(data['data']);
-                selectProject('projectModal', projectList);
-            }, failure: function() {
-                console.log("Getting project failed.");
-            }});
+                    var projectList = _.flatten(data.data);
+                    selectProject('projectModal', projectList);
+                }, failure: function() {
+                    console.log("Getting project failed.");
+                }});
         });
 
         $("#project-button").on("click", function() {
             var newProject = $("#create-new-project").val();
-            if (newProject != null && newProject != "") {
+            if (newProject !== null && newProject !== "") {
                 var pattern = new RegExp("^[a-zA-Z]\\w*");
                 var match = pattern.exec(newProject);
 
@@ -69,17 +68,19 @@ define([
                 }
             }
 
-            if (newProject != null && newProject != "") {
-                $.blockUI();
-                Requester.createProject(newProject, function() {
-                    $("#projectModal").modal('hide');
-                    $("#projectName").text(newProject);
-                    $.unblockUI();
-                    Router.redirect('#home', { name : newProject });
+            if (newProject !== null && newProject !== "") {
+                Requester.createProject(newProject, {
+                    success: function() {
+                        $("#projectModal").modal('hide');
+                        $("#projectName").text(newProject);
+                        State.set('project', newProject);
+                        Router.redirect('#home', { name : newProject });
+                    },
+                    failure: err
                 });
             } else {
                 var selectedProject = $("#select-existing-project").val();
-                if (selectedProject == null) {
+                if (selectedProject === null) {
                     err("No project is selected.");
                     return;
                 }
@@ -88,7 +89,7 @@ define([
             }
         });
     }
-    
+
     function render() {
         $('body').append(_.template(NavbarTemplate)());
     }
@@ -113,14 +114,14 @@ define([
         Router.redirect('#home', { name : selectedProject });
     }
 
-	function start() {
-		render();
-		bindEvent();
+    function start() {
+        render();
+        bindEvent();
 
         // start project selection process
         Requester.getProject({
             success: function(data) {
-                var projectList = _.flatten(data['data']);
+                var projectList = _.flatten(data.data);
                 var oldProject = State.get('project');
                 if (oldProject && _.indexOf(projectList, oldProject) > -1)
                     enterProject(oldProject);
@@ -130,8 +131,8 @@ define([
                 console.log("Getting project failed.");
             }
         });
-	}
-	
+    }
+
     return {
         start : start
     };

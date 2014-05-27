@@ -166,8 +166,8 @@ define(["requester", "state"], function(Requester, State) {
         Requester.getViolationMetaData(rule, {
             success: function (data) {
                 var tables =
-                    data['data'].length < 1 ?
-                        [[State.get("currentSource")]] : data['data'];
+                    data.data.length < 1 ?
+                        [[0, State.get("currentSource")]] : data.data;
                 if (tables.length > 1) {
                     instance1 = createViolationTable(
                         domId, tables[0][1], rule, true, [3, 10, 25, 50]);
@@ -181,7 +181,7 @@ define(["requester", "state"], function(Requester, State) {
                     $("#violation-table-extra").removeClass("hide");
                 } else {
                     $("#violation-table-extra").addClass("hide");
-                    createViolationTable(domId, tables[0][0], rule);
+                    createViolationTable(domId, tables[0][1], rule);
                 }
             }
         });

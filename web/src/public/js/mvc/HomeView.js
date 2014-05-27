@@ -111,7 +111,7 @@ define([
             Table.load({domId : 'audit-table', table : 'audit'}, reload);
             break;
         case 'source':
-            var sourceTable = $("#selected_source").val();
+            var sourTable = $("#selected_source").val();
             if (!_.isEmpty(sourceTable))
                 Table.load({domId: 'source-table', table : sourceTable}, reload);
             break;

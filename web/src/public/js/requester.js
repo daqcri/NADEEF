@@ -189,15 +189,9 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
             get({ url : "/" + getProjectName() + "/data/rule", type: "POST", data : data }), x);
     }
 
-    function createProject(projectName, successCallback, failureCallback) {
-        $.ajax({
-            url : '/project',
-            type: 'POST',
-            dataType: 'json',
-            data: { project : projectName },
-            success: successCallback,
-            error: failureCallback
-        });
+    function createProject(projectName, x) {
+        return request(
+            get({ url: "/project", type: "POST", data: { project : projectName }}), x);
     }
 
     return {
