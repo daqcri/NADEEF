@@ -111,12 +111,7 @@ define([
                     var newSource = $("#selected_source").val();
                     State.set("currentSource", newSource);
                     renderRuleList(newSource);
-
-                    // only reload the violation table when the violation tab is active
-                    var activeTable = $('#tables .tab-content').find('div.active')[0].id;
-                    if (activeTable.indexOf("violation") > -1) {
-                        Table.load({ domId: 'source-table', table: newSource });
-                    }
+                    Table.load({ domId: 'source-table', table: newSource });
                 });
 
                 $('#new-source').on('click', function() {
@@ -178,7 +173,11 @@ define([
                     var newRule = $("#selected_rule").val();
                     State.set('currentRule', newRule);
                     renderRuleDetail();
-                    Table.load({ domId: 'violation-table', table: "violation", rule: newRule });
+                    // only reload the violation table when the violation tab is active
+                    var activeTable = $('#tables .tab-content').find('div.active')[0].id;
+                    if (activeTable.indexOf("violation") > -1) {
+                        Table.load({ domId: 'violation-table', table: "violation", rule: newRule });
+                    }
                 });
 
                 $('#detect').on('click', function() {
