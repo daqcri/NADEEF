@@ -1,4 +1,5 @@
-# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" /> 
+
+# NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" />  [![Stories in Ready](https://badge.waffle.io/qatar-computing-research-institute/nadeef.png?label=ready&title=Ready)](https://waffle.io/qatar-computing-research-institute/nadeef)
 
 ### What is NADEEF?
 
@@ -8,11 +9,13 @@ NADEEF (or ''clean'' in Arabic, نظيف) is a generalized data cleaning system 
 
 Launch NADEEF using command 
 ```
-    Usage: nadeef.[sh | bat] [OPTIONS]
+    Usage: nadeef.sh [OPTIONS]
     Options are:
         console : start the NADEEF console.
         dashboard : start the NADEEF dashboard.
 ```
+
+**A demo page can be accessed via [here](http://bit.ly/nadeef0).**
 
 More details on the instructions can be found in the [User Guide](https://github.com/daqcri/NADEEF/wiki/User-Guide).
 
