@@ -72,8 +72,7 @@ public final class Dashboard {
          * Start page.
          */
         get(new Route("/") {
-            @Override
-            public Object handle(Request request, Response response) {
+            @Override public Object handle(Request request, Response response) {
                 response.redirect("/index.html");
                 return success(0);
             }
@@ -83,37 +82,141 @@ public final class Dashboard {
 
     //<editor-fold desc="Table actions">
     private static void setupTable() {
+        get(new Route("/:project/violation/metadata") {
+            @Override public Object handle(Request request, Response response) {
+                return doIt(request, response, new Ido() {
+                    @Override public JsonObject ido(Request x) throws Exception {
+                        String project = x.params("project");
+                        String rule = x.queryParams("rule");
+
+                        if (Strings.isNullOrEmpty(project) || Strings.isNullOrEmpty(rule))
+                            throw new IllegalArgumentException("Input is not valid");
+                        String sql = String.format(
+                            "select count(*), tablename from violation " +
+                                "where rid = '%s' group by tablename", rule
+                        );
+                        return query(project, sql, true);
+                    }
+                });
+            }
+        });
+
+        get(new Route("/:project/violation/:tablename") {
+            @Override public Object handle(Request request, Response response) {
+                return doIt(request, response, new Ido() {
+                    @Override public JsonObject ido(Request x) throws Exception {
+                        String project = x.params("project");
+                        String rule = x.queryParams("rule");
+                        String tableName = x.params("tablename");
+
+                        if (Strings.isNullOrEmpty(project) ||
+                            Strings.isNullOrEmpty(rule) ||
+                            Strings.isNullOrEmpty(tableName))
+                            throw new IllegalArgumentException("Input is not valid");
+
+                        String start_ = x.queryParams("start");
+                        String interval_ = x.queryParams("length");
+                        String filter = x.queryParams("search[value]");
+
+                        if (!(
+                            SQLUtil.isValidInteger(start_) &&
+                            SQLUtil.isValidInteger(interval_)
+                        )) throw new IllegalArgumentException("Input is not valid.");
+
+                        String vidFilter = "";
+                        String tidFilter = "";
+                        String columnFilter = "";
+                        if (!Strings.isNullOrEmpty(filter)) {
+                            if (filter.startsWith(":=")) {
+                                vidFilter = filter.substring(2).trim();
+                                if (!Strings.isNullOrEmpty(vidFilter)) {
+                                    String[] tokens = vidFilter.split(",");
+                                    for (String token : tokens)
+                                        if (!SQLUtil.isValidInteger(token))
+                                            throw new IllegalArgumentException("Input is not valid.");
+                                    vidFilter = "and vid = any(array[" + vidFilter + "])";
+                                }
+                            } else  if (filter.startsWith("?=")) {
+                                tidFilter = filter.substring(2).trim();
+                                if (!Strings.isNullOrEmpty(tidFilter)) {
+                                    String[] tokens = tidFilter.split(",");
+                                    for (String token : tokens)
+                                        if (!SQLUtil.isValidInteger(token))
+                                            throw new IllegalArgumentException("Input is not valid.");
+                                    tidFilter = "and tupleid = any(array[" + tidFilter + "])";
+                                }
+                            } else {
+                                columnFilter = "and value like '%" + filter + "%' ";
+                            }
+                        }
+
+                        int start = Strings.isNullOrEmpty(start_) ? 0 : Integer.parseInt(start_);
+                        int interval =
+                            Strings.isNullOrEmpty(interval_) ? 10 : Integer.parseInt(interval_);
+
+                        String sql = String.format(
+                            "select a.*, b.vid, b._attrs from %s a inner join " +
+                            "(select vid, tupleid, array_agg(attribute) as _attrs from violation " +
+                            "where rid='%s' and tablename = '%s' %s %s %s group by vid, tupleid) b " +
+                            "on a.tid = b.tupleid order by vid limit %d offset %d",
+                            tableName,
+                            rule,
+                            tableName,
+                            vidFilter,
+                            tidFilter,
+                            columnFilter,
+                            interval,
+                            start);
+
+                        JsonObject result = query(project, sql, true);
+
+                        String countSql = String.format(
+                            "select count(distinct(vid, tupleid)) from violation where rid = '%s'",
+                            rule
+                        );
+
+                        JsonObject countJson = query(project, countSql, false);
+                        JsonArray dataArray = countJson.getAsJsonArray("data");
+                        int count = dataArray.get(0).getAsInt();
+                        result.add("iTotalRecords", new JsonPrimitive(count));
+                        result.add("iTotalDisplayRecords", new JsonPrimitive(count));
+                        if (x.queryParams("sEcho") != null)
+                            result.add("sEcho", new JsonPrimitive(x.queryParams("sEcho")));
+                        return result;
+                    }
+                });
+            }
+        });
+
         /**
-         * Gets violation table with pagination support.
+         * Gets data table with pagination support.
          */
         get(new Route("/:project/table/:tablename") {
             @Override public Object handle(Request request, Response response) {
                 return doIt(request, response, new Ido() {
-                    @Override public JsonObject ido(Request request) throws Exception {
-                        String tableName = request.params("tablename");
-                        String project = request.params("project");
+                    @Override
+                    public JsonObject ido(Request x) throws Exception {
+                        String tableName = x.params("tablename");
+                        String project = x.params("project");
 
                         if (Strings.isNullOrEmpty(tableName) || Strings.isNullOrEmpty(project))
                             throw new IllegalArgumentException("Input is not valid");
 
                         JsonObject queryJson;
-                        String start_ = request.queryParams("iDisplayStart");
-                        String interval_ = request.queryParams("iDisplayLength");
-                        String firstNViolation = request.queryParams("firstNViolation");
-                        String orderBy = request.queryParams("orderBy");
+                        String start_ = x.queryParams("start");
+                        String interval_ = x.queryParams("length");
 
                         if (!(
                             SQLUtil.isValidInteger(start_) &&
-                            SQLUtil.isValidInteger(interval_) &&
-                            SQLUtil.isValidInteger(firstNViolation)
+                                SQLUtil.isValidInteger(interval_)
                         )) throw new IllegalArgumentException("Input is not valid.");
 
                         int start = Strings.isNullOrEmpty(start_) ? 0 : Integer.parseInt(start_);
                         int interval =
                             Strings.isNullOrEmpty(interval_) ? 10 : Integer.parseInt(interval_);
-                        String filter = request.queryParams("sSearch");
+                        String filter = x.queryParams("search[value]");
                         ArrayList columns = null;
-                        if (filter != null) {
+                        if (!Strings.isNullOrEmpty(filter)) {
                             JsonObject objSchema =
                                 query(project, dialectInstance.querySchema(tableName), true);
                             columns =
@@ -142,8 +245,8 @@ public final class Dashboard {
                         int count = dataArray.get(0).getAsInt();
                         queryJson.add("iTotalRecords", new JsonPrimitive(count));
                         queryJson.add("iTotalDisplayRecords", new JsonPrimitive(count));
-                        if (request.queryParams("sEcho") != null)
-                            queryJson.add("sEcho", new JsonPrimitive(request.queryParams("sEcho")));
+                        if (x.queryParams("sEcho") != null)
+                            queryJson.add("sEcho", new JsonPrimitive(x.queryParams("sEcho")));
                         return queryJson;
                     }
                 });
@@ -195,15 +298,12 @@ public final class Dashboard {
         get(new Route("/:project/data/rule") {
             @Override
             public Object handle(Request request, Response response) {
-                return doIt(request, response, new Ido() {
-                    @Override
-                    public JsonObject ido(Request request) throws Exception {
-                        String project = request.params("project");
-                        if (Strings.isNullOrEmpty(project))
-                            throw new IllegalArgumentException("Input is not valid.");
+                return doIt(request, response, x -> {
+                    String project = x.params("project");
+                    if (Strings.isNullOrEmpty(project))
+                        throw new IllegalArgumentException("Input is not valid.");
 
-                        return query(project, dialectInstance.queryRule(), true);
-                    }
+                    return query(project, dialectInstance.queryRule(), true);
                 });
             }
         });
@@ -228,23 +328,20 @@ public final class Dashboard {
         delete(new Route("/:project/data/rule") {
             @Override
             public Object handle(Request request, Response response) {
-                return doIt(request, response, new Ido() {
-                    @Override
-                    public JsonObject ido(Request request) throws Exception {
-                        HashMap<String, Object> json = HTTPPostJsonParser.parse(request.body());
-                        @SuppressWarnings("unchecked")
-                        List<String> ruleNames = (List<String>)json.get("rules");
-                        String project = (String)json.get("project");
+                return doIt(request, response, x -> {
+                    HashMap<String, Object> json = HTTPPostJsonParser.parse(x.body());
+                    @SuppressWarnings("unchecked")
+                    List<String> ruleNames = (List<String>)json.get("rules");
+                    String project = (String)json.get("project");
 
-                        if (Strings.isNullOrEmpty(project) ||
-                            ruleNames == null ||
-                            ruleNames.size() == 0)
-                            throw new IllegalArgumentException("Input is not valid.");
+                    if (Strings.isNullOrEmpty(project) ||
+                        ruleNames == null ||
+                        ruleNames.size() == 0)
+                        throw new IllegalArgumentException("Input is not valid.");
 
-                        for (String ruleName : ruleNames)
-                            update(project, dialectInstance.deleteRule(ruleName), "delete rule");
-                        return success(0);
-                    }
+                    for (String ruleName : ruleNames)
+                        update(project, dialectInstance.deleteRule(ruleName), "delete rule");
+                    return success(0);
                 });
             }
         });
@@ -356,16 +453,18 @@ public final class Dashboard {
             }
         });
 
-        get(new Route("/:project/widget/top10") {
+        get(new Route("/:project/widget/top/:k") {
             @Override
             public Object handle(Request request, Response response) {
                 return doIt(request, response, new Ido() {
                     @Override
                     public JsonObject ido(Request request) throws Exception {
                         String project = request.params("project");
-                        if (Strings.isNullOrEmpty(project))
+                        String k = request.params("k");
+
+                        if (Strings.isNullOrEmpty(project) || Strings.isNullOrEmpty(k))
                             throw new IllegalArgumentException("Input is not valid");
-                        return query(project, dialectInstance.queryTopK(10), true);
+                        return query(project, dialectInstance.queryTopK(Integer.parseInt(k)), true);
                     }
                 });
             }
@@ -430,9 +529,11 @@ public final class Dashboard {
                             }
 
                             rs = stat.executeQuery(dialectInstance.countViolation());
-                            result.add(new JsonPrimitive(sum));
+                            int vcount = 0;
                             if (rs.next())
-                                result.add(new JsonPrimitive(rs.getInt(1)));
+                                vcount = rs.getInt(1);
+                            result.add(new JsonPrimitive(sum - vcount));
+                            result.add(new JsonPrimitive(vcount));
                             json.add("data", result);
                             return json;
                         } finally {

@@ -26,10 +26,17 @@
         </table>
     </div>
     <div class="tab-pane" id="violation-tab">
-        <table id="violation-table"
-               border="0"
-               class="table table-striped table-bordered table-hover table-condensed">
-        </table>
+        <div id="violation-table-info" class="well well-small">No rule is selected.</div>
+        <div id="violation-table-div" class="hide">
+            <table id="violation-table"
+                   border="0"
+                   class="table table-striped table-bordered table-condensed">
+            </table>
+            <table id="violation-table-extra"
+                   border="0"
+                   class="table table-striped table-bordered table-condensed hide">
+            </table>
+        </div>
     </div>
     <div class="tab-pane" id="audit-tab">
         <table id="audit-table"

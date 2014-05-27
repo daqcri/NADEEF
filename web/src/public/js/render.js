@@ -29,9 +29,13 @@ define([
             if (clean == 0 && polluted == 0) {
                 values = [];
             } else {
+                var sum = clean + polluted;
+                var cleanPerc = Math.round((clean / sum) * 100);
+                var pollutedPerc = 100 - cleanPerc;
+
                 values = [
-                    {"label": "Clean Tuples", "value" : clean},
-                    {"label": "Dirty Tuples", "value" : polluted}
+                    {"label": "Clean Tuples " + cleanPerc + "%", "value" : clean},
+                    {"label": "Dirty Tuples " + pollutedPerc + "%", "value" : polluted}
                 ];
             }
 
@@ -214,7 +218,7 @@ define([
                 });
 
                 svg.selectAll('circle.node').on('click', function(e) {
-                    Table.filter(e.name);
+                    Table.filter("?=" + e.name);
                 });
             });
         });
@@ -319,7 +323,7 @@ define([
                 nv.utils.windowResize(chart.update);
 
                 chart.discretebar.dispatch.on('elementClick', function(e) {
-                    Table.filter(e.point.label);
+                    Table.filter("?=" + e.point.label);
                 });
                 return chart;
             });

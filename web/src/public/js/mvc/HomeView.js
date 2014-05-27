@@ -103,7 +103,9 @@ define([
         console.log('Load table ' + id);
         switch(id) {
         case 'violation':
-            Table.load({domId : 'violation-table', table : 'violation'}, reload);
+            var rule = $("#selected_rule").val();
+            if (!_.isEmpty(rule))
+                Table.load({domId : 'violation-table', table : 'violation', rule : rule}, reload);
             break;
         case 'audit':
             Table.load({domId : 'audit-table', table : 'audit'}, reload);

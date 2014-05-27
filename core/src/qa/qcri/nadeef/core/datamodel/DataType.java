@@ -56,6 +56,8 @@ public enum DataType {
             result = DataType.FLOAT;
         else if (sqlTypeValue.equalsIgnoreCase("double"))
             result = DataType.DOUBLE;
+        else if (sqlTypeValue.equalsIgnoreCase("float4"))
+            result = DataType.DOUBLE;
         else if (sqlTypeValue.equalsIgnoreCase("bool"))
             result = DataType.BOOL;
         else if (sqlTypeValue.equalsIgnoreCase("timestamp"))

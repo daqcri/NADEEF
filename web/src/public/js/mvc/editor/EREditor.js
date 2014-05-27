@@ -123,7 +123,7 @@ define([
                             pin1 = new NodeEditor.CreatePin(
                                 __.table2.name,
                                 tmp.column2,
-                                _.indexOf(__.table1.columns, tmp.column2)
+                                _.indexOf(__.table2.columns, tmp.column2)
                             );
                         } else {
                             pin0 = new NodeEditor.CreatePin(

@@ -86,4 +86,4 @@ define([], function() {
         clear : clear,
         subscribe : subscribe
     };
-})
+});

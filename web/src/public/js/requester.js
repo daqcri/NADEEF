@@ -26,8 +26,8 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
                 delete cache[key];
             });
         } else {
-            if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true)
-                $.blockUI();
+            if (_.isUndefined(callbacks.blockUI) || true === callbacks.blockUI)
+                $.blockUI({ baseZ: 2000 });
 
             if (callbacks.before) {
                 callbacks.before();
@@ -51,6 +51,14 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
 
     function getProjectName() {
         return State.get('project');
+    }
+
+    function getViolationMetaData(rule, x) {
+        return request(
+            get({
+                url: "/" + getProjectName() + "/violation/metadata",
+                data: "rule=" + rule[0]
+            }), x);
     }
 
     function getProgress(x) {
@@ -141,7 +149,7 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
 
     function getTupleRank(successCallback, failureCallback) {
         $.ajax({
-            url : '/' + getProjectName() + '/widget/top10',
+            url : '/' + getProjectName() + '/widget/top/100',
             type: 'GET',
             success: successCallback,
             error: failureCallback
@@ -211,6 +219,7 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
         getAttribute: getAttribute,
         getViolationRelation: getViolationRelation,
         getRuleDistribution: getRuleDistribution,
-        getTupleRank: getTupleRank
+        getTupleRank: getTupleRank,
+        getViolationMetaData: getViolationMetaData
     };
 });

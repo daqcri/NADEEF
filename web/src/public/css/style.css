@@ -12,11 +12,8 @@
  */
 
 /* -------------------------- HTML Default CSS ------------------------ */
-html, body {
-	background-color: #eee;
-}
-
 body {
+    background-color: #eee;
 	padding-top: 60px;
 }
 

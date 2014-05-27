@@ -153,7 +153,7 @@ define([
                     }
 
                     if (_.isArray(selectedRule) && selectedRule.length != 1) {
-                        err('Can not edit multiple clean plans.');
+                        err('Can not edit multiple rules.');
                         return;
                     }
 
@@ -170,8 +170,10 @@ define([
                 });
 
                 $('#selected_rule').on('change', function() {
-                    State.set('currentRule', $("#selected_rule").val());
+                    var newRule = $("#selected_rule").val();
+                    State.set('currentRule', newRule);
                     renderRuleDetail();
+                    Table.load({ domId: 'violation-table', table: "violation", rule: newRule });
                 });
 
                 $('#detect').on('click', function() {
