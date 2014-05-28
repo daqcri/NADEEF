@@ -43,8 +43,10 @@ define(["requester", "state"], function(Requester, State) {
                         var schema = data['schema'];
                         var columns = [];
                         var dom = $('#' + domId);
-                        if ($.fn.dataTable.isDataTable('#' + domId))
+                        if ($.fn.dataTable.isDataTable('#' + domId)) {
                             dom.DataTable().destroy();
+                        }
+
                         dom.empty().append('<thead><tr></tr></thead>');
                         for (var i = 0; i < schema.length; i++)
                             columns.push({ sTitle: schema[i] });
@@ -76,16 +78,19 @@ define(["requester", "state"], function(Requester, State) {
                 var project = State.get('project');
                 var ruleQuery = "";
                 schema = data['schema'];
-                columns = [];
 
-                if ($.fn.dataTable.isDataTable('#' + domId))
+                if ($.fn.dataTable.isDataTable('#' + domId)) {
                     dom.DataTable().destroy();
-                dom.empty().append('<thead><tr></tr></thead>');
-                for (var i = 0; i < schema.length; i++)
-                    columns.push({ sTitle: schema[i] });
+                }
 
-                for (var i = 0; i < rule.length; i++)
+                dom.empty().append('<thead><tr></tr></thead>');
+                for (var i = 0; i < schema.length; i++) {
+                    columns.push({ sTitle: schema[i] });
+                }
+
+                for (var i = 0; i < rule.length; i++) {
                     ruleQuery += "rule=" + rule[i];
+                }
 
                 var url = "/" + project + "/violation/" + tableName + "?" + ruleQuery;
                 instance = dom.DataTable({
@@ -115,10 +120,13 @@ define(["requester", "state"], function(Requester, State) {
                         // create event for click filter
                         cells.on("click", function(e) {
                             var vid = this.getAttribute("data");
-                            if (instance1 != null)
+                            if (instance1 != null) {
                                 instance1.search(":=" + vid).draw();
-                            if (instance2 != null)
+                            }
+
+                            if (instance2 != null) {
                                 instance2.search(":=" + vid).draw();
+                            }
                         });
 
                         // truncate large text
@@ -135,10 +143,13 @@ define(["requester", "state"], function(Requester, State) {
                     "initComplete": function() {
                         $(document).off('keyup').on('keyup', function (e) {
                             if (e.which == 27) {
-                                if (instance1 != null)
+                                if (instance1 != null) {
                                     instance1.search("").draw();
-                                if (instance2 != null)
+                                }
+
+                                if (instance2 != null) {
                                     instance2.search("").draw();
+                                }
                             }
                         });
                     },
@@ -153,10 +164,11 @@ define(["requester", "state"], function(Requester, State) {
                     "lengthMenu": _.isUndefined(length) ? [10, 25, 50] : length
                 });
 
-                if (isFirst)
+                if (isFirst) {
                     instance1 = instance;
-                else
+                } else {
                     instance2 = instance;
+                }
             }
         });
     }
@@ -169,18 +181,28 @@ define(["requester", "state"], function(Requester, State) {
                     data.data.length < 1 ?
                         [[0, State.get("currentSource")]] : data.data;
                 if (tables.length > 1) {
-                    instance1 = createViolationTable(
-                        domId, tables[0][1], rule, true, [3, 10, 25, 50]);
-                    instance2 = createViolationTable(
+                    createViolationTable(
+                        domId,
+                        tables[0][1],
+                        rule,
+                        true,
+                        [3, 10, 25, 50]
+                    );
+                    createViolationTable(
                         "violation-table-extra",
                         tables[1][1],
                         rule,
                         false,
                         [3, 10, 25, 50]
                     );
+                    $("#violation-table-extra_wrapper").removeClass("hide");
                     $("#violation-table-extra").removeClass("hide");
                 } else {
-                    $("#violation-table-extra").addClass("hide");
+                    if ($.fn.dataTable.isDataTable('#violation-table-extra')) {
+                        $("#violation-table-extra").DataTable().destroy();
+                        $("#violation-table-extra").addClass('hide');
+                        $("#violation-table-extra_wrapper").addClass('hide');
+                    }
                     createViolationTable(domId, tables[0][1], rule);
                 }
             }
@@ -188,10 +210,13 @@ define(["requester", "state"], function(Requester, State) {
     }
 
     function filter(e) {
-        if (instance1 != null)
+        if (instance1 != null) {
             instance1.search(e).draw();
-        if (instance2 != null)
+        }
+
+        if (instance2 != null) {
             instance2.search(e).draw();
+        }
     }
 
     return {
