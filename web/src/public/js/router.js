@@ -12,11 +12,12 @@
  */
 
 /* Simple routing system */
-define([], function() {
+define([], function () {
+    "use strict";
     var routes = [
-        {hash:'#home', controller:'HomeView'},
-        {hash:'#dashboard',  controller:'DashboardView'},
-        {hash:'#project', controller: 'NavbarView'}
+        {hash: '#home', controller: 'HomeView'},
+        {hash: '#dashboard', controller: 'DashboardView'},
+        {hash: '#project', controller: 'NavbarView'}
     ];
     var currentHash = '';
     var currentState = null;
@@ -31,13 +32,15 @@ define([], function() {
             return;
         }
 
-        if (window.location.hash != currentHash || window.history.state != currentState) {
+        if (window.location.hash !== currentHash ||
+            !_.isEqual(window.history.state, currentState)) {
             currentHash = window.location.hash;
-            for (var i = 0, currentRoute; currentRoute = routes[i++];) {
-                if (window.location.hash == currentRoute.hash) {
+            for (var i = 0; i < routes.length; i ++) {
+                var currentRoute = routes[i];
+                if (window.location.hash === currentRoute.hash) {
                     loadController(currentRoute.controller);
 
-                    if (window.history.state == null) {
+                    if (window.history.state === null) {
                         window.history.pushState(currentState, null, this.url);
                     } else {
                         currentState = window.history.state;
@@ -49,7 +52,7 @@ define([], function() {
     }
 
     function loadController(controllerName) {
-        require(['mvc/' + controllerName], function(controller) {
+        require(['mvc/' + controllerName], function (controller) {
             controller.start();
         });
     }
