@@ -12,7 +12,7 @@
     <option devel="false" />
     <option dojo="false" />
     <option eqeqeq="true" />
-    <option eqnull="false" />
+    <option eqnull="true" />
     <option es3="false" />
     <option esnext="false" />
     <option evil="false" />
@@ -31,6 +31,7 @@
     <option laxcomma="false" />
     <option loopfunc="false" />
     <option maxerr="50" />
+    <option maxlen="100" />
     <option mootools="false" />
     <option moz="false" />
     <option multistr="false" />
@@ -48,6 +49,7 @@
     <option passfail="false" />
     <option phantom="false" />
     <option plusplus="false" />
+    <option predef="" />
     <option proto="false" />
     <option prototypejs="false" />
     <option quotmark="false" />
@@ -58,10 +60,10 @@
     <option strict="true" />
     <option sub="false" />
     <option supernew="false" />
-    <option trailing="false" />
-    <option undef="true" />
+    <option trailing="true" />
+    <option undef="false" />
     <option unused="false" />
-    <option validthis="false" />
+    <option validthis="true" />
     <option white="true" />
     <option worker="false" />
     <option wsh="false" />
