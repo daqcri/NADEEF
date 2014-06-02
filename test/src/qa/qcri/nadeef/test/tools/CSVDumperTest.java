@@ -64,35 +64,25 @@ public class CSVDumperTest extends NadeefTestBase {
 
     @After
     public void tearDown() {
-        Statement stat = null;
-        Connection conn = null;
-        try {
-            conn = DBConnectionPool.createConnection(dbConfig);
-            stat = conn.createStatement();
+        try (
+            Connection conn = DBConnectionPool.createConnection(dbConfig, true);
+            Statement stat = conn.createStatement()
+        ) {
             stat.execute(dialectManager.dropTable(tableName));
-            conn.commit();
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
-        } finally {
-            try {
-                if (stat != null) {
-                    stat.close();
-                }
-
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception ex) {
-                // ignore
-            }
         }
+
+        Bootstrap.shutdown();
     }
+
+
 
     @Test
     public void goodDumpTest() {
-        Statement stat = null;
-        Connection conn = null;
-        try {
+        try (Connection conn = DBConnectionPool.createConnection(dbConfig, true);
+             Statement stat = conn.createStatement()
+        ) {
             tableName =
                 CSVTools.dump(dbConfig, dialectManager, TestDataRepository.getDumpTestCSVFile());
             Assert.assertNotNull("tableName cannot be null", tableName);
@@ -105,30 +95,17 @@ public class CSVDumperTest extends NadeefTestBase {
                 lineCount ++;
             }
             reader.close();
-
-            conn = DBConnectionPool.createConnection(dbConfig);
-            stat = conn.createStatement();
             ResultSet resultSet = stat.executeQuery("SELECT COUNT(*) FROM " + tableName);
             int rowCount = -1;
             if (resultSet.next()) {
                 rowCount = resultSet.getInt(1);
             }
 
-            resultSet.close();
             Assert.assertEquals("Row number is not correct", lineCount - 1, rowCount);
+            resultSet.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail(ex.getMessage());
-        } finally {
-            try {
-                if (stat != null) {
-                    stat.close();
-                }
-
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception ex) {}
         }
     }
 }

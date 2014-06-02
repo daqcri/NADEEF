@@ -76,14 +76,10 @@ public class DerbySQLDialect extends SQLDialectBase {
             StringBuilder builder = new StringBuilder();
             boolean isFirst = true;
             for (Column column : schema.getColumns()) {
-                if (column.getColumnName().equalsIgnoreCase("TID")) {
+                if (column.getColumnName().equalsIgnoreCase("TID"))
                     continue;
-                }
-
-                if (!isFirst) {
+                if (!isFirst)
                     builder.append(",");
-                }
-
                 builder.append(column.getColumnName());
                 isFirst = false;
             }

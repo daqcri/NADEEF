@@ -13,9 +13,17 @@
 
 package qa.qcri.nadeef.core.util.sql;
 
+import org.postgresql.copy.CopyManager;
+import org.postgresql.core.BaseConnection;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
+import qa.qcri.nadeef.core.datamodel.Column;
+import qa.qcri.nadeef.core.datamodel.Schema;
+import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.Tracer;
 
+import java.io.FileReader;
+import java.nio.file.Path;
 import java.sql.*;
 
 /**
@@ -112,4 +120,47 @@ public class PostgresSQLDialect extends SQLDialectBase {
         st.add("values", valueBuilder.toString());
         return st.render();
     }
+
+    @Override public boolean supportBulkLoad() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int bulkLoad(
+        DBConfig dbConfig,
+        String tableName,
+        Path file,
+        boolean hasHeader
+    ) {
+        Tracer tracer = Tracer.getTracer(PostgresSQLDialect.class);
+        tracer.info("Bulk loading CSV file.");
+        try (Connection conn = DBConnectionPool.createConnection(dbConfig, true);
+             FileReader reader = new FileReader(file.toFile())
+        ) {
+            Schema schema = DBMetaDataTool.getSchema(dbConfig, tableName);
+            StringBuilder builder = new StringBuilder();
+            for (Column column : schema.getColumns()) {
+                if (column.getColumnName().equalsIgnoreCase("TID"))
+                    continue;
+                builder.append(column.getColumnName()).append(",");
+            }
+            builder.deleteCharAt(builder.length() - 1);
+
+            CopyManager copyManager = new CopyManager((BaseConnection)conn);
+            String sql =
+                String.format(
+                    "COPY %s (%s) FROM STDIN WITH (FORMAT 'csv', DELIMITER ',', HEADER true)",
+                    tableName,
+                    builder.toString());
+            copyManager.copyIn(sql, reader);
+        } catch (Exception ex) {
+            tracer.err("Loading csv file " + file.getFileName() + " failed.");
+            return 1;
+        }
+        return 0;
+    }
+
 }
