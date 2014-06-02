@@ -1,8 +1,8 @@
 define([
     "requester",
     "text!mvc/editor/template/dc.template.html"
-], function(Requester, Template) {
-
+], function (Requester, Template) {
+    "use strict";
     function DCEditor(dom, table1, table2, rule) {
         this.dom = dom;
         this.tableName1 = table1;
@@ -13,12 +13,12 @@ define([
     DCEditor.prototype.render = function () {
         var promise = null;
         var __ = this;
-        if (_.isEmpty(this.tableName1))
+        if (_.isEmpty(this.tableName1)) {
             promise = null;
-        else {
+        } else {
             promise = Requester.getTableSchema(this.tableName1, {
                 success: function (data) {
-                    __.table1 = { name: __.tableName1, columns: data['schema']};
+                    __.table1 = { name: __.tableName1, columns: data.schema};
                 },
                 failure: function () {
                     console.log("Schema fetching failed.");
@@ -34,11 +34,11 @@ define([
         });
     };
 
-    DCEditor.prototype.val = function() {
+    DCEditor.prototype.val = function () {
         return $(this.dom).find("#value").val();
     };
 
     return {
         Create: DCEditor
-    }
+    };
 });
