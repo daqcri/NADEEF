@@ -87,13 +87,11 @@ public class Tracer {
 
         String outputFile = outputPath + File.separator + getLogFileName();
         try {
-            FileAppender logFile =
-                new FileAppender(
-                    new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN),
-                    outputFile
-                );
-            logFile.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
+            PatternLayout layout = new PatternLayout("%-4r [%t] %-5p %c %x - %m%n");
+            FileAppender logFile = new FileAppender(layout, outputFile);
+            ConsoleAppender console = new ConsoleAppender(layout);
             Logger.getRootLogger().addAppender(logFile);
+            Logger.getRootLogger().addAppender(console);
             Logger.getRootLogger().setLevel(Level.INFO);
             // BasicConfigurator.configure(logFile);
 

@@ -1,8 +1,8 @@
 <component name="libraryTable">
-  <library name="com.sparkjava:spark-core:1.1" type="repository">
-    <properties maven-id="com.sparkjava:spark-core:1.1" />
+  <library name="com.sparkjava:spark-core:2.0.0" type="repository">
+    <properties maven-id="com.sparkjava:spark-core:2.0.0" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/vendors/spark-core-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/vendors/spark-core-2.0.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/slf4j-api-1.7.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/jetty-server-9.0.2.v20130417.jar!/" />
       <root url="jar://$PROJECT_DIR$/vendors/javax.servlet-3.0.0.v201112011016.jar!/" />

@@ -1,13 +1,17 @@
-define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, BlockUI) {
+define(['router', 'state', 'ruleminer', 'blockUI'], function (Router, State) {
+    "use strict";
     var cache = {};
 
     function get(call) {
-        if (!('type' in call))
-            call['type'] = 'GET';
-        if (!('dataType' in call))
-            call['dataType'] = 'json';
+        if (!('type' in call)) {
+            call.type = 'GET';
+        }
 
-        var key = 'key' in call ? call['key'] : call.url + call.type;
+        if (!('dataType' in call)) {
+            call.dataType = 'json';
+        }
+
+        var key = 'key' in call ? call.key : call.url + call.type;
         var promise = cache[key];
         if (!promise) {
             promise = $.ajax(call);
@@ -26,24 +30,30 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
                 delete cache[key];
             });
         } else {
-            if (_.isUndefined(callbacks.blockUI) || true === callbacks.blockUI)
+            if (_.isUndefined(callbacks.blockUI) || true === callbacks.blockUI) {
                 $.blockUI({ baseZ: 2000 });
+            }
 
             if (callbacks.before) {
                 callbacks.before();
             }
             $.when(promise).done(function (data) {
-                if (callbacks.success)
+                if (callbacks.success) {
                     callbacks.success(data);
+                }
             }).fail(function (data) {
-                if (callbacks.failure)
+                if (callbacks.failure) {
                     callbacks.failure(data);
+                }
             }).always(function (data) {
-                if (callbacks.always)
+                if (callbacks.always) {
                     callbacks.always(data);
+                }
+
                 delete cache[key];
-                if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true)
+                if (_.isUndefined(callbacks.blockUI) || callbacks.blockUI === true) {
                     $.unblockUI();
+                }
             });
         }
         return promise;
@@ -51,6 +61,10 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
 
     function getProjectName() {
         return State.get('project');
+    }
+
+    function getFilter() {
+        return State.get('filter');
     }
 
     function getViolationMetaData(rule, x) {
@@ -72,12 +86,11 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
     function doDetect(data, x) {
         // inject project name
         data.project = getProjectName();
-        return request(get(
-            {
-                url : "/do/detect",
-                type : "POST",
-                data: data,
-                key: "detect-" + data.project + "-" + data.name
+        return request(get({
+            url : "/do/detect",
+            type : "POST",
+            data: data,
+            key: "detect-" + data.project + "-" + data.name
         }), x);
     }
 
@@ -120,22 +133,20 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function(Router, State, Bloc
         });
     }
 
-    function getAttribute(successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/widget/attribute',
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+    function getAttribute(x) {
+        return request(
+            get({
+                url: '/' + getProjectName() + '/widget/attribute',
+                data: 'filter=' + getFilter()
+            }), x);
     }
 
-    function getViolationRelation(successCallback, failureCallback) {
-        $.ajax({
-            url : '/' + getProjectName() + '/widget/violation_relation',
-            type: 'GET',
-            success: successCallback,
-            error: failureCallback
-        });
+    function getViolationRelation(x) {
+        return request(
+            get({
+                url: '/' + getProjectName() + '/widget/violation_relation',
+                data: 'filter=' + getFilter()
+            }), x);
     }
 
     function getRuleDistribution(successCallback, failureCallback) {

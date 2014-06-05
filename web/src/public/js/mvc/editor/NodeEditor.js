@@ -12,10 +12,11 @@
  */
 
 define(["d3"], function () {
+    "use strict";
     var rainbow = [ "#00008B", "#8B0000", "#FF8C00", "BlueViolet", "Black", "#0000CD" ];
     var pathGenerator = d3.svg.line()
-        .x(function(d) { return d.x; })
-        .y(function(d) { return d.y; })
+        .x(function (d) { return d.x; })
+        .y(function (d) { return d.y; })
         .interpolate("basis");
 
     function translate(x, y) {
@@ -28,11 +29,11 @@ define(["d3"], function () {
         this.column = column;
     }
 
-    Pin.prototype.getName = function() {
+    Pin.prototype.getName = function () {
         return this.tableName + '.' + this.column;
     };
 
-    Table.prototype.getPoint = function(pin, leftness) {
+    Table.prototype.getPoint = function (pin, leftness) {
         var x;
         var y = this.y + this.boxHeight * (pin.index + 1) + this.boxHeight * 0.5;
         if (leftness) {
@@ -57,7 +58,7 @@ define(["d3"], function () {
         this.onLineAddedHandlers = [];
     }
 
-    NodeEditor.prototype.render = function() {
+    NodeEditor.prototype.render = function () {
         $(this.dom).empty();
         var width = $(this.dom).width();
         var height = $(this.dom).height();
@@ -77,17 +78,20 @@ define(["d3"], function () {
             .attr("width", width)
             .attr("height", height)
             .style('visibility', 'hidden')
-            .on("mousemove", function() {
+            .on("mousemove", function () {
                 _this.redrawTrace({
                     "x" : d3.mouse(this)[0],
                     "y" : d3.mouse(this)[1]
                 });
             });
 
-        if (!_.isNull(this.table1))
+        if (!_.isNull(this.table1)) {
             this.table1.render(true);
-        if (!_.isNull(this.table2))
+        }
+
+        if (!_.isNull(this.table2)) {
             this.table2.render(false);
+        }
 
         this.redrawLine();
     };
@@ -125,12 +129,12 @@ define(["d3"], function () {
 
         paths.enter().append("path");
         paths.exit().remove();
-        paths.attr("d", function(d) { return pathGenerator(d.points); })
-            .attr("stroke", function(d, i) { return rainbow[i % rainbow.length]; })
-            .attr("id", function(d, i) { return i; })
+        paths.attr("d", function (d) { return pathGenerator(d.points); })
+            .attr("stroke", function (d, i) { return rainbow[i % rainbow.length]; })
+            .attr("id", function (d, i) { return i; })
             .attr("stroke-width", 2)
             .attr("fill", "none")
-            .on('click', function(d) {
+            .on('click', function (d) {
                 console.log('clicked a line');
                 _.each(_this.onLineAddedHandlers, function (f) {
                     f(d);
@@ -145,7 +149,7 @@ define(["d3"], function () {
         );
     };
 
-    NodeEditor.prototype.redrawTrace = function ( e ) {
+    NodeEditor.prototype.redrawTrace = function (e) {
         if (!this.pin0 && !this.pin1)
             return;
 

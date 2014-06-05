@@ -30,28 +30,31 @@
     <div class="navbar-inner" id="navbar">
         <a class="brand" style="margin-left: 30px;" href="#">NADEEF</a>
         <ul class="nav">
-            <li><a id="home" href="#home">Home</a></li>
-        </ul>
-        <ul class="nav">
-            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a id="home" href="#home"></a></li>
         </ul>
         <ul class="nav pull-right">
             <li style="margin-right: 5px">
-                <button class="btn" data-toggle="Reload" title="Refresh" id="refresh">
-                    <i class="icon-refresh"></i>
-                </button>
-                <button class="btn"
-                        data-toggle="Clear violation"
-                        title="Clear Violation"
-                        id="clear">
-                    <i class="icon-trash"></i>
-                </button>
-                <button class="btn"
-                        title="Change Project"
-                        id="change">
-                    <i class="icon-user"></i>
-                    <span id="projectName"></span>
-                </button>
+                <form class="navbar-form form-inline" id="navbar-form" role="search">
+                    <input type="text" id="searchbar" class="form-control span3" placeholder="Search">
+                    <button class="btn" data-toggle="Analytic" title="Analysis" id="analytic">
+                        <i class="icon-eye-open"></i>
+                    </button>
+                    <button class="btn" data-toggle="Reload" title="Refresh" id="refresh">
+                        <i class="icon-refresh"></i>
+                    </button>
+                    <button class="btn"
+                            data-toggle="Clear violation"
+                            title="Clear Violation"
+                            id="clear">
+                        <i class="icon-trash"></i>
+                    </button>
+                    <button class="btn"
+                            title="Change Project"
+                            id="change">
+                        <i class="icon-user"></i>
+                        <span id="projectName"></span>
+                    </button>
+                </form>
             </li>
         </ul>
     </div>

@@ -19,7 +19,7 @@ define([
     "text!mvc/template/table.template.html",
     "text!mvc/template/tab.template.html",
     "mvc/ControllerView"
-], function(
+], function (
     State,
     Renderer,
     Table,
@@ -29,15 +29,17 @@ define([
     WidgetTemplate,
     ControllerView
 ) {
+    "use strict";
     function info(msg) {
         $('home-alert-info').alert('close');
         $('#home-alert').html([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ["<span><h4>" + msg + "</h4></span></div>"]].join(''));
+            ["<span><h4>" + msg + "</h4></span></div>"]
+        ].join(''));
     
-        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 2000);
+        window.setTimeout(function () { $('#home-alert-info').alert('close'); }, 2000);
     }
     
     function err(msg) {
@@ -45,11 +47,12 @@ define([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));  
+            ['<span>' + msg + '</span></div>']
+        ].join(''));
     }
 
     function bindEvent() {
-        $('#widget').find("ul li").on('click', function(e) {
+        $('#widget').find("ul li").on('click', function (e) {
             renderWidget(e.currentTarget.id);
         });
 
@@ -58,13 +61,13 @@ define([
             renderTable(tableName);
         });
 
-        $('#clear').on('click', function() {
+        $('#clear').on('click', function () {
             Requester.deleteViolation({
-                success: function() {
+                success: function () {
                     info('Violations are removed');
                     refresh();
                 },
-                failure: function() {
+                failure: function () {
                     err("Removing violations failed.");
                 }
             });
@@ -77,15 +80,16 @@ define([
             renderWidget(defaultWidget[0].id);
         }
 
-        var activeTable = $('#tables .tab-content').find('div.active table')[0].id;
+        var activeTable = $("#table-tabs").find('.active a')[0].text;
         if (activeTable != null) {
-            if (activeTable.indexOf('violation') > -1)
+            if (activeTable.indexOf('Violation') > -1) {
                 renderTable('violation', true);
-            if (activeTable.indexOf('audit') > -1)
+            } else if (activeTable.indexOf('Audit') > -1) {
                 renderTable('audit', true);
-            if (activeTable.indexOf('source') > -1)
+            } else if (activeTable.indexOf('Source') > -1) {
                 renderTable('source', true);
-        }           
+            }
+        }
     }
     
     function start() {
@@ -95,25 +99,28 @@ define([
         var defaultWidget = $('#widget').find('li.active');
         if (defaultWidget != null && defaultWidget.length > 0) {
             renderWidget(defaultWidget[0].id);
-        } else
+        } else {
             renderWidget("overview");
+        }
     }
 
     function renderTable(id, reload) {
         console.log('Load table ' + id);
-        switch(id) {
+        switch (id) {
         case 'violation':
             var rule = $("#selected_rule").val();
-            if (!_.isEmpty(rule))
-                Table.load({domId : 'violation-table', table : 'violation', rule : rule}, reload);
+            if (!_.isEmpty(rule)) {
+                Table.load({domId: 'violation-table', table: 'violation', rule: rule}, reload);
+            }
             break;
         case 'audit':
             Table.load({domId : 'audit-table', table : 'audit'}, reload);
             break;
         case 'source':
             var sourceTable = $("#selected_source").val();
-            if (!_.isEmpty(sourceTable))
-                Table.load({domId: 'source-table', table : sourceTable}, reload);
+            if (!_.isEmpty(sourceTable)) {
+                Table.load({domId: 'source-table', table: sourceTable}, reload);
+            }
             break;
         }
     }
@@ -156,10 +163,10 @@ define([
                 placeholder2 : _.template(TableTemplate)()
             });
 
-        $("#container").html(homeHtml);         
+        $("#container").html(homeHtml);
         
         // render the cleanplan controller
-        ControllerView.render('controller');        
+        ControllerView.render('controller');
     }
     
     return {
