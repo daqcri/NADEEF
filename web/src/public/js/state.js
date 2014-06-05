@@ -11,39 +11,45 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define([], function() {
-    var keyList = [ "project", "job", "source", "currentSource", "rule", "currentRule"];
+define([], function () {
+    "use strict";
+    var keyList = [ "project", "job", "source", "currentSource", "rule", "currentRule", "filter"];
     var changeHandler = {};
 
     function set(key, value) {
-        if (_.indexOf(keyList, key) == -1) {
+        if (_.indexOf(keyList, key) === -1) {
             console.log("Key is not found.");
             return;
         }
 
-        if (_.isObject(value) && !_.isArray(value))
+        if (_.isObject(value) && !_.isArray(value)) {
             window.localStorage.setItem(key, JSON.stringify(value));
-        else
-            set(key, { _ : value});
+        } else {
+            set(key, { _: value});
+        }
 
         if (key in changeHandler) {
             var fs = changeHandler[key];
-            _.each(fs, function(f) { f(); })
+            _.each(fs, function (f) { f(); });
         }
     }
 
     function get(key) {
-        if (_.indexOf(keyList, key) == -1) {
+        if (_.indexOf(keyList, key) === -1) {
             console.log("Key is not found.");
             return;
         }
 
         var item = window.localStorage.getItem(key);
-        if (_.isUndefined(item) || _.isNull(item))
+        if (_.isUndefined(item) || _.isNull(item)) {
             return null;
+        }
+
         var obj = JSON.parse(window.localStorage.getItem(key));
-        if ('_' in obj)
-            return obj['_'];
+        if ('_' in obj) {
+            return obj._;
+        }
+
         return obj;
     }
 

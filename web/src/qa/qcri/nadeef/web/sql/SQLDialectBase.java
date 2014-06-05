@@ -192,7 +192,7 @@ public abstract class SQLDialectBase {
      * @return SQL query.
      */
     public String countViolation() {
-        return "select count(distinct(tupleid)) from VIOLATION";
+        return "select count(distinct(tablename, tupleid)) from VIOLATION";
     }
 
     /**

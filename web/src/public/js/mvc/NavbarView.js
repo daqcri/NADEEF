@@ -18,50 +18,75 @@ define([
     "text!mvc/template/navbar.template.html",
     "text!mvc/template/project.template.html",
     "mvc/HomeView"
-], function(Router, State, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
+], function (Router, State, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
+    "use strict";
     function err(msg) {
         $('#projectModal-alert').html([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span>' + msg + '</span></div>']].join(''));
+            ['<span>' + msg + '</span></div>']
+        ].join(''));
+    }
+
+    function triggerFilter(text) {
+        var filter = State.get("filter");
+        if (text !== filter) {
+            State.set("filter", text);
+            HomeView.refresh();
+        }
     }
 
     function bindEvent() {
-        $('#navbar').find("li a").on('click', function() {
+        $('#navbar').find("li a").on('click', function () {
             $('#navbar').find('.active').removeClass('active');
             $(this).addClass('active');
         });
 
-        $('#project-modal-close').on('click', function() {
+        $('#project-modal-close').on('click', function () {
             var oldProject = State.get('project');
-            if (oldProject !== null)
+            if (oldProject !== null) {
                 $('#projectModal').modal('hide');
-            else
+            } else {
                 err("No project is selected.");
+            }
         });
 
         $("#refresh").on('click', HomeView.refresh);
 
-        $("#change").on("click", function() {
-            $('#projectModal').find('.modal-body').remove();
-            Requester.getProject({
-                success: function(data) {
-                    var projectList = _.flatten(data.data);
-                    selectProject('projectModal', projectList);
-                }, failure: function() {
-                    console.log("Getting project failed.");
-                }});
+        $(document).on('keyup', function (e) {
+            if (e.which === 27) {
+                triggerFilter('');
+                $("#searchbar").val('');
+            }
         });
 
-        $("#project-button").on("click", function() {
+        $('#navbar-form').submit(function (e) {
+            e.preventDefault();
+            triggerFilter($("#searchbar").val());
+        });
+
+        $("#change").on("click", function () {
+            $('#projectModal').find('.modal-body').remove();
+            Requester.getProject({
+                success: function (data) {
+                    var projectList = _.flatten(data.data);
+                    selectProject('projectModal', projectList);
+                },
+                failure: function () {
+                    console.log("Getting project failed.");
+                }
+            });
+        });
+
+        $("#project-button").on("click", function () {
             var newProject = $("#create-new-project").val();
             if (newProject !== null && newProject !== "") {
                 var pattern = new RegExp("^[a-zA-Z]\\w*");
                 var match = pattern.exec(newProject);
 
                 // regexp check failed.
-                if (match != newProject) {
+                if (match !== newProject) {
                     $("#project-input").addClass("error");
                     err("Input text has incorrect char.");
                     return;
@@ -70,7 +95,7 @@ define([
 
             if (newProject !== null && newProject !== "") {
                 Requester.createProject(newProject, {
-                    success: function() {
+                    success: function () {
                         $("#projectModal").modal('hide');
                         $("#projectName").text(newProject);
                         State.set('project', newProject);
@@ -92,6 +117,7 @@ define([
 
     function render() {
         $('body').append(_.template(NavbarTemplate)());
+        $('#searchbar').val(State.get("filter"));
     }
 
     function selectProject(id, projectList) {
@@ -99,7 +125,7 @@ define([
         $('#' + id).find(".modal-footer").before(modalHtml);
 
         // event handler for modal
-        $("#create-new-project").keypress(function() {
+        $("#create-new-project").keypress(function () {
             $("#project-input").removeClass("error");
             $("#project-input").find("span").text("");
         });
@@ -120,14 +146,16 @@ define([
 
         // start project selection process
         Requester.getProject({
-            success: function(data) {
+            success: function (data) {
                 var projectList = _.flatten(data.data);
                 var oldProject = State.get('project');
-                if (oldProject && _.indexOf(projectList, oldProject) > -1)
+                if (oldProject && _.indexOf(projectList, oldProject) > -1) {
                     enterProject(oldProject);
-                else
+                } else {
                     selectProject('projectModal', projectList);
-            }, failure: function() {
+                }
+            },
+            failure: function () {
                 console.log("Getting project failed.");
             }
         });

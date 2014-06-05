@@ -17,6 +17,7 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
+import qa.qcri.nadeef.web.sql.DBInstaller;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

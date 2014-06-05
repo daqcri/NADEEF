@@ -10,9 +10,88 @@
  * NADEEF has patent pending nevertheless the following is granted.
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
-define(["requester", "state"], function(Requester, State) {
-    var instance1 = null;
-    var instance2 = null;
+define(["requester", "state"], function (Requester, State) {
+    "use strict";
+    var sourceInstance = null;
+    var auditInstance = null;
+    var violationInstance1 = null;
+    var violationInstance2 = null;
+    var sourceUrl = null;
+    var auditUrl = null;
+
+    function loadSourceTable(domId, tablename) {
+        $("#source-table-info").addClass('hide');
+        $('#source-table').removeClass('hide');
+        var url = "/" + State.get('project') + "/table/" + tablename;
+
+        if (sourceUrl === url) {
+            sourceInstance.ajax.reload();
+        } else {
+            Requester.getTableSchema(tablename, {
+                success: function (data) {
+                    var schema = data.schema;
+                    var columns = [];
+                    var dom = $('#' + domId);
+                    if ($.fn.dataTable.isDataTable('#' + domId)) {
+                        dom.DataTable().destroy();
+                    }
+                    dom.empty().append('<thead><tr></tr></thead>');
+                    for (var i = 0; i < schema.length; i++) {
+                        columns.push({ sTitle: schema[i] });
+                    }
+                    sourceInstance = dom.DataTable({
+                        "scrollX": true,
+                        "ordering": false,
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax": { "url": url, "dataSrc": 'data' },
+                        "search": { "search": State.get("filter")},
+                        "destroy": true,
+                        "columns": columns,
+                        "ajaxDataProp": 'data'
+                    });
+                }
+            });
+            sourceUrl = url;
+        }
+    }
+
+    function loadAuditTable(domId, tablename) {
+        var url = "/" + State.get('project') + "/table/" + tablename;
+
+        if (auditUrl === url) {
+            auditInstance.ajax.reload();
+        } else {
+            Requester.getTableSchema(tablename, {
+                success: function (data) {
+                    var schema = data.schema;
+                    var columns = [];
+                    var dom = $('#' + domId);
+                    if ($.fn.dataTable.isDataTable('#' + domId)) {
+                        dom.DataTable().destroy();
+                    }
+                    dom.empty().append('<thead><tr></tr></thead>');
+                    for (var i = 0; i < schema.length; i++) {
+                        columns.push({ sTitle: schema[i] });
+                    }
+                    var project = State.get('project');
+
+                    auditInstance = dom.DataTable({
+                        "scrollX": true,
+                        "ordering": false,
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax": { "url": url, "dataSrc": 'data' },
+                        "search": { "search": State.get("filter")},
+                        "destroy": true,
+                        "columns": columns,
+                        "ajaxDataProp": 'data'
+                    });
+                }
+            });
+            auditUrl = tablename;
+        }
+    }
 
     function load(table) {
         if (_.isNull(table) || _.isNaN(table)) {
@@ -20,51 +99,16 @@ define(["requester", "state"], function(Requester, State) {
             return;
         }
 
-        var domId = table.domId;
-        var tablename = table.table;
-        var rule = table.rule;
-
-        if ("source-table" === domId) {
-            $("#source-table-info").addClass('hide');
-            $('#source-table').removeClass('hide');
-        }
-
-        if (domId == 'violation-table') {
-            $("#violation-table-info").addClass('hide');
-            $('#violation-table-div').removeClass('hide');
-        }
-
-        if (tablename === "violation") {
-            drawViolationTable(domId, rule);
-        } else {
-            Requester.getTableSchema(
-                tablename, {
-                    success: function (data) {
-                        var schema = data['schema'];
-                        var columns = [];
-                        var dom = $('#' + domId);
-                        if ($.fn.dataTable.isDataTable('#' + domId)) {
-                            dom.DataTable().destroy();
-                        }
-
-                        dom.empty().append('<thead><tr></tr></thead>');
-                        for (var i = 0; i < schema.length; i++)
-                            columns.push({ sTitle: schema[i] });
-
-                        var project = State.get('project');
-                        var url = "/" + project + "/table/" + tablename;
-                        instance1 = dom.DataTable({
-                            "scrollX": true,
-                            "ordering": false,
-                            "processing": true,
-                            "serverSide": true,
-                            "ajax": { "url": url, "dataSrc": 'data' },
-                            "destroy": true,
-                            "columns": columns,
-                            "ajaxDataProp": 'data'
-                        });
-                    }}
-            );
+        switch (table.domId) {
+            case "source-table":
+                loadSourceTable(table.domId, table.table, table.rule);
+                break;
+            case "violation-table":
+                loadViolationTable(table.domId, table.table, table.rule);
+                break;
+            case "audit-table":
+                loadAuditTable(table.domId, table.table, table.rule);
+                break;
         }
     }
 
@@ -76,8 +120,7 @@ define(["requester", "state"], function(Requester, State) {
                 var columns = [];
                 var instance;
                 var project = State.get('project');
-                var ruleQuery = "";
-                schema = data['schema'];
+                schema = data.schema;
 
                 if ($.fn.dataTable.isDataTable('#' + domId)) {
                     dom.DataTable().destroy();
@@ -88,11 +131,13 @@ define(["requester", "state"], function(Requester, State) {
                     columns.push({ sTitle: schema[i] });
                 }
 
-                for (var i = 0; i < rule.length; i++) {
+                var ruleQuery = "";
+                for (i = 0; i < rule.length; i++) {
                     ruleQuery += "rule=" + rule[i];
                 }
 
                 var url = "/" + project + "/violation/" + tableName + "?" + ruleQuery;
+
                 instance = dom.DataTable({
                     "createdRow": function (row, data) {
                         var vid = data[data.length - 2];
@@ -118,20 +163,19 @@ define(["requester", "state"], function(Requester, State) {
                         }
 
                         // create event for click filter
-                        cells.on("click", function(e) {
+                        cells.on("click", function (e) {
                             var vid = this.getAttribute("data");
-                            if (instance1 != null) {
-                                instance1.search(":=" + vid).draw();
+                            if (violationInstance1 != null) {
+                                violationInstance1.search(":=" + vid).draw();
                             }
 
-                            if (instance2 != null) {
-                                instance2.search(":=" + vid).draw();
+                            if (violationInstance2 != null) {
+                                violationInstance2.search(":=" + vid).draw();
                             }
                         });
 
                         // truncate large text
-
-                        for (var i = 0; i < data.length; i ++) {
+                        for (i = 0; i < data.length; i ++) {
                             if (!_.isEmpty(data[i]) && data[i].length > 300) {
                                 var label = '... <span class="label label-info" ' +
                                     'data-toggle="tooltip" ' +
@@ -140,18 +184,8 @@ define(["requester", "state"], function(Requester, State) {
                             }
                         }
                     },
-                    "initComplete": function() {
-                        $(document).off('keyup').on('keyup', function (e) {
-                            if (e.which == 27) {
-                                if (instance1 != null) {
-                                    instance1.search("").draw();
-                                }
-
-                                if (instance2 != null) {
-                                    instance2.search("").draw();
-                                }
-                            }
-                        });
+                    "initComplete": function () {
+                        $(document).on('keyup', keyPressHandler);
                     },
                     "scrollX": true,
                     "ordering": false,
@@ -160,21 +194,37 @@ define(["requester", "state"], function(Requester, State) {
                     "ajax": { "url": url, "dataSrc": 'data' },
                     "destroy": true,
                     "columns": columns,
+                    "search": { "search" : State.get("filter")},
                     "ajaxDataProp": 'data',
                     "lengthMenu": _.isUndefined(length) ? [10, 25, 50] : length
                 });
 
                 if (isFirst) {
-                    instance1 = instance;
+                    violationInstance1 = instance;
                 } else {
-                    instance2 = instance;
+                    violationInstance2 = instance;
                 }
             }
         });
     }
 
+    function keyPressHandler(e) {
+        if (e.which === 27) {
+            if (violationInstance1 != null) {
+                violationInstance1.search("").draw();
+            }
+
+            if (violationInstance2 != null) {
+                violationInstance2.search("").draw();
+            }
+        }
+    }
+
     // render of violation table
-    function drawViolationTable(domId, rule) {
+    function loadViolationTable(domId, tablename, rule) {
+        $("#violation-table-info").addClass('hide');
+        $('#violation-table-div').removeClass('hide');
+
         Requester.getViolationMetaData(rule, {
             success: function (data) {
                 var tables =
@@ -210,12 +260,12 @@ define(["requester", "state"], function(Requester, State) {
     }
 
     function filter(e) {
-        if (instance1 != null) {
-            instance1.search(e).draw();
+        if (violationInstance1 != null) {
+            violationInstance1.search(e).draw();
         }
 
-        if (instance2 != null) {
-            instance2.search(e).draw();
+        if (violationInstance2 != null) {
+            violationInstance2.search(e).draw();
         }
     }
 

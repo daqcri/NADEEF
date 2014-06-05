@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web;
+package qa.qcri.nadeef.web.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
@@ -19,7 +19,6 @@ import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
-import qa.qcri.nadeef.web.sql.SQLDialectBase;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -28,7 +27,7 @@ import java.sql.Statement;
 /**
  * DB Installer for Dashboard.
  */
-class DBInstaller {
+public class DBInstaller {
     private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
 
     public static void installMetaData(DBConfig dbConfig) throws Exception {
