@@ -1,24 +1,24 @@
 define([
     "requester",
     "text!mvc/editor/template/fd.template.html"
-], function(Requester, Template) {
-
+], function (Requester, Template) {
+    "use strict";
     function FDEditor(dom, table1, table2, rule) {
         this.dom = dom;
         this.tableName1 = table1;
         this.tableName2 = table2;
         this.rule = rule;
-}
+    }
 
     FDEditor.prototype.render = function () {
         var promise = null;
         var __ = this;
-        if (_.isEmpty(this.tableName1))
+        if (_.isEmpty(this.tableName1)) {
             promise = null;
-        else {
+        } else {
             promise = Requester.getTableSchema(this.tableName1, {
                 success: function (data) {
-                    __.table1 = { name: __.tableName1, columns: data['schema']};
+                    __.table1 = { name: __.tableName1, columns: data.schema};
                 },
                 failure: function () {
                     console.log("Schema fetching failed.");
@@ -34,11 +34,11 @@ define([
         });
     };
 
-    FDEditor.prototype.val = function() {
+    FDEditor.prototype.val = function () {
         return $(this.dom).find("#value").val();
     };
 
     return {
         Create: FDEditor
-    }
+    };
 });

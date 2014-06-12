@@ -17,22 +17,25 @@ define([
     'jquery.filedrop',
     'state',
     'ruleminer',
+    'analytic',
     'mvc/RuleEditorView',
     'mvc/ProgressbarView',
     'mvc/SourceEditorView',
     'text!mvc/template/controller.template.html',
     'text!mvc/template/detail.template.html'
-], function(
+], function (
     Requester,
     Table,
     FileDrop,
     State,
     RuleMiner,
+    Analytic,
     RuleEditorView,
     ProgressBarView,
     SourceEditorView,
     ControllerTemplate,
     DetailTemplate) {
+    "use strict";
     var domId;
 
     function info(msg) {
@@ -43,7 +46,7 @@ define([
             ['&times;</button>'],
             ['<span><h4>' + msg + '</h4></span></div>']].join(''));
 
-        window.setTimeout(function() { $('#home-alert-info').alert('close'); }, 3000);
+        window.setTimeout(function () { $('#home-alert-info').alert('close'); }, 3000);
     }
 
     function err(msg) {
@@ -73,6 +76,7 @@ define([
 
         window.addEventListener('beforeunload', function() {
             RuleMiner.close();
+            Analytic.close();
         });
 
         $('#' + domId)[0].addEventListener('refreshRuleEvent', function(e) {
@@ -97,7 +101,7 @@ define([
     function refreshSourceList() {
         console.log("Refresh source list");
         Requester.getSource({
-            success: function(source) {
+            success: function (source) {
                 var sources = source['data'];
                 State.set('source', sources);
                 var html =
@@ -136,7 +140,7 @@ define([
                         err("Rule Miner is not available.");
                 });
 
-                $('#new_plan').on('click', function() {
+                $('#new_plan').on('click', function () {
                     var editor = new RuleEditorView.Create($('#rule-editor-modal')[0], {
                         name: null,
                         type: 'FD',

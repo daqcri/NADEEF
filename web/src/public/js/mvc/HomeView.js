@@ -150,7 +150,7 @@ define([
         var widgetTabs = {
             tabs: [
                 {tag : "overview", head : "Overview", isActive : true},
-                {tag : "attribute", head : "Rule Attribute", isActive : false},
+                // {tag : "attribute", head : "Rule Attribute", isActive : false},
                 {tag : "distribution", head : "Rule Distribution", isActive : false},
                 {tag : "violationRelation", head : "Violation Relation", isActive : false},
                 {tag : "tupleRank", head : "Tuple Rank", isActive : false}

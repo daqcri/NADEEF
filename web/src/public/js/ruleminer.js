@@ -11,7 +11,8 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-define([], function() {
+define([], function () {
+    "use strict";
     var instance = null;
     var pingId = null;
     var MAX_PING = 20;
@@ -21,10 +22,14 @@ define([], function() {
     // TODO: move to the backend.
     function getHostname() {
         var windowHostname = window.location.hostname;
-        if (windowHostname.indexOf("localhost") > -1)
+        if (windowHostname.indexOf("localhost") > -1) {
             return "http://localhost:8080";
-        if (windowHostname.indexOf("qcridemos.org") > -1)
+        }
+
+        if (windowHostname.indexOf("qcridemos.org") > -1) {
             return "http://ruleminer.da.qcridemos.org:1067";
+        }
+
         return "http://" + window.location.hostname + ":8080";
     }
 
@@ -34,7 +39,7 @@ define([], function() {
     }
 
     function isWindowOpened() {
-        return instance != null && instance.closed == false;
+        return instance != null && instance.closed === false;
     }
 
     function start(project, table) {
@@ -44,24 +49,28 @@ define([], function() {
             instance = window.open(url, "Rule Miner");
             $.blockUI({ message: "<h4>Starting Rule Miner</h4>"});
             var i = 0;
-            var pingFunc = function() {
+            var pingFunc = function () {
                 i ++;
                 if (i >= MAX_PING) {
-                    if (pingId)
+                    if (pingId) {
                         clearInterval(pingId);
+                    }
+
                     $.blockUI({message: "<h4>Rule Miner failed to start.</h4>"});
-                    setTimeout(function() {$.unblockUI();}, 1500);
+                    setTimeout(function () {$.unblockUI(); }, 1500);
                     console.log("Starting rule miner failed.");
-                } else
+                } else {
                     ping();
+                }
             };
 
-            window.addEventListener("message", function(event) {
+            window.addEventListener("message", function (event) {
                 console.log('received: ' + event.data);
                 if (event.origin.indexOf(hostname) > -1) {
                     if (event.data.indexOf("pong") > -1) {
-                        if (pingId)
+                        if (pingId) {
                             clearInterval(pingId);
+                        }
                         $.unblockUI();
                     }
 
@@ -78,8 +87,9 @@ define([], function() {
     }
 
     function close() {
-        if (isWindowOpened())
+        if (isWindowOpened()) {
             instance.close();
+        }
         instance = null;
     }
 

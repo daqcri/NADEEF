@@ -277,7 +277,9 @@ public class CleanExecutor {
             detectFlow
                 .setInputKey(cacheManager.getKeyForNothing())
                 .addNode(new ViolationDetector(context), 6)
-                .addNode(new ViolationExport(context));
+                // .addNode(new ViolationExport(context))
+                .addNode(new ViolationExportToCSV(context))
+                .addNode(new ViolationCSVExport(context));
 
             // assemble the repair flow
             repairFlow = new Flow("repair");

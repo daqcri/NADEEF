@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.core.util.sql;
 
+import com.google.common.base.Stopwatch;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.stringtemplate.v4.ST;
@@ -25,6 +26,7 @@ import qa.qcri.nadeef.tools.Tracer;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Database manager for Apache Derby database.
@@ -136,10 +138,11 @@ public class PostgresSQLDialect extends SQLDialectBase {
         boolean hasHeader
     ) {
         Tracer tracer = Tracer.getTracer(PostgresSQLDialect.class);
-        tracer.info("Bulk loading CSV file.");
+        tracer.info("Bulk load CSV file " + file.toString());
         try (Connection conn = DBConnectionPool.createConnection(dbConfig, true);
              FileReader reader = new FileReader(file.toFile())
         ) {
+            Stopwatch watch = Stopwatch.createStarted();
             Schema schema = DBMetaDataTool.getSchema(dbConfig, tableName);
             StringBuilder builder = new StringBuilder();
             for (Column column : schema.getColumns()) {
@@ -152,15 +155,17 @@ public class PostgresSQLDialect extends SQLDialectBase {
             CopyManager copyManager = new CopyManager((BaseConnection)conn);
             String sql =
                 String.format(
-                    "COPY %s (%s) FROM STDIN WITH (FORMAT 'csv', DELIMITER ',', HEADER true)",
+                    "COPY %s (%s) FROM STDIN WITH (FORMAT 'csv', DELIMITER ',', HEADER %s)",
                     tableName,
-                    builder.toString());
+                    builder.toString(),
+                    hasHeader ? "true" : "false");
             copyManager.copyIn(sql, reader);
+            watch.stop();
+            tracer.info("Bulk load finished in " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms");
         } catch (Exception ex) {
             tracer.err("Loading csv file " + file.getFileName() + " failed.");
             return 1;
         }
         return 0;
     }
-
 }

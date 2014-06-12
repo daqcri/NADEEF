@@ -23,6 +23,7 @@ import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.util.Bootstrap;
 import qa.qcri.nadeef.core.util.Violations;
 import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
@@ -38,39 +39,13 @@ import java.util.Map;
  * Performance benchmark class.
  */
 @RunWith(Parameterized.class)
-public class PerformanceBenchmark {
+public class PerformanceBenchmark extends NadeefTestBase {
     private static List<PerfReport.Metric> measuredMetrics;
     private static PrintWriter writer;
     private static final String separator = ",";
-    private static final int TEST_TIME = 3;
-    private String testConfig;
-
-    @Parameterized.Parameters
-    public static List<String[]> configs() {
-        List<String[]> data = Lists.newArrayList();
-        // regression test check
-        if (System.getProperty("regression") != null) {
-            for (int i = 0; i < TEST_TIME; i ++) {
-                data.add( new String[] { TestDataRepository.DerbyConfig });
-            }
-
-            for (int i = 0; i < TEST_TIME; i ++) {
-                data.add( new String[] { TestDataRepository.PostgresConfig } );
-            }
-
-            for (int i = 0; i < TEST_TIME; i ++) {
-                data.add( new String[] { TestDataRepository.MySQLConfig } );
-            }
-        } else {
-            for (int i = 0; i < TEST_TIME; i ++) {
-                data.add( new String[] { TestDataRepository.DerbyConfig } );
-            }
-        }
-        return data;
-    }
 
     public PerformanceBenchmark(String testConfig) {
-        this.testConfig = testConfig;
+        super(testConfig);
     }
 
 
@@ -201,7 +176,7 @@ public class PerformanceBenchmark {
             CleanPlan plan = TestDataRepository.getPlan("benchmark_adult_30k_2.json").get(0);
             executor = new CleanExecutor(plan);
             executor.detect();
-            verifyViolationResult(33086);
+            verifyViolationResult(33080);
             writeToFile("Adult30k_2");
         } catch (Exception ex) {
             ex.printStackTrace();

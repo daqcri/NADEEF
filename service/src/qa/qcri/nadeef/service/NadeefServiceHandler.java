@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.service;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import org.apache.thrift.TException;
@@ -28,6 +29,7 @@ import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -167,6 +169,19 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             Rule ruleInstance;
             CleanPlan cleanPlan;
             if (type.equalsIgnoreCase("udf")) {
+                String currentPath = NadeefConfiguration.getOutputPath().toString();
+                File outputFile = new File(currentPath + File.separator + name + ".java");
+
+                try (FileOutputStream os = new FileOutputStream(outputFile)) {
+                    String code = rule.getCode();
+                    os.write(code.getBytes());
+                    os.flush();
+                }
+
+                String message = CommonTools.compileFile(outputFile);
+                if (!Strings.isNullOrEmpty(message))
+                    throw new Exception(message);
+
                 Class udfClass = CommonTools.loadClass(name);
                 if (!Rule.class.isAssignableFrom(udfClass)) {
                     throw new IllegalArgumentException("The specified class is not a Rule class.");

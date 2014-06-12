@@ -20,7 +20,7 @@ define([
     'mvc/editor/UDFEditor',
     'mvc/editor/DCEditor',
     'text!mvc/template/ruleeditor.template.html'
-], function(
+], function (
     Requester,
     State,
     Ace,
@@ -30,6 +30,7 @@ define([
     DCEditor,
     RuleEditorTemplate
 ) {
+    "use strict";
     var types = {
         'FD' : FDEditor,
         'UDF' : UDFEditor,
@@ -59,21 +60,21 @@ define([
             $(__.dom).find('#ace-editor').css({ height: (height - 138) + 'px'});
         };
 
-        this.enlargeFont = function() {
+        this.enlargeFont = function () {
             __.codeEditor.setFontSize(++ __.fontSize);
         };
 
-        this.decreaseFont = function() {
+        this.decreaseFont = function () {
             __.codeEditor.setFontSize(-- __.fontSize);
         };
 
-        this.generateEvent = function() {
+        this.generateEvent = function () {
             var rule = __.getRule();
             if (!_.isNull(rule)) {
                 Requester.doGenerate(rule, {
-                    success: function(data) {
+                    success: function (data) {
                         info("Code generation succeeded.");
-                        __.codeEditor.setValue(data['data'], -1);
+                        __.codeEditor.setValue(data.data, -1);
                         $('#rule-editor-tab a[href="#code-editor"]').tab("show");
                     },
                     failure: err
@@ -90,13 +91,13 @@ define([
                     return;
                 }
 
-                if (rule.type != 'UDF') {
+                if (rule.type !== 'UDF') {
                     err("Please change the Type to Java first.");
                     return;
                 }
 
                 Requester.doVerify(rule, {
-                    success: function() { info("Verification succeeded."); },
+                    success: function () { info("Verification succeeded."); },
                     failure: err
                 });
             }
@@ -106,7 +107,7 @@ define([
             var rule = __.getRule();
             if (!_.isNull(rule)) {
                 Requester.createRule(rule, {
-                    success: function() {
+                    success: function () {
                         $(__.dom).modal('hide');
                         // TODO: change to event bubbling
                         $("#controller")[0].dispatchEvent(
@@ -121,8 +122,8 @@ define([
         };
 
         this.jumpCode = function () {
-            var line = undefined;
-            switch(this.id) {
+            var line;
+            switch (this.id) {
                 case "horizontalScope":
                     line = __.codeEditor.find("public Collection<Table> horizontalScope");
                     break;
@@ -140,14 +141,15 @@ define([
                     break;
             }
 
-            if (!_.isUndefined(line))
+            if (!_.isUndefined(line)) {
                 __.codeEditor.gotoLine(line.start.row + 1, 1, true);
-            else
+            } else {
                 err(this.id + " interface is not found.");
+            }
         };
     }
 
-    RuleEditorView.prototype.getRule = function() {
+    RuleEditorView.prototype.getRule = function () {
         var type = this.ruleType.val(),
             table1 = this.table1.val(),
             table2 = this.table2.val() === table1 ? null : this.table2.val(),
@@ -181,7 +183,7 @@ define([
     };
 
 
-    RuleEditorView.prototype.render = function() {
+    RuleEditorView.prototype.render = function () {
         var sources = State.get("source");
         $(this.dom).html(
             _.template(RuleEditorTemplate) ({
@@ -203,8 +205,9 @@ define([
         $(this.dom).find('#generate').on('click', this.generateEvent);
         $(this.dom).find('#verify').on('click', this.verifyEvent);
         $(this.dom).find(".breadcrumb a").on("click", this.jumpCode);
+
         var __ = this;
-        var initEditor = function() {
+        var initEditor = function () {
             __.ruleEditor = new types[__.ruleType.val()].Create(
                 $(__.dom).find("#advance-editor"),
                 __.table1.val(),
@@ -214,6 +217,12 @@ define([
 
             __.ruleEditor.render();
         };
+
+        $(this.dom).find('#rule-editor-tab a[href="#code-editor"]').on('click', function () {
+            if (__.ruleType.val() === 'UDF') {
+                __.codeEditor.setValue(__.rule.code, -1);
+            }
+        });
 
         this.ruleType.change(initEditor);
         this.table1.change(initEditor);
@@ -233,7 +242,8 @@ define([
             ['<div class="alert alert-success" id="cleanPlanView-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']
+        ].join(''));
         window.setTimeout(function() { $('#cleanPlanView-alert-info').alert('close'); }, 3000);
     }
 
@@ -243,7 +253,8 @@ define([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span><h4>' + txt + '</h4></span></div>']].join(''));
+            ['<span><h4>' + txt + '</h4></span></div>']
+        ].join(''));
     }
 
     return {

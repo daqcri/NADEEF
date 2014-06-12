@@ -16,6 +16,7 @@ define([
     "text!mvc/template/tab.template.html",
     "text!mvc/template/dashboard.template.html"
 ], function(renderer, widget_template, dashboard_template) {
+    "use strict";
     function start() {
         render();
 
@@ -37,8 +38,8 @@ define([
             });
         var distributionHtml =
             tabTemplate({tabs:
-                [{tag : "distribution", 
-                  head : "Rule Distribution", 
+                [{tag : "distribution",
+                  head : "Rule Distribution",
                   isActive : true}]
             });
         var tupleRankHtml =

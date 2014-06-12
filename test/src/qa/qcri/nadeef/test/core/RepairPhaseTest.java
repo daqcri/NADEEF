@@ -94,10 +94,8 @@ public class RepairPhaseTest extends NadeefTestBase {
                     cleanPlan,
                     NadeefConfiguration.getDbConfig()
                 );
-            int count = executor.detect().getDetectViolation().size();
-            Assert.assertEquals(1, count);
 
-            count = (Integer)executor.repair().getRepairOutput();
+            int count = (Integer)executor.repair().getRepairOutput();
             Assert.assertEquals(1, count);
 
             executor.shutdown();
@@ -119,10 +117,7 @@ public class RepairPhaseTest extends NadeefTestBase {
             CleanExecutor executor = new CleanExecutor(cleanPlan);
             UpdateExecutor updateExecutor =
                 new UpdateExecutor(cleanPlan, NadeefConfiguration.getDbConfig());
-            int count = executor.detect().getDetectViolation().size();
-            Assert.assertEquals(2, count);
-
-            count = (Integer)executor.repair().getRepairOutput();
+            int count = (Integer)executor.repair().getRepairOutput();
             Assert.assertEquals(4, count);
 
             executor.shutdown();

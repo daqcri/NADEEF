@@ -143,16 +143,16 @@ public final class CommonTools {
         boolean result =
             compiler.getTask(null, fileManager, diagnostics, args, null, compilationUnit).call();
 
-        String msg = null;
+        String msg = "";
         if (!result) {
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
-                msg =
+                msg +=
                     String.format(
                         "Error on line %d in %s%n",
                             diagnostic.getLineNumber(),
                             diagnostic.getMessage(null));
-                System.out.println(msg);
             }
+            tracer.err(msg);
         }
         fileManager.close();
         return msg;

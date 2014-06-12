@@ -121,62 +121,69 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
                 $("#" + id + " svg").empty();
                 var result = data.data;
                 // TODO: find a better pattern
-                if (result === 1) {
+                if (data.code === 2) {
                     d3.select("#" + id + " svg")
                         .append("text")
-                        .attr("x", 200)
-                        .attr("y", 150)
+                        .attr("x", width / 2 - 80)
+                        .attr("y", height / 2 - 50)
                         .style("font-size", "20px")
+                        .style("font-weight", "bold")
                         .text("There are too many violations to show.");
                     return;
                 }
-                var links = [];
-                var nodes = [];
 
-                var vid;
-                var tid;
-                var groupId;
-                var maxGroupId = 0;
-                var pre = null;
-                var conns = [];
-                var hash = new HashMap.Map();
+                if (data.data && data.data.length === 0) {
+                    d3.select("#" + id + " svg")
+                        .append("text")
+                        .attr("x", width / 2 - 80)
+                        .attr("y", height / 2 - 50)
+                        .style("font-size", "20px")
+                        .style("font-weight", "bold")
+                        .text("No Data Available.");
+                    return;
+                }
 
-                // process the graph
-                for (var i = 0; i < result.length; i++) {
-                    vid = result[i][0];
-                    tid = result[i][1];
-                    if (hash.hasKey(tid)) {
-                        groupId = hash.get(tid);
+                var i,
+                    count = 0,
+                    links = [],
+                    hash = {},
+                    nodes = [];
+
+                // cluster the graph
+                for (i = 0; i < result.length; i += 2) {
+                    var tid0 = "tid_" + result[i][1];
+                    var tid1 = "tid_" + result[i + 1][1];
+                    var node0, node1;
+                    if (tid0 in hash) {
+                        // add to existing cluster
+                        node0 = hash[tid0];
                     } else {
-                        groupId = maxGroupId;
-                        hash.put(tid, maxGroupId);
-                        nodes.push({'name': tid, 'group': groupId});
-                        maxGroupId++;
+                        node0 = count;
+                        hash[tid0] = count;
+                        nodes.push({'name': tid0, 'group': count, 'tid': result[i][1] });
+                        count ++;
                     }
 
-                    if (vid === pre) {
-                        for (var j = 0; j < conns.length; j++) {
-                            var gid = hash.get(conns[j]);
-                            // TODO: use different value
-                            links.push(
-                                {'source': gid,
-                                    'target': groupId,
-                                    'value': 1,
-                                    'weight': 1
-                                }
-                            );
-                        }
-                        conns.push(tid);
+                    if (tid1 in hash) {
+                        // add to existing cluster
+                        node1 = hash[tid1];
                     } else {
-                        conns = [];
-                        conns.push(tid);
-                        pre = vid;
+                        node1 = count;
+                        hash[tid1] = count;
+                        nodes.push({'name': tid1, 'group': count, 'tid': result[i + 1][1] });
+                        count ++;
                     }
+
+                    links.push({
+                        'source': node0,
+                        'target': node1,
+                        'value': 1,
+                        'weight': 1
+                    });
                 }
 
                 nv.addGraph(function () {
                     var color = d3.scale.category20();
-
                     var svg = d3.select("#" + id + " svg")
                         .attr("pointer-events", "all")
                         .append('svg:g')
@@ -189,8 +196,8 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
                         }));
 
                     var force = d3.layout.force()
-                        .charge(-200)
-                        .linkDistance(150)
+                        .charge(-250)
+                        .linkDistance(200)
                         .size([width, height])
                         .nodes(nodes)
                         .links(links)
@@ -201,7 +208,7 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
                         .enter().append("line")
                         .attr("class", "link")
                         .style("stroke-width", function (d) {
-                            return Math.sqrt(d.value);
+                            return 2.0;
                         });
 
                     var node = svg.selectAll(".node")
@@ -210,35 +217,33 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
                         .attr("class", "node")
                         .attr("r", 15)
                         .style("fill", function (d) {
-                            return color(d.group * 2);
+                            return color(d.group % 20);
                         })
                         .call(force.drag);
 
                     node.append("title")
                         .text(function (d) {
-                            return d.name;
+                            return d.tid;
                         });
+
 
                     force.on("tick", function () {
                         link.attr("x1", function (d) {
                             return d.source.x;
-                        })
-                            .attr("y1", function (d) {
-                                return d.source.y;
-                            })
-                            .attr("x2", function (d) {
-                                return d.target.x;
-                            })
-                            .attr("y2", function (d) {
-                                return d.target.y;
-                            });
+                        }).attr("y1", function (d) {
+                            return d.source.y;
+                        }).attr("x2", function (d) {
+                            return d.target.x;
+                        }).attr("y2", function (d) {
+                            return d.target.y;
+                        });
 
                         node.attr("cx", function (d) {
                             return d.x;
                         })
-                            .attr("cy", function (d) {
-                                return d.y;
-                            });
+                        .attr("cy", function (d) {
+                            return d.y;
+                        });
                     });
 
                     svg.selectAll('circle.node').on('click', function (e) {

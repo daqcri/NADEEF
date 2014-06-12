@@ -58,5 +58,6 @@ public final class Dashboard {
         SourceAction.setup(dialect);
         RemoteAction.setup(dialect);
         ProjectAction.setup(dialect);
+        AnalyticAction.setup(dialect);
     }
 }
