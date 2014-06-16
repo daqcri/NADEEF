@@ -125,7 +125,7 @@ public class WidgetAction {
             JsonObject result = null;
             if (count < 10000) {
                 String sql =
-                    "SELECT DISTINCT(VID), TUPLEID FROM " + getSubquery(filter) + " ORDER BY VID";
+                    "SELECT DISTINCT(VID), TUPLEID, TABLENAME FROM " + getSubquery(filter) + " ORDER BY VID";
                 result = SQLUtil.query(project, sql, true);
             } else {
                 result = new JsonObject();

@@ -40,7 +40,7 @@ public final class Dashboard {
 
         get("/", (request, response) -> {
             response.redirect("/index.html");
-            return null;
+            return 0;
         });
 
         exception(Exception.class, (ex, request, response) -> {

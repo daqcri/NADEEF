@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.web.rest;
 
+import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.io.BufferedReader;
@@ -27,6 +28,7 @@ public class AnalyticAction {
     private static String getPysparkUrl() {
         return "http://localhost:8888/api/notebooks";
     }
+    private static Tracer tracer = Tracer.getTracer(AnalyticAction.class);
 
     public static void setup(SQLDialect dialect) {
         post("/analytic/:project", (request, response) -> {
@@ -43,7 +45,7 @@ public class AnalyticAction {
                         + conn.getResponseCode());
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                tracer.err(ex.getMessage(), ex);
             } finally {
                 if (conn != null)
                     conn.disconnect();
@@ -73,7 +75,7 @@ public class AnalyticAction {
                 if (conn != null)
                     conn.disconnect();
             }
-            return null;
+            return 0;
         });
     }
 }

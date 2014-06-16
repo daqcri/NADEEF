@@ -38,7 +38,7 @@ public class TableAction {
                 throw new IllegalArgumentException("Input is not valid");
             String sql = String.format(
                 "select count(*), tablename from violation " +
-                    "where rid = '%s' group by tablename", rule
+                "where rid = '%s' group by tablename", rule
             );
             return SQLUtil.query(project, sql, true);
         });

@@ -20,7 +20,7 @@ require.config({
         "underscore" : "lib/underscore.min",
         "bootstrap" : "lib/bootstrap.min",
         "datatables" : "lib/jquery.dataTables.min", // has to be this name
-        "d3" : "lib/d3.v3.min",
+        "d3" : "lib/d3.min",
         "nvd3" : "lib/nv.d3.min",
         "ace" : "lib/ace-min/ace",
         "jquery.filedrop" : "lib/jquery.filedrop",
@@ -31,7 +31,6 @@ require.config({
         'underscore' : {
             exports: '_'
         },
-
         'ace' : {
             deps : ['jquery'],
             exports: 'ace'
@@ -49,7 +48,8 @@ require.config({
 
 require(
     ['router', 'state', 'bootstrap', 'underscore', 'datatables'],
-    function(Router, State) {
+    function (Router, State) {
+        "use strict";
         // Check for datatable and bootstrap loading status
         //
         // console.log(jQuery.fn.DataTable);
@@ -58,4 +58,5 @@ require(
         State.init();
         Router.start();
         Router.redirect('#project');
-});
+    }
+);
