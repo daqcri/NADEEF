@@ -163,7 +163,7 @@ define(["requester", "state"], function (Requester, State) {
                         }
 
                         // create event for click filter
-                        cells.on("click", function (e) {
+                        cells.on("click", function () {
                             var vid = this.getAttribute("data");
                             if (violationInstance1 != null) {
                                 violationInstance1.search(":=" + vid).draw();
@@ -199,6 +199,7 @@ define(["requester", "state"], function (Requester, State) {
                     "lengthMenu": _.isUndefined(length) ? [10, 25, 50] : length
                 });
 
+                instance.tableName = tableName;
                 if (isFirst) {
                     violationInstance1 = instance;
                 } else {
@@ -260,18 +261,63 @@ define(["requester", "state"], function (Requester, State) {
     }
 
     function filter(e) {
-        if (violationInstance1 != null) {
+        if (violationInstance1) {
             violationInstance1.search(e).draw();
         }
 
-        if (violationInstance2 != null) {
+        if (violationInstance2) {
             violationInstance2.search(e).draw();
+        }
+    }
+
+    function filterByCluster(e) {
+        if (!_.isArray(e)) {
+            console.log("Input is not an array.");
+            return;
+        }
+
+        var query = {},
+            tableName,
+            ids,
+            str;
+
+        for (var i = 0; i < e.length; i ++) {
+            tableName = e[i].tableName;
+            if (tableName in query) {
+                ids = query[tableName];
+            } else {
+                query[tableName] = [];
+                ids = query[tableName];
+            }
+            ids.push(e[i].tid);
+        }
+
+        var tables = Object.keys(query);
+        for (var j = 0; j < tables.length; j ++) {
+            tableName = tables[j];
+            str = '?=';
+            ids = query[tableName];
+            for (var k = 0; k < ids.length; k ++) {
+                if (k !== 0) {
+                    str += ',';
+                }
+                str += ids[k];
+            }
+
+            if (violationInstance1 && violationInstance1.tableName === tableName) {
+                violationInstance1.search(str).draw();
+            } else if (violationInstance2 && violationInstance2.tableName === tableName) {
+                violationInstance2.search(str).draw();
+            } else {
+                console.log("Table name " + tableName + " is not found.");
+            }
         }
     }
 
     return {
         load : load,
-        filter : filter
+        filter : filter,
+        filterByCluster : filterByCluster
     };
 });
 

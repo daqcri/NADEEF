@@ -114,9 +114,10 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
         });
     }
 
-    var svg;
-    var link;
-    var node;
+    var svg;        // outer svg
+    var link;       // svg links
+    var node;       // svg nodes
+    var clusterMap; // node cluster map;
     function drawViolationRelation(id) {
         Requester.getViolationRelation({
             success: function (data) {
@@ -158,7 +159,6 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                     tableHash = {},
                     buildId = function (d) { return d[2] + '_' + d[1]; };
 
-                // cluster the graph
                 // first loop to find distinct nodes
                 for (i = 0; i < result.length; i ++) {
                     tmp = buildId(result[i]);
@@ -176,7 +176,7 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                         var newNode = {
                                 'name': tmp,
                                 'group': tableId,
-                                'tablename' : tableName,
+                                'tableName' : tableName,
                                 'tid' : result[i][1]
                             };
                         nodeTable[tmp] = newNode;
@@ -206,32 +206,61 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                     }
                 }
 
-                // create distinct connections
+                // third loop to create edges and clusters
                 var tuples = Object.keys(graph),
                     links = [],
                     linkSet = {};
 
+                clusterMap = {};
                 for (i = 0; i < tuples.length; i ++) {
                     var components = graph[tuples[i]];
                     var targets = Object.keys(components);
                     var sourceId = tuples[i];
+                    var cluster;
+
+                    // create new cluster if not exists
+                    if (sourceId in clusterMap) {
+                        cluster = clusterMap[sourceId];
+                    } else {
+                        cluster = [nodeTable[sourceId]];
+                        clusterMap[sourceId] = cluster;
+                    }
+
                     for (j = 0; j < targets.length; j ++) {
                         var targetId = targets[j];
                         var hash0 = sourceId + '_' + targetId;
                         var hash1 = targetId + '_' + sourceId;
-                        if (hash0 in linkSet || hash1 in linkSet) {
-                            continue;
+                        if (!(hash0 in linkSet || hash1 in linkSet)) {
+                            links.push({
+                                'source': nodeTable[sourceId],
+                                'target': nodeTable[targetId],
+                                'value': 1,
+                                'weight': 1
+                            });
+
+                            linkSet[hash0] = 1;
+                            linkSet[hash1] = 1;
                         }
 
-                        links.push({
-                            'source': nodeTable[sourceId],
-                            'target': nodeTable[targetId],
-                            'value': 1,
-                            'weight': 1
-                        });
+                        // merge two existing cluster
+                        if (targetId in clusterMap) {
+                            var mergeCluster = clusterMap[targetId];
+                            if (mergeCluster !== cluster) {
+                                if (targetId === 'tb_amazon_560') {
+                                    console.log('got it');
+                                }
 
-                        linkSet[hash0] = 1;
-                        linkSet[hash1] = 1;
+                                cluster = cluster.concat(mergeCluster);
+                                // assign new cluster
+                                for (k = 0; k < cluster.length; k ++) {
+                                    clusterMap[cluster[k].name] = cluster;
+                                }
+                            }
+                        } else {
+                            // adds to the existing cluster
+                            cluster.push(nodeTable[targetId]);
+                            clusterMap[targetId] = cluster;
+                        }
                     }
                 }
 
@@ -272,15 +301,14 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                     .append("circle")
                     .attr("r", function (d) {
                         var components = graph[d.name];
-                        return Object.keys(components).length * 2 + 10;
+                        return Object.keys(components).length * 2 + 8;
                     }).style("fill", function (d) { return color(d.group % 20); })
                     .on('click', function (d) {
-                        var tableName = e.name;
-                        Table.filter("?=" + e.name.substr(4));
+                        Table.filterByCluster(clusterMap[d.name]);
                     }).call(force.drag);
 
                 node.append("title")
-                    .text(function (d) { return d.tid; });
+                    .text(function (d) { return d.tableName + ':' + d.tid; });
 
                 force.on("tick", function () {
                     link.attr("x1", function (d) { return d.source.x; })
