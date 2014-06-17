@@ -44,7 +44,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
     </path>
 
     <!-- JDK 1.8 check -->
-    <condition property="version1.7">
+    <condition property="version1.8">
         <or>
             <equals arg1="${ant.java.version}" arg2="1.8" />            
         </or>
@@ -119,7 +119,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <!-- Targets per component -->
     <target name="console" depends="core">
-        <fail message="JDK 1.7 required" unless="version1.7" />
+        <fail message="JDK 1.8 required" unless="version1.8" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="console/src"
@@ -132,7 +132,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="core" depends="tools">
         <mkdir dir="${build.dir}" />
-        <fail message="JDK 1.7 required" unless="version1.7" />
+        <fail message="JDK 1.8 required" unless="version1.8" />
         <javac includeantruntime="false"
                fork="true"
                debug="on"
@@ -149,7 +149,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="ruleext" depends="core">
         <mkdir dir="${build.dir}" />
-        <fail message="JDK 1.7 required" unless="version1.7" />
+        <fail message="JDK 1.8 required" unless="version1.8" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="ruleext/src"
@@ -165,7 +165,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="tools">
         <mkdir dir="${build.dir}" />
-        <fail message="JDK 1.7 required" unless="version1.7" />
+        <fail message="JDK 1.8 required" unless="version1.8" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="tools/src"
@@ -179,7 +179,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="service">
         <mkdir dir="${build.dir}" />
-        <fail message="JDK 1.7 required" unless="version1.7" />
+        <fail message="JDK 1.8 required" unless="version1.8" />
         <javac includeantruntime="false"
                fork="true"
                srcdir="service/src"
@@ -192,7 +192,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
     <target name="web" depends="core, service, ruleext, tools">
         <mkdir dir="${build.root}/bin" />
-        <fail message="JDK 1.7 required" unless="version1.7" />
+        <fail message="JDK 1.8 required" unless="version1.8" />
         <javac includeantruntime="false"
                fork="true"
                debug="on"
