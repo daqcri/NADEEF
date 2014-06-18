@@ -16,7 +16,6 @@ package qa.qcri.nadeef.core.pipeline;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.ByteArrayOutputStream;
@@ -35,18 +34,19 @@ public class ViolationExportToCSV extends Operator<Collection<Violation>, File> 
         super(context);
     }
 
-    private String getViolationFileName() {
-        DBConfig dbConfig = NadeefConfiguration.getDbConfig();
-        String dbName = dbConfig.getDatabaseName();
-        return String.format("violation_%s_%d.csv", dbName, System.currentTimeMillis());
-    }
-
     @Override protected File execute(Collection<Violation> violations) throws Exception {
         Tracer tracer = Tracer.getTracer(ViolationExportToCSV.class);
         Path outputPath = NadeefConfiguration.getOutputPath();
         int vid = 0;
-        File file = new File(outputPath.toFile(), getViolationFileName());
-        tracer.info("Export to " + getViolationFileName());
+
+        String filename =
+            String.format("violation_%s_%d.csv",
+                getCurrentContext().getConnectionPool().getSourceDBConfig().getDatabaseName(),
+                System.currentTimeMillis()
+            );
+
+        File file = new File(outputPath.toFile(), filename);
+        tracer.info("Export to " + filename);
         byte[] result = null;
         try (
             ByteArrayOutputStream output = new ByteArrayOutputStream();
