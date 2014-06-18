@@ -13,6 +13,7 @@
 
 package qa.qcri.nadeef.web.rest;
 
+import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
@@ -26,7 +27,8 @@ import static spark.Spark.post;
 
 public class AnalyticAction {
     private static String getPysparkUrl() {
-        return "http://localhost:8888/api/notebooks";
+        String url = NadeefConfiguration.getNotebookUrl();
+        return "http://" + url + "/api/notebooks";
     }
     private static Tracer tracer = Tracer.getTracer(AnalyticAction.class);
 

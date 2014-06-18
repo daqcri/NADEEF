@@ -22,7 +22,7 @@ define(["requester"], function (Requester) {
         if (windowHostname.indexOf("localhost") > -1) {
             urlBase = "http://localhost:8888";
         } else if (windowHostname.indexOf("qcridemos.org") > -1) {
-            urlBase = "http://violet.da.qcridemos.org:1067";
+            urlBase = "http://notebook.da.qcridemos.org:1067";
         } else {
             urlBase = "http://" + window.location.hostname + ":8888";
         }

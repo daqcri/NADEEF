@@ -31,6 +31,7 @@ import java.util.Properties;
 
 /**
  * NADEEF configuration class.
+ * TODO: make it auto-generated from property file.
  */
 public final class NadeefConfiguration {
     private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
@@ -173,6 +174,14 @@ public final class NadeefConfiguration {
         return Integer.parseInt(
             properties.getProperty("general.maxIterationNumber", "10")
         );
+    }
+
+    /**
+     * Gets notebook URL.
+     * @return Notebook URL.
+     */
+    public static String getNotebookUrl() {
+        return properties.getProperty("notebook.url", "localhost:8888");
     }
 
     /**
