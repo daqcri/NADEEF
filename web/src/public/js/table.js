@@ -23,6 +23,7 @@ define(["requester", "state"], function (Requester, State) {
         $("#source-table-info").addClass('hide');
         $('#source-table').removeClass('hide');
         var url = "/" + State.get('project') + "/table/" + tablename;
+        var columnDefs = [];
 
         if (sourceUrl === url) {
             sourceInstance.ajax.reload();
@@ -38,6 +39,7 @@ define(["requester", "state"], function (Requester, State) {
                     dom.empty().append('<thead><tr></tr></thead>');
                     for (var i = 0; i < schema.length; i++) {
                         columns.push({ sTitle: schema[i] });
+                        columnDefs.push({ "defaultContent" : "" });
                     }
                     sourceInstance = dom.DataTable({
                         "scrollX": true,
@@ -48,7 +50,8 @@ define(["requester", "state"], function (Requester, State) {
                         "search": { "search": State.get("filter")},
                         "destroy": true,
                         "columns": columns,
-                        "ajaxDataProp": 'data'
+                        "ajaxDataProp": 'data',
+                        "columnDefs" : columnDefs,
                     });
                 }
             });
