@@ -66,6 +66,7 @@ define(["requester", "state"], function (Requester, State) {
                 success: function (data) {
                     var schema = data.schema;
                     var columns = [];
+                    var columnDefs = [];
                     var dom = $('#' + domId);
                     if ($.fn.dataTable.isDataTable('#' + domId)) {
                         dom.DataTable().destroy();
@@ -73,6 +74,7 @@ define(["requester", "state"], function (Requester, State) {
                     dom.empty().append('<thead><tr></tr></thead>');
                     for (var i = 0; i < schema.length; i++) {
                         columns.push({ sTitle: schema[i] });
+                        columnDefs.push({ "defaultContent" : "" });
                     }
                     var project = State.get('project');
 
@@ -85,6 +87,7 @@ define(["requester", "state"], function (Requester, State) {
                         "search": { "search": State.get("filter")},
                         "destroy": true,
                         "columns": columns,
+                        "columnDefs" : columnDefs,
                         "ajaxDataProp": 'data'
                     });
                 }
@@ -118,6 +121,7 @@ define(["requester", "state"], function (Requester, State) {
             success: function (data) {
                 var dom = $('#' + domId);
                 var columns = [];
+                var columnDefs = [];
                 var instance;
                 var project = State.get('project');
                 schema = data.schema;
@@ -129,6 +133,7 @@ define(["requester", "state"], function (Requester, State) {
                 dom.empty().append('<thead><tr></tr></thead>');
                 for (var i = 0; i < schema.length; i++) {
                     columns.push({ sTitle: schema[i] });
+                    columnDefs.push({ "defaultContent" : "" });
                 }
 
                 var ruleQuery = "";
@@ -194,6 +199,7 @@ define(["requester", "state"], function (Requester, State) {
                     "ajax": { "url": url, "dataSrc": 'data' },
                     "destroy": true,
                     "columns": columns,
+                    "columnDefs" : columnDefs,
                     "search": { "search" : State.get("filter")},
                     "ajaxDataProp": 'data',
                     "lengthMenu": _.isUndefined(length) ? [10, 25, 50] : length

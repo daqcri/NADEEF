@@ -66,11 +66,12 @@ public final class NadeefConfiguration {
             if (tmpPath.exists() && tmpPath.isDirectory())
                 outputPath = tmpPath.toPath();
             else {
-                outputPathString = System.getProperty("user.dir");
-                tracer.info(
-                    "Cannot find directory " + outputPathString +
-                        ", we change to working directory " + outputPathString
-                );
+                String userDir = System.getProperty("user.dir");
+                tracer.info(String.format(
+                    "Cannot find directory %s, we use %s as default.",
+                    outputPathString,
+                    userDir
+                ));
                 outputPath = new File(outputPathString).toPath();
             }
         }

@@ -364,8 +364,8 @@ public class SQLTable extends Table {
                 if (tidIndex != 0) {
                     tupleId = resultSet.getInt(tidIndex);
                 } else {
-                    tracer.info("Table does not have an TID column, use -1 as default.");
-                    tupleId = -1;
+                    tracer.info("Table does not have an TID column, use 1 as default.");
+                    tupleId = 1;
                 }
 
                 for (int i = 1; i <= count; i ++) {
