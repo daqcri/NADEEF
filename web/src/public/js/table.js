@@ -41,17 +41,19 @@ define(["requester", "state"], function (Requester, State) {
                         columns.push({ sTitle: schema[i] });
                         columnDefs.push({ "defaultContent" : "" });
                     }
+
+                    var search = State.get("filter") ? State.get("filter") : "";
                     sourceInstance = dom.DataTable({
                         "scrollX": true,
                         "ordering": false,
                         "processing": true,
                         "serverSide": true,
                         "ajax": { "url": url, "dataSrc": 'data' },
-                        "search": { "search": State.get("filter")},
+                        "search": { "search": search },
                         "destroy": true,
                         "columns": columns,
                         "ajaxDataProp": 'data',
-                        "columnDefs" : columnDefs,
+                        "columnDefs" : columnDefs
                     });
                 }
             });
@@ -80,6 +82,7 @@ define(["requester", "state"], function (Requester, State) {
                         columnDefs.push({ "defaultContent" : "" });
                     }
                     var project = State.get('project');
+                    var search = State.get("filter") ? State.get("filter") : "";
 
                     auditInstance = dom.DataTable({
                         "scrollX": true,
@@ -87,7 +90,7 @@ define(["requester", "state"], function (Requester, State) {
                         "processing": true,
                         "serverSide": true,
                         "ajax": { "url": url, "dataSrc": 'data' },
-                        "search": { "search": State.get("filter")},
+                        "search": { "search": search },
                         "destroy": true,
                         "columns": columns,
                         "columnDefs" : columnDefs,
@@ -145,6 +148,7 @@ define(["requester", "state"], function (Requester, State) {
                 }
 
                 var url = "/" + project + "/violation/" + tableName + "?" + ruleQuery;
+                var search = State.get("filter") ? State.get("filter") : "";
 
                 instance = dom.DataTable({
                     "createdRow": function (row, data) {
@@ -203,7 +207,7 @@ define(["requester", "state"], function (Requester, State) {
                     "destroy": true,
                     "columns": columns,
                     "columnDefs" : columnDefs,
-                    "search": { "search" : State.get("filter")},
+                    "search": { "search" : search },
                     "ajaxDataProp": 'data',
                     "lengthMenu": _.isUndefined(length) ? [10, 25, 50] : length
                 });
