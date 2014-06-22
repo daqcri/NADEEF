@@ -170,7 +170,8 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             CleanPlan cleanPlan;
             if (type.equalsIgnoreCase("udf")) {
                 String currentPath = NadeefConfiguration.getOutputPath().toString();
-                File outputFile = new File(currentPath + File.separator + name + ".java");
+                String fileName = currentPath + File.separator + name + ".java";
+                File outputFile = new File(fileName);
 
                 try (FileOutputStream os = new FileOutputStream(outputFile)) {
                     String code = rule.getCode();
@@ -178,7 +179,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                     os.flush();
                 }
 
-                tracer.info("Loading " + outputFile.getName());
+                tracer.info("Loading " + fileName);
                 String message = CommonTools.compileFile(outputFile);
                 if (!Strings.isNullOrEmpty(message))
                     throw new Exception(message);
