@@ -178,6 +178,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                     os.flush();
                 }
 
+                tracer.info("Loading " + outputFile.getName());
                 String message = CommonTools.compileFile(outputFile);
                 if (!Strings.isNullOrEmpty(message))
                     throw new Exception(message);
@@ -207,7 +208,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
         } catch (Exception ex) {
             tracer.err("Exception in detect", ex);
             TNadeefRemoteException re = new TNadeefRemoteException();
-            re.setType(TNadeefExceptionType.UNKNOWN);
+            re.setType(TNadeefExceptionType.COMPILE_ERROR);
             re.setMessage(ex.getMessage());
             throw re;
         }

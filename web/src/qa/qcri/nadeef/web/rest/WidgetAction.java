@@ -123,7 +123,7 @@ public class WidgetAction {
             JsonArray dataArray = countJson.getAsJsonArray("data");
             int count = dataArray.get(0).getAsInt();
             JsonObject result = null;
-            if (count < 10000) {
+            if (count < 12000) {
                 String sql =
                     "SELECT DISTINCT(VID), TUPLEID, TABLENAME FROM " + getSubquery(filter) + " ORDER BY VID";
                 result = SQLUtil.query(project, sql, true);
