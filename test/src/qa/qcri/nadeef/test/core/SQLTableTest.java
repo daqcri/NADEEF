@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.test.core;
 
 import com.google.common.base.Stopwatch;
+import org.apache.commons.lang.time.StopWatch;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,9 +31,12 @@ import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 @RunWith(Parameterized.class)
 public class SQLTableTest extends NadeefTestBase {
     private String tableName;
+    private String tableName10k;
     private DBConnectionPool connectionFactory;
 
     public SQLTableTest(String config_) {
@@ -54,9 +59,14 @@ public class SQLTableTest extends NadeefTestBase {
             Bootstrap.start(testConfig);
             DBConfig dbConfig = NadeefConfiguration.getDbConfig();
             SQLDialectBase dialectManager =
-                    SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
+                SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
             tableName =
                 CSVTools.dump(dbConfig, dialectManager, TestDataRepository.getDumpTestCSVFile());
+            tableName10k =
+                CSVTools.dump(
+                    dbConfig,
+                    dialectManager,
+                    new File("test/src/qa/qcri/nadeef/test/input/hospital_10k.csv"));
             connectionFactory = DBConnectionPool.createDBConnectionPool(dbConfig, dbConfig);
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,25 +76,18 @@ public class SQLTableTest extends NadeefTestBase {
 
     @After
     public void teardown() {
-        Connection conn = null;
-        try {
-            conn = connectionFactory.getSourceConnection();
+        try (
+            Connection conn = connectionFactory.getSourceConnection();
+            Statement stat = conn.createStatement()
+        ) {
             SQLDialectBase dialectManager =
                 SQLDialectFactory.getNadeefDialectManagerInstance();
-            Statement stat = conn.createStatement();
             stat.execute(dialectManager.dropTable(tableName));
+            stat.execute(dialectManager.dropTable(tableName10k));
             conn.commit();
             Bootstrap.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                    // ignore
-                }
-            }
         }
     }
 
@@ -98,7 +101,7 @@ public class SQLTableTest extends NadeefTestBase {
         Assert.assertEquals(1, cellSets.size());
         Cell cell = (Cell)cellSets.iterator().next();
         Assert.assertTrue(
-                (tableName + ".c").equalsIgnoreCase(cell.getColumn().getFullColumnName())
+            (tableName + ".c").equalsIgnoreCase(cell.getColumn().getFullColumnName())
         );
     }
 
@@ -140,6 +143,43 @@ public class SQLTableTest extends NadeefTestBase {
         }
     }
 
+    @Test public void testGroup2() {
+        SQLTable table = new SQLTable(tableName10k, connectionFactory);
+        Column column0 = new Column(tableName10k, "hospitalowner");
+        Column column1 = new Column(tableName10k, "condition");
+        List<Column> columns = new ArrayList<>();
+        columns.add(column0);
+        columns.add(column1);
+        Collection<Table> blocks = table.groupOn(columns);
+        System.out.println("Blocked " + blocks.size() + " groups.");
+        for (Table x : blocks) {
+            Tuple tuple = x.get(0);
+            for (int i = 1; i < x.size(); i ++) {
+                Tuple tuple1 = x.get(i);
+                Assert.assertEquals(tuple.get(column0), tuple1.get(column0));
+                Assert.assertEquals(tuple.get(column0), tuple1.get(column0));
+            }
+        }
+    }
+
+    @Test public void testGroup3() {
+        SQLTable table = new SQLTable(tableName10k, connectionFactory);
+        Column column0 = new Column(tableName10k, "hospitalowner");
+        Column column1 = new Column(tableName10k, "condition");
+        List<Column> columns = new ArrayList<>();
+        columns.add(column0);
+        columns.add(column1);
+        Collection<Table> blocks = table.groupOnConstrained(columns);
+        System.out.println("Blocked " + blocks.size() + " groups.");
+        for (Table x : blocks) {
+            Tuple tuple = x.get(0);
+            for (int i = 1; i < x.size(); i ++) {
+                Tuple tuple1 = x.get(i);
+                Assert.assertEquals(tuple.get(column0), tuple1.get(column0));
+                Assert.assertEquals(tuple.get(column0), tuple1.get(column0));
+            }
+        }
+    }
     // @Test
     public void testSize() throws InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();

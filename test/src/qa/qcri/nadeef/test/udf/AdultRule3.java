@@ -86,7 +86,7 @@ public class AdultRule3 extends SingleTupleRule {
         int pos = 0;
         while (pos < table.size()) {
             Tuple t = table.get(pos++);
-            output.put(t);
+            output.offer(t);
         }
     }
 

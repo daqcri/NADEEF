@@ -16,9 +16,8 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * MemoryTable represents a table which resides in memory.
@@ -138,43 +137,32 @@ public class MemoryTable extends Table {
             }
         }
 
-        List<Table> groups = Lists.newArrayList();
-        orderBy(columns);
-        if (size() < 2) {
-            groups.add(this);
-            return groups;
-        }
-
-        Tuple lastTuple = get(0);
-        List<Tuple> curList = Lists.newArrayList();
-        curList.add(lastTuple);
-
-        boolean isSameGroup = true;
-        for (int i = 1; i < size(); i ++) {
-            isSameGroup = true;
+        HashMap<String, List<Tuple>> map = new HashMap<>();
+        for (int i = 0; i < size(); i ++) {
             Tuple tuple = get(i);
+            StringBuilder builder = new StringBuilder();
             for (Column column : columns) {
-                Object lvalue = lastTuple.get(column);
-                Object rvalue = tuple.get(column);
-                if (!lvalue.equals(rvalue)) {
-                    isSameGroup = false;
-                    break;
-                }
-
+                Object obj = tuple.get(column);
+                builder.append(obj.toString()).append("_");
             }
 
-            if (isSameGroup) {
-                curList.add(tuple);
+            String hash = builder.toString();
+            // TODO: double-check the correctness
+            if (map.containsKey(hash)) {
+                List<Tuple> tupleList = map.get(hash);
+                tupleList.add(tuple);
             } else {
-                groups.add(new MemoryTable(curList));
-                curList = Lists.newArrayList();
-                curList.add(tuple);
+                List<Tuple> newGroup = new ArrayList<>();
+                newGroup.add(tuple);
+                map.put(hash, newGroup);
             }
-
-            lastTuple = tuple;
         }
 
-        groups.add(new MemoryTable(curList));
-        return groups;
+        List<Table> lists = new ArrayList<>();
+        for (List<Tuple> group : map.values()) {
+            MemoryTable newTable = MemoryTable.of(group);
+            lists.add(newTable);
+        }
+        return lists;
     }
 }

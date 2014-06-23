@@ -46,7 +46,8 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
     <!-- JDK 1.8 check -->
     <condition property="version1.8">
         <or>
-            <equals arg1="${ant.java.version}" arg2="1.8" />            
+            <equals arg1="${ant.java.version}" arg2="1.7" />
+            <equals arg1="${ant.java.version}" arg2="1.8" />
         </or>
     </condition>
 

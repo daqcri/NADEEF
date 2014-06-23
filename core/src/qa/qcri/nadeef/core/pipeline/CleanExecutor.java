@@ -149,9 +149,10 @@ public class CleanExecutor {
      * Gets the output from Repair.
      * @return output object from repair.
      */
-    public Object getRepairOutput() {
+    @SuppressWarnings("unchecked")
+    public <T> T getRepairOutput() {
         String key = repairFlow.getCurrentOutputKey();
-        return cacheManager.get(key);
+        return (T)cacheManager.get(key);
     }
 
     /**

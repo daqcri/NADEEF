@@ -38,7 +38,7 @@ public class MyTestRule1 extends SingleTupleRule {
     public void iterator(Collection<Table> blocks, IteratorStream iteratorStream) {
         Table table = blocks.iterator().next();
         for (int i = 0; i < table.size(); i ++) {
-            iteratorStream.put(table.get(i));
+            iteratorStream.offer(table.get(i));
         }
     }
 }

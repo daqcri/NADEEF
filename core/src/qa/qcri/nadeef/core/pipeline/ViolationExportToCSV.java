@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Exports Violation list to a CSV file
@@ -82,6 +84,10 @@ public class ViolationExportToCSV extends Operator<Collection<Violation>, File> 
             MappedByteBuffer buf =
                 memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, result.length);
             buf.put(result);
+            PerfReport.appendMetric(
+                PerfReport.Metric.ViolationExport,
+                violations.size()
+            );
         }
         return file;
     }

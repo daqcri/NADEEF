@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
  * SQLTable represents a {@link Table} which resides in a database.
  */
 public class SQLTable extends Table {
+    private static Tracer tracer = Tracer.getTracer(SQLTable.class);
+
     private DBConnectionPool connectionFactory;
     private SQLDialectBase dialectManager;
     private String tableName;
@@ -42,8 +44,7 @@ public class SQLTable extends Table {
     private List<Tuple> tuples;
     private long updateTimestamp = -1;
     private long changeTimestamp = System.currentTimeMillis();
-
-    private static Tracer tracer = Tracer.getTracer(SQLTable.class);
+    private Object lock;
 
     //<editor-fold desc="Constructor">
     /**
@@ -61,6 +62,7 @@ public class SQLTable extends Table {
         this.tableName = tableName;
         this.sqlQuery = new SQLQueryBuilder();
         this.sqlQuery.addFrom(tableName);
+        this.lock = new Object();
     }
 
     //</editor-fold>
@@ -83,9 +85,12 @@ public class SQLTable extends Table {
      * @return the schema.
      */
     @Override
-    public synchronized Schema getSchema() {
+    public Schema getSchema() {
         if (schema == null) {
-            syncSchema();
+            synchronized (lock) {
+                if (schema == null)
+                    syncSchema();
+            }
         }
 
         return schema;
@@ -111,7 +116,8 @@ public class SQLTable extends Table {
         for (Column column : columns) {
             sqlQuery.addSelect(column.getColumnName());
         }
-        synchronized (this) {
+
+        synchronized (lock) {
             changeTimestamp = System.currentTimeMillis();
         }
         return this;
@@ -125,7 +131,8 @@ public class SQLTable extends Table {
         for (Column column : columns) {
             sqlQuery.addOrder(column.getColumnName());
         }
-        synchronized (this) {
+
+        synchronized (lock) {
             changeTimestamp = System.currentTimeMillis();
         }
         return this;
@@ -139,7 +146,8 @@ public class SQLTable extends Table {
         for (Predicate expression : expressions) {
             sqlQuery.addWhere(expression.toSQLString());
         }
-        synchronized (this) {
+
+        synchronized (lock) {
             changeTimestamp = System.currentTimeMillis();
         }
         return this;
@@ -148,78 +156,60 @@ public class SQLTable extends Table {
     /**
      * {@inheritDoc}
      */
-    @Override
-    @SuppressWarnings("unchecked")
-    public Collection<Table> groupOn(List<Column> columns) {
-        List result = Lists.newArrayList(this);
-        for (Column column : columns) {
-            List<Table> tmp = Lists.newArrayList();
-            for (Object collection : result) {
-                tmp.addAll(((SQLTable) collection).groupOn(column));
-            }
-            result = tmp;
-        }
-        return result;
+    @Override public Collection<Table> groupOn(List<Column> columns) {
+        // TODO: check memory constraints
+        this.syncDataIfNeeded();
+        MemoryTable table = MemoryTable.of(this.tuples);
+        return table.groupOn(columns);
     }
 
     /**
-     * {@inheritDoc}
+     * Group on operation with memory constraints.
      */
-    @Override
-    public Collection<Table> groupOn(Column column) {
+    public Collection<Table> groupOnConstrained(List<Column> columns) {
         Collection<Table> result = Lists.newArrayList();
-        Connection conn = null;
-        Statement stat = null;
         ResultSet distinctResult = null;
 
-        try {
-            connectionFactory.createIndexIfNotExist(tableName, column.getColumnName());
-            conn = connectionFactory.getSourceConnection();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < columns.size(); i ++) {
+            if (i > 0)
+                builder.append(",");
+            String columnName = columns.get(i).getColumnName();
+            builder.append(columnName);
+            connectionFactory.createIndexIfNotExist(tableName, columnName);
+        }
+        String sql = String.format("SELECT DISTINCT %s FROM %s", builder.toString(), tableName);
+
+        try (Connection conn = connectionFactory.getSourceConnection();
+             Statement stat = conn.createStatement()) {
             // create index ad-hoc.
-            stat = conn.createStatement();
-            stat.setFetchSize(4096);
-            String sql =
-                "SELECT DISTINCT(" + column.getColumnName() + ") FROM " + tableName;
+            stat.setFetchSize(8192);
             distinctResult = stat.executeQuery(sql);
 
             while (distinctResult.next()) {
-                Object value = distinctResult.getObject(1);
-                Predicate columnFilter =
-                    new Predicate.PredicateBuilder()
-                        .left(column)
-                        .isSingle()
-                        .constant(value)
-                        .op(Operation.EQ).build();
-
                 SQLTable newTable =
                     new SQLTable(tableName, connectionFactory);
                 newTable.sqlQuery = new SQLQueryBuilder(sqlQuery);
-                newTable.sqlQuery.addWhere(columnFilter.toSQLString());
+                for (int i = 0; i < columns.size(); i ++) {
+                    Column column = columns.get(i);
+                    Object value = distinctResult.getObject(i + 1);
+                    Predicate columnFilter =
+                        new Predicate.PredicateBuilder()
+                            .left(column)
+                            .isSingle()
+                            .constant(value)
+                            .op(Operation.EQ).build();
+                    newTable.sqlQuery.addWhere(columnFilter.toSQLString());
+                }
                 result.add(newTable);
             }
         } catch (Exception ex) {
             tracer.err(ex.getMessage(), ex);
-            // as a backup plan we try to use in-memory solution.
-            result = super.groupOn(column);
         } finally {
             if (distinctResult != null) {
                 try {
                     distinctResult.close();
                 } catch (Exception ex) {}
-            }
-
-            if (stat != null) {
-                try {
-                    stat.close();
-                } catch (Exception ex) {};
-            }
-
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
             }
         }
         return result;
@@ -271,19 +261,16 @@ public class SQLTable extends Table {
      * Synchronize the data schema with underneath database.
      */
     private void syncSchema() {
-        Connection conn = null;
-        Statement stat = null;
-        ResultSet resultSet = null;
-        try {
-            SQLQueryBuilder builder = new SQLQueryBuilder(sqlQuery);
-            builder.setLimit(1);
-            String sql = builder.build(dialectManager);
+        SQLQueryBuilder builder = new SQLQueryBuilder(sqlQuery);
+        builder.setLimit(1);
+        String sql = builder.build(dialectManager);
+
+        try (
+            Connection conn = connectionFactory.getSourceConnection();
+            Statement stat = conn.createStatement();
+            ResultSet resultSet = stat.executeQuery(sql);
+        ) {
             // tracer.verbose(sql);
-
-            conn = connectionFactory.getSourceConnection();
-            stat = conn.createStatement();
-
-            resultSet = stat.executeQuery(sql);
             ResultSetMetaData metaData = resultSet.getMetaData();
             int count = metaData.getColumnCount();
             Column[] columns = new Column[count];
@@ -297,26 +284,6 @@ public class SQLTable extends Table {
             schema = new Schema(tableName, columns, types);
         } catch (Exception ex) {
             tracer.err("Cannot get valid schema.", ex);
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (Exception ex) {}
-            }
-
-            if (stat != null) {
-                try {
-                    stat.close();
-                } catch (Exception ex) {};
-            }
-
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
         }
     }
 
@@ -326,17 +293,15 @@ public class SQLTable extends Table {
      */
     private boolean syncData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Connection conn = null;
-        Statement stat = null;
+        // prepare for the SQL
+        String sql = sqlQuery.build(dialectManager);
         ResultSet resultSet = null;
-        try {
-            // prepare for the SQL
-            String sql = sqlQuery.build(dialectManager);
-            // tracer.verbose(sql);
-
+        try (
+            Connection conn = connectionFactory.getSourceConnection();
             // get the connection and run the SQL
-            conn = connectionFactory.getSourceConnection();
-            stat = conn.createStatement();
+            Statement stat = conn.createStatement();
+        ) {
+            // tracer.verbose(sql);
             stat.setFetchSize(4096);
             resultSet = stat.executeQuery(sql);
 
@@ -382,14 +347,6 @@ public class SQLTable extends Table {
                 if (resultSet != null) {
                     resultSet.close();
                 }
-
-                if (stat != null) {
-                    stat.close();
-                }
-
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (Exception ex) {}
         }
 
@@ -401,10 +358,12 @@ public class SQLTable extends Table {
         return true;
     }
 
-    private synchronized void syncDataIfNeeded() {
+    private void syncDataIfNeeded() {
         if (updateTimestamp < changeTimestamp) {
-            syncData();
-            updateTimestamp = changeTimestamp;
+            synchronized (lock) {
+                syncData();
+                updateTimestamp = changeTimestamp;
+            }
         }
     }
 
@@ -428,7 +387,7 @@ public class SQLTable extends Table {
     //</editor-fold>
 
     //<editor-fold desc="Finalization methods">
-    public synchronized void recycle() {
+    public void recycle() {
         tuples.clear();
         tuples = null;
         tableName = null;

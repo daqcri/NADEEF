@@ -87,7 +87,7 @@ public class MyRule8 extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < table.size(); j++) {
                             TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                            output.put(pair);
+                            output.offer(pair);
                         }
                     }
                     break;
@@ -143,7 +143,7 @@ public class MyRule8 extends PairTupleRule {
                     fix = builder.left(cell).right(right).build();
                     result.add(fix);
                 } else {
-                    // it is the first time of this cell shown up, put it in the
+                    // it is the first time of this cell shown up, offer it in the
                     // candidate and wait for the next one shown up.
                     candidates.put(column, cell);
                 }

@@ -53,7 +53,7 @@ public class AdultRule2 extends PairTupleRule {
                 Tuple right = table.get(j);
                 if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
                     TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                    iteratorStream.put(pair);
+                    iteratorStream.offer(pair);
                     break;
                 }
             }

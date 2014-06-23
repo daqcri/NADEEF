@@ -13,12 +13,16 @@
 
 package qa.qcri.nadeef.core.pipeline;
 
+import com.google.common.base.Stopwatch;
+import javafx.scene.paint.Stop;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class ViolationCSVExport extends Operator<File, File> {
     public ViolationCSVExport(ExecutionContext context) {
@@ -27,6 +31,7 @@ public class ViolationCSVExport extends Operator<File, File> {
 
     @Override
     protected File execute(File file) throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Tracer tracer = Tracer.getTracer(ViolationCSVExport.class);
         DBConfig config = getCurrentContext().getConnectionPool().getNadeefConfig();
         SQLDialectBase instance =
@@ -38,6 +43,11 @@ public class ViolationCSVExport extends Operator<File, File> {
             tracer.err("Bulk load is not supported.");
         }
 
+        PerfReport.appendMetric(
+            PerfReport.Metric.ViolationExportTime,
+            stopwatch.elapsed(TimeUnit.MILLISECONDS)
+        );
+        stopwatch.stop();
         return file;
     }
 }
