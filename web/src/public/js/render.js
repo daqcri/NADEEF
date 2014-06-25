@@ -413,7 +413,7 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                     .y(function (d) { return d.value; })
                     .staggerLabels(false)
                     .tooltips(true)
-                    .showValues(true)
+                    .showValues(false)
                     .valueFormat(d3.format('d'));
 
                 chart.yAxis
