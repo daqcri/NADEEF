@@ -17,7 +17,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * MemoryTable represents a table which resides in memory.
@@ -143,7 +142,10 @@ public class MemoryTable extends Table {
             StringBuilder builder = new StringBuilder();
             for (Column column : columns) {
                 Object obj = tuple.get(column);
-                builder.append(obj.toString()).append("_");
+                if (obj != null) {
+                    builder.append(obj.toString());
+                }
+                builder.append("_");
             }
 
             String hash = builder.toString();
