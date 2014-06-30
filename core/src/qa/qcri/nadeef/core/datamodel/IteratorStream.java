@@ -79,12 +79,12 @@ public class IteratorStream {
      * Puts the item in the buffer.
      * @param item item.
      */
-    public void put(Object item) {
+    public void offer(Object item) {
         if (buffer.size() == BUFFER_BOUNDARY) {
             try {
                 while (!queue.offer(new ArrayList<>(buffer), TIMEOUT, TimeUnit.MILLISECONDS));
             } catch (InterruptedException e) {
-                tracer.err("put interrupted", e);
+                tracer.err("offer interrupted", e);
             }
             buffer = Lists.newArrayList();
         }

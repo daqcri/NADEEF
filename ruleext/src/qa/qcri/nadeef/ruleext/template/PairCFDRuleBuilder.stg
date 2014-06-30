@@ -101,7 +101,7 @@ public class $CFDName$ extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < table.size(); j++) {
                             TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                            output.put(pair);
+                            output.offer(pair);
                         }
                     }
                     break;

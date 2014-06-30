@@ -72,7 +72,7 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
     public void iterator(Collection<Table> blocks, IteratorStream iteratorStream) {
         Table table = blocks.iterator().next();
         for (int i = 0; i < table.size(); i ++) {
-            iteratorStream.put(table.get(i));
+            iteratorStream.offer(table.get(i));
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
             for (int i = 0; i < table.size(); i++) {
                 Tuple tuple1 = table.get(i);
                 if (newTuplesIDs.contains(tuple1.getTid())) {
-                    iteratorStream.put(tuple1);
+                    iteratorStream.offer(tuple1);
                 }
             }
         }
