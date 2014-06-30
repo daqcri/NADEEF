@@ -14,7 +14,6 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
-import javafx.scene.paint.Stop;
 import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
 import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -40,7 +39,7 @@ public class ViolationCSVExport extends Operator<File, File> {
         if (instance.supportBulkLoad()) {
             instance.bulkLoad(config, "VIOLATION", file.toPath(), false);
         } else {
-            tracer.err("Bulk load is not supported.");
+            instance.fallbackLoad(config, "VIOLATION", file, false);
         }
 
         PerfReport.appendMetric(

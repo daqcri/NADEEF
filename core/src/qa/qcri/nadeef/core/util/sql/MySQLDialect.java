@@ -17,7 +17,10 @@ import com.google.common.base.Preconditions;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Database manager for Apache Derby database.
@@ -84,46 +87,6 @@ public class MySQLDialect extends SQLDialectBase {
     @Override
     public String limitRow(int row) {
         return " LIMIT " + row;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String importFromCSV(ResultSetMetaData metaData, String tableName, String row) {
-        StringBuilder valueBuilder = new StringBuilder(1024);
-        StringBuilder columnBuilder = new StringBuilder(1024);
-        String[] tokens = row.split(",");
-        try {
-            for (int i = 0; i < tokens.length; i ++) {
-                // skip column 0 for tid.
-                columnBuilder
-                    .append("`")
-                    .append(metaData.getColumnName(i + 2))
-                    .append("`");
-
-                int type = metaData.getColumnType(i + 2);
-                if (type == Types.VARCHAR || type == Types.CHAR) {
-                    valueBuilder.append('\'').append(tokens[i]).append('\'');
-                } else {
-                    valueBuilder.append(tokens[i]);
-                }
-
-                if (i != tokens.length - 1) {
-                    valueBuilder.append(',');
-                    columnBuilder.append(',');
-                }
-            }
-        } catch (SQLException ex) {
-            // type info is missing
-            return "Missing SQL types when inserting";
-        }
-
-        ST st = getTemplate().getInstanceOf("InsertTableFromCSV");
-        st.add("tableName", tableName);
-        st.add("columns", columnBuilder.toString());
-        st.add("values", valueBuilder.toString());
-        return st.render();
     }
 
     /**

@@ -29,7 +29,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -102,58 +104,9 @@ public class CSVTools {
             int size = 0;
 
             if (dialectManager.supportBulkLoad()) {
-                size =
-                    dialectManager.bulkLoad(
-                        dbConfig,
-                        tableName,
-                        file.toPath(),
-                        true
-                    );
+                size = dialectManager.bulkLoad(dbConfig, tableName, file.toPath(), true);
             } else {
-                Connection conn = null;
-                Statement stat = null;
-                BufferedReader reader = null;
-                try {
-                    conn = DBConnectionPool.createConnection(dbConfig, false);
-                    stat = conn.createStatement();
-                    ResultSet rs = stat.executeQuery(dialectManager.selectAll(tableName));
-                    ResultSetMetaData metaData = rs.getMetaData();
-                    String line;
-                    int lineCount = 0;
-                    // Batch load the data
-                    reader = new BufferedReader(new FileReader(file));
-                    // skip the header
-                    reader.readLine();
-                    while ((line = reader.readLine()) != null) {
-                        if (Strings.isNullOrEmpty(line)) {
-                            continue;
-                        }
-
-                        lineCount ++;
-                        size += line.toCharArray().length;
-                        String sql = dialectManager.importFromCSV(metaData, tableName, line);
-                        stat.addBatch(sql);
-
-                        if (lineCount % 10240 == 0) {
-                            stat.executeBatch();
-                        }
-                    }
-
-                    stat.executeBatch();
-                    conn.commit();
-                } finally {
-                    if (stat != null) {
-                        stat.close();
-                    }
-
-                    if (conn != null) {
-                        conn.close();
-                    }
-
-                    if (reader != null) {
-                        reader.close();
-                    }
-                }
+                size = dialectManager.fallbackLoad(dbConfig, tableName, file, true);
             }
 
             tracer.info(
@@ -268,40 +221,7 @@ public class CSVTools {
                             true
                         );
                 } else {
-                    try {
-                        conn = DBConnectionPool.createConnection(dbConfig, false);
-                        stat = conn.createStatement();
-                        ResultSet rs = stat.executeQuery(dialectManager.selectAll(fullTableName));
-                        ResultSetMetaData metaData = rs.getMetaData();
-                        String line;
-                        int lineCount = 0;
-                        // Batch load the data
-                        while ((line = reader.readLine()) != null) {
-                            if (Strings.isNullOrEmpty(line)) {
-                                continue;
-                            }
-
-                            lineCount ++;
-                            size += line.toCharArray().length;
-                            sql = dialectManager.importFromCSV(metaData, fullTableName, line);
-                            stat.addBatch(sql);
-
-                            if (lineCount % 10240 == 0) {
-                                stat.executeBatch();
-                            }
-                        }
-
-                        stat.executeBatch();
-                        conn.commit();
-                    } finally {
-                        if (stat != null) {
-                            stat.close();
-                        }
-
-                        if (conn != null) {
-                            conn.close();
-                        }
-                    }
+                    size = dialectManager.fallbackLoad(dbConfig, fullTableName, file, true);
                 }
 
                 tracer.info(

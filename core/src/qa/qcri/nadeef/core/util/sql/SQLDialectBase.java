@@ -14,15 +14,20 @@
 package qa.qcri.nadeef.core.util.sql;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.tools.DBConfig;
+import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Interface for cross vendor Database methods.
@@ -64,16 +69,69 @@ public abstract class SQLDialectBase {
      * @param dbConfig DBConfig.
      * @param tableName table name.
      * @param file CSV file.
-     * @param hasHeader has header.
+     * @param skipHeader has header.
      * @return line of rows loaded.
      */
     public int bulkLoad(
         DBConfig dbConfig,
         String tableName,
         Path file,
-        boolean hasHeader
+        boolean skipHeader
     ) {
         throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    /**
+     * Loads CSV file when bulk load is not used.
+     * @param dbConfig {@link qa.qcri.nadeef.tools.DBConfig}
+     * @param tableName table name.
+     * @param file CSV file.
+     * @param skipHeader skip header.
+     * @return line of rows loaded.
+     */
+    public int fallbackLoad(DBConfig dbConfig, String tableName, File file, boolean skipHeader) {
+        Tracer tracer = Tracer.getTracer(SQLDialectBase.class);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        try (
+            Connection conn = DBConnectionPool.createConnection(dbConfig, false);
+            Statement stat = conn.createStatement();
+            BufferedReader reader = new BufferedReader(new FileReader(file))
+        ) {
+            ResultSet rs = stat.executeQuery(this.selectAll(tableName));
+            ResultSetMetaData metaData = rs.getMetaData();
+            String line;
+            int lineCount = 0;
+            int size = 0;
+            // Batch load the data
+            while ((line = reader.readLine()) != null) {
+                lineCount ++;
+                if (Strings.isNullOrEmpty(line))
+                    continue;
+                if (skipHeader && lineCount == 1)
+                    continue;
+                size += line.toCharArray().length;
+                String sql = this.importFromCSV(metaData, tableName, line);
+                stat.addBatch(sql);
+
+                if (lineCount % 10240 == 0) {
+                    stat.executeBatch();
+                }
+            }
+
+            stat.executeBatch();
+            conn.commit();
+
+            tracer.info(
+                "Dumped " + size + " bytes in " +
+                stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
+            );
+            stopwatch.stop();
+            return lineCount;
+        } catch (Exception ex) {
+            tracer.err("Cannot load file " + file.getName(), ex);
+        }
+        return 0;
     }
 
     /**
@@ -213,9 +271,44 @@ public abstract class SQLDialectBase {
      * @param row row value.
      * @return SQL statement.
      */
-    public abstract String importFromCSV(
+    private String importFromCSV(
         ResultSetMetaData metaData,
         String tableName,
         String row
-    );
+    ) {
+        StringBuilder valueBuilder = new StringBuilder(1024);
+        StringBuilder columnBuilder = new StringBuilder(1024);
+        String[] tokens = row.split(",");
+        try {
+            int delta = tokens.length == metaData.getColumnCount() ? 0 : 1;
+            for (int i = 0; i < tokens.length; i ++) {
+                String columnName = metaData.getColumnName(i + 1 + delta);
+                int type = metaData.getColumnType(i + 1 + delta);
+                columnBuilder
+                    .append("`")
+                    .append(columnName)
+                    .append("`");
+
+                if (type == Types.VARCHAR || type == Types.CHAR) {
+                    valueBuilder.append('\'').append(tokens[i]).append('\'');
+                } else {
+                    valueBuilder.append(tokens[i]);
+                }
+
+                if (i != tokens.length - 1) {
+                    valueBuilder.append(',');
+                    columnBuilder.append(',');
+                }
+            }
+        } catch (SQLException ex) {
+            // type info is missing
+            return "Missing SQL types when inserting";
+        }
+
+        ST st = getTemplate().getInstanceOf("InsertTableFromCSV");
+        st.add("tableName", tableName);
+        st.add("columns", columnBuilder.toString());
+        st.add("values", valueBuilder.toString());
+        return st.render();
+    }
 }

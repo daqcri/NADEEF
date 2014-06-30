@@ -49,11 +49,11 @@ public class DerbySQLDialect extends SQLDialectBase {
      * {@inheritDoc}
      */
     @Override
-    public int bulkLoad(DBConfig dbConfig, String tableName, Path file, boolean hasHeader) {
+    public int bulkLoad(DBConfig dbConfig, String tableName, Path file, boolean skipHeader) {
         Tracer tracer = Tracer.getTracer(DerbySQLDialect.class);
         Path inputFile = file;
         int lines = 0;
-        if (hasHeader) {
+        if (skipHeader) {
             // if the header exists we need to remove it before doing loading
             try {
                 // copy to a temp file.
@@ -110,7 +110,7 @@ public class DerbySQLDialect extends SQLDialectBase {
                 }
 
                 // remove the temporary file
-                if (hasHeader) {
+                if (skipHeader) {
                     Files.delete(inputFile);
                 }
             } catch (Exception ex) {}
@@ -208,43 +208,6 @@ public class DerbySQLDialect extends SQLDialectBase {
     @Override
     public String limitRow(int row) {
         return " FETCH FIRST " + row + " ROW ONLY";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String importFromCSV(ResultSetMetaData metaData, String tableName, String row) {
-        StringBuilder valueBuilder = new StringBuilder(1024);
-        StringBuilder columnBuilder = new StringBuilder(1024);
-        String[] tokens = row.split(",");
-        try {
-            for (int i = 0; i < tokens.length; i ++) {
-                // skip column 0 for tid.
-                columnBuilder.append(metaData.getColumnName(i + 2));
-
-                int type = metaData.getColumnType(i + 2);
-                if (type == Types.VARCHAR || type == Types.CHAR) {
-                    valueBuilder.append('\'').append(tokens[i]).append('\'');
-                } else {
-                    valueBuilder.append(tokens[i]);
-                }
-
-                if (i != tokens.length - 1) {
-                    valueBuilder.append(',');
-                    columnBuilder.append(',');
-                }
-            }
-        } catch (SQLException ex) {
-            // type info is missing
-            return "Missing SQL types when inserting";
-        }
-
-        ST st = getTemplate().getInstanceOf("InsertTableFromCSV");
-        st.add("tableName", tableName.toUpperCase());
-        st.add("columns", columnBuilder.toString());
-        st.add("values", valueBuilder.toString());
-        return st.render();
     }
 
     private static int removeFirstLine(Path file) throws IOException {

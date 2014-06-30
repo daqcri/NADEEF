@@ -25,7 +25,10 @@ import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.FileReader;
 import java.nio.file.Path;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -86,43 +89,6 @@ public class PostgresSQLDialect extends SQLDialectBase {
         return " LIMIT " + row;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String importFromCSV(ResultSetMetaData metaData, String tableName, String row) {
-        StringBuilder valueBuilder = new StringBuilder(1024);
-        StringBuilder columnBuilder = new StringBuilder(1024);
-        String[] tokens = row.split(",");
-        try {
-            for (int i = 0; i < tokens.length; i ++) {
-                // skip column 0 for tid.
-                columnBuilder.append(metaData.getColumnName(i + 2));
-
-                int type = metaData.getColumnType(i + 2);
-                if (type == Types.VARCHAR || type == Types.CHAR) {
-                    valueBuilder.append('\'').append(tokens[i]).append('\'');
-                } else {
-                    valueBuilder.append(tokens[i]);
-                }
-
-                if (i != tokens.length - 1) {
-                    valueBuilder.append(',');
-                    columnBuilder.append(',');
-                }
-            }
-        } catch (SQLException ex) {
-            // type info is missing
-            return "Missing SQL types when inserting";
-        }
-
-        ST st = getTemplate().getInstanceOf("InsertTableFromCSV");
-        st.add("tableName", tableName.toUpperCase());
-        st.add("columns", columnBuilder.toString());
-        st.add("values", valueBuilder.toString());
-        return st.render();
-    }
-
     @Override public boolean supportBulkLoad() {
         return true;
     }
@@ -135,7 +101,7 @@ public class PostgresSQLDialect extends SQLDialectBase {
         DBConfig dbConfig,
         String tableName,
         Path file,
-        boolean hasHeader
+        boolean skipHeader
     ) {
         Tracer tracer = Tracer.getTracer(PostgresSQLDialect.class);
         tracer.info("Bulk load CSV file " + file.toString());
@@ -158,12 +124,12 @@ public class PostgresSQLDialect extends SQLDialectBase {
                     "COPY %s (%s) FROM STDIN WITH (FORMAT 'csv', DELIMITER ',', HEADER %s)",
                     tableName,
                     builder.toString(),
-                    hasHeader ? "true" : "false");
+                    skipHeader ? "true" : "false");
             copyManager.copyIn(sql, reader);
             watch.stop();
             tracer.info("Bulk load finished in " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms");
         } catch (Exception ex) {
-            tracer.err("Loading csv file " + file.getFileName() + " failed.");
+            tracer.err("Loading csv file " + file.getFileName() + " failed.", ex);
             return 1;
         }
         return 0;

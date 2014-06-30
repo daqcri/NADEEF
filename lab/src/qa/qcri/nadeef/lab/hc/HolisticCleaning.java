@@ -206,7 +206,7 @@ public class HolisticCleaning extends FixDecisionMaker {
             Fix fix =
                 new Fix.Builder()
                 .left(topCell)
-                .right(topCell.getValue())
+                .right(topCell)
                 .op(Operation.EQ).build();
             result.add(fix);
         }
