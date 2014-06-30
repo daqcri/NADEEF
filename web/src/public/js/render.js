@@ -30,6 +30,11 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
             } else {
                 var sum = clean + polluted;
                 var cleanPerc = Math.round((clean / sum) * 100);
+                // ceiling
+                if (cleanPerc === 0 && clean !== 0) {
+                    cleanPerc = 1;
+                }
+
                 var pollutedPerc = 100 - cleanPerc;
 
                 values = [
@@ -419,7 +424,7 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                 chart.yAxis
                     .tickFormat(d3.format('d'))
                     .axisLabelDistance(50)
-                    .axisLabel("Number of direct duplication");
+                    .axisLabel("Number of involved violation");
 
                 chart.showXAxis(false);
 
@@ -436,7 +441,7 @@ define(['table', 'requester', 'nvd3'], function (Table, Requester) {
                     .attr("x", container.width() / 2 - 100)
                     .attr("y", container.height() - 20)
                     .style("weight", "bold")
-                    .text("Tuple ID in duplication rank");
+                    .text("Violation rank by tuple");
 
                 nv.utils.windowResize(chart.update);
 
