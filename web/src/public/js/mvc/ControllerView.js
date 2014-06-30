@@ -44,7 +44,8 @@ define([
             ['<div class="alert alert-success" id="home-alert-info">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']
+        ].join(''));
 
         window.setTimeout(function () { $('#home-alert-info').alert('close'); }, 3000);
     }

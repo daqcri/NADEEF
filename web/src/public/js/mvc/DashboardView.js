@@ -15,7 +15,7 @@ define([
     "render",
     "text!mvc/template/tab.template.html",
     "text!mvc/template/dashboard.template.html"
-], function(renderer, widget_template, dashboard_template) {
+], function (renderer, widgetTemplate, dashboardTemplate) {
     "use strict";
     function start() {
         render();
@@ -27,7 +27,7 @@ define([
     }
     
     function render() {
-        var tabTemplate = _.template(widget_template);
+        var tabTemplate = _.template(widgetTemplate);
         var overviewHtml =
             tabTemplate({tabs:
                 [{tag : "overview", head : "Overview", isActive : true}]
@@ -49,7 +49,7 @@ define([
                   isActive : true}]
             });
         
-        var dashboardTemplate = _.template(dashboard_template);
+        var dashboardTemplate = _.template(dashboardTemplate);
         var dashboardHtml = dashboardTemplate(
             {
                 placeholder1: overviewHtml,
