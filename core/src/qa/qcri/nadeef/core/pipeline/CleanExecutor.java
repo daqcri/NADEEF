@@ -149,9 +149,10 @@ public class CleanExecutor {
      * Gets the output from Repair.
      * @return output object from repair.
      */
-    public Object getRepairOutput() {
+    @SuppressWarnings("unchecked")
+    public <T> T getRepairOutput() {
         String key = repairFlow.getCurrentOutputKey();
-        return cacheManager.get(key);
+        return (T)cacheManager.get(key);
     }
 
     /**
@@ -277,7 +278,9 @@ public class CleanExecutor {
             detectFlow
                 .setInputKey(cacheManager.getKeyForNothing())
                 .addNode(new ViolationDetector(context), 6)
-                .addNode(new ViolationExport(context));
+                // .addNode(new ViolationExport(context))
+                .addNode(new ViolationExportToCSV(context))
+                .addNode(new ViolationCSVExport(context));
 
             // assemble the repair flow
             repairFlow = new Flow("repair");

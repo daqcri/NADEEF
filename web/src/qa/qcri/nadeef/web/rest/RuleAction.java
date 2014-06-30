@@ -59,7 +59,7 @@ public class RuleAction {
 
             for (String ruleName : ruleNames)
                 SQLUtil.update(project, dialectInstance.deleteRule(ruleName));
-            return null;
+            return 0;
         });
 
         post("/:project/data/rule", (request, response) -> {

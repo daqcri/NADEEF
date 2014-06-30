@@ -205,6 +205,14 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function (Router, State) {
             get({ url: "/project", type: "POST", data: { project : projectName }}), x);
     }
 
+    function getNotebooks(x) {
+        return request(get({ url: "/analytic/notebooks", type: "GET"}), x);
+    }
+
+    function createNotebook(projectName, x) {
+        return request(get({ url: "analytic/" + projectName, type: "POST"}), x);
+    }
+
     return {
         doDetect : doDetect,
         doVerify : doVerify,
@@ -225,6 +233,8 @@ define(['router', 'state', 'ruleminer', 'blockUI'], function (Router, State) {
         getViolationRelation: getViolationRelation,
         getRuleDistribution: getRuleDistribution,
         getTupleRank: getTupleRank,
-        getViolationMetaData: getViolationMetaData
+        getViolationMetaData: getViolationMetaData,
+        getNotebooks: getNotebooks,
+        createNotebook: createNotebook
     };
 });

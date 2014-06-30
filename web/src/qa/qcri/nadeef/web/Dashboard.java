@@ -40,7 +40,7 @@ public final class Dashboard {
 
         get("/", (request, response) -> {
             response.redirect("/index.html");
-            return null;
+            return 0;
         });
 
         exception(Exception.class, (ex, request, response) -> {
@@ -58,5 +58,6 @@ public final class Dashboard {
         SourceAction.setup(dialect);
         RemoteAction.setup(dialect);
         ProjectAction.setup(dialect);
+        AnalyticAction.setup(dialect);
     }
 }

@@ -122,14 +122,17 @@ public class WidgetAction {
                 SQLUtil.query(project, dialectInstance.countTable("violation"), true);
             JsonArray dataArray = countJson.getAsJsonArray("data");
             int count = dataArray.get(0).getAsInt();
-            if (count > 10000)
-                return null;
-
-            String sql =
-                "SELECT DISTINCT(VID), TUPLEID FROM " + getSubquery(filter) + " ORDER BY VID";
-
-            return SQLUtil.query(project, sql, true);
-        });
+            JsonObject result = null;
+            if (count < 12000) {
+                String sql =
+                    "SELECT DISTINCT(VID), TUPLEID, TABLENAME FROM " + getSubquery(filter) + " ORDER BY VID";
+                result = SQLUtil.query(project, sql, true);
+            } else {
+                result = new JsonObject();
+                result.add("code", new JsonPrimitive(2));
+            }
+            return result;
+        }, new RenderResponseTransformer());
 
         get("/:project/widget/overview", (request, response) -> {
             response.type("application/json");

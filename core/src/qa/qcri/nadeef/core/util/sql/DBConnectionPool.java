@@ -103,13 +103,12 @@ public class DBConnectionPool {
      */
     public void shutdown() {
         // drop all the indexes.
-        Connection conn = null;
-        Statement stat = null;
-        if (sourcePool != null) {
-            try {
-                conn = sourcePool.getConnection();
-                stat = conn.createStatement();
 
+        if (sourcePool != null) {
+            try (
+                Connection conn = sourcePool.getConnection();
+                Statement stat = conn.createStatement();
+            ) {
                 synchronized (indexLockObject) {
                     for (String indexName : localCache) {
                         int count =
@@ -129,22 +128,12 @@ public class DBConnectionPool {
                             indexCount.put(indexName, count);
                         }
                     }
-
                     conn.commit();
-                    localCache.clear();
                 }
+
+                localCache.clear();
             } catch (Exception ex) {
                 tracer.err("Exceptions happen when closing the connection pool.", ex);
-            } finally {
-                try {
-                    if (conn != null) {
-                        conn.close();
-                    }
-
-                    if (stat != null) {
-                        stat.close();
-                    }
-                } catch (Exception ex) {}
             }
         }
 

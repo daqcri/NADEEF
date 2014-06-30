@@ -105,7 +105,7 @@ define(["d3"], function () {
         this.onLineAddedHandlers.push(f);
     };
 
-    NodeEditor.prototype.getPathPoints = function() {
+    NodeEditor.prototype.getPathPoints = function () {
         // path points { key: 'l1r2', points: [ x, y ] }
         var pathPoints = [];
         for (var i = 0; i < this.conns.length; i ++) {
@@ -121,11 +121,11 @@ define(["d3"], function () {
         return pathPoints;
     };
 
-    NodeEditor.prototype.redrawLine = function() {
+    NodeEditor.prototype.redrawLine = function () {
         var pathPoints = this.getPathPoints();
         var _this = this;
         var paths =
-            this.svg.selectAll("path").data(pathPoints, function(d) { return d.key; });
+            this.svg.selectAll("path").data(pathPoints, function (d) { return d.key; });
 
         paths.enter().append("path");
         paths.exit().remove();
@@ -140,10 +140,10 @@ define(["d3"], function () {
                     f(d);
                 });
             })
-            .on("mouseover", function() {
-                d3.select(this).style("stroke-width", 5)
+            .on("mouseover", function () {
+                d3.select(this).style("stroke-width", 5);
             })
-            .on("mouseout", function() {
+            .on("mouseout", function () {
                 d3.select(this).style("stroke-width", 2);
             }
         );
@@ -245,25 +245,25 @@ define(["d3"], function () {
             .data(__.columns)
             .enter()
             .append('g')
-            .attr("transform", function(d, i) {
+            .attr("transform", function (d, i) {
                 return translate(0, (i + 1) * __.boxHeight);
             })
-            .attr("id", function(d, i) {
+            .attr("id", function (d, i) {
                 return leftness == true ? "l" + i : "r" + i;
             })
-            .on("mouseover", function() {
+            .on("mouseover", function () {
                 d3.select(this)
                     .select("rect")
                     .style("stroke-width", 5)
                     .style("stroke", "green");
             })
-            .on("mouseout", function() {
+            .on("mouseout", function () {
                 d3.select(this)
                     .select("rect")
                     .style("stroke", "#777")
                     .style("stroke-width", 1);
             })
-            .on("click", function(d) {
+            .on("click", function (d) {
                 if (this.id[0] === 'l') {
                     if (!_.isEmpty(__.nodeEditor.pin0)) {
                         console.log("Cannot pin the same table.");
@@ -303,7 +303,7 @@ define(["d3"], function () {
                     __.nodeEditor.redrawLine();
                     __.nodeEditor.pin0 = null;
                     __.nodeEditor.pin1 = null;
-                    _.each(__.nodeEditor.onLineAddedHandlers, function(f) { f.call(d); });
+                    _.each(__.nodeEditor.onLineAddedHandlers, function (f) { f.call(d); });
                 }
             }
         );
@@ -317,7 +317,7 @@ define(["d3"], function () {
             .attr("height", __.boxHeight);
 
         tableItems.append("svg:circle")
-            .attr("cx", function() { return leftness ? __.boxWidth + 10 : -10; })
+            .attr("cx", function () { return leftness ? __.boxWidth + 10 : -10; })
             .attr("cy", __.boxHeight * 0.5)
             .attr("r", 2)
             .style("fill", "none")
@@ -329,19 +329,19 @@ define(["d3"], function () {
             .style("font-family", "Aria")
             .attr("x", fontOffsetX)
             .attr("y", fontOffsetY)
-            .text(function(d) { return d; });
+            .text(function (d) { return d; });
     };
 
-    NodeEditor.prototype.getConnection = function() {
+    NodeEditor.prototype.getConnection = function () {
         return this.conns;
     };
 
-    NodeEditor.prototype.updateConnection = function(x) {
+    NodeEditor.prototype.updateConnection = function (x) {
         this.conns = x;
         this.redrawLine();
     };
 
-    NodeEditor.prototype.reset = function() {
+    NodeEditor.prototype.reset = function () {
         this.updateConnection([]);
     };
 
@@ -349,12 +349,12 @@ define(["d3"], function () {
         this.left = pin0;
         this.right = pin1;
         this.property = property ? property : this.defaultProperty();
-        this.id = 'l' + pin0.index + 'r' + pin1.index
+        this.id = 'l' + pin0.index + 'r' + pin1.index;
     }
 
     return {
         Create : NodeEditor,
         CreatePin : Pin,
         CreateConnection : Connection
-    }
+    };
 });

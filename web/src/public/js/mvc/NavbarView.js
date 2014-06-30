@@ -15,10 +15,11 @@ define([
     "router",
     "state",
     "requester",
+    "analytic",
     "text!mvc/template/navbar.template.html",
     "text!mvc/template/project.template.html",
     "mvc/HomeView"
-], function (Router, State, Requester, NavbarTemplate, ProjectTemplate, HomeView) {
+], function (Router, State, Requester, Analytic, NavbarTemplate, ProjectTemplate, HomeView) {
     "use strict";
     function err(msg) {
         $('#projectModal-alert').html([
@@ -54,6 +55,10 @@ define([
 
         $("#refresh").on('click', HomeView.refresh);
 
+        $("#analytic").on('click', function () {
+            Analytic.start(State.get("project"));
+        });
+
         $(document).on('keyup', function (e) {
             if (e.which === 27) {
                 triggerFilter('');
@@ -86,7 +91,7 @@ define([
                 var match = pattern.exec(newProject);
 
                 // regexp check failed.
-                if (match !== newProject) {
+                if (match && match[0] !== newProject) {
                     $("#project-input").addClass("error");
                     err("Input text has incorrect char.");
                     return;

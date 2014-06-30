@@ -23,6 +23,7 @@ define(["requester", "state"], function (Requester, State) {
         $("#source-table-info").addClass('hide');
         $('#source-table').removeClass('hide');
         var url = "/" + State.get('project') + "/table/" + tablename;
+        var columnDefs = [];
 
         if (sourceUrl === url) {
             sourceInstance.ajax.reload();
@@ -38,17 +39,21 @@ define(["requester", "state"], function (Requester, State) {
                     dom.empty().append('<thead><tr></tr></thead>');
                     for (var i = 0; i < schema.length; i++) {
                         columns.push({ sTitle: schema[i] });
+                        columnDefs.push({ "defaultContent" : "" });
                     }
+
+                    var search = State.get("filter") ? State.get("filter") : "";
                     sourceInstance = dom.DataTable({
                         "scrollX": true,
                         "ordering": false,
                         "processing": true,
                         "serverSide": true,
                         "ajax": { "url": url, "dataSrc": 'data' },
-                        "search": { "search": State.get("filter")},
+                        "search": { "search": search },
                         "destroy": true,
                         "columns": columns,
-                        "ajaxDataProp": 'data'
+                        "ajaxDataProp": 'data',
+                        "columnDefs" : columnDefs
                     });
                 }
             });
@@ -66,6 +71,7 @@ define(["requester", "state"], function (Requester, State) {
                 success: function (data) {
                     var schema = data.schema;
                     var columns = [];
+                    var columnDefs = [];
                     var dom = $('#' + domId);
                     if ($.fn.dataTable.isDataTable('#' + domId)) {
                         dom.DataTable().destroy();
@@ -73,8 +79,10 @@ define(["requester", "state"], function (Requester, State) {
                     dom.empty().append('<thead><tr></tr></thead>');
                     for (var i = 0; i < schema.length; i++) {
                         columns.push({ sTitle: schema[i] });
+                        columnDefs.push({ "defaultContent" : "" });
                     }
                     var project = State.get('project');
+                    var search = State.get("filter") ? State.get("filter") : "";
 
                     auditInstance = dom.DataTable({
                         "scrollX": true,
@@ -82,9 +90,10 @@ define(["requester", "state"], function (Requester, State) {
                         "processing": true,
                         "serverSide": true,
                         "ajax": { "url": url, "dataSrc": 'data' },
-                        "search": { "search": State.get("filter")},
+                        "search": { "search": search },
                         "destroy": true,
                         "columns": columns,
+                        "columnDefs" : columnDefs,
                         "ajaxDataProp": 'data'
                     });
                 }
@@ -118,6 +127,7 @@ define(["requester", "state"], function (Requester, State) {
             success: function (data) {
                 var dom = $('#' + domId);
                 var columns = [];
+                var columnDefs = [];
                 var instance;
                 var project = State.get('project');
                 schema = data.schema;
@@ -129,6 +139,7 @@ define(["requester", "state"], function (Requester, State) {
                 dom.empty().append('<thead><tr></tr></thead>');
                 for (var i = 0; i < schema.length; i++) {
                     columns.push({ sTitle: schema[i] });
+                    columnDefs.push({ "defaultContent" : "" });
                 }
 
                 var ruleQuery = "";
@@ -137,6 +148,7 @@ define(["requester", "state"], function (Requester, State) {
                 }
 
                 var url = "/" + project + "/violation/" + tableName + "?" + ruleQuery;
+                var search = State.get("filter") ? State.get("filter") : "";
 
                 instance = dom.DataTable({
                     "createdRow": function (row, data) {
@@ -163,7 +175,7 @@ define(["requester", "state"], function (Requester, State) {
                         }
 
                         // create event for click filter
-                        cells.on("click", function (e) {
+                        cells.on("click", function () {
                             var vid = this.getAttribute("data");
                             if (violationInstance1 != null) {
                                 violationInstance1.search(":=" + vid).draw();
@@ -194,11 +206,13 @@ define(["requester", "state"], function (Requester, State) {
                     "ajax": { "url": url, "dataSrc": 'data' },
                     "destroy": true,
                     "columns": columns,
-                    "search": { "search" : State.get("filter")},
+                    "columnDefs" : columnDefs,
+                    "search": { "search" : search },
                     "ajaxDataProp": 'data',
                     "lengthMenu": _.isUndefined(length) ? [10, 25, 50] : length
                 });
 
+                instance.tableName = tableName;
                 if (isFirst) {
                     violationInstance1 = instance;
                 } else {
@@ -260,18 +274,63 @@ define(["requester", "state"], function (Requester, State) {
     }
 
     function filter(e) {
-        if (violationInstance1 != null) {
+        if (violationInstance1) {
             violationInstance1.search(e).draw();
         }
 
-        if (violationInstance2 != null) {
+        if (violationInstance2) {
             violationInstance2.search(e).draw();
+        }
+    }
+
+    function filterByCluster(e) {
+        if (!_.isArray(e)) {
+            console.log("Input is not an array.");
+            return;
+        }
+
+        var query = {},
+            tableName,
+            ids,
+            str;
+
+        for (var i = 0; i < e.length; i ++) {
+            tableName = e[i].tableName;
+            if (tableName in query) {
+                ids = query[tableName];
+            } else {
+                query[tableName] = [];
+                ids = query[tableName];
+            }
+            ids.push(e[i].tid);
+        }
+
+        var tables = Object.keys(query);
+        for (var j = 0; j < tables.length; j ++) {
+            tableName = tables[j];
+            str = '?=';
+            ids = query[tableName];
+            for (var k = 0; k < ids.length; k ++) {
+                if (k !== 0) {
+                    str += ',';
+                }
+                str += ids[k];
+            }
+
+            if (violationInstance1 && violationInstance1.tableName === tableName) {
+                violationInstance1.search(str).draw();
+            } else if (violationInstance2 && violationInstance2.tableName === tableName) {
+                violationInstance2.search(str).draw();
+            } else {
+                console.log("Table name " + tableName + " is not found.");
+            }
         }
     }
 
     return {
         load : load,
-        filter : filter
+        filter : filter,
+        filterByCluster : filterByCluster
     };
 });
 

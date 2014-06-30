@@ -38,7 +38,7 @@ public class TableAction {
                 throw new IllegalArgumentException("Input is not valid");
             String sql = String.format(
                 "select count(*), tablename from violation " +
-                    "where rid = '%s' group by tablename", rule
+                "where rid = '%s' group by tablename", rule
             );
             return SQLUtil.query(project, sql, true);
         });
@@ -93,27 +93,21 @@ public class TableAction {
             int interval =
                 Strings.isNullOrEmpty(interval_) ? 10 : Integer.parseInt(interval_);
 
-            String sql = String.format(
+            String rawSql = String.format(
                 "select a.*, b.vid, b._attrs from %s a inner join " +
                     "(select vid, tupleid, array_agg(attribute) as _attrs from violation " +
                     "where rid='%s' and tablename = '%s' %s %s %s group by vid, tupleid) b " +
-                    "on a.tid = b.tupleid order by vid limit %d offset %d",
+                    "on a.tid = b.tupleid order by vid",
                 tableName,
                 rule,
                 tableName,
                 vidFilter,
                 tidFilter,
-                columnFilter,
-                interval,
-                start);
+                columnFilter);
 
-            JsonObject result = SQLUtil.query(project, sql, true);
-
-            String countSql = String.format(
-                "select count(distinct(vid, tupleid)) from violation where rid = '%s'",
-                rule
-            );
-
+            String limitSql = String.format("%s limit %d offset %d", rawSql, interval, start);
+            JsonObject result = SQLUtil.query(project, limitSql, true);
+            String countSql = String.format("select count(*) from (%s) a", rawSql);
             JsonObject countJson = SQLUtil.query(project, countSql, false);
             JsonArray dataArray = countJson.getAsJsonArray("data");
             int count = dataArray.get(0).getAsInt();

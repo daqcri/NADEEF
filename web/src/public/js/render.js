@@ -14,7 +14,7 @@
 /**
  * Render module which draws different visualization graphs.
  */
-define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, Requester) {
+define(['table', 'requester', 'nvd3'], function (Table, Requester) {
     "use strict";
     function drawOverview(id) {
         Requester.getOverview(function (json) {
@@ -50,6 +50,8 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
                     .datum(values)
                     .transition(10)
                     .call(chart);
+
+                nv.utils.windowResize(chart.update);
                 return chart;
             });
         });
@@ -112,141 +114,225 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
         });
     }
 
+    var svg;        // outer svg
+    var link;       // svg links
+    var node;       // svg nodes
+    var clusterMap; // node cluster map;
     function drawViolationRelation(id) {
         Requester.getViolationRelation({
             success: function (data) {
-                var width = $('#violationRelation').width();
-                var height = $('#violationRelation').height();
+                var width = $('#' + id).width();
+                var height = $('#' + id).height();
 
                 $("#" + id + " svg").empty();
                 var result = data.data;
                 // TODO: find a better pattern
-                if (result === 1) {
+                if (data.code === 2) {
                     d3.select("#" + id + " svg")
                         .append("text")
-                        .attr("x", 200)
-                        .attr("y", 150)
+                        .attr("x", width / 2 - 80)
+                        .attr("y", height / 2 - 50)
                         .style("font-size", "20px")
+                        .style("font-weight", "bold")
                         .text("There are too many violations to show.");
                     return;
                 }
-                var links = [];
-                var nodes = [];
 
-                var vid;
-                var tid;
-                var groupId;
-                var maxGroupId = 0;
-                var pre = null;
-                var conns = [];
-                var hash = new HashMap.Map();
+                if (data.data && data.data.length === 0) {
+                    d3.select("#" + id + " svg")
+                        .append("text")
+                        .attr("x", width / 2 - 80)
+                        .attr("y", height / 2 - 50)
+                        .style("font-size", "20px")
+                        .style("font-weight", "bold")
+                        .text("No Data Available.");
+                    return;
+                }
 
-                // process the graph
-                for (var i = 0; i < result.length; i++) {
-                    vid = result[i][0];
-                    tid = result[i][1];
-                    if (hash.hasKey(tid)) {
-                        groupId = hash.get(tid);
-                    } else {
-                        groupId = maxGroupId;
-                        hash.put(tid, maxGroupId);
-                        nodes.push({'name': tid, 'group': groupId});
-                        maxGroupId++;
-                    }
+                var i,
+                    j,
+                    k,
+                    tmp,
+                    graph = {},
+                    nodes = [],
+                    nodeTable = {},
+                    tableHash = {},
+                    buildId = function (d) { return d[2] + '_' + d[1]; };
 
-                    if (vid === pre) {
-                        for (var j = 0; j < conns.length; j++) {
-                            var gid = hash.get(conns[j]);
-                            // TODO: use different value
-                            links.push(
-                                {'source': gid,
-                                    'target': groupId,
-                                    'value': 1,
-                                    'weight': 1
-                                }
-                            );
+                // first loop to find distinct nodes
+                for (i = 0; i < result.length; i ++) {
+                    tmp = buildId(result[i]);
+                    if (!(tmp in graph)) {
+                        graph[tmp] = {};
+                        var tableName = result[i][2];
+                        var tableId;
+                        if (tableName in tableHash) {
+                            tableId = tableHash[tableName];
+                        } else {
+                            var keys = Object.keys(tableHash);
+                            tableId = keys.length + 1;
+                            tableHash[tableName] = tableId;
                         }
-                        conns.push(tid);
-                    } else {
-                        conns = [];
-                        conns.push(tid);
-                        pre = vid;
+                        var newNode = {
+                                'name': tmp,
+                                'group': tableId,
+                                'tableName' : tableName,
+                                'tid' : result[i][1]
+                            };
+                        nodeTable[tmp] = newNode;
+                        nodes.push(newNode);
                     }
                 }
 
-                nv.addGraph(function () {
-                    var color = d3.scale.category20();
+                // second loop to create graph matrix
+                var preVid = null,
+                    cc = [];
 
-                    var svg = d3.select("#" + id + " svg")
-                        .attr("pointer-events", "all")
-                        .append('svg:g')
-                        .call(d3.behavior.zoom().on("zoom", function () {
-                            svg.attr(
-                                "transform",
-                                    "translate(" + d3.event.translate + ")" +
-                                    " scale(" + d3.event.scale + ")"
-                            );
-                        }));
+                for (i = 0; i < result.length; i ++) {
+                    var vid = result[i][0];
+                    if (vid === preVid) {
+                        cc.push(result[i]);
+                    } else {
+                        for (j = 0; j < cc.length; j ++) {
+                            var id1 = buildId(cc[j]);
+                            for (k = j + 1; k < cc.length; k ++) {
+                                var id2 = buildId(cc[k]);
+                                graph[id1][id2] = 1;
+                                graph[id2][id1] = 1;
+                            }
+                        }
+                        cc = [result[i]];
+                        preVid = vid;
+                    }
+                }
 
-                    var force = d3.layout.force()
-                        .charge(-200)
-                        .linkDistance(150)
-                        .size([width, height])
-                        .nodes(nodes)
-                        .links(links)
-                        .start();
+                // third loop to create edges and clusters
+                var tuples = Object.keys(graph),
+                    links = [],
+                    linkSet = {};
 
-                    var link = svg.selectAll(".link")
-                        .data(links)
-                        .enter().append("line")
-                        .attr("class", "link")
-                        .style("stroke-width", function (d) {
-                            return Math.sqrt(d.value);
-                        });
+                clusterMap = {};
+                for (i = 0; i < tuples.length; i ++) {
+                    var components = graph[tuples[i]];
+                    var targets = Object.keys(components);
+                    var sourceId = tuples[i];
+                    var cluster;
 
-                    var node = svg.selectAll(".node")
-                        .data(nodes)
-                        .enter().append("circle")
-                        .attr("class", "node")
-                        .attr("r", 15)
-                        .style("fill", function (d) {
-                            return color(d.group * 2);
-                        })
-                        .call(force.drag);
+                    // create new cluster if not exists
+                    if (sourceId in clusterMap) {
+                        cluster = clusterMap[sourceId];
+                    } else {
+                        cluster = [nodeTable[sourceId]];
+                        clusterMap[sourceId] = cluster;
+                    }
 
-                    node.append("title")
-                        .text(function (d) {
-                            return d.name;
-                        });
-
-                    force.on("tick", function () {
-                        link.attr("x1", function (d) {
-                            return d.source.x;
-                        })
-                            .attr("y1", function (d) {
-                                return d.source.y;
-                            })
-                            .attr("x2", function (d) {
-                                return d.target.x;
-                            })
-                            .attr("y2", function (d) {
-                                return d.target.y;
+                    for (j = 0; j < targets.length; j ++) {
+                        var targetId = targets[j];
+                        var hash0 = sourceId + '_' + targetId;
+                        var hash1 = targetId + '_' + sourceId;
+                        if (!(hash0 in linkSet || hash1 in linkSet)) {
+                            links.push({
+                                'source': nodeTable[sourceId],
+                                'target': nodeTable[targetId],
+                                'value': 1,
+                                'weight': 1
                             });
 
-                        node.attr("cx", function (d) {
-                            return d.x;
-                        })
-                            .attr("cy", function (d) {
-                                return d.y;
-                            });
-                    });
+                            linkSet[hash0] = 1;
+                            linkSet[hash1] = 1;
+                        }
 
-                    svg.selectAll('circle.node').on('click', function (e) {
-                        Table.filter("?=" + e.name);
-                    });
+                        // merge two existing cluster
+                        if (targetId in clusterMap) {
+                            var mergeCluster = clusterMap[targetId];
+                            if (mergeCluster !== cluster) {
+                                if (targetId === 'tb_amazon_560') {
+                                    console.log('got it');
+                                }
+
+                                cluster = cluster.concat(mergeCluster);
+                                // assign new cluster
+                                for (k = 0; k < cluster.length; k ++) {
+                                    clusterMap[cluster[k].name] = cluster;
+                                }
+                            }
+                        } else {
+                            // adds to the existing cluster
+                            cluster.push(nodeTable[targetId]);
+                            clusterMap[targetId] = cluster;
+                        }
+                    }
+                }
+
+                // render time
+                var container = $("#" + id);
+                var color = d3.scale.category10();
+                svg = d3.select("#" + id + " svg")
+                    .attr('width', container.width())
+                    .attr('height', container.height())
+                    .append('g')
+                    .call(d3.behavior.zoom().scaleExtent([0.1, 20]).on("zoom", rescale));
+
+                svg.append('svg:rect')
+                    .attr('width', container.width())
+                    .attr('height', container.height())
+                    .attr("fill", "none")
+                    .attr("pointer-events", "all")
+                    .append("g");
+
+                var force = d3.layout.force()
+                    .charge(-150)
+                    .linkDistance(50)
+                    .size([container.width(), container.height()])
+                    .nodes(nodes)
+                    .links(links)
+                    .start();
+
+                link = svg.selectAll(".link")
+                    .data(links)
+                    .enter()
+                    .append("line")
+                    .style("stroke", "steelblue")
+                    .style("stroke-width", function () { return 2.0; });
+
+                node = svg.selectAll(".node")
+                    .data(nodes)
+                    .enter()
+                    .append("circle")
+                    .attr("r", function (d) {
+                        var components = graph[d.name];
+                        return Object.keys(components).length * 2 + 8;
+                    }).style("fill", function (d) { return color(d.group % 20); })
+                    .on('click', function (d) {
+                        Table.filterByCluster(clusterMap[d.name]);
+                    }).call(force.drag);
+
+                node.append("title")
+                    .text(function (d) { return d.tableName + ':' + d.tid; });
+
+                force.on("tick", function () {
+                    link.attr("x1", function (d) { return d.source.x; })
+                        .attr("y1", function (d) { return d.source.y; })
+                        .attr("x2", function (d) { return d.target.x; })
+                        .attr("y2", function (d) { return d.target.y; });
+
+                    node.attr("cx", function (d) { return d.x; })
+                        .attr("cy", function (d) { return d.y; });
                 });
             }
         });
+    }
+
+    function rescale() {
+        link.attr(
+            "transform",
+            "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")"
+        );
+
+        node.attr(
+            "transform",
+            "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")"
+        );
     }
 
     function drawDistribution(id) {
@@ -323,27 +409,34 @@ define(['hash', 'nvd3', 'table', 'requester'], function (HashMap, NVD3, Table, R
 
             nv.addGraph(function () {
                 var chart = nv.models.discreteBarChart()
-                    .x(function (d) { return d.label; })
+                    .x(function (d) { return "TID: " + d.label; })
                     .y(function (d) { return d.value; })
                     .staggerLabels(false)
                     .tooltips(true)
-                    .showValues(true)
+                    .showValues(false)
                     .valueFormat(d3.format('d'));
 
                 chart.yAxis
                     .tickFormat(d3.format('d'))
                     .axisLabelDistance(50)
-                    .axisLabel("Number of violation");
+                    .axisLabel("Number of direct duplication");
 
-                chart.xAxis
-                    .axisLabel("Tuple Id in violation rank");
+                chart.showXAxis(false);
 
+                var container = $("#" + id);
                 d3.select("#" + id + " svg")
-                    .attr("width", 400)
-                    .attr("height", 300)
+                    .attr("width", container.width())
+                    .attr("height", container.height())
                     .datum(graphData)
                     .transition().duration(10)
                     .call(chart);
+
+                d3.select("#" + id + " svg")
+                    .append("text")
+                    .attr("x", container.width() / 2 - 100)
+                    .attr("y", container.height() - 20)
+                    .style("weight", "bold")
+                    .text("Tuple ID in duplication rank");
 
                 nv.utils.windowResize(chart.update);
 

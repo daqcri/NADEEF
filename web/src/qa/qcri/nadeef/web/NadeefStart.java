@@ -45,12 +45,12 @@ public final class NadeefStart {
             if (CommonTools.isLinux() || CommonTools.isMac()) {
                 thriftProcess =
                     Runtime.getRuntime().exec(
-                        "java -cp out/bin/*:. qa.qcri.nadeef.service.NadeefService"
+                        "java -cp out/bin/*:.:out/ qa.qcri.nadeef.service.NadeefService"
                     );
             } else {
                 thriftProcess =
                     Runtime.getRuntime().exec(
-                        "java -cp out/bin/*;. qa.qcri.nadeef.service.NadeefService"
+                        "java -cp out/bin/*;.;out/ qa.qcri.nadeef.service.NadeefService"
                     );
             }
 

@@ -211,7 +211,7 @@ public class RemoteAction {
                     }
                 } catch (Exception ex) {}
             }
-            return null;
+            return 0;
         });
 
         post("/do/repair", (request, response) -> {
