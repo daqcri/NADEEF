@@ -147,6 +147,25 @@ public class StressDetectionTest extends NadeefTestBase {
         }
     }
 
+    @Test
+    public void cleanExecutorTest500k() {
+        Tracer.setVerbose(false);
+        Tracer.setInfo(true);
+        CleanExecutor executor = null;
+        try {
+            CleanPlan cleanPlan = TestDataRepository.getPlan("benchmark500k.json").get(0);
+            executor = new CleanExecutor(cleanPlan);
+            executor.detect();
+            verifyViolationResult(4050052);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        } finally {
+            if (executor != null)
+                executor.shutdown();
+        }
+    }
+
     private int getViolationCount(
         DBConfig dbConfig,
         String tableName,

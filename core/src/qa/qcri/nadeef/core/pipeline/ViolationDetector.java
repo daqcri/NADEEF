@@ -148,13 +148,13 @@ public class ViolationDetector
         finishedThreadCount = 0;
 
         Rule rule = getCurrentContext().getRule();
-        IteratorStream iteratorStream = new IteratorStream();
+        IteratorBlockingQueue iteratorBlockingQueue = new IteratorBlockingQueue();
         resultCollection.clear();
         List<Object> tupleList;
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<ListenableFuture<Integer>> futures = Lists.newArrayList();
         while (true) {
-            tupleList = iteratorStream.poll();
+            tupleList = iteratorBlockingQueue.poll();
             if (tupleList.size() == 0) {
                 break;
             }

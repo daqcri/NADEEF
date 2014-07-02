@@ -16,7 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
-import qa.qcri.nadeef.core.datamodel.IteratorStream;
+import qa.qcri.nadeef.core.datamodel.IteratorBlockingQueue;
 import qa.qcri.nadeef.core.datamodel.PairTupleRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
@@ -69,7 +69,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
      * IteratorCallable is a {@link Callable} class for iteration operation on each block.
      */
     class IteratorCallable<T> implements Callable<Integer> {
-        private IteratorStream iteratorStream;
+        private IteratorBlockingQueue iteratorBlockingQueue;
         private WeakReference<T> ref;
         private WeakReference<ConcurrentMap<String, HashSet<Integer>>> newTupleRef;
         private Rule rule;
@@ -81,7 +81,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
         ) {
             this.newTupleRef = new WeakReference<>(newTuples);
             this.ref = new WeakReference<>(tables);
-            this.iteratorStream = new IteratorStream();
+            this.iteratorBlockingQueue = new IteratorBlockingQueue();
             this.rule = rule;
         }
 
@@ -108,11 +108,11 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
 
             ConcurrentMap<String, HashSet<Integer>> newTuples = newTupleRef.get();
             if (newTuples == null || newTuples.size() == 0 || rule.hasOwnIterator()) {
-                rule.iterator(value, iteratorStream);
+                rule.iterator(value, iteratorBlockingQueue);
             } else {
-                rule.iterator(value, newTuples, iteratorStream);
+                rule.iterator(value, newTuples, iteratorBlockingQueue);
             }
-            iteratorStream.flush();
+            iteratorBlockingQueue.flush();
 
             // return the tuple total count
             int size = 0;
@@ -172,7 +172,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
             }
 
             // mark the end of the iteration output
-            IteratorStream.markEnd();
+            IteratorBlockingQueue.markEnd();
         } catch (InterruptedException ex) {
             tracer.err("Iterator is interrupted.", ex);
         } finally {
@@ -194,7 +194,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
      */
     @Override
     public void interrupt() {
-        IteratorStream.markEnd();
+        IteratorBlockingQueue.markEnd();
     }
 
     /**
@@ -202,6 +202,6 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
      */
     @Override
     public void reset() {
-        IteratorStream.clear();
+        IteratorBlockingQueue.clear();
     }
 }

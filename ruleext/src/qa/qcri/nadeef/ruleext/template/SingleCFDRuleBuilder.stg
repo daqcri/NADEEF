@@ -88,13 +88,13 @@ public class $CFDName$ extends SingleTupleRule {
      * @param tables input table
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream output) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler output) {
         Table table = tables.iterator().next();
         ArrayList<Tuple> result = new ArrayList();
         int pos = 0;
        	while (pos < table.size()) {
             Tuple t = table.get(pos++);
-            output.offer(t);
+            output.handle(t);
     	}
     }
 

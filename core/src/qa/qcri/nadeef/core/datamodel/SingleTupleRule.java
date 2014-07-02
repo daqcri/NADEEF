@@ -69,10 +69,10 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
      * @param blocks input table collection.
      */
     @Override
-    public void iterator(Collection<Table> blocks, IteratorStream iteratorStream) {
+    public void iterator(Collection<Table> blocks, IteratorResultHandler iteratorBlockingQueue) {
         Table table = blocks.iterator().next();
         for (int i = 0; i < table.size(); i ++) {
-            iteratorStream.offer(table.get(i));
+            iteratorBlockingQueue.handle(table.get(i));
         }
     }
 
@@ -80,12 +80,12 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
      * Incremental iterator interface.
      * @param tables blocks.
      * @param newTuples new tuples comes in.
-     * @param iteratorStream output stream.
+     * @param iteratorResultHandler output stream.
      */
     public final void iterator(
         Collection<Table> tables,
         ConcurrentMap<String, HashSet<Integer>> newTuples,
-        IteratorStream iteratorStream
+        IteratorResultHandler iteratorResultHandler
     ) {
         Table table = tables.iterator().next();
         String tableName = table.getSchema().getTableName();
@@ -96,7 +96,7 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
             for (int i = 0; i < table.size(); i++) {
                 Tuple tuple1 = table.get(i);
                 if (newTuplesIDs.contains(tuple1.getTid())) {
-                    iteratorStream.offer(tuple1);
+                    iteratorResultHandler.handle(tuple1);
                 }
             }
         }
@@ -112,7 +112,7 @@ public abstract class SingleTupleRule extends Rule<Tuple> {
             String declareClassName =
                 getClass().getMethod(
                     "iterator",
-                    new Class[] { Collection.class, IteratorStream.class }
+                    new Class[] { Collection.class, IteratorResultHandler.class }
                 ).getDeclaringClass().getSimpleName();
             result = !declareClassName.equalsIgnoreCase("SingleTupleRule");
         } catch (Exception ex) {}

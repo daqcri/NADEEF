@@ -187,6 +187,24 @@ public class PerformanceBenchmark extends NadeefTestBase {
         }
     }
 
+    @Test
+    public void hospital500k() {
+        CleanExecutor executor = null;
+        try {
+            CleanPlan plan = TestDataRepository.getPlan("benchmark500k.json").get(0);
+            executor = new CleanExecutor(plan);
+            executor.detect();
+            verifyViolationResult(4050052);
+            writeToFile("hospital500k");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Assert.fail(ex.getMessage());
+        } finally {
+            if (executor != null)
+                executor.shutdown();
+        }
+    }
+
     private void writeToFile(String ruleName) {
         Map<PerfReport.Metric, List<Long>> metrics = PerfReport.getMetrics();
         StringBuilder line = new StringBuilder();

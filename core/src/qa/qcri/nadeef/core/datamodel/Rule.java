@@ -88,23 +88,23 @@ public abstract class Rule<E> {
     /**
      * Iterator operator.
      * @param tables a collection of tables.
-     * @param iteratorStream Iterator output object.
+     * @param iteratorResultHandler Iterator output object.
      */
     public abstract void iterator(
         Collection<Table> tables,
-        IteratorStream iteratorStream
+        IteratorResultHandler iteratorResultHandler
     );
 
     /**
      * Iterator operator.
      * @param tables a collection of tables.
      * @param newTuples new tuples.
-     * @param iteratorStream Iterator output object.
+     * @param iteratorResultHandler Iterator output object.
      */
     public abstract void iterator(
         Collection<Table> tables,
         ConcurrentMap<String, HashSet<Integer>> newTuples,
-        IteratorStream iteratorStream
+        IteratorResultHandler iteratorResultHandler
     );
 
 

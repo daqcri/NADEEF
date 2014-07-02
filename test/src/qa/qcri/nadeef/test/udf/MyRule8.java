@@ -64,7 +64,7 @@ public class MyRule8 extends PairTupleRule {
      * @param tables input tables
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream output) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler output) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList();
         table.orderBy(rightHandSide);
@@ -87,7 +87,7 @@ public class MyRule8 extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < table.size(); j++) {
                             TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                            output.offer(pair);
+                            output.handle(pair);
                         }
                     }
                     break;

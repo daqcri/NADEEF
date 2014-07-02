@@ -50,7 +50,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * @param tables input tuple
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler iteratorResultHandler) {
         List<Table> collectionList = Lists.newArrayList(tables);
 
         if (collectionList.size() == 1) {
@@ -58,7 +58,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    iteratorStream.offer(pair);
+                    iteratorResultHandler.handle(pair);
                 }
             }
         } else {
@@ -67,7 +67,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
             for (int i = 0; i < left.size(); i ++) {
                 for (int j = 0; j < right.size(); j ++) {
                     TuplePair pair = new TuplePair(left.get(i), right.get(j));
-                    iteratorStream.offer(pair);
+                    iteratorResultHandler.handle(pair);
                 }
             }
         }
@@ -77,12 +77,12 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
      * Incremental iterator interface.
      * @param blocks blocks.
      * @param newTuples new tuples comes in.
-     * @param iteratorStream output stream.
+     * @param iteratorResultHandler output stream.
      */
     public final void iterator(
         Collection<Table> blocks,
         ConcurrentMap<String, HashSet<Integer>> newTuples,
-        IteratorStream iteratorStream
+        IteratorResultHandler iteratorResultHandler
     ) {
         // We are dealing with two table rule.
         if (blocks.size() > 1) {
@@ -99,7 +99,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
                     continue;
                 for (int j = 0; j < table2.size(); j ++) {
                     Tuple tuple2 = table2.get(j);
-                    iteratorStream.offer(new TuplePair(tuple1, tuple2));
+                    iteratorResultHandler.handle(new TuplePair(tuple1, tuple2));
                 }
             }
 
@@ -111,7 +111,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
                     Tuple tuple1 = table1.get(j);
                     if (tableSet1.contains(tuple1.getTid()))
                         continue;
-                    iteratorStream.offer(new TuplePair(tuple1, tuple2));
+                    iteratorResultHandler.handle(new TuplePair(tuple1, tuple2));
                 }
             }
         } else {
@@ -131,11 +131,11 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
                                 if (newTuplesIDs.contains(tuple2.getTid())) {
                                     // Both are new tuples, check once
                                     if (j > i) {
-                                        iteratorStream.offer(new TuplePair(tuple1, tuple2));
+                                        iteratorResultHandler.handle(new TuplePair(tuple1, tuple2));
                                     }
                                 } else {
                                     // Compare with old tuples
-                                    iteratorStream.offer(new TuplePair(tuple1, tuple2));
+                                    iteratorResultHandler.handle(new TuplePair(tuple1, tuple2));
                                 }
                             }
                         }
@@ -175,7 +175,7 @@ public abstract class PairTupleRule extends Rule<TuplePair> {
             String declareClassName =
                 getClass().getMethod(
                     "iterator",
-                    new Class[] { Collection.class, IteratorStream.class }
+                    new Class[] { Collection.class, IteratorBlockingQueue.class }
                 ).getDeclaringClass().getSimpleName();
             result = !declareClassName.equalsIgnoreCase("PairTupleRule");
         } catch (Exception ex) {}

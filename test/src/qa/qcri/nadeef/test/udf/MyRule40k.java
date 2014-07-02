@@ -70,7 +70,7 @@ public class MyRule40k extends PairTupleRule {
      * @param tables input table.
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler iteratorResultHandler) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList<>();
         table.orderBy(rightHandSide);
@@ -92,7 +92,7 @@ public class MyRule40k extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < table.size(); j++) {
                             TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                            iteratorStream.offer(pair);
+                            iteratorResultHandler.handle(pair);
                         }
                     }
                     break;

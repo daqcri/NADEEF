@@ -41,10 +41,7 @@ public class AdultRule2 extends PairTupleRule {
     }
 
     @Override
-    public void iterator(
-        Collection<Table> tables,
-        IteratorStream iteratorStream
-    ) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler iteratorResultHandler) {
         Table table = tables.iterator().next();
         ArrayList<TuplePair> result = new ArrayList<>();
         for (int i = 0; i < table.size(); i ++) {
@@ -53,7 +50,7 @@ public class AdultRule2 extends PairTupleRule {
                 Tuple right = table.get(j);
                 if (!left.get("fnlwgt").equals(right.get("fnlwgt"))) {
                     TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                    iteratorStream.offer(pair);
+                    iteratorResultHandler.handle(pair);
                     break;
                 }
             }

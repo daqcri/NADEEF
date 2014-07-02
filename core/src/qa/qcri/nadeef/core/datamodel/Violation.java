@@ -23,7 +23,6 @@ import java.util.Set;
 
 /**
  * Violation class.
- *
  */
 public class Violation {
     public static final int UnknownId = -1;

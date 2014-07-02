@@ -160,7 +160,8 @@ public class CleanExecutor {
      * @return current progress percentage of Detect.
      */
     public double getDetectProgress() {
-        return queryFlow.getProgress() * 0.5 + detectFlow.getProgress() * 0.5;
+        return detectFlow.getProgress();
+        // return queryFlow.getProgress() * 0.5 + detectFlow.getProgress() * 0.5;
     }
 
     /**
@@ -168,10 +169,11 @@ public class CleanExecutor {
      * @return the detail progress information of Detection.
      */
     public List<ProgressReport> getDetailDetectProgress() {
-        List<ProgressReport> queryProgress = queryFlow.getDetailProgress();
-        List<ProgressReport> detectProgress = detectFlow.getDetailProgress();
-        queryProgress.addAll(detectProgress);
-        return queryProgress;
+        return detectFlow.getDetailProgress();
+        // List<ProgressReport> queryProgress = queryFlow.getDetailProgress();
+        // List<ProgressReport> detectProgress = detectFlow.getDetailProgress();
+        // queryProgress.addAll(detectProgress);
+        // return queryProgress;
     }
 
     /**
@@ -196,13 +198,13 @@ public class CleanExecutor {
     public CleanExecutor detect() {
         Stopwatch sw = Stopwatch.createStarted();
 
-        queryFlow.reset();
+        // queryFlow.reset();
         detectFlow.reset();
 
-        queryFlow.start();
+        // queryFlow.start();
         detectFlow.start();
 
-        queryFlow.waitUntilFinish();
+        // queryFlow.waitUntilFinish();
         detectFlow.waitUntilFinish();
 
         // clear the new tuples after every run.
@@ -266,12 +268,13 @@ public class CleanExecutor {
     private void assembleFlow() {
         try {
             // assemble the query flow.
+            /*
             queryFlow = new Flow("query");
             queryFlow
                 .setInputKey(cacheManager.getKeyForNothing())
                 .addNode(new SourceImport(context))
                 .addNode(new ScopeOperator(context))
-                .addNode(new Iterator(context), 6);
+                .addNode(new Iterator(context));
 
             // assemble the detect flow
             detectFlow = new Flow("detect");
@@ -279,6 +282,16 @@ public class CleanExecutor {
                 .setInputKey(cacheManager.getKeyForNothing())
                 .addNode(new ViolationDetector(context), 6)
                 // .addNode(new ViolationExport(context))
+                .addNode(new ViolationExportToCSV(context))
+                .addNode(new ViolationCSVExport(context));
+            */
+
+            detectFlow = new Flow("detect");
+            detectFlow
+                .setInputKey(cacheManager.getKeyForNothing())
+                .addNode(new SourceImport(context))
+                .addNode(new ScopeOperator(context))
+                .addNode(new DirectIterator(context))
                 .addNode(new ViolationExportToCSV(context))
                 .addNode(new ViolationCSVExport(context));
 

@@ -242,11 +242,7 @@ public class PerfReport {
         return sb.toString();
     }
 
-    private static String formatEntry(
-        Metric metric,
-        String prefix,
-        String suffix
-    ) {
+    private static String formatEntry(Metric metric, String prefix, String suffix) {
         String value;
         List<Long> values = PerfReport.get(metric);
         StringBuilder outputBuilder = new StringBuilder(50);

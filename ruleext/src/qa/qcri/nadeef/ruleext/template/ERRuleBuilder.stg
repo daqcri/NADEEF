@@ -30,7 +30,7 @@ public class $ERName$ extends PairTupleRule {
     }
 
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler iteratorResultHandler) {
         List<Table> collectionList = new ArrayList<>(tables);
 
         if (collectionList.size() == 1) {
@@ -38,7 +38,7 @@ public class $ERName$ extends PairTupleRule {
             for (int i = 0; i < tuples.size(); i ++) {
                 for (int j = i + 1; j < tuples.size(); j ++) {
                     TuplePair pair = new TuplePair(tuples.get(i), tuples.get(j));
-                    iteratorStream.offer(pair);
+                    iteratorResultHandler.handle(pair);
                 }
             }
         } else {
@@ -47,7 +47,7 @@ public class $ERName$ extends PairTupleRule {
             for (int i = 0; i < left.size(); i ++) {
                 for (int j = 0; j < right.size(); j ++) {
                     TuplePair pair = new TuplePair(left.get(i), right.get(j));
-                    iteratorStream.offer(pair);
+                    iteratorResultHandler.handle(pair);
                 }
             }
         }

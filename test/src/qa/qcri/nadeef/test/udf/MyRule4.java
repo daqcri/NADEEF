@@ -67,7 +67,7 @@ public class MyRule4 extends PairTupleRule {
      * @param tables input tables
      */
     @Override
-    public void iterator(Collection<Table> tables, IteratorStream iteratorStream) {
+    public void iterator(Collection<Table> tables, IteratorResultHandler iteratorBlockingQueue) {
         Table table = tables.iterator().next();
         table.orderBy(rightHandSide);
         int pos1 = 0, pos2 = 0;
@@ -87,7 +87,7 @@ public class MyRule4 extends PairTupleRule {
                     for (int i = pos1; i < pos2; i ++) {
                         for (int j = pos2; j < table.size(); j++) {
                             TuplePair pair = new TuplePair(table.get(i), table.get(j));
-                            iteratorStream.offer(pair);
+                            iteratorBlockingQueue.handle(pair);
                         }
                     }
                     break;

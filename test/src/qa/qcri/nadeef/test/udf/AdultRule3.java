@@ -80,13 +80,13 @@ public class AdultRule3 extends SingleTupleRule {
      * @param blocks input table
      */
     @Override
-    public void iterator(Collection<Table> blocks, IteratorStream output) {
+    public void iterator(Collection<Table> blocks, IteratorResultHandler output) {
         Table table = blocks.iterator().next();
         ArrayList<Tuple> result = new ArrayList<>();
         int pos = 0;
         while (pos < table.size()) {
             Tuple t = table.get(pos++);
-            output.offer(t);
+            output.handle(t);
         }
     }
 
