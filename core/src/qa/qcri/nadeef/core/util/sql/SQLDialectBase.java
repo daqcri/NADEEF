@@ -18,6 +18,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
@@ -111,7 +112,13 @@ public abstract class SQLDialectBase {
                 if (skipHeader && lineCount == 1)
                     continue;
                 size += line.toCharArray().length;
-                String sql = this.importFromCSV(metaData, tableName, line);
+                String[] tokens = line.split(",");
+                String[] newTokens = new String[tokens.length];
+                for (int i = 0; i < tokens.length; i ++) {
+                    newTokens[i] = CommonTools.unescapeString(tokens[i], CommonTools.DOUBLE_QUOTE);
+                }
+
+                String sql = this.importFromCSV(metaData, tableName, newTokens);
                 stat.addBatch(sql);
 
                 if (lineCount % 10240 == 0) {
@@ -268,29 +275,29 @@ public abstract class SQLDialectBase {
      * Inserts values into a table from CSV row used for batch loading.
      * @param metaData column meta data.
      * @param tableName target table name.
-     * @param row row value.
+     * @param tokens row values.
      * @return SQL statement.
      */
     private String importFromCSV(
         ResultSetMetaData metaData,
         String tableName,
-        String row
+        String[] tokens
     ) {
         StringBuilder valueBuilder = new StringBuilder(1024);
         StringBuilder columnBuilder = new StringBuilder(1024);
-        String[] tokens = row.split(",");
         try {
             int delta = tokens.length == metaData.getColumnCount() ? 0 : 1;
             for (int i = 0; i < tokens.length; i ++) {
                 String columnName = metaData.getColumnName(i + 1 + delta);
-                int type = metaData.getColumnType(i + 1 + delta);
-                columnBuilder
-                    .append("`")
-                    .append(columnName)
-                    .append("`");
+                String typeName = metaData.getColumnTypeName(i + 1 + delta);
+                columnBuilder.append(columnName);
 
-                if (type == Types.VARCHAR || type == Types.CHAR) {
-                    valueBuilder.append('\'').append(tokens[i]).append('\'');
+                if (typeName.equalsIgnoreCase("VARCHAR") || typeName.equalsIgnoreCase("CHAR")) {
+                    valueBuilder.append(
+                        CommonTools.escapeString(
+                            tokens[i],
+                            CommonTools.SINGLE_QUOTE
+                        ));
                 } else {
                     valueBuilder.append(tokens[i]);
                 }

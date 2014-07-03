@@ -35,6 +35,9 @@ public final class CommonTools {
     private static Tracer tracer = Tracer.getTracer(CommonTools.class);
     private static Process derbyProcess;
 
+    public static char DOUBLE_QUOTE = '"';
+    public static char SINGLE_QUOTE = '\'';
+
     public static boolean isWindows() {
         String osName = System.getProperty("os.name");
         return osName.indexOf("Win") >= 0;
@@ -222,5 +225,29 @@ public final class CommonTools {
             System.exit(1);
         }
         System.out.println("OK");
+    }
+
+    public static String escapeString(String s, char enclosed) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(enclosed);
+        for (char c : s.toCharArray()) {
+            if (c == enclosed)
+                builder.append("\\").append(enclosed);
+            else
+                builder.append(c);
+        }
+        builder.append(enclosed);
+        return builder.toString();
+    }
+
+
+    public static String unescapeString(String s, char enclosed) {
+        // return unchanged when the string is not enclosed.
+        if (s.charAt(0) != enclosed)
+            return s;
+
+        String reg = "\\\\" + enclosed;
+        String replaced = s.replaceAll(reg, Character.toString(enclosed));
+        return replaced.substring(1, replaced.length() - 1);
     }
 }

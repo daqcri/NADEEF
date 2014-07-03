@@ -38,16 +38,15 @@ public class ViolationImport extends Operator<Optional, Collection<Violation>> {
      */
     @Override
     public Collection<Violation> execute(Optional empty) throws Exception {
-        Connection conn = null;
-        Statement stat = null;
         ResultSet resultSet = null;
         Collection<Violation> result = null;
         DBConnectionPool connectionPool = getCurrentContext().getConnectionPool();
         Rule rule = getCurrentContext().getRule();
-        try {
-            conn = connectionPool.getNadeefConnection();
+        try (
+            Connection conn = connectionPool.getNadeefConnection();
+            Statement stat = conn.createStatement();
+        ) {
             conn.setAutoCommit(true);
-            stat = conn.createStatement();
             resultSet = stat.executeQuery(
                 "SELECT * FROM " +
                     NadeefConfiguration.getViolationTableName() +
@@ -57,17 +56,9 @@ public class ViolationImport extends Operator<Optional, Collection<Violation>> {
             );
 
             result = Violations.fromQuery(resultSet);
-            setPercentage(1f);
         } finally {
-            if (stat != null) {
-                stat.close();
-            }
-
             if (resultSet != null) {
                 resultSet.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
         return result;

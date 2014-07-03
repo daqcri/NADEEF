@@ -19,7 +19,7 @@ import org.junit.Assert;
 
 import java.util.concurrent.*;
 
-public final class IteratorTest {
+public final class IteratorBenchmark {
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Invalid inputs.");
@@ -38,7 +38,7 @@ public final class IteratorTest {
             ExecutorService executor = Executors.newFixedThreadPool(numThread, factory);
             ConcurrentLinkedQueue<Long> queue = new ConcurrentLinkedQueue<>();
 
-            for (int t = 0; t < 50; t ++) {
+            for (int t = 0; t < 5; t ++) {
                 executor.submit(() -> {
                     for (int j = 0; j < 2000; j ++)
                         for (int k = j + 1; k < 2000; k ++)

@@ -60,6 +60,7 @@ public class DirectIterator extends Operator<Collection<Table>, Collection<Viola
          * @throws Exception if unable to compute a result
          */
         @Override
+        @SuppressWarnings("unchecked")
         public Integer call() throws Exception {
             if (newTuples == null || newTuples.size() == 0 || rule.hasOwnIterator()) {
                 rule.iterator(tables, directIteratorResultHandler);

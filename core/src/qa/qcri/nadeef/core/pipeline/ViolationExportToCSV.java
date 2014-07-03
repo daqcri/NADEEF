@@ -16,6 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Violation;
+import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Tracer;
 
@@ -26,7 +27,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Exports Violation list to a CSV file
@@ -63,17 +63,26 @@ public class ViolationExportToCSV extends Operator<Collection<Violation>, File> 
                     String value = cell.getValue() == null ? "" : cell.getValue().toString();
                     line
                         .append(vid)
-                        .append(",\"")
-                        .append(violation.getRuleId())
-                        .append("\",\"")
-                        .append(cell.getColumn().getTableName())
-                        .append("\",")
+                        .append(",")
+                        .append(
+                            CommonTools.escapeString(
+                                violation.getRuleId(),
+                                CommonTools.DOUBLE_QUOTE
+                            )).append(",")
+                        .append(
+                            CommonTools.escapeString(
+                                cell.getColumn().getTableName(),
+                                CommonTools.DOUBLE_QUOTE
+                            )).append(",")
                         .append(cell.getTid())
-                        .append(",\"")
-                        .append(cell.getColumn().getColumnName())
-                        .append("\",\"")
-                        .append(value)
-                        .append("\"\n");
+                        .append(",")
+                        .append(
+                            CommonTools.escapeString(
+                                cell.getColumn().getColumnName(),
+                                CommonTools.DOUBLE_QUOTE
+                            )).append(",")
+                        .append(CommonTools.escapeString(value, CommonTools.DOUBLE_QUOTE))
+                        .append("\n");
                     byte[] bytes = line.toString().getBytes();
                     output.write(bytes, 0, bytes.length);
                 }

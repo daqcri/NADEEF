@@ -89,12 +89,8 @@ public class Tracer {
         try {
             PatternLayout layout = new PatternLayout("%-4r [%t] %-5p %c %x - %m%n");
             FileAppender logFile = new FileAppender(layout, outputFile);
-            ConsoleAppender console = new ConsoleAppender(layout);
             Logger.getRootLogger().addAppender(logFile);
-            Logger.getRootLogger().addAppender(console);
             Logger.getRootLogger().setLevel(Level.INFO);
-            // BasicConfigurator.configure(logFile);
-
         } catch (IOException e) {
             Tracer tracer = getTracer(Tracer.class);
             tracer.info("Cannot open log file : " + getLogFileName());
@@ -134,7 +130,6 @@ public class Tracer {
      */
     public void verbose(String msg) {
         if (isVerboseOn()) {
-            // console.println(msg);
             logger.debug(msg);
         }
     }
@@ -185,6 +180,12 @@ public class Tracer {
      */
     public static void setInfo(boolean mode) {
         infoFlag = mode;
+        Logger root = Logger.getRootLogger();
+        if (mode) {
+            root.addAppender(consoleAppender);
+        } else {
+            root.removeAppender(consoleAppender);
+        }
     }
 
     /**

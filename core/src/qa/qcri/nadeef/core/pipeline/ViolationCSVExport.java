@@ -35,7 +35,7 @@ public class ViolationCSVExport extends Operator<File, File> {
         DBConfig config = getCurrentContext().getConnectionPool().getNadeefConfig();
         SQLDialectBase instance =
             SQLDialectFactory.getDialectManagerInstance(config.getDialect());
-
+        tracer.info("Load " + file.getCanonicalPath() + " into violation table");
         if (instance.supportBulkLoad()) {
             instance.bulkLoad(config, "VIOLATION", file.toPath(), false);
         } else {
