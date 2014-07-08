@@ -1,93 +1,137 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+<html lang="en">
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <title>NADEEF by Qatar-Computing-Research-Institute</title>
-  </head>
+    <title>NADEEF</title>
 
-  <body>
+    <!-- Bootstrap Core CSS -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
-    <header>
-      <div class="container">
-        <h1>NADEEF</h1>
-        <h2>Data Cleaning Framework in Java</h2>
+    <!-- Fonts -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 
-        <section id="downloads">
-          <a href="https://github.com/Qatar-Computing-Research-Institute/NADEEF/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/Qatar-Computing-Research-Institute/NADEEF/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/Qatar-Computing-Research-Institute/NADEEF" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+    <!-- Custom Theme CSS -->
+    <link href="css/grayscale.css" rel="stylesheet">
 
-    <div class="container">
-      <section id="main_content">
-        <h1>
-<a name="nadeef-" class="anchor" href="#nadeef-"><span class="octicon octicon-link"></span></a>NADEEF <img src="https://travis-ci.org/daqcri/NADEEF.png">
-</h1>
+</head>
 
-<h3>
-<a name="what-is-nadeef" class="anchor" href="#what-is-nadeef"><span class="octicon octicon-link"></span></a>What is NADEEF?</h3>
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
 
-<p>NADEEF (or ''clean'' in Arabic, نظيف) is a commodity data cleaning system developed by the data analytic group at <a href="da.qcri.org">QCRI</a>. </p>
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#page-top">
+                    <i class="fa fa-play-circle"></i>  <span class="light">QCRI</span> Data Analytics
+                </a>
+            </div>
 
-<h3>
-<a name="see-it-in-action" class="anchor" href="#see-it-in-action"><span class="octicon octicon-link"></span></a>See it in Action</h3>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#features">Features</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
 
-<p>Launch NADEEF using command </p>
+    <section class="intro">
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h1 class="brand-heading">NADEEF</h1>
+                        <p class="intro-text">An extensible and user-friendly data cleaning system.</p>
+						<ul class="list-inline banner-social-buttons">
+						  <li>
+							<a href="https://github.com/Qatar-Computing-Research-Institute/NADEEF" class="btn btn-primary btn-lg" target="_blank">
+							  <i class="fa fa-github fa-fw"></i><span class="network-name">Github</span>
+							</a>
+						  </li>
+						  <li>
+							<a href="http://bit.ly/nadeef0" class="btn btn-success btn-lg" target="_blank">
+							  <i class="fa fa-cloud fa-fw"></i><span class="network-name">Live Demo</span>
+							</a>
+						  </li>
+						</ul>
+                        <div class="page-scroll">
+                            <a href="#about" class="btn btn-circle">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<pre><code>    Usage: nadeef.[sh | bat] [OPTIONS]
-    Options are:
-        console : start the NADEEF console.
-        dashboard : start the NADEEF dashboard.
-</code></pre>
+    <section id="about" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>About NADEEF</h2>
+				<p>Since 2011 we are trying to solve Data Cleaning problem that the data quality rules are employed in isolation and heterogeneous. Each time a new data cleaning problem arises or a new type of rules is considered, partitioners either build a new system or go through a painful process of customizing an existing tool.</p>
+				<p>In NADEEF all the data quality rules are sharing the same programming APIs and we provide a runtime execution engine to detect data violations. We also provide a graphical HTML5 user interface to help users navigate and understand their data in order to improve the rule quality.</p>
+                <p>NADEEF is an open source project initialized and developed by <br><a href="http://da.qcri.org" target="_blank">Qatar Computing Research Institute</a>.</p>
+            </div>
+        </div>
+    </section>
 
-<p>More details on the instructions can be found in the <a href="https://github.com/daqcri/NADEEF/wiki/User-Guide">User Guide</a>.</p>
+    <section id="features" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>Features</h2>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<h3>
-<a name="goals-of-nadeef" class="anchor" href="#goals-of-nadeef"><span class="octicon octicon-link"></span></a>Goals of NADEEF</h3>
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Contact Us</h2>
+                <p>Feel free to email us to provide some feedback or give us suggestions in our Github issue pages!</p>
+                <ul class="list-inline banner-social-buttons">
+                    <li><a href="https://github.com/Qatar-Computing-Research-Institute/NADEEF/issues?state=open" class="btn btn-default btn-lg" target="_blank">
+						<i class="fa fa-question fa-fw"></i><span class="network-name">Feedbacks</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+		<p class="muted credit" style="margin-top: 40px">
+		  <a href="http://qcri.qa" target="_blank"><small>Qatar Computing Research Institute</a> 2014</small>.
+		</p>
+    </section>
 
-<p><strong>Being a commodity data cleaning system, NADEEF aims to be extensible, generic and easy-to-deploy.</strong></p>
+    <!-- Core JavaScript Files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="js/grayscale.js"></script>
+</body>
 
-<p>Most existing data cleaning methods and systems, either in industry or academia,
-employ different types of data quality rules in isolation, each time a new data cleaning problem arises or
-a new type of rules is considered, practitioners either build a new system from scratch or go through a painful
-process of customizing an existing tool. The NADEEF team designed a new data cleaning system that distinguishes
-between a programming interface and a core to achieve generality and extensibility.</p>
-
-<h3>
-<a name="publications" class="anchor" href="#publications"><span class="octicon octicon-link"></span></a>Publications</h3>
-
-<p><a href="http://da.qcri.org/publications">http://da.qcri.org/publications</a></p>
-
-<h3>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
-
-<p>NADEEF is released under the terms of the MIT License, (<a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>).</p>
-
-<h3>
-<a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact</h3>
-
-<p>For any issues or enhancement please use the issue pages in Github, or contact <a href="mailto:siyin@qf.org.qa">siyin@qf.org.qa</a>. We will try our best to help you sort it out.</p>
-      </section>
-    </div>
-
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-44233464-1");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
-
-  </body>
 </html>
