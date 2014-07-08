@@ -53,14 +53,15 @@ define([
     function err(msg) {
         if (_.isObject(msg) && 'responseText' in msg) {
             var json = JSON.parse(msg.responseText);
-            msg = json['error'];
+            msg = json.error;
         }
 
         $('#home-alert').html([
             ['<div class="alert alert-error">'],
             ['<button type="button" class="close" data-dismiss="alert">'],
             ['&times;</button>'],
-            ['<span><h4>' + msg + '</h4></span></div>']].join(''));
+            ['<span><h4>' + msg + '</h4></span></div>']
+        ].join(''));
     }
 
     function render(id) {
@@ -68,19 +69,19 @@ define([
 
         refresh();
 
-        window.addEventListener("message", function(event) {
+        window.addEventListener("message", function (event) {
             if (event.origin.indexOf("ruleminer") > -1 && event.data.indexOf("inserted") > -1) {
                 console.log('received: ' + event.data);
                 refreshRuleList();
             }
         }, false);
 
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             RuleMiner.close();
             Analytic.close();
         });
 
-        $('#' + domId)[0].addEventListener('refreshRuleEvent', function(e) {
+        $('#' + domId)[0].addEventListener('refreshRuleEvent', function (e) {
             console.log("refreshRule event received.");
             if ("detail" in e && "info" in e.detail) {
                 info(e.detail.info);
@@ -88,7 +89,7 @@ define([
             refreshRuleList();
         });
 
-        $('#' + domId)[0].addEventListener('refreshSource', function() {
+        $('#' + domId)[0].addEventListener('refreshSource', function () {
             console.log("refreshSource event received.");
             refreshSourceList();
         });
@@ -103,42 +104,44 @@ define([
         console.log("Refresh source list");
         Requester.getSource({
             success: function (source) {
-                var sources = source['data'];
+                var sources = source.data;
                 State.set('source', sources);
                 var html =
                     _.template(ControllerTemplate)({ sources: sources});
                 $('#' + domId).html(html);
-                $('#refresh_source').on('click', function() {
+                $('#refresh_source').on('click', function () {
                     refresh();
                 });
 
-                $('#selected_source').on('change', function() {
+                $('#selected_source').on('change', function () {
                     var newSource = $("#selected_source").val();
                     State.set("currentSource", newSource);
                     renderRuleList(newSource);
                     Table.load({ domId: 'source-table', table: newSource });
                 });
 
-                $('#new-source').on('click', function() {
+                $('#new-source').on('click', function () {
                     $('#source-editor').modal('show');
                 });
 
-                $('#btn-discover').on('click', function() {
+                $('#btn-discover').on('click', function () {
                     if (RuleMiner.isAvailable()) {
-                        if (RuleMiner.isWindowOpened())
+                        if (RuleMiner.isWindowOpened()) {
                             info("Rule Miner window is already opened.");
-                        else {
+                        } else {
                             var project = State.get("project");
                             var table = State.get("currentSource");
                             if (_.isNull(project) || _.isNull(table)) {
                                 err("No table is selected.");
                                 return false;
                             }
-                            if (!RuleMiner.start(project, table))
+                            if (!RuleMiner.start(project, table)) {
                                 err("Starting Rule Miner failed.");
+                            }
                         }
-                    } else
+                    } else {
                         err("Rule Miner is not available.");
+                    }
                 });
 
                 $('#new_plan').on('click', function () {
@@ -157,13 +160,13 @@ define([
                         return;
                     }
 
-                    if (_.isArray(selectedRule) && selectedRule.length != 1) {
+                    if (_.isArray(selectedRule) && selectedRule.length !== 1) {
                         err('Can not edit multiple rules.');
                         return;
                     }
 
                     Requester.getRuleDetail(selectedRule[0], {
-                        success: function(data) {
+                        success: function (data) {
                             var plan = data['data'][0];
                             var editor = new RuleEditorView.Create(
                                 $('#rule-editor-modal')[0],
@@ -174,7 +177,7 @@ define([
                     });
                 });
 
-                $('#selected_rule').on('change', function() {
+                $('#selected_rule').on('change', function () {
                     var newRule = $("#selected_rule").val();
                     State.set('currentRule', newRule);
                     renderRuleDetail();
@@ -185,7 +188,7 @@ define([
                     }
                 });
 
-                $('#detect').on('click', function() {
+                $('#detect').on('click', function () {
                     var selectedPlan = State.get("currentRule");
                     if (selectedPlan == null || !_.isArray(selectedPlan)) {
                         err('No rule is selected.');
@@ -195,7 +198,7 @@ define([
                     detect(selectedPlan);
                 });
 
-                $('#delete').on('click', function() {
+                $('#delete').on('click', function () {
                     var selectedRule = State.get("currentRule");
                     if (selectedRule == null || !_.isArray(selectedRule)) {
                         err('No rule is selected.');
@@ -203,7 +206,7 @@ define([
                     }
 
                     Requester.deleteRule({ rules: selectedRule }, {
-                        success: function() {
+                        success: function () {
                             info("Selected rules are deleted.");
                             refreshRuleList();
                         },
@@ -214,13 +217,15 @@ define([
                 State.clear("currentSource");
             },
             failure: err,
-            always: function() {
+            always: function () {
                 // TODO: to move
-                if ($("#progressbar-content").length == 0)
+                if ($("#progressbar-content").length === 0) {
                     ProgressBarView.start('progressbar');
+                }
 
-                if ($("#source-editor").length == 0)
+                if ($("#source-editor").length === 0) {
                     SourceEditorView.start('source-editor-modal');
+                }
             }
         });
     }
@@ -228,11 +233,13 @@ define([
     function refreshRuleList() {
         console.log("Refresh rule list");
         Requester.getRule({
-            success: function(data) {
-                State.set('rule', data['data']);
-                if (State.get("currentSource"))
+            success: function (data) {
+                State.set('rule', data.data);
+                if (State.get("currentSource")) {
                     renderRuleList(State.get("currentSource"));
-            }, failure: err
+                }
+            },
+            failure: err
         });
     }
 
@@ -248,10 +255,11 @@ define([
 
     function renderRuleDetail() {
         var selectedRule = State.get('currentRule');
-        if (_.isUndefined(selectedRule) || _.isNull(selectedRule))
+        if (_.isUndefined(selectedRule) || _.isNull(selectedRule)) {
             return;
+        }
 
-        if (_.isArray(selectedRule) && selectedRule.length != 1) {
+        if (_.isArray(selectedRule) && selectedRule.length !== 1) {
             $('#detail').html('');
         } else {
             Requester.getRuleDetail(
@@ -267,7 +275,7 @@ define([
     function renderRuleList(source) {
         var ruleList = State.get('rule');
         var selectedRule =
-            _.filter(ruleList, function(x) { return x[3] === source || x[4] === source; })
+            _.filter(ruleList, function (x) { return x[3] === source || x[4] === source; });
         var selectedHtml = _.template(
             "<% _.each(rules, function(rule) { %>" +
             "<option value='<%= rule[0] %>'><%= rule[0] %></option>" +
@@ -279,17 +287,17 @@ define([
     function detect(plans) {
         // clean the violation before start new detection.
         $.when(Requester.deleteViolation()).then(
-            function() {
-                _.each(plans, function(planName) {
+            function () {
+                _.each(plans, function (planName) {
                     Requester.getRuleDetail(planName, {
-                        success: function(data) {
+                        success: function (data) {
                             var plan = arrayToPlan(data['data'][0]);
                             Requester.doDetect(
                                 plan,
                                 {
-                                    success: function(data) {
+                                    success: function (data) {
                                         info("A job is successfully submitted.");
-                                        var key = data['data'];
+                                        var key = data.data;
                                         console.log('Received job key : ' + key);
                                         if (key != null) {
                                             var jobList = State.get("job");
