@@ -153,7 +153,7 @@ define([
                     editor.render();
                 });
 
-                $('#edit_plan').on('click', function() {
+                $('#edit_plan').on('click', function () {
                     var selectedRule = State.get('currentRule');
                     if (selectedRule == null) {
                         err('No rule is selected.');

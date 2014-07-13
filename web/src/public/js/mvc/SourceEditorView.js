@@ -13,8 +13,10 @@
 
 define([
     'state',
+    "mvc/SourceEditorView",
     'text!mvc/template/sourceeditor.template.html'
-], function(State, SourceEditorTemplate) {
+], function (State, SourceEditor, SourceEditorTemplate) {
+    "use strict";
     function start(id) {
         var html =
             _.template(SourceEditorTemplate)();
@@ -28,8 +30,8 @@ define([
             url: "/do/upload",
             allowedfileextensions: ['.csv'],
             data: { project: State.get("project") },
-            error: function(err, file) {
-                switch(err) {
+            error: function (err, file) {
+                switch (err) {
                     case 'BrowserNotSupported':
                         alert('Your browser does not support HTML5 file uploads!');
                         break;
@@ -44,7 +46,7 @@ define([
                 }
             },
 
-            uploadStarted: function(i, file, len) {
+            uploadStarted: function (i, file, len) {
                 // a file began uploading
                 // i = index => 0, 1, 2, 3, 4 etc
                 // file is the actual file of the index
@@ -54,7 +56,7 @@ define([
                 $("#source-editor-cancel").prop('disabled', true);
             },
 
-            uploadFinished: function(i, file, response, time) {
+            uploadFinished: function (i, file, response, time) {
                 // response is the data you got back from server in JSON format.
                 // alert("hello");
                 // alert(time);
@@ -64,16 +66,20 @@ define([
                 $('#dropbox-progress div').width(0);
             },
 
-            progressUpdated: function(i, file, progress) {
+            progressUpdated: function (i, file, progress) {
                 // this function is used for large files and updates intermittently
                 // progress is the integer value of file being uploaded percentage to completion
             },
 
-            globalProgressUpdated: function(progress) {
+            globalProgressUpdated: function (progress) {
                 // progress for all the files uploaded on the current instance (percentage)
                 // ex: $('#progress div').width(progress+"%");
                 $('#dropbox-progress div').width(progress + "%");
             }
+        });
+
+        $("#source-editor").on("hidden", function () {
+            $("#controller")[0].dispatchEvent(new Event("refreshSource"));
         });
     }
 
