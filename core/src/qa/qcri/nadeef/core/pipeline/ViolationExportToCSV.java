@@ -31,12 +31,12 @@ import java.util.Collection;
 /**
  * Exports Violation list to a CSV file
  */
-public class ViolationExportToCSV extends Operator<Collection<Violation>, File> {
+public class ViolationExportToCSV extends Operator<java.util.Iterator<Violation>, File> {
     public ViolationExportToCSV(ExecutionContext context) {
         super(context);
     }
 
-    @Override protected File execute(Collection<Violation> violations) throws Exception {
+    @Override protected File execute(java.util.Iterator<Violation> violations) throws Exception {
         Tracer tracer = Tracer.getTracer(ViolationExportToCSV.class);
         Path outputPath = NadeefConfiguration.getOutputPath();
         int vid = 0;
@@ -50,11 +50,14 @@ public class ViolationExportToCSV extends Operator<Collection<Violation>, File> 
         File file = new File(outputPath.toFile(), filename);
         tracer.info("Export to " + filename);
         byte[] result = null;
+        int size = 0;
         try (
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             RandomAccessFile memoryMappedFile = new RandomAccessFile(file, "rw")
         ) {
-            for (Violation violation : violations) {
+            while (violations.hasNext()) {
+                Violation violation = violations.next();
+                size ++;
                 Collection<Cell> cells = violation.getCells();
                 for (Cell cell : cells) {
                     StringBuffer line = new StringBuffer();
@@ -95,7 +98,7 @@ public class ViolationExportToCSV extends Operator<Collection<Violation>, File> 
             buf.put(result);
             PerfReport.appendMetric(
                 PerfReport.Metric.ViolationExport,
-                violations.size()
+                size
             );
         }
         return file;

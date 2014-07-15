@@ -14,18 +14,22 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.datamodel.IteratorResultHandler;
+import qa.qcri.nadeef.core.datamodel.NonBlockingCollectionIterator;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collection;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class DirectIteratorResultHandler implements IteratorResultHandler {
     private Rule rule;
-    private LinkedBlockingQueue<Violation> violations;
+    private NonBlockingCollectionIterator<Violation> violations;
+    //private LinkedBlockingQueue<Violation> violations;
 
-    public DirectIteratorResultHandler(Rule rule, LinkedBlockingQueue<Violation> violations) {
+    public DirectIteratorResultHandler(
+        Rule rule,
+        NonBlockingCollectionIterator<Violation> violations
+    ) {
         this.rule = rule;
         this.violations = violations;
     }
@@ -36,7 +40,9 @@ public class DirectIteratorResultHandler implements IteratorResultHandler {
         Tracer tracer = Tracer.getTracer(DirectIteratorResultHandler.class);
         try {
             Collection<Violation> detectResult = rule.detect(item);
-            violations.addAll(detectResult);
+            if (detectResult.size() != 0) {
+                violations.appendCollection(detectResult);
+            }
         } catch (Exception ex) {
             tracer.err("Exception during detection", ex);
         }

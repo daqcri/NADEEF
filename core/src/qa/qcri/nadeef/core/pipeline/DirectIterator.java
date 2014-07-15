@@ -15,6 +15,7 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import qa.qcri.nadeef.core.datamodel.NonBlockingCollectionIterator;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
 import qa.qcri.nadeef.core.datamodel.Violation;
@@ -26,7 +27,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.*;
 
-public class DirectIterator extends Operator<Collection<Table>, Collection<Violation>>{
+public class DirectIterator extends Operator<Collection<Table>, java.util.Iterator<Violation>> {
     private static final int MAX_THREAD_NUM = Runtime.getRuntime().availableProcessors();
     public DirectIterator(ExecutionContext context) {
         super(context);
@@ -45,11 +46,12 @@ public class DirectIterator extends Operator<Collection<Table>, Collection<Viola
             Collection<Table> tables,
             Rule rule,
             ConcurrentMap<String, HashSet<Integer>> newTuples,
-            LinkedBlockingQueue<Violation> outputBuffer
+            NonBlockingCollectionIterator<Violation> outputIterator
         ) {
             this.newTuples = newTuples;
             this.tables = tables;
-            this.directIteratorResultHandler = new DirectIteratorResultHandler(rule, outputBuffer);
+            this.directIteratorResultHandler =
+                new DirectIteratorResultHandler(rule, outputIterator);
             this.rule = rule;
         }
 
@@ -72,7 +74,7 @@ public class DirectIterator extends Operator<Collection<Table>, Collection<Viola
     }
 
     @Override
-    protected Collection<Violation> execute(Collection<Table> blocks) throws Exception {
+    protected java.util.Iterator<Violation> execute(Collection<Table> blocks) throws Exception {
         Tracer tracer = Tracer.getTracer(DirectIterator.class);
         ThreadFactory factory =
             new ThreadFactoryBuilder().setNameFormat("iterator-#" + MAX_THREAD_NUM + "-%d").build();
@@ -81,11 +83,12 @@ public class DirectIterator extends Operator<Collection<Table>, Collection<Viola
 
         ExecutionContext context = getCurrentContext();
         Rule rule = context.getRule();
-        LinkedBlockingQueue<Violation> output = new LinkedBlockingQueue<>();
+        NonBlockingCollectionIterator<Violation> output = new NonBlockingCollectionIterator<>();
         try {
             if (rule.supportTwoTables()) {
                 // Rule runs on two tables.
-                executor.submit(new IteratorCallable(blocks, rule, context.getNewTuples(), output));
+                executor.submit(
+                    new IteratorCallable(blocks, rule, context.getNewTuples(), output));
             } else {
                 // Rule runs on each table.
                 for (Table table : blocks)
