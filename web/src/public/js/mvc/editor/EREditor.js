@@ -16,7 +16,8 @@ define([
     "requester",
     "text!mvc/editor/template/er.template.html",
     "text!mvc/editor/template/property.template.html"
-], function(NodeEditor, Requester, ERTemplate, TableTemplate) {
+], function (NodeEditor, Requester, ERTemplate, TableTemplate) {
+    "use strict";
     var int2op = {
         0: 'EQ',
         1: 'ED',
@@ -53,7 +54,8 @@ define([
 
     function parse(str) {
         var reg =
-            new RegExp("(EQ|ED|LS|QG|SD)\\((\\w+)\\.(\\w+),(\\w+)\\.(\\w+)\\)(=|>|<|>=|<=|!=)(\\d+\\.?\\d*)");
+            new RegExp(
+            "(EQ|ED|LS|QG|SD)\\((\\w+)\\.(\\w+),(\\w+)\\.(\\w+)\\)(=|>|<|>=|<=|!=)(\\d+\\.?\\d*)");
         if (reg.test(str)) {
             var matches = reg.exec(str);
             return {
@@ -88,7 +90,7 @@ define([
         } else {
             promise1 = Requester.getTableSchema(this.tableName1, {
                 success: function (data) {
-                    __.table1 = { name: __.tableName1, columns: data['schema']};
+                    __.table1 = { name: __.tableName1, columns: data.schema};
                 }
             });
         }
@@ -100,12 +102,12 @@ define([
         } else {
             promise2 = Requester.getTableSchema(this.tableName2, {
                 success: function (data) {
-                    __.table2 = { name: __.tableName2, columns: data['schema']};
+                    __.table2 = { name: __.tableName2, columns: data.schema};
                 }
             });
         }
 
-        $.when(promise1, promise2).then(function() {
+        $.when(promise1, promise2).then(function () {
             var conns = [];
             if (__.rule.code) {
                 var ps = __.rule.code.split("\n");
@@ -154,20 +156,20 @@ define([
             );
 
             // wrap up the right closure
-            __.nodeEditor.onLineAdded(function(d) { __.drawProperty(d); });
+            __.nodeEditor.onLineAdded(function (d) { __.drawProperty(d); });
             __.nodeEditor.render();
             __.drawProperty();
         });
     };
 
-    EREditor.prototype.drawProperty = function() {
+    EREditor.prototype.drawProperty = function () {
         this.predicates = this.nodeEditor.getConnection();
 
         var __ = this;
         var trs =
             d3.select("#ruleTableBody")
               .selectAll("tr")
-              .data(this.predicates, function(d) { return d.id; });
+              .data(this.predicates, function (d) { return d.id; });
 
         trs.exit().remove();
         trs.enter().append("tr");
@@ -181,7 +183,7 @@ define([
                     cmp: d.property.cmp,
                     value: d.property.val
                 });
-        }).each(function(d, i) {
+        }).each(function (d, i) {
             $(__.dom).find("#del" + i).on("click", function () {
                 console.log('del' + i);
                 __.predicates.splice(i, 1);
@@ -210,12 +212,13 @@ define([
         });
     };
 
-    EREditor.prototype.val = function() {
-        if (_.isEmpty(this.predicates))
+    EREditor.prototype.val = function () {
+        if (_.isEmpty(this.predicates)) {
             return null;
+        }
 
         var cmd = "";
-        _.each(this.predicates, function(d) {
+        _.each(this.predicates, function (d) {
             cmd += int2op[d.property.op];
             cmd += "(";
             cmd += d.left.getName();

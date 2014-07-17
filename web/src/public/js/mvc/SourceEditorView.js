@@ -24,7 +24,7 @@ define([
 
         // initialize the filedrop
         $("#dropbox").filedrop({
-            maxfiles: 5,
+            maxfiles: 1,
             maxfilesize: 500,
             queuefiles: 1,
             url: "/do/upload",
@@ -46,6 +46,52 @@ define([
                 }
             },
 
+            beforeSend: function (file, fileIndex, e, done) {
+                $("#schema").removeClass("hide");
+                // console.log(e.target.result.length);
+                var content = e.target.result;
+                var i = 0;
+                for (i = 0; i < content.length; i ++) {
+                    if (content[i] === '\n') {
+                        break;
+                    }
+                }
+
+                var header = content.slice(0, i);
+                var tbody = $("#schema").find("tbody");
+                var tokens = header.split(",");
+                var template =
+                    '<tr>' +
+                    '<td><input type="text" value="<%= value %>"></td>' +
+                    '<td><select>' +
+                    '<option value="string">String</option>' +
+                    '<option value="integer">Integer</option>' +
+                    '<option value="float">Float</option>' +
+                    '</select></td></tr>';
+
+                var html = '';
+                for (i = 0; i < tokens.length; i ++) {
+                    tokens[i] = tokens[i].trim();
+                    html += _.template(template, { value : tokens[i] });
+                }
+
+                tbody.empty().append(html);
+                $("#source-editor-save").on("click", function () {
+                    var attributes = $("#schema").find("tbody input");
+                    var types = $("#schema").find("tbody select");
+                    var schema = "";
+                    for (var i = 0; i < attributes.length; i ++) {
+                        schema += attributes[i] + ':' + types[i];
+                    }
+
+                    e.target.result = schema + '\n' + e.target.result;
+
+                    done();
+                });
+
+                $("#source-editor-save").removeClass("disabled");
+            },
+
             uploadStarted: function (i, file, len) {
                 // a file began uploading
                 // i = index => 0, 1, 2, 3, 4 etc
@@ -58,12 +104,12 @@ define([
 
             uploadFinished: function (i, file, response, time) {
                 // response is the data you got back from server in JSON format.
-                // alert("hello");
-                // alert(time);
                 $("#dropbox-message").text('Drop CSV file here to upload.');
                 $("#source-editor-save").prop('disabled', false);
                 $("#source-editor-cancel").prop('disabled', false);
                 $('#dropbox-progress div').width(0);
+                $('#schema').addClass('hide');
+                $("#source-editor-save").addClass("disabled");
             },
 
             progressUpdated: function (i, file, progress) {
