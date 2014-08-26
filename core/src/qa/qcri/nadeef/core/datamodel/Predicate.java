@@ -17,6 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
+import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.Collections;
 import java.util.Map;
@@ -43,6 +44,8 @@ public class Predicate {
         realMap.put(Operation.LTE, "<=");
         operationMap = ImmutableBiMap.copyOf(Collections.unmodifiableMap(realMap));
     }
+
+    private static Tracer tracer = Tracer.getTracer(Predicate.class);
 
     private Operation operation;
     private Column left;
@@ -234,30 +237,46 @@ public class Predicate {
         int compareResult;
         if (!isRightConstant()) {
             Object rightValue = tuple.get(right);
-            compareResult = leftComparable.compareTo(rightValue);
+
+            if (leftValue == null || rightValue == null) {
+                tracer.info("Tuple attribute contains NULL value.");
+            }
+
+            if (leftValue == null && rightValue == null) {
+                compareResult = 0;
+            } else if (leftValue == null || rightValue == null) {
+                compareResult = 1;
+            } else {
+                compareResult = leftComparable.compareTo(rightValue);
+            }
         } else {
-            DataType type = tuple.getSchema().getType(left);
-            // TODO: should move during parsing?
-            switch (type) {
-                case INTEGER:
-                    compareResult =
-                        leftComparable.compareTo(Integer.parseInt((String)value));
-                    break;
-                case FLOAT:
-                    // special case for postgres when reading real is always DOUBLE.
-                    if (leftValue instanceof Double) {
+            if (leftValue == null) {
+                tracer.info("Tuple attribute contains NULL value.");
+                compareResult = 1;
+            } else {
+                DataType type = tuple.getSchema().getType(left);
+                // TODO: should move during parsing?
+                switch (type) {
+                    case INTEGER:
                         compareResult =
-                            leftComparable.compareTo(Double.parseDouble((String) value));
-                    } else {
-                        compareResult =
-                            leftComparable.compareTo(Float.parseFloat((String)value));
-                    }
-                    break;
-                case DOUBLE:
-                    compareResult = leftComparable.compareTo(Double.parseDouble((String)value));
-                    break;
-                default:
-                    compareResult = leftComparable.compareTo(value);
+                            leftComparable.compareTo(Integer.parseInt((String)value));
+                        break;
+                    case FLOAT:
+                        // special case for postgres when reading real is always DOUBLE.
+                        if (leftValue instanceof Double) {
+                            compareResult =
+                                leftComparable.compareTo(Double.parseDouble((String) value));
+                        } else {
+                            compareResult =
+                                leftComparable.compareTo(Float.parseFloat((String)value));
+                        }
+                        break;
+                    case DOUBLE:
+                        compareResult = leftComparable.compareTo(Double.parseDouble((String)value));
+                        break;
+                    default:
+                        compareResult = leftComparable.compareTo(value);
+                }
             }
         }
         return validResult(compareResult);
@@ -275,27 +294,42 @@ public class Predicate {
         Comparable leftComparable = (Comparable)leftValue;
         int compareResult;
         if (isRightConstant()) {
-            DataType type = tupleLeft.getSchema().getType(left);
-            // TODO: should move during parsing?
-            switch (type) {
-                case INTEGER:
-                    compareResult =
-                        leftComparable.compareTo(Integer.parseInt((String)value));
-                    break;
-                case FLOAT:
-                    compareResult =
-                        leftComparable.compareTo(Float.parseFloat((String)value));
-                    break;
-                case DOUBLE:
-                    compareResult =
-                        leftComparable.compareTo(Double.parseDouble((String)value));
-                    break;
-                default:
-                    compareResult = leftComparable.compareTo(value);
+            if (leftValue == null) {
+                tracer.info("Tuple attribute contains NULL value.");
+                compareResult = 1;
+            } else {
+                DataType type = tupleLeft.getSchema().getType(left);
+                // TODO: should move during parsing?
+                switch (type) {
+                    case INTEGER:
+                        compareResult =
+                            leftComparable.compareTo(Integer.parseInt((String)value));
+                        break;
+                    case FLOAT:
+                        compareResult =
+                            leftComparable.compareTo(Float.parseFloat((String)value));
+                        break;
+                    case DOUBLE:
+                        compareResult =
+                            leftComparable.compareTo(Double.parseDouble((String)value));
+                        break;
+                    default:
+                        compareResult = leftComparable.compareTo(value);
+                }
             }
         } else {
             Object rightValue = tupleRight.get(right);
-            compareResult = ((Comparable)leftValue).compareTo(rightValue);
+            if (leftValue == null || rightValue == null) {
+                tracer.info("Tuple attribute contains NULL value.");
+            }
+
+            if (leftValue == null && rightValue == null) {
+                compareResult = 0;
+            } else if (leftValue == null || rightValue == null) {
+                compareResult = 1;
+            } else {
+                compareResult = ((Comparable)leftValue).compareTo(rightValue);
+            }
         }
         return validResult(compareResult);
     }
