@@ -19,26 +19,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.rest.model.Rule;
-import qa.qcri.nadeef.web.sql.SQLDialectBase;
 
 @RestController
 public class WidgetController {
     private JdbcTemplate jdbcTemplate;
-    private SQLDialectBase dialectBase;
 
-    public WidgetController(BasicDataSource dataSource, SQLDialect dialect) {
+    public WidgetController(BasicDataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.dialectBase = SQLDialectBase.createDialectBaseInstance(dialect);
     }
 
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/{project}/data/rule")
     public Rule getRule(@PathVariable String project) {
-        this.jdbcTemplate = new JdbcTemplate()
         this.jdbcTemplate.query(
-            this.dialectBase.queryRule(),
+            "select * from rule where project_id = (select id from project where name = ?)",
+            new A
     }
 }

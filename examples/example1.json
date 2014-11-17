@@ -1,12 +1,12 @@
 {
     "source" : {
         "type" : "csv",
-        "file" : ["./examples/hospital.csv"]
+        "file" : ["./examples/tax_dirty.csv"]
     },
     "rule" : [
         {
             "type" : "fd",
-            "value" : ["zipcode | city, state"]
+            "value" : ["Location | OwnerStreet"]
         }
     ]
 }

@@ -25,7 +25,7 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/web/pom.xml" />
+        <option value="$PROJECT_DIR$/nadeef-web/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
@@ -69,3 +69,4 @@
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
 </project>
+
