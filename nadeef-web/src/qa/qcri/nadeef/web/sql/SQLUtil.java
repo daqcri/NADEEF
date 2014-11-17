@@ -18,6 +18,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
@@ -29,6 +33,8 @@ import java.util.regex.Pattern;
 
 public class SQLUtil {
     private static Tracer tracer = Tracer.getTracer(SQLUtil.class);
+    private static BasicDataSource basicDataSource;
+
 
     public static boolean isValidTableName(String s) {
         boolean isGood = true;
@@ -53,7 +59,6 @@ public class SQLUtil {
         return isGood;
     }
 
-    //<editor-fold desc="Private helpers">
     public static JsonObject query(String dbName, String sql, boolean includeHeader)
         throws RuntimeException {
         DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());

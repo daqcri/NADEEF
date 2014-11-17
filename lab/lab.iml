@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="web" />
+    <orderEntry type="module" module-name="nadeef-web" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="tools" />
     <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
@@ -220,4 +220,3 @@
     </option>
   </component>
 </module>
-

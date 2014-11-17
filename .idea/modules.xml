@@ -5,12 +5,12 @@
       <module fileurl="file://$PROJECT_DIR$/console/console.iml" filepath="$PROJECT_DIR$/console/console.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/lab/lab.iml" filepath="$PROJECT_DIR$/lab/lab.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nadeef.iml" filepath="$PROJECT_DIR$/nadeef.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nadeef-web/nadeef-web.iml" filepath="$PROJECT_DIR$/nadeef-web/nadeef-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruleext/ruleext.iml" filepath="$PROJECT_DIR$/ruleext/ruleext.iml" />
       <module fileurl="file://$PROJECT_DIR$/service/service.iml" filepath="$PROJECT_DIR$/service/service.iml" />
       <module fileurl="file://$PROJECT_DIR$/test/test.iml" filepath="$PROJECT_DIR$/test/test.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/tools.iml" filepath="$PROJECT_DIR$/tools/tools.iml" />
-      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
     </modules>
   </component>
 </project>
-
