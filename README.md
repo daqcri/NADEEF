@@ -42,5 +42,12 @@ NADEEF is released under the terms of the [MIT License](http://opensource.org/li
 For any issues or enhancement please use the [issue pages](https://github.com/daqcri/NADEEF/issues) in Github, 
 or contact [siyin@qf.org.qa](mailto:siyin@qf.org.qa). We will try our best to help you sort it out.
 
+### Acknowledgement
+
+We would like to thank JetBrains' support for their wonderful IntelliJ IDEA product. We are using it through all the development of NADEEF.
+
+![IntelliJ](https://www.jetbrains.com/idea/docs/logo_intellij_idea.png)
+
+
 [![githalytics.com alpha](https://cruel-carlota.gopagoda.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
 
