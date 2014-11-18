@@ -19,6 +19,7 @@ public class Rule {
     private String code;
     private String table1;
     private String table2;
+    private String javaCode;
 
     public Rule(
         String name,
@@ -82,6 +83,4 @@ public class Rule {
     public void setName(String name) {
         this.name = name;
     }
-
-    private String javaCode;
 }

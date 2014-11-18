@@ -1,21 +1,23 @@
 create table if not exists project (
-  id serial primary key,
-  name varchar(255) UNIQUE NOT NULL);
+  name varchar(255) PRIMARY KEY);
+
+create table if not exists rule_type (
+  name varchar(255) primary key,
+  enabled boolean not null);
 
 create table if not exists rule (
-  name varchar(255) primary key not null,
-  type int,
+  id serial primary key,
+  name varchar(255) not null,
+  type varchar(255),
   code text not null,
   java_code text,
   table1 varchar(255) not null,
   table2 varchar(255),
-  last_edit_timestamp timestamp,
-  project_id integer,
-  foreign key (project_id) references project (id));
+  project_name varchar(255),
+  foreign key (project_name) references project (name),
+  foreign key (type) REFERENCES rule_type(name)
+);
 
-create table if not exists rule_type (
-    name varchar(255) primary key,
-    enabled boolean not null);
 
 insert into rule_type (name, enabled)
   select 'UDF', true

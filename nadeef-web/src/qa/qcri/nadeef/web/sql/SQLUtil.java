@@ -33,9 +33,6 @@ import java.util.regex.Pattern;
 
 public class SQLUtil {
     private static Tracer tracer = Tracer.getTracer(SQLUtil.class);
-    private static BasicDataSource basicDataSource;
-
-
     public static boolean isValidTableName(String s) {
         boolean isGood = true;
         if (!Strings.isNullOrEmpty(s)) {
