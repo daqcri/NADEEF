@@ -21,6 +21,8 @@ public class Rule {
     private String table2;
     private String javaCode;
 
+    public Rule() {}
+
     public Rule(
         String name,
         String type,

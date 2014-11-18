@@ -24,18 +24,18 @@ import qa.qcri.nadeef.web.rest.model.RuleBuilder;
 import java.util.List;
 
 @RestController
-public class WidgetController {
+public class RuleController {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public WidgetController(BasicDataSource dataSource) {
+    public RuleController(BasicDataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{project}/data/rule")
     public @ResponseBody List<Rule> getRules(@PathVariable String project) {
         return this.jdbcTemplate.query(
-            "select * from rule where project_id = (select id from project where name = ?)",
+            "select * from rule where project_name = ?",
             new String[]{project},
             (rs, i) -> new RuleBuilder()
                 .setName(rs.getString("name"))
