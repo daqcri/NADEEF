@@ -13,77 +13,42 @@
 
 package qa.qcri.nadeef.web.rest.controller;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import qa.qcri.nadeef.web.rest.model.Rule;
-import qa.qcri.nadeef.web.rest.model.RuleBuilder;
+import qa.qcri.nadeef.web.rest.model.RuleDao;
 
 import java.util.List;
 
 @RestController
 public class RuleController {
-    private JdbcTemplate jdbcTemplate;
+    private RuleDao ruleDao;
 
     @Autowired
-    public RuleController(BasicDataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public RuleController(RuleDao ruleDao) {
+        this.ruleDao = ruleDao;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{project}/data/rule")
     public @ResponseBody List<Rule> getRules(@PathVariable String project) {
-        return this.jdbcTemplate.query(
-            "select * from rule where project_name = ?",
-            new String[]{project},
-            (rs, i) -> new RuleBuilder()
-                .setName(rs.getString("name"))
-                .setType(rs.getString("type"))
-                .setCode(rs.getString("code"))
-                .setJavaCode(rs.getString("java_code"))
-                .setTable1(rs.getString("table1"))
-                .setTable2(rs.getString("table2"))
-                .createRule());
+        return ruleDao.getRules(project);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{project}/data/rule/{ruleName}")
     public @ResponseBody Rule getRule(@PathVariable String project, @PathVariable String ruleName) {
-        List<Rule> rules = this.jdbcTemplate.query(
-            "select * from rule where name = ? and project_name = ?",
-            new String[]{ruleName, project},
-            (rs, i) -> new RuleBuilder()
-                .setName(rs.getString("name"))
-                .setType(rs.getString("type"))
-                .setCode(rs.getString("code"))
-                .setJavaCode(rs.getString("java_code"))
-                .setTable1(rs.getString("table1"))
-                .setTable2(rs.getString("table2"))
-                .createRule());
-        assert rules.size() == 1;
-        return rules.get(0);
+        return ruleDao.queryRule(ruleName, project);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{project}/data/rule/{ruleName}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteRule(@PathVariable String project, @PathVariable String ruleName) {
-        this.jdbcTemplate.update(
-            "delete from rule where name = ? and project = ?", ruleName, project);
+        ruleDao.deleteRule(ruleName, project);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{project}/data/rule")
     @ResponseStatus(HttpStatus.CREATED)
     public void createRule(@PathVariable String project, @RequestBody Rule rule) {
-        this.jdbcTemplate.update(
-            "insert into rule " +
-                "(name, type, code, java_code, table1, table2, project_name) " +
-                "values (?, ?, ?, ?, ?, ?, ?)",
-            rule.getName(),
-            rule.getType(),
-            rule.getCode(),
-            rule.getJavaCode(),
-            rule.getTable1(),
-            rule.getTable2(),
-            project);
+        ruleDao.insertRule(rule, project);
     }
 }

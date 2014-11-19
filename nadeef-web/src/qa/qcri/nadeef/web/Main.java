@@ -14,12 +14,17 @@
 package qa.qcri.nadeef.web;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import qa.qcri.nadeef.web.rest.model.JdbcRule;
+import qa.qcri.nadeef.web.rest.model.RuleDao;
+
+import javax.sql.DataSource;
 
 
 @Configuration
@@ -31,13 +36,19 @@ class ApplicationContext {
     @Value("${database.driverClass}") private String databaseDriverClass;
 
     @Bean(name = "dataSource")
-    public BasicDataSource getBasicDataSource() {
+    public DataSource getBasicDataSource() {
         BasicDataSource result = new BasicDataSource();
         result.setUrl(databaseUrl);
         result.setDriverClassName(databaseDriverClass);
         result.setUsername(databaseUserName);
         result.setPassword(databasePassword);
         return result;
+    }
+
+    @Bean
+    @Autowired
+    public RuleDao getRuleDao(DataSource dataSource) {
+        return new JdbcRule(dataSource);
     }
 
 }
