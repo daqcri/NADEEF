@@ -18,6 +18,13 @@ create table if not exists rule (
   foreign key (type) REFERENCES rule_type(name)
 );
 
+create table if not exists source (
+  id serial primary key,
+  name varchar(255) not null,
+  url varchar(255) not null,
+  project_name varchar(255) not null,
+  foreign key (project_name) references project(name)
+);
 
 insert into rule_type (name, enabled)
   select 'UDF', true

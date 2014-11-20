@@ -27,7 +27,7 @@ import java.util.List;
 
 import static spark.Spark.get;
 
-public class SourceAction {
+public class  SourceAction {
     private static final String TABLE_PREFIX = "TB_"; // TODO: move
 
     //<editor-fold desc="source actions">

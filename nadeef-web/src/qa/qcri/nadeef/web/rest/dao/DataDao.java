@@ -11,14 +11,15 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.model;
+package qa.qcri.nadeef.web.rest.dao;
 
-import java.util.List;
+import com.google.gson.JsonObject;
 
-public interface RuleDao {
-    public List<Rule> getRules(String projectName);
-    public Rule queryRule(String ruleName, String projectName);
-    public void deleteRule(String ruleName, String projectName);
-    public void insertRule(Rule rule, String projectName);
+public interface DataDao {
+    public JsonObject query(
+        String projectName,
+        String sourceName,
+        Integer start,
+        Integer length,
+        String filter);
 }
-

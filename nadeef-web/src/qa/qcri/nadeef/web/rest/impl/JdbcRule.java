@@ -11,9 +11,12 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.model;
+package qa.qcri.nadeef.web.rest.impl;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import qa.qcri.nadeef.web.rest.dao.RuleDao;
+import qa.qcri.nadeef.web.rest.model.Rule;
+import qa.qcri.nadeef.web.rest.model.RuleBuilder;
 
 import javax.sql.DataSource;
 import java.util.List;

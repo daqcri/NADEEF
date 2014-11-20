@@ -21,8 +21,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import qa.qcri.nadeef.web.rest.model.JdbcRule;
-import qa.qcri.nadeef.web.rest.model.RuleDao;
+import qa.qcri.nadeef.web.rest.dao.ProjectDao;
+import qa.qcri.nadeef.web.rest.impl.JdbcProject;
+import qa.qcri.nadeef.web.rest.impl.JdbcRule;
+import qa.qcri.nadeef.web.rest.dao.RuleDao;
 
 import javax.sql.DataSource;
 
@@ -49,6 +51,12 @@ class ApplicationContext {
     @Autowired
     public RuleDao getRuleDao(DataSource dataSource) {
         return new JdbcRule(dataSource);
+    }
+
+    @Bean
+    @Autowired
+    public ProjectDao getProjectDao(DataSource dataSource) {
+        return new JdbcProject(dataSource);
     }
 
 }

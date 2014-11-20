@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import qa.qcri.nadeef.web.rest.model.Rule;
-import qa.qcri.nadeef.web.rest.model.RuleDao;
+import qa.qcri.nadeef.web.rest.dao.RuleDao;
 
 import java.util.List;
 
