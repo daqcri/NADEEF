@@ -13,15 +13,13 @@
 
 package qa.qcri.nadeef.web.rest.controller;
 
+import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import qa.qcri.nadeef.web.rest.dao.DataDao;
-import qa.qcri.nadeef.web.rest.dao.ProjectDao;
-
-import java.util.List;
 
 @Controller
 public class DataController {
@@ -38,10 +36,15 @@ public class DataController {
         @PathVariable String name,
         @RequestParam(value = "start", defaultValue = "0") Integer start,
         @RequestParam(value = "length", defaultValue = "10") Integer interval,
-        @RequestParam(value = "search[value]", required = false) String filter) {
+        @RequestParam(value = "search[value]", required = false, defaultValue = "") String filter,
+        @RequestParam(value = "sEcho", required = false) String sEcho) {
+
         JsonObject json = tableDao.query(projectName, name, start, interval, filter);
-        if (json != null)
-            return json.toString();
-        return null;
+        int count = json.get("data").getAsJsonArray().size();
+        json.add("iTotalRecords", new JsonPrimitive(count));
+        json.add("iTotalDisplayRecords", new JsonPrimitive(count));
+        if (!Strings.isNullOrEmpty(sEcho))
+            json.add("sEcho", new JsonPrimitive(sEcho));
+        return json != null ? json.toString() : null;
     }
 }
