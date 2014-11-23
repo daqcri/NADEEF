@@ -21,13 +21,33 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import qa.qcri.nadeef.web.rest.dao.DataDao;
 import qa.qcri.nadeef.web.rest.dao.ProjectDao;
+import qa.qcri.nadeef.web.rest.dao.SourceDao;
+import qa.qcri.nadeef.web.rest.impl.JdbcDataDao;
 import qa.qcri.nadeef.web.rest.impl.JdbcProject;
 import qa.qcri.nadeef.web.rest.impl.JdbcRule;
 import qa.qcri.nadeef.web.rest.dao.RuleDao;
+import qa.qcri.nadeef.web.rest.impl.JdbcSourceDao;
 
 import javax.sql.DataSource;
 
+@Configuration
+@EnableWebMvc
+class WebConfig extends WebMvcConfigurerAdapter {
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        if (!registry.hasMappingForPattern("/**")) {
+            registry
+                .addResourceHandler("/**")
+                .addResourceLocations("file:/public");
+        }
+    }
+}
 
 @Configuration
 class ApplicationContext {
@@ -59,6 +79,13 @@ class ApplicationContext {
         return new JdbcProject(dataSource);
     }
 
+    @Bean
+    @Autowired
+    public DataDao getDataDao(DataSource dataSource) { return new JdbcDataDao(dataSource); }
+
+    @Bean
+    @Autowired
+    public SourceDao getSourceDao(DataSource dataSource) { return new JdbcSourceDao(dataSource); }
 }
 
 @ComponentScan

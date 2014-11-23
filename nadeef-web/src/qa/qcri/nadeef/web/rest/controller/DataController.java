@@ -30,7 +30,11 @@ public class DataController {
         this.tableDao = tableDao;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{project}/table/{name}")
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/{projectName}/table/{name}",
+        produces = "application/json; charset=utf-8"
+    )
     public @ResponseBody String queryData(
         @PathVariable String projectName,
         @PathVariable String name,
@@ -41,7 +45,7 @@ public class DataController {
 
         JsonObject json = tableDao.query(projectName, name, start, interval, filter);
         int count = json.get("data").getAsJsonArray().size();
-        json.add("iTotalRecords", new JsonPrimitive(count));
+        json.add("iTotalRecords", new JsonPrimitive(tableDao.count(projectName, name)));
         json.add("iTotalDisplayRecords", new JsonPrimitive(count));
         if (!Strings.isNullOrEmpty(sEcho))
             json.add("sEcho", new JsonPrimitive(sEcho));

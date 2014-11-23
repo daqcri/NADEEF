@@ -16,6 +16,8 @@ package qa.qcri.nadeef.web.rest.dao;
 import com.google.gson.JsonObject;
 
 public interface DataDao {
+    Integer count(String projectName, String sourceName);
+
     public JsonObject query(
         String projectName,
         String sourceName,

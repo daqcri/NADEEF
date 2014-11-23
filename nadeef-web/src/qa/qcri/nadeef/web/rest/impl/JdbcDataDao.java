@@ -18,7 +18,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import org.springframework.jdbc.core.JdbcTemplate;
+
 import qa.qcri.nadeef.web.rest.dao.DataDao;
 
 import javax.sql.DataSource;
@@ -30,6 +32,14 @@ public class JdbcDataDao implements DataDao {
 
     public JdbcDataDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public Integer count(String projectName, String sourceName) {
+        String targetTableName = buildTargetTableName(projectName, sourceName);
+        return jdbcTemplate.query(
+            "select count(*) from " + targetTableName,
+            (resultSet, i) -> resultSet.getInt(1)).get(0);
     }
 
     /**
@@ -53,32 +63,32 @@ public class JdbcDataDao implements DataDao {
         JsonArray schema = new JsonArray();
         // assemble the global string search sql
         String filterSql =
-            Strings.isNullOrEmpty(filter) ? "" :
-            jdbcTemplate.query("select * from ? limit 1",
-                new String[] { targetTableName },
+            jdbcTemplate.query("select * from " + targetTableName + " limit 1",
                 (resultSet, k) -> {
                     ResultSetMetaData metaData = resultSet.getMetaData();
                     int columnCount = metaData.getColumnCount();
-                    StringBuffer buf = new StringBuffer(" where ");
+                    StringBuffer buf =
+                        new StringBuffer(Strings.isNullOrEmpty(filter) ? "" : " where ");
                     for (int i = 0; i < columnCount; i ++) {
-                        if (i > 0)
-                            buf.append(" or ");
                         String columnName = metaData.getColumnName(i + 1);
-                        String like =
-                            String.format("cast(%s as text) like %%s%", columnName, filter);
-                        buf.append(like);
-                        schema.add(new JsonPrimitive(metaData.getColumnName(i)));
+                        if (!Strings.isNullOrEmpty(filter)) {
+                            if (i > 0)
+                                buf.append(" or ");
+                            buf.append(
+                                String.format("cast(%s as text) like %%%s%%", columnName, filter));
+                        }
+                        schema.add(new JsonPrimitive(columnName));
                     }
                     return buf.toString();
                 }).get(0);
 
         List<JsonArray> tuples =
             jdbcTemplate.query(
-                "select * from ? " + filterSql + " limit ? offset ?",
-                new Object[]{targetTableName, start, length},
+                "select * from " + targetTableName + filterSql + " limit ? offset ?",
+                new Object[]{length, start},
                 (rs, k) -> {
                     JsonArray entry = new JsonArray();
-                    for (int i = 1; i <= schema.size(); i++) {
+                    for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
                         Object obj = rs.getObject(i);
                         if (obj != null)
                             entry.add(new JsonPrimitive(obj.toString()));
@@ -90,9 +100,9 @@ public class JdbcDataDao implements DataDao {
 
         JsonObject result = new JsonObject();
         JsonArray data = new JsonArray();
-        for (JsonArray tuple : tuples)
-            data.add(tuple);
+        tuples.forEach(data::add);
         result.add("data", data);
+        result.add("schema", schema);
         return result;
     }
 
