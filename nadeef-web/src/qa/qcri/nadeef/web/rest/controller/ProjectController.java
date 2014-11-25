@@ -37,7 +37,7 @@ public class ProjectController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/project")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody void createProject(@RequestParam(value = "name") String name) {
+    public @ResponseBody void createProject(@RequestBody String name) {
         projectDao.create(name);
     }
 }

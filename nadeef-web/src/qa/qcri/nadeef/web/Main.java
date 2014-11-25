@@ -18,9 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -33,19 +38,15 @@ import qa.qcri.nadeef.web.rest.impl.JdbcProject;
 import qa.qcri.nadeef.web.rest.impl.JdbcRule;
 import qa.qcri.nadeef.web.rest.dao.RuleDao;
 import qa.qcri.nadeef.web.rest.impl.JdbcSourceDao;
+import qa.qcri.nadeef.web.rest.model.Rule;
 
 import javax.sql.DataSource;
 
-@Configuration
 @EnableWebMvc
-class WebConfig extends WebMvcConfigurerAdapter {
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern("/**")) {
-            registry
-                .addResourceHandler("/**")
-                .addResourceLocations("file:/public");
-        }
+class WebConfig {
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    public String home() {
+        return "index";
     }
 }
 
@@ -92,6 +93,10 @@ class ApplicationContext {
 @EnableAutoConfiguration
 public class Main {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        ConfigurableApplicationContext ctx = SpringApplication.run(Main.class, args);
+        String[] beanNames = ctx.getBeanDefinitionNames();
+        for (String beanName : beanNames) {
+            System.out.println(beanName);
+        }
     }
 }
