@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>nadeef-web</module>
+        <module>web</module>
     </modules>
 
     <parent>

@@ -23,15 +23,16 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="nadeef-web" />
+        <module name="web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
       <module name="nadeef" target="1.8" />
       <module name="nadeef-web" target="1.8" />
+      <module name="web" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="MAXIMUM_HEAP_SIZE" value="512" />
   </component>
 </project>
-

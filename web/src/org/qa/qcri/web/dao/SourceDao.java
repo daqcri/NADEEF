@@ -11,11 +11,12 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.dao;
+package org.qa.qcri.web.dao;
+
+import org.qa.qcri.web.model.Source;
 
 import java.util.List;
 
-public interface ProjectDao {
-    public List<String> getProjects();
-    public void create(String name);
+public interface SourceDao {
+    public List<Source> getSources(String projectName);
 }

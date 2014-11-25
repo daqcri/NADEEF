@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.model;
+package org.qa.qcri.web.model;
 
 public class Rule {
     private String name;

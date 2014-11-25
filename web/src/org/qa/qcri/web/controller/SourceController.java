@@ -11,13 +11,13 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.controller;
+package org.qa.qcri.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import qa.qcri.nadeef.web.rest.dao.SourceDao;
-import qa.qcri.nadeef.web.rest.model.Source;
+import org.qa.qcri.web.dao.SourceDao;
+import org.qa.qcri.web.model.Source;
 
 import java.util.List;
 

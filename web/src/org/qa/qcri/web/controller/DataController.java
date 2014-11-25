@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.controller;
+package org.qa.qcri.web.controller;
 
 import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
@@ -19,7 +19,7 @@ import com.google.gson.JsonPrimitive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import qa.qcri.nadeef.web.rest.dao.DataDao;
+import org.qa.qcri.web.dao.DataDao;
 
 @Controller
 public class DataController {

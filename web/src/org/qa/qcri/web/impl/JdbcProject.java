@@ -11,33 +11,32 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.impl;
+package org.qa.qcri.web.impl;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import qa.qcri.nadeef.web.rest.dao.SourceDao;
-import qa.qcri.nadeef.web.rest.model.Source;
+import org.qa.qcri.web.dao.ProjectDao;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-public class JdbcSourceDao implements SourceDao {
+public class JdbcProject implements ProjectDao {
+
     private JdbcTemplate jdbcTemplate;
 
-    public JdbcSourceDao(DataSource dataSource) {
+    public JdbcProject(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
-    public List<Source> getSources(String projectName) {
+    public List<String> getProjects() {
         return this.jdbcTemplate.query(
-            "select * from source",
-            (resultSet, i) -> new Source(
-                resultSet.getString("name"),
-                resultSet.getString("url"),
-                resultSet.getString("project_name"))
+            "select name from project",
+            (resultSet, i) -> resultSet.getString("name")
         );
+    }
+
+    @Override
+    public void create(String name) {
+        this.jdbcTemplate.update("insert into project (name) values (?)", name);
     }
 }

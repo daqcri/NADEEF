@@ -11,9 +11,9 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.dao;
+package org.qa.qcri.web.dao;
 
-import qa.qcri.nadeef.web.rest.model.Rule;
+import org.qa.qcri.web.model.Rule;
 
 import java.util.List;
 

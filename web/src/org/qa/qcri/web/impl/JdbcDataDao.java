@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.web.rest.impl;
+package org.qa.qcri.web.impl;
 
 import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
@@ -21,7 +21,7 @@ import com.google.gson.JsonPrimitive;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import qa.qcri.nadeef.web.rest.dao.DataDao;
+import org.qa.qcri.web.dao.DataDao;
 
 import javax.sql.DataSource;
 import java.sql.ResultSetMetaData;

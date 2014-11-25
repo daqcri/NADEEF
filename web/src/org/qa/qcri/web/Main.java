@@ -10,10 +10,17 @@
  * NADEEF has patent pending nevertheless the following is granted.
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
-
-package qa.qcri.nadeef.web;
+package org.qa.qcri.web;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.qa.qcri.web.dao.DataDao;
+import org.qa.qcri.web.dao.ProjectDao;
+import org.qa.qcri.web.dao.RuleDao;
+import org.qa.qcri.web.dao.SourceDao;
+import org.qa.qcri.web.impl.JdbcDataDao;
+import org.qa.qcri.web.impl.JdbcProject;
+import org.qa.qcri.web.impl.JdbcRule;
+import org.qa.qcri.web.impl.JdbcSourceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -22,33 +29,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import qa.qcri.nadeef.web.rest.dao.DataDao;
-import qa.qcri.nadeef.web.rest.dao.ProjectDao;
-import qa.qcri.nadeef.web.rest.dao.SourceDao;
-import qa.qcri.nadeef.web.rest.impl.JdbcDataDao;
-import qa.qcri.nadeef.web.rest.impl.JdbcProject;
-import qa.qcri.nadeef.web.rest.impl.JdbcRule;
-import qa.qcri.nadeef.web.rest.dao.RuleDao;
-import qa.qcri.nadeef.web.rest.impl.JdbcSourceDao;
-import qa.qcri.nadeef.web.rest.model.Rule;
 
 import javax.sql.DataSource;
-
-@EnableWebMvc
-class WebConfig {
-    @RequestMapping(method = RequestMethod.GET, value = "/")
-    public String home() {
-        return "index";
-    }
-}
 
 @Configuration
 class ApplicationContext {
@@ -94,9 +76,5 @@ class ApplicationContext {
 public class Main {
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(Main.class, args);
-        String[] beanNames = ctx.getBeanDefinitionNames();
-        for (String beanName : beanNames) {
-            System.out.println(beanName);
-        }
     }
 }
