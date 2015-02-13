@@ -1,5 +1,6 @@
 
 # NADEEF <img src="https://travis-ci.org/Qatar-Computing-Research-Institute/NADEEF.png" />  [![Stories in Ready](https://badge.waffle.io/qatar-computing-research-institute/nadeef.png?label=ready&title=Ready)](https://waffle.io/qatar-computing-research-institute/nadeef)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Qatar-Computing-Research-Institute/NADEEF?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### What is NADEEF?
 
