@@ -40,7 +40,7 @@ NADEEF is released under the terms of the [MIT License](http://opensource.org/li
 ### Contact
 
 For any issues or enhancement please use the [issue pages](https://github.com/daqcri/NADEEF/issues) in Github, 
-or contact [Si Yin](mailto:zyzyis@gmail.com). We will try our best to help you sort it out.
+or [contact us](mailto:zyzyis@gmail.com). We will try our best to help you sort it out.
 
 ### Acknowledgement
 
