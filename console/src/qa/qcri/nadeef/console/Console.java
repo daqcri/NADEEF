@@ -23,15 +23,16 @@ import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.CSVTools;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
+import sun.rmi.runtime.Log;
 
 import java.io.File;
 import java.io.FileReader;
@@ -66,7 +67,7 @@ public class Console {
     private static ConsoleReader console;
     private static List<CleanPlan> cleanPlans;
     private static List<CleanExecutor> executors = Lists.newArrayList();
-    private static Tracer tracer = Tracer.getTracer(Console.class);
+    private static Logger tracer = Logger.getLogger(Console.class);
     private static int lastExecutorIndex = -1;
 
     //</editor-fold>
@@ -137,7 +138,6 @@ public class Console {
             Bootstrap.start();
 
             console = new ConsoleReader();
-            Tracer.setConsole(new ConsoleReaderAdaptor(console));
             List<Completer> loadCompleter =
                 Arrays.asList(
                     new StringsCompleter(commands),
@@ -195,12 +195,12 @@ public class Console {
                         "Oops, something is wrong. Please check the log in the output dir."
                     );
 
-                    tracer.err("", ex);
+                    tracer.error("", ex);
                 }
             }
         } catch (Exception ex) {
             try {
-                tracer.err("Bootstrap failed", ex);
+                tracer.error("Bootstrap failed", ex);
             } catch (Exception ignore) {}
         } finally {
             Bootstrap.shutdown();
@@ -234,7 +234,7 @@ public class Console {
                 executors.add(new CleanExecutor(cleanPlan, dbConfig));
             }
         } catch (Exception ex) {
-            tracer.err("Loading CleanPlan failed.", ex);
+            tracer.error("Loading CleanPlan failed.", ex);
             return;
         } finally {
             if (reader != null)
@@ -424,7 +424,7 @@ public class Console {
             try {
                 DBInstaller.cleanExecutionDB();
             } catch (Exception ex) {
-                tracer.err("Cleaning database failed.", ex);
+                tracer.error("Cleaning database failed.", ex);
             }
             for (int i = 0; i < executors.size(); i ++) {
                 if (index != -1 && index != i) {
@@ -473,18 +473,6 @@ public class Console {
 
     private static void set(String cmd) throws IOException {
         String[] tokens = cmd.split("\\s");
-        if (tokens[1].equalsIgnoreCase("verbose")) {
-            boolean mode = !Tracer.isVerboseOn();
-            console.println("set verbose " + (mode ? "on" : "off"));
-            Tracer.setVerbose(mode);
-        }
-
-        if (tokens[1].equalsIgnoreCase("info")) {
-            boolean mode = !Tracer.isInfoOn();
-            console.println("set info " + (mode ? "on" : "off"));
-            Tracer.setInfo(mode);
-        }
-
         if (tokens[1].equalsIgnoreCase("alwaysCompile")) {
             boolean mode = !NadeefConfiguration.getAlwaysCompile();
             console.println("set alwaysCompile " + (mode ? "on" : "off"));

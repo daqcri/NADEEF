@@ -19,19 +19,19 @@ import gurobi.*;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Operation;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 public class GurobiSolver extends SolverBase {
-    private Tracer tracer = Tracer.getTracer(GurobiSolver.class);
+    private Logger tracer = Logger.getLogger(GurobiSolver.class);
 
     public List<Fix> solve(HashSet<Fix> repairContext, HashSet<Cell> changedCell) {
-        tracer.verbose("Probing: ");
+        tracer.fine("Probing: ");
         for (Cell cell : changedCell)
-            tracer.verbose(cell.getColumn().getFullColumnName() + ":" + cell.getTid());
+            tracer.fine(cell.getColumn().getFullColumnName() + ":" + cell.getTid());
 
         GRBEnv env = null;
         GRBModel model = null;
@@ -157,7 +157,7 @@ public class GurobiSolver extends SolverBase {
                         exp.append("<= 0");
                         break;
                 }
-                tracer.verbose(exp.toString());
+                tracer.fine(exp.toString());
             }
 
             // Start optimizing
@@ -221,7 +221,7 @@ public class GurobiSolver extends SolverBase {
             }
             return fixList;
         } catch (Exception ex) {
-            tracer.err("Initializing GRB environment failed.", ex);
+            tracer.error("Initializing GRB environment failed.", ex);
         }  finally {
             try {
                 if (model != null)
@@ -229,7 +229,7 @@ public class GurobiSolver extends SolverBase {
                 if (env != null)
                     env.dispose();
             } catch (Exception ex) {
-                tracer.err("Disposing Gurobi failed.", ex);
+                tracer.error("Disposing Gurobi failed.", ex);
             }
         }
         return null;

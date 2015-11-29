@@ -16,7 +16,7 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Tuple class represents a tuple (row) in a table.
  */
 public class Tuple {
-    private Tracer tracer = Tracer.getTracer(Tuple.class);
+    private Logger tracer = Logger.getLogger(Tuple.class);
 
     //<editor-fold desc="Private Fields">
     private List<byte[]> values;

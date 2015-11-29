@@ -16,10 +16,20 @@ package qa.qcri.nadeef.web;
 import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.tools.Tracer;
+
 import qa.qcri.nadeef.tools.sql.SQLDialect;
-import qa.qcri.nadeef.web.rest.*;
+import qa.qcri.nadeef.web.rest.WidgetAction;
+import qa.qcri.nadeef.web.rest.TableAction;
+import qa.qcri.nadeef.web.rest.ProjectAction;
+import qa.qcri.nadeef.web.rest.RuleAction;
+import qa.qcri.nadeef.web.rest.SourceAction;
+import qa.qcri.nadeef.web.rest.RemoteAction;
+import qa.qcri.nadeef.web.rest.AnalyticAction;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static spark.Spark.*;
 
@@ -27,14 +37,19 @@ import static spark.Spark.*;
  * Start class for launching dashboard.
  */
 public final class Dashboard {
+    private static final String defaultRoot = "qa/qcri/nadeef/web/public";
+    private static final Logger logger = Logger.getLogger(Dashboard.class.getName());
+
     //<editor-fold desc="Where everything begins">
     public static void main(String[] args) {
         Bootstrap.start();
-        Tracer tracer = Tracer.getTracer(Dashboard.class);
+
         String rootDir = System.getProperty("rootDir");
         if (Strings.isNullOrEmpty(rootDir)) {
-            staticFileLocation("qa/qcri/nadeef/web/public");
+            logger.info("Set rootDir " + defaultRoot);
+            staticFileLocation(defaultRoot);
         } else {
+            logger.info("Set rootDir " + rootDir);
             externalStaticFileLocation(rootDir);
         }
 
@@ -45,7 +60,7 @@ public final class Dashboard {
 
         exception(Exception.class, (ex, request, response) -> {
             response.status(400);
-            tracer.err("Exception happens ", ex);
+            logger.log(Level.SEVERE, "Exception happens ", ex);
             JsonObject json = new JsonObject();
             json.add("error", new JsonPrimitive(ex.getMessage()));
             response.body(json.toString());

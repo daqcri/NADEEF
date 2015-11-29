@@ -16,8 +16,8 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.Violations;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.PerfReport;
 
 import java.sql.Connection;

@@ -19,11 +19,11 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class CleanExecutor {
 
     //<editor-fold desc="Private fields">
-    private static Tracer tracer = Tracer.getTracer(CleanExecutor.class);
+    private static Logger tracer = Logger.getLogger(CleanExecutor.class);
     private CleanPlan cleanPlan;
     private NodeCacheManager cacheManager;
     private Flow queryFlow;
@@ -303,7 +303,7 @@ public class CleanExecutor {
                 .addNode(new FixExport(context));
 
         } catch (Exception ex) {
-            tracer.err("Exception happens during assembling the pipeline ", ex);
+            tracer.error("Exception happens during assembling the pipeline ", ex);
         }
     }
     //</editor-fold>

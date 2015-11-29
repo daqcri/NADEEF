@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
@@ -20,7 +20,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.io.BufferedReader;
@@ -91,7 +91,7 @@ public abstract class SQLDialectBase {
      * @return line of rows loaded.
      */
     public int fallbackLoad(DBConfig dbConfig, String tableName, File file, boolean skipHeader) {
-        Tracer tracer = Tracer.getTracer(SQLDialectBase.class);
+        Logger tracer = Logger.getLogger(SQLDialectBase.class);
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         try (
@@ -136,7 +136,7 @@ public abstract class SQLDialectBase {
             stopwatch.stop();
             return lineCount;
         } catch (Exception ex) {
-            tracer.err("Cannot load file " + file.getName(), ex);
+            tracer.error("Cannot load file " + file.getName(), ex);
         }
         return 0;
     }
@@ -205,7 +205,9 @@ public abstract class SQLDialectBase {
         STGroupFile template = Preconditions.checkNotNull(getTemplate());
         ST st = template.getInstanceOf("CreateTableFromCSV");
         st.add("tableName", tableName.toUpperCase());
-        st.add("content", content);
+        // TODO: remove
+        st.add("content", content.replaceAll("string", "varchar(8192)"));
+        // st.add("content", content);
         return st.render();
     }
 

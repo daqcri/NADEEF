@@ -14,6 +14,7 @@
 package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.tools.CommonTools;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.FileReader;
 
@@ -25,6 +26,8 @@ public final class NadeefStart {
     private static final int WEB_PORT = 4567;
 
     public static void main(String[] args) {
+        Logger logger = Logger.getLogger(NadeefStart.class);
+
         try {
             System.getProperties().load(new FileReader("nadeef.conf"));
             Runtime runtime = Runtime.getRuntime();
@@ -36,8 +39,7 @@ public final class NadeefStart {
             });
 
             if (CommonTools.isPortOccupied(WEB_PORT)) {
-                System.err.println(
-                    "Web port " + WEB_PORT + " is occupied, please clear the port first.");
+                logger.error("Web port " + WEB_PORT + " is occupied, please clear the port first.");
                 System.exit(1);
             }
 
@@ -45,13 +47,11 @@ public final class NadeefStart {
             if (CommonTools.isLinux() || CommonTools.isMac()) {
                 thriftProcess =
                     Runtime.getRuntime().exec(
-                        "java -cp out/bin/*:.:out/ qa.qcri.nadeef.service.NadeefService"
-                    );
+                        "java -cp out/bin/*:.:out/ qa.qcri.nadeef.service.NadeefService");
             } else {
                 thriftProcess =
                     Runtime.getRuntime().exec(
-                        "java -cp out/bin/*;.;out/ qa.qcri.nadeef.service.NadeefService"
-                    );
+                        "java -cp out/bin/*;.;out/ qa.qcri.nadeef.service.NadeefService");
             }
 
             int thriftPort = Integer.parseInt(System.getProperty("thrift.port", "9091"));
@@ -60,13 +60,12 @@ public final class NadeefStart {
                 System.exit(1);
             }
 
-            System.out.println("OK");
+            logger.info("OK");
 
-            System.out.println("NADEEF Dashboard is live at http://localhost:4567/index.html");
+            logger.info("NADEEF Dashboard is live at http://localhost:4567/index.html");
             Dashboard.main(args);
         } catch (Exception ex) {
-            System.err.println("Launching dashboard failed, shutdown.");
-            ex.printStackTrace(System.err);
+            logger.error("Launching dashboard failed, shutdown.", ex);
         }
     }
 }

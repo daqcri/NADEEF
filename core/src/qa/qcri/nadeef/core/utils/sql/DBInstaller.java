@@ -11,11 +11,11 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
@@ -25,7 +25,7 @@ import java.sql.Statement;
  * NADEEF database installation utility class.
  */
 public final class DBInstaller {
-    private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
+    private static Logger tracer = Logger.getLogger(DBInstaller.class);
 
     /**
      * Delete all the existing data from Violation and Repair table.
@@ -43,13 +43,13 @@ public final class DBInstaller {
             conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             if (!DBMetaDataTool.isTableExist(dbConfig, violationTableName)) {
-                tracer.verbose("Violation is not yet installed.");
+                tracer.fine("Violation is not yet installed.");
             } else {
                 stat.execute(dialectManager.deleteAll(violationTableName));
             }
 
             if (!DBMetaDataTool.isTableExist(dbConfig, repairTableName)) {
-                tracer.verbose("Repair is not yet installed.");
+                tracer.fine("Repair is not yet installed.");
             } else {
                 stat.execute(dialectManager.deleteAll(repairTableName));
             }
@@ -84,7 +84,7 @@ public final class DBInstaller {
             stat = conn.createStatement();
 
             if (DBMetaDataTool.isTableExist(dbConfig, violationTableName)) {
-                tracer.verbose(
+                tracer.fine(
                     "Violation is already installed on the database, skip installing."
                 );
             } else {
@@ -92,7 +92,7 @@ public final class DBInstaller {
             }
 
             if (DBMetaDataTool.isTableExist(dbConfig, repairTableName)) {
-                tracer.verbose(
+                tracer.fine(
                     "Repair is already installed on the database, skip installing."
                 );
             } else {
@@ -100,7 +100,7 @@ public final class DBInstaller {
             }
 
             if (DBMetaDataTool.isTableExist(dbConfig, auditTableName)) {
-                tracer.verbose(
+                tracer.fine(
                     "Audit is already installed on the database, skip installing."
                 );
             } else {
@@ -109,7 +109,7 @@ public final class DBInstaller {
 
             conn.commit();
         } catch (Exception ex) {
-            tracer.err("Exception during installing tables.", ex);
+            tracer.error("Exception during installing tables.", ex);
             throw ex;
         } finally {
             if (stat != null) {
@@ -156,7 +156,7 @@ public final class DBInstaller {
 
             conn.commit();
         } catch (Exception ex) {
-            tracer.err("SQLException during installing tables.", ex);
+            tracer.error("SQLException during installing tables.", ex);
             throw ex;
         } finally {
             if (stat != null) {

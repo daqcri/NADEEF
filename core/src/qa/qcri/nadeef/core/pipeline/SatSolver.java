@@ -23,7 +23,7 @@ import org.sat4j.pb.IPBSolver;
 import org.sat4j.specs.IProblem;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -300,8 +300,8 @@ public class SatSolver extends FixDecisionMaker {
                 }
             }
         } catch (Exception ex) {
-            Tracer tracer = Tracer.getTracer(this.getClass());
-            tracer.err("Sat solving failed.", ex);
+            Logger tracer = Logger.getLogger(this.getClass());
+            tracer.error("Sat solving failed.", ex);
         }
         return newFix;
     }

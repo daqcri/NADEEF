@@ -14,11 +14,11 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.base.Stopwatch;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +31,7 @@ public class ViolationCSVExport extends Operator<File, File> {
     @Override
     protected File execute(File file) throws Exception {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Tracer tracer = Tracer.getTracer(ViolationCSVExport.class);
+        Logger tracer = Logger.getLogger(ViolationCSVExport.class);
         DBConfig config = getCurrentContext().getConnectionPool().getNadeefConfig();
         SQLDialectBase instance =
             SQLDialectFactory.getDialectManagerInstance(config.getDialect());

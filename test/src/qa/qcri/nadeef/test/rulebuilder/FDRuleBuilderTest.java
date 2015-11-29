@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.utils.Bootstrap;
 import qa.qcri.nadeef.ruleext.FDRuleBuilder;
 import qa.qcri.nadeef.test.NadeefTestBase;
 

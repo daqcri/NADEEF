@@ -14,10 +14,10 @@
 package qa.qcri.nadeef.web.sql;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.Connection;
@@ -28,7 +28,7 @@ import java.sql.Statement;
  * DB Installer for Dashboard.
  */
 public class DBInstaller {
-    private static Tracer tracer = Tracer.getTracer(DBInstaller.class);
+    private static Logger tracer = Logger.getLogger(DBInstaller.class);
 
     public static void installMetaData(DBConfig dbConfig) throws Exception {
         Connection conn = null;
@@ -47,7 +47,7 @@ public class DBInstaller {
                 stat.execute(dialectInstance.installProject());
             }
         } catch (Exception ex) {
-            tracer.err("Install Dashboard Meta DB failed.", ex);
+            tracer.error("Install Dashboard Meta DB failed.", ex);
             System.exit(1);
         } finally {
             if (stat != null) {

@@ -16,9 +16,9 @@ package qa.qcri.nadeef.web.rest;
 import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.DBInstaller;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
@@ -32,7 +32,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class ProjectAction {
-    private static Tracer tracer = Tracer.getTracer(ProjectAction.class);
+    private static Logger tracer = Logger.getLogger(ProjectAction.class);
     private static SQLDialect dialect;
     private static SQLDialectBase dialectInstance;
 
@@ -66,7 +66,7 @@ public class ProjectAction {
                     stat.execute(dialectInstance.createDatabase(project_));
                 }
             } catch (Exception ex) {
-                tracer.err("Create project failed " + project, ex);
+                tracer.error("Create project failed " + project, ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -77,9 +77,9 @@ public class ProjectAction {
         // install the tables
         try {
             DBInstaller.install(dbConfig);
-            qa.qcri.nadeef.core.util.sql.DBInstaller.install(dbConfig);
+            qa.qcri.nadeef.core.utils.sql.DBInstaller.install(dbConfig);
         } catch (Exception ex) {
-            tracer.err(ex.getMessage(), ex);
+            tracer.error(ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
 

@@ -22,16 +22,12 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.CleanPlanJsonBuilder;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
 import qa.qcri.nadeef.core.pipeline.UpdateExecutor;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.Violations;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
 import qa.qcri.nadeef.lab.hc.HolisticCleaning;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
-
-import java.io.StringReader;
 
 public class DCRepairTest {
     private DBConfig dbConfig;
@@ -40,7 +36,6 @@ public class DCRepairTest {
     public void setup() {
         try {
             Bootstrap.start();
-            Tracer.setVerbose(true);
             NadeefConfiguration.setMaxIterationNumber(2);
             NadeefConfiguration.setAlwaysOverride(true);
             NadeefConfiguration.setDecisionMakerClass(HolisticCleaning.class);

@@ -24,21 +24,19 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.SQLTable;
 import qa.qcri.nadeef.core.datamodel.Table;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.CSVTools;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(Parameterized.class)
@@ -65,7 +63,6 @@ public class TablePerformanceBenchmark extends NadeefTestBase {
                     new File("test/src/qa/qcri/nadeef/test/input/hospital_10k.csv")
                 );
             connectionFactory = DBConnectionPool.createDBConnectionPool(dbConfig, dbConfig);
-            Tracer.setVerbose(true);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

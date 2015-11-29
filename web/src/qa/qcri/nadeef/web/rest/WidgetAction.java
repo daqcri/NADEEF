@@ -19,9 +19,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.SQLDialectBase;
 import qa.qcri.nadeef.web.sql.SQLUtil;
@@ -64,7 +64,7 @@ public class WidgetAction {
 
     public static void setup(SQLDialect dialect) {
         SQLDialectBase dialectInstance = SQLDialectBase.createDialectBaseInstance(dialect);
-        Tracer tracer = Tracer.getTracer(WidgetAction.class);
+        Logger tracer = Logger.getLogger(WidgetAction.class);
         get("/:project/widget/attribute", (request, response) -> {
             response.type("application/json");
             String filter = request.queryParams("filter");
@@ -173,7 +173,7 @@ public class WidgetAction {
                 json.add("data", result);
                 return json;
             } catch (Exception ex) {
-                tracer.err("Query failed", ex);
+                tracer.error("Query failed", ex);
                 throw new RuntimeException(ex);
             }
         });

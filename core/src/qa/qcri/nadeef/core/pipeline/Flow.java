@@ -16,7 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import qa.qcri.nadeef.core.datamodel.ProgressReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ enum FlowState {
  */
 public class Flow {
     //<editor-fold desc="Private fields">
-    private static Tracer tracer = Tracer.getTracer(Flow.class);
+    private static Logger tracer = Logger.getLogger(Flow.class);
 
     private List<Node> nodeList;
     private List<Integer> weights;
@@ -186,7 +186,7 @@ public class Flow {
                     state = FlowState.Stopped;
                 } catch (Exception ex) {
                     Node curNode = nodeList.get(currentFlowPosition);
-                    tracer.err("Flow stops at node " + curNode.getName(), ex);
+                    tracer.error("Flow stops at node " + curNode.getName(), ex);
                     state = FlowState.StoppedWithException;
                 } finally {
                     for (int i = 0; i < nodeList.size(); i ++) {
@@ -207,7 +207,7 @@ public class Flow {
                 thread.join();
             }
         } catch (InterruptedException ex) {
-            tracer.err("Flow " + name + " is interrupted.", ex);
+            tracer.error("Flow " + name + " is interrupted.", ex);
         }
     }
 

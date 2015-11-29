@@ -21,7 +21,7 @@ import qa.qcri.nadeef.core.datamodel.PairTupleRule;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -133,7 +133,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
     @Override
     @SuppressWarnings("unchecked")
     public Boolean execute(Collection<Table> blocks) {
-        Tracer tracer = Tracer.getTracer(Iterator.class);
+        Logger tracer = Logger.getLogger(Iterator.class);
         ThreadFactory factory =
             new ThreadFactoryBuilder().setNameFormat("iterator-pool-%d").build();
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
@@ -174,7 +174,7 @@ public class Iterator extends Operator<Collection<Table>, Boolean> {
             // mark the end of the iteration output
             IteratorBlockingQueue.markEnd();
         } catch (InterruptedException ex) {
-            tracer.err("Iterator is interrupted.", ex);
+            tracer.error("Iterator is interrupted.", ex);
         } finally {
             executor.shutdown();
         }

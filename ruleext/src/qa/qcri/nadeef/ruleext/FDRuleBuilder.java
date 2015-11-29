@@ -20,9 +20,9 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.utils.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class FDRuleBuilder extends RuleBuilder {
     private List<String> lhs;
     private List<String> rhs;
 
-    private static Tracer tracer = Tracer.getTracer(FDRuleBuilder.class);
+    private static Logger tracer = Logger.getLogger(FDRuleBuilder.class);
     //</editor-fold>
 
 

@@ -21,7 +21,7 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.pipeline.Flow;
 import qa.qcri.nadeef.core.pipeline.Node;
 import qa.qcri.nadeef.core.pipeline.NodeCacheManager;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.utils.Bootstrap;
 import qa.qcri.nadeef.test.NadeefTestBase;
 
 /**

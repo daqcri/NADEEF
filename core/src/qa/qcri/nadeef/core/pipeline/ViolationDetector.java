@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import qa.qcri.nadeef.core.datamodel.*;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.Collection;
 import java.util.List;
@@ -122,8 +122,8 @@ public class ViolationDetector
                         result.addAll(violations);
                     }
                 } catch (Exception ex) {
-                    Tracer tracer = Tracer.getTracer(this.getClass());
-                    tracer.err("Exception inside detect method.", ex);
+                    Logger tracer = Logger.getLogger(this.getClass());
+                    tracer.error("Exception inside detect method.", ex);
                 }
             }
 

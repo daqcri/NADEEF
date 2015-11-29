@@ -19,16 +19,16 @@ import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.utils.Bootstrap;
 import qa.qcri.nadeef.service.thrift.TNadeefService;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 /**
  * Service container which starts / stops the NADEEF thrift service.
  */
 public class NadeefService extends AbstractIdleService {
     private TServer server;
-    private static Tracer tracer = Tracer.getTracer(NadeefService.class);
+    private static Logger logger = Logger.getLogger(NadeefService.class);
 
     @Override
     protected void startUp() throws Exception {
@@ -45,7 +45,7 @@ public class NadeefService extends AbstractIdleService {
                     .Args(serverTransport)
                     .processor(processor)
             );
-        tracer.info("Starting NADEEF server @ " + port);
+        logger.info("Starting NADEEF server @ " + port);
         server.serve();
     }
 
@@ -68,8 +68,7 @@ public class NadeefService extends AbstractIdleService {
             service.startUp();
             Thread.sleep(100);
         } catch (Exception ex) {
-            tracer.err("Nadeef service has exception underneath.", ex);
-            ex.printStackTrace();
+            logger.error("Nadeef service has exception underneath.", ex);
         } finally {
             if (service != null) {
                 try {

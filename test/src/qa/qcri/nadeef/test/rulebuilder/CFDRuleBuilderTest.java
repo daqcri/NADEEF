@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import qa.qcri.nadeef.core.datamodel.Predicate;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.utils.Bootstrap;
 import qa.qcri.nadeef.ruleext.CFDRuleBuilder;
 
 import java.util.Collection;

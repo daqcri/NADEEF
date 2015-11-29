@@ -32,7 +32,7 @@ import java.util.List;
  * Common helper tools.
  */
 public final class CommonTools {
-    private static Tracer tracer = Tracer.getTracer(CommonTools.class);
+    private static Logger tracer = Logger.getLogger(CommonTools.class);
     private static Process derbyProcess;
 
     public static char DOUBLE_QUOTE = '"';
@@ -155,7 +155,7 @@ public final class CommonTools {
                             diagnostic.getLineNumber(),
                             diagnostic.getMessage(null));
             }
-            tracer.err(msg);
+            tracer.error(msg);
         }
         fileManager.close();
         return msg;

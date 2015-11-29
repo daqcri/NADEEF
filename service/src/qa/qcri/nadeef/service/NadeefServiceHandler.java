@@ -21,12 +21,12 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Schema;
-import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.utils.RuleBuilder;
+import qa.qcri.nadeef.core.utils.sql.DBMetaDataTool;
 import qa.qcri.nadeef.service.thrift.*;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,7 +42,7 @@ import java.util.List;
  */
 // TODO: speedup the compiling stage by using object caching.
 public class NadeefServiceHandler implements TNadeefService.Iface {
-    private static Tracer tracer = Tracer.getTracer(NadeefServiceHandler.class);
+    private static Logger tracer = Logger.getLogger(NadeefServiceHandler.class);
 
     /**
      * {@inheritDoc}
@@ -82,7 +82,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 File codeFile = javaFiles.iterator().next();
                 result = Files.toString(codeFile, Charset.defaultCharset());
             } catch (Exception ex) {
-                tracer.err("Code generation failed.", ex);
+                tracer.error("Code generation failed.", ex);
                 TNadeefRemoteException re = new TNadeefRemoteException();
                 re.setType(TNadeefExceptionType.UNKNOWN);
                 re.setMessage(ex.getMessage());
@@ -127,7 +127,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 throw ex;
             }
         } catch (Exception ex) {
-            tracer.err("Exception happens in verify.", ex);
+            tracer.error("Exception happens in verify.", ex);
             if (ex instanceof TNadeefRemoteException)
                 throw (TNadeefRemoteException)ex;
         }
@@ -207,7 +207,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             return key;
 
         } catch (Exception ex) {
-            tracer.err("Exception in detect", ex);
+            tracer.error("Exception in detect", ex);
             TNadeefRemoteException re = new TNadeefRemoteException();
             re.setType(TNadeefExceptionType.COMPILE_ERROR);
             re.setMessage(ex.getMessage());
@@ -259,7 +259,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
             String key = scheduler.submitRepairJob(new CleanPlan(config, ruleInstance));
             return key;
         } catch (Exception ex) {
-            tracer.err("Exception in detect", ex);
+            tracer.error("Exception in detect", ex);
             TNadeefRemoteException re = new TNadeefRemoteException();
             re.setType(TNadeefExceptionType.UNKNOWN);
             re.setMessage(ex.getMessage());
@@ -308,7 +308,7 @@ public class NadeefServiceHandler implements TNadeefService.Iface {
                 .value(lines)
                 .build();
         } else {
-            tracer.err("Unknown Rule type: " + type, null);
+            tracer.error("Unknown Rule type: " + type, null);
             throw new IllegalArgumentException("Unknown rule type");
         }
         return result;

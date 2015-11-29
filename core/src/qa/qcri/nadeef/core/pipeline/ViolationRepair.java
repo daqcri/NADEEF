@@ -19,7 +19,7 @@ import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.Collection;
 import java.util.List;
@@ -55,8 +55,8 @@ public class ViolationRepair
                 result.add(fix);
                 count ++;
             } catch (Exception ex) {
-                Tracer tracer = Tracer.getTracer(ViolationRepair.class);
-                tracer.err("Exception in repair method.", ex);
+                Logger tracer = Logger.getLogger(ViolationRepair.class);
+                tracer.error("Exception in repair method.", ex);
             }
             setPercentage(count / violations.size());
         }

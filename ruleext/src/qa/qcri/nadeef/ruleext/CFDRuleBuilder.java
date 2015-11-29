@@ -20,7 +20,7 @@ import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Operation;
 import qa.qcri.nadeef.core.datamodel.Predicate;
-import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.utils.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 
 import java.io.File;

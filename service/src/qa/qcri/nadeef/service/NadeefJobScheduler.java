@@ -22,7 +22,7 @@ import qa.qcri.nadeef.core.datamodel.ProgressReport;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TJobStatusType;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
@@ -45,13 +45,13 @@ public class NadeefJobScheduler {
     private static ConcurrentMap<String, NadeefJob> runningCleaner;
     private static ConcurrentMap<String, String> runningRules;
     private static String hostname;
-    private static Tracer tracer = Tracer.getTracer(NadeefServiceHandler.class);
+    private static Logger tracer = Logger.getLogger(NadeefServiceHandler.class);
 
     static {
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            tracer.err("Unknown hostname", e);
+            tracer.error("Unknown hostname", e);
             hostname = "127.0.0.1";
         }
 
@@ -115,7 +115,7 @@ public class NadeefJobScheduler {
      * Callback function once a clean is done.
      */
     class CleanCallback implements FutureCallback<String> {
-        private Tracer tracer = Tracer.getTracer(CleanCallback.class);
+        private Logger tracer = Logger.getLogger(CleanCallback.class);
 
         public void onSuccess(String key) {
             keys.remove(key);
@@ -125,7 +125,7 @@ public class NadeefJobScheduler {
 
         @Override
         public void onFailure(Throwable throwable) {
-            tracer.err("FutureCallback failed.");
+            tracer.error("FutureCallback failed.");
         }
     }
 

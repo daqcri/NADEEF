@@ -16,10 +16,10 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import qa.qcri.nadeef.core.util.RuleBuilder;
+import qa.qcri.nadeef.core.utils.RuleBuilder;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 import java.io.File;
@@ -34,7 +34,7 @@ import java.util.Properties;
  * TODO: make it auto-generated from property file.
  */
 public final class NadeefConfiguration {
-    private static Tracer tracer = Tracer.getTracer(NadeefConfiguration.class);
+    private static Logger logger = Logger.getLogger(NadeefConfiguration.class);
 
     private static DBConfig dbConfig;
     private static HashMap<String, RuleBuilder> ruleExtension = Maps.newHashMap();
@@ -67,7 +67,7 @@ public final class NadeefConfiguration {
                 outputPath = tmpPath.toPath();
             else {
                 String userDir = System.getProperty("user.dir");
-                tracer.info(String.format(
+                logger.info(String.format(
                     "Cannot find directory %s, we use %s as default.",
                     outputPathString,
                     userDir

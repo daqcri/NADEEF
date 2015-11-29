@@ -16,7 +16,7 @@ package qa.qcri.nadeef.core.pipeline;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import qa.qcri.nadeef.core.datamodel.Rule;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentMap;
