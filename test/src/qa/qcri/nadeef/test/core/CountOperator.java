@@ -15,15 +15,11 @@ package qa.qcri.nadeef.test.core;
 
 import qa.qcri.nadeef.core.pipeline.ExecutionContext;
 import qa.qcri.nadeef.core.pipeline.Operator;
-import qa.qcri.nadeef.tools.Tracer;
 
 /**
  * A counter operator.
  */
 public class CountOperator extends Operator<Integer, Integer> {
-
-    private static Tracer tracer = Tracer.getTracer(CountOperator.class);
-
     public CountOperator(ExecutionContext context) {
         super(context);
     }
@@ -34,7 +30,6 @@ public class CountOperator extends Operator<Integer, Integer> {
      */
     @Override
     protected Integer execute(Integer count) throws Exception {
-        tracer.info("This is " + count);
         count ++;
         return count;
     }

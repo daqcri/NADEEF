@@ -16,13 +16,14 @@ package qa.qcri.nadeef.core.datamodel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
-import qa.qcri.nadeef.core.util.sql.SQLQueryBuilder;
+
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.sql.SQLQueryBuilder;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * SQLTable represents a {@link Table} which resides in a database.
  */
 public class SQLTable extends Table {
-    private static Tracer tracer = Tracer.getTracer(SQLTable.class);
+    private static Logger tracer = Logger.getLogger(SQLTable.class);
 
     private DBConnectionPool connectionFactory;
     private SQLDialectBase dialectManager;
@@ -204,7 +205,7 @@ public class SQLTable extends Table {
                 result.add(newTable);
             }
         } catch (Exception ex) {
-            tracer.err(ex.getMessage(), ex);
+            tracer.error(ex.getMessage(), ex);
         } finally {
             if (distinctResult != null) {
                 try {
@@ -283,7 +284,7 @@ public class SQLTable extends Table {
 
             schema = new Schema(tableName, columns, types);
         } catch (Exception ex) {
-            tracer.err("Cannot get valid schema.", ex);
+            tracer.error("Cannot get valid schema.", ex);
         }
     }
 
@@ -341,7 +342,7 @@ public class SQLTable extends Table {
                 tuples.add(new Tuple(tupleId, schema, values));
             }
         } catch (Exception ex) {
-            tracer.err("Synchronization failed.", ex);
+            tracer.error("Synchronization failed.", ex);
         } finally {
             try {
                 if (resultSet != null) {

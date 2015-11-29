@@ -15,7 +15,6 @@ package qa.qcri.nadeef.web;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.tools.CommonTools;
-import qa.qcri.nadeef.tools.Tracer;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.sql.DBInstaller;
 
@@ -55,12 +54,6 @@ public final class Bootstrap {
     public static void start(String fileName) {
         try {
             NadeefConfiguration.initialize(new FileReader(fileName));
-            // set the logging directory
-            Path outputPath = NadeefConfiguration.getOutputPath();
-            Tracer.setLoggingPrefix("dashboard");
-            Tracer.setLoggingDir(outputPath.toString());
-            Tracer tracer = Tracer.getTracer(Bootstrap.class);
-            tracer.verbose("Tracer initialized at " + outputPath.toString());
 
             // start embedded database
             if (NadeefConfiguration.getDbConfig().getDialect() == SQLDialect.DERBY ||

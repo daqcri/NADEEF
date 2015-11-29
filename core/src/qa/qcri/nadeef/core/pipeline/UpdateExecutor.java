@@ -17,10 +17,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class UpdateExecutor {
     private Flow updateFlow;
     private NodeCacheManager cacheManager;
-    private Tracer tracer;
+    private Logger tracer;
     private DBConnectionPool connectionPool;
     private ExecutionContext context;
 
@@ -42,7 +42,7 @@ public class UpdateExecutor {
 
     public UpdateExecutor(CleanPlan cleanPlan, DBConfig nadeefConfig) {
         cacheManager = NodeCacheManager.getInstance();
-        tracer = Tracer.getTracer(UpdateExecutor.class);
+        tracer = Logger.getLogger(UpdateExecutor.class);
         this.connectionPool =
             DBConnectionPool.createDBConnectionPool(
                 cleanPlan.getSourceDBConfig(),
@@ -126,7 +126,7 @@ public class UpdateExecutor {
                 .addNode(new Updater(context));
                 // .addNode(new IncrementalUpdate(NadeefConfiguration.getDbConfig()));
         } catch (Exception ex) {
-            tracer.err("Exception happens during assembling the update flow.", ex);
+            tracer.error("Exception happens during assembling the update flow.", ex);
         }
     }
 }

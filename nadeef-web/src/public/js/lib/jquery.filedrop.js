@@ -114,6 +114,10 @@
                 builder = '',
                 paramname = opts.paramname;
 
+            if (jQuery.isFunction(opts.data)) {
+                opts.data = opts.data();
+            }
+
             if (opts.data) {
                 var params = $.param(opts.data).replace(/\+/g, '%20').split(/&/);
 

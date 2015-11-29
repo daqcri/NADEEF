@@ -24,12 +24,11 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.CleanPlanJsonBuilder;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.Violations;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,6 @@ public class ERDetectionTest extends NadeefTestBase {
         try {
             Bootstrap.start(testConfig);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
-            Tracer.setVerbose(true);
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }

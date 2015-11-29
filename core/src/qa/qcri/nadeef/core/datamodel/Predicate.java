@@ -17,7 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.Collections;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class Predicate {
         operationMap = ImmutableBiMap.copyOf(Collections.unmodifiableMap(realMap));
     }
 
-    private static Tracer tracer = Tracer.getTracer(Predicate.class);
+    private static Logger tracer = Logger.getLogger(Predicate.class);
 
     private Operation operation;
     private Column left;

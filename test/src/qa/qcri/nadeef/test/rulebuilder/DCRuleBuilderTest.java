@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.runners.Parameterized;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.utils.Bootstrap;
 import qa.qcri.nadeef.ruleext.DCRuleBuilder;
 
 import java.io.File;

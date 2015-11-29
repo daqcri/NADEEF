@@ -22,12 +22,11 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.Violations;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.Tracer;
 
 @RunWith(Parameterized.class)
 public class DCDetectionTest extends NadeefTestBase {
@@ -39,7 +38,6 @@ public class DCDetectionTest extends NadeefTestBase {
     public void setup() {
         try {
             Bootstrap.start(testConfig);
-            Tracer.setVerbose(true);
             NadeefConfiguration.setMaxIterationNumber(1);
             NadeefConfiguration.setAlwaysOverride(true);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());

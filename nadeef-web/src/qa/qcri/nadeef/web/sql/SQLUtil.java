@@ -23,16 +23,17 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLUtil {
-    private static Tracer tracer = Tracer.getTracer(SQLUtil.class);
+    private static Logger tracer = Logger.getLogger(SQLUtil.class);
+
     public static boolean isValidTableName(String s) {
         boolean isGood = true;
         if (!Strings.isNullOrEmpty(s)) {
@@ -67,7 +68,7 @@ public class SQLUtil {
         ) {
             return queryToJson(rs, includeHeader);
         } catch(Exception ex) {
-            tracer.err("Exception on query " + sql, ex);
+            tracer.error("Exception on query " + sql, ex);
             throw new RuntimeException(ex);
         }
     }
@@ -84,7 +85,7 @@ public class SQLUtil {
         } catch (
             SQLException | ClassNotFoundException |
                 InstantiationException | IllegalAccessException ex) {
-            tracer.err("Exception", ex);
+            tracer.error("Exception", ex);
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
@@ -119,7 +120,7 @@ public class SQLUtil {
             queryObject.add("data", data);
             return queryObject;
         } catch (SQLException ex) {
-            tracer.err("Exception", ex);
+            tracer.error("Exception", ex);
             throw new RuntimeException(ex);
         }
     }

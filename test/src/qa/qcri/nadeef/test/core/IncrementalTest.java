@@ -23,15 +23,14 @@ import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.CSVTools;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.File;
 import java.util.HashSet;
@@ -49,7 +48,6 @@ public class IncrementalTest extends NadeefTestBase {
     public void setup() {
         try {
             Bootstrap.start(testConfig);
-            Tracer.setVerbose(true);
             NadeefConfiguration.setMaxIterationNumber(1);
             NadeefConfiguration.setAlwaysOverride(true);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());

@@ -17,33 +17,40 @@ import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+
 import org.apache.thrift.TException;
+
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.CSVTools;
+import qa.qcri.nadeef.core.utils.CSVTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.web.Bootstrap;
 import qa.qcri.nadeef.web.NadeefClient;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.StringReader;
+import java.io.BufferedWriter;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class RemoteAction {
+    private static Logger logger = Logger.getLogger(RemoteAction.class);
+
     //<editor-fold desc="Do actions">
     public static void setup(SQLDialect dialect) {
         NadeefClient nadeefClient = Bootstrap.getNadeefClient();
         String TABLE_PREFIX = "TB_";
-        Tracer tracer = Tracer.getTracer(RemoteAction.class);
 
         get("/progress", (request, response) -> {
             try {
                 String msg = nadeefClient.getJobStatus();
                 return new Gson().fromJson(msg, JsonElement.class).getAsJsonObject();
             } catch (TException ex) {
-                tracer.err("Thrift exception", ex);
+                logger.error("Thrift exception", ex);
                 throw new RuntimeException(ex);
             }
         });
@@ -67,7 +74,7 @@ public class RemoteAction {
                     nadeefClient.generate(type, name, code, table1, project);
                 return new Gson().fromJson(msg, JsonElement.class).getAsJsonObject();
             } catch (TException ex) {
-                tracer.err("generate failed", ex);
+                logger.error("generate failed", ex);
                 throw new RuntimeException(ex);
             }
         });
@@ -88,7 +95,7 @@ public class RemoteAction {
                 String msg = nadeefClient.verify(type, name, code);
                 return new Gson().fromJson(msg, JsonElement.class).getAsJsonObject();
             } catch (TException ex) {
-                tracer.err("verify failed", ex);
+                logger.error("verify failed", ex);
                 throw new RuntimeException(ex);
             }
         });
@@ -113,7 +120,7 @@ public class RemoteAction {
                     nadeefClient.detect(type, name, code, table1, table2, dbname);
                 return new Gson().fromJson(msg, JsonElement.class).getAsJsonObject();
             } catch (TException ex) {
-                tracer.err("detect failed", ex);
+                logger.error("detect failed", ex);
                 throw new RuntimeException(ex);
             }
         });
@@ -137,6 +144,23 @@ public class RemoteAction {
                     }
 
                     if (projectName != null) {
+                        break;
+                    }
+                }
+
+                // parse the schema
+                String schema = null;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("schema")) {
+                        while ((line = reader.readLine()) != null) {
+                            if (!line.isEmpty()) {
+                                schema = line.trim();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (schema != null) {
                         break;
                     }
                 }
@@ -179,15 +203,15 @@ public class RemoteAction {
                     writer.write("\n");
                 }
                 writer.flush();
-                tracer.info("Write upload file to " + outputFile.getAbsolutePath());
+                logger.info("Write upload file to " + outputFile.getAbsolutePath());
 
                 // dump into database
                 DBConfig dbConfig = new DBConfig(NadeefConfiguration.getDbConfig());
                 dbConfig.switchDatabase(projectName);
 
                 // TODO: resolve this by using injection deps.
-                qa.qcri.nadeef.core.util.sql.SQLDialectBase dialectBase =
-                    qa.qcri.nadeef.core.util.sql.SQLDialectBase.createDialectBaseInstance(
+                qa.qcri.nadeef.core.utils.sql.SQLDialectBase dialectBase =
+                    qa.qcri.nadeef.core.utils.sql.SQLDialectBase.createDialectBaseInstance(
                         dbConfig.getDialect()
                     );
 
@@ -197,10 +221,11 @@ public class RemoteAction {
                     dialectBase,
                     outputFile,
                     tableName,
+                    schema,
                     NadeefConfiguration.getAlwaysOverrideTable());
 
             } catch (Exception ex) {
-                tracer.err("Upload file failed.", ex);
+                logger.error("Upload file failed.", ex);
                 response.status(400);
                 throw new RuntimeException(ex);
             } finally {
@@ -235,7 +260,7 @@ public class RemoteAction {
                     nadeefClient.repair(type, name, code, table1, table2, dbName);
                 return new Gson().fromJson(msg, JsonElement.class).getAsJsonObject();
             } catch (TException ex) {
-                tracer.err("repair failed.", ex);
+                logger.error("repair failed.", ex);
                 throw new RuntimeException(ex);
             }
         });

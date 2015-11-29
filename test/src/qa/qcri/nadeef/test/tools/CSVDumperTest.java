@@ -20,15 +20,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.CSVTools;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -53,7 +52,6 @@ public class CSVDumperTest extends NadeefTestBase {
     public void setUp() {
         try {
             Bootstrap.start(testConfig);
-            Tracer.setInfo(true);
             dbConfig = NadeefConfiguration.getDbConfig();
             dialectManager =
                 SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());

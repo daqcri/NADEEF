@@ -18,9 +18,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.utils.sql.DBMetaDataTool;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class  SourceAction {
 
     //<editor-fold desc="source actions">
     public static void setup(SQLDialect dialect) {
-        Tracer tracer = Tracer.getTracer(SourceAction.class);
+        Logger tracer = Logger.getLogger(SourceAction.class);
 
         get("/:project/data/source", (request, response) -> {
             JsonObject json = new JsonObject();
@@ -59,7 +59,7 @@ public class  SourceAction {
                 json.add("data", result);
                 return json;
             } catch (Exception ex) {
-                tracer.err("Exception", ex);
+                tracer.error("Exception", ex);
                 throw new RuntimeException(ex);
             }
         });

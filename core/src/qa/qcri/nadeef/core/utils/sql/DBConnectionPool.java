@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.dbcp.BasicDataSource;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
 import java.sql.Connection;
@@ -34,7 +34,7 @@ import java.util.HashSet;
  * Database JDBC Connection Factory class.
  */
 public class DBConnectionPool {
-    private static Tracer tracer = Tracer.getTracer(DBConnectionPool.class);
+    private static Logger tracer = Logger.getLogger(DBConnectionPool.class);
     private static final int MAX_ACTIVE = Runtime.getRuntime().availableProcessors() * 2;
 
     private BasicDataSource nadeefPool;
@@ -76,7 +76,7 @@ public class DBConnectionPool {
      * @return connection pool instance.
      */
     public BasicDataSource createConnectionPool(DBConfig dbconfig) {
-        tracer.verbose("Creating connection pool for " + dbconfig.getUrl());
+        tracer.fine("Creating connection pool for " + dbconfig.getUrl());
         BasicDataSource result;
         result = new BasicDataSource();
         result.setUrl(dbconfig.getUrl());
@@ -133,22 +133,22 @@ public class DBConnectionPool {
 
                 localCache.clear();
             } catch (Exception ex) {
-                tracer.err("Exceptions happen when closing the connection pool.", ex);
+                tracer.error("Exceptions happen when closing the connection pool.", ex);
             }
         }
 
         try {
             if (nadeefPool != null) {
                 nadeefPool.close();
-                tracer.verbose("Closing a connection pool @" + nadeefPool.getUrl());
+                tracer.fine("Closing a connection pool @" + nadeefPool.getUrl());
             }
 
             if (sourcePool != null) {
                 sourcePool.close();
-                tracer.verbose("Closing a connection pool @" + sourcePool.getUrl());
+                tracer.fine("Closing a connection pool @" + sourcePool.getUrl());
             }
         } catch (Exception e) {
-            tracer.err("Exception during closing NADEEF pool.", e);
+            tracer.error("Exception during closing NADEEF pool.", e);
         }
     }
 
@@ -217,7 +217,7 @@ public class DBConnectionPool {
 
                     PerfReport.addMetric(PerfReport.Metric.SourceIndexCreationCount, 1);
                 } catch (Exception ex) {
-                    tracer.err("Creating index " + indexName + " failed.", ex);
+                    tracer.error("Creating index " + indexName + " failed.", ex);
                 } finally {
                     try {
                         if (conn != null) {

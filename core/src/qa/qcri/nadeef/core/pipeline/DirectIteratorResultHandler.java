@@ -17,7 +17,7 @@ import qa.qcri.nadeef.core.datamodel.IteratorResultHandler;
 import qa.qcri.nadeef.core.datamodel.NonBlockingCollectionIterator;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.Collection;
 
@@ -37,14 +37,14 @@ public class DirectIteratorResultHandler implements IteratorResultHandler {
     @Override
     @SuppressWarnings("unchecked")
     public <T> void handle(T item) {
-        Tracer tracer = Tracer.getTracer(DirectIteratorResultHandler.class);
+        Logger tracer = Logger.getLogger(DirectIteratorResultHandler.class);
         try {
             Collection<Violation> detectResult = rule.detect(item);
             if (detectResult.size() != 0) {
                 violations.appendCollection(detectResult);
             }
         } catch (Exception ex) {
-            tracer.err("Exception during detection", ex);
+            tracer.error("Exception during detection", ex);
         }
     }
 }

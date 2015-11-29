@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;

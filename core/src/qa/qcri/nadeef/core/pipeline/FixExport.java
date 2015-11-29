@@ -16,10 +16,10 @@ package qa.qcri.nadeef.core.pipeline;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.Fixes;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.Fixes;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -31,7 +31,7 @@ import java.util.Collection;
  *
  */
 class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
-    private static Tracer tracer = Tracer.getTracer(FixExport.class);
+    private static Logger tracer = Logger.getLogger(FixExport.class);
 
     /**
      * Constructor.
@@ -75,7 +75,7 @@ class FixExport extends Operator<Collection<Collection<Fix>>, Integer> {
                 count
             );
         } catch (Exception ex) {
-            tracer.err("Exporting Fixes failed", ex);
+            tracer.error("Exporting Fixes failed", ex);
         } finally {
             if (stat != null) {
                 stat.close();

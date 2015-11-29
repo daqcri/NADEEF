@@ -14,7 +14,7 @@
 package qa.qcri.nadeef.core.datamodel;
 
 import com.google.common.collect.Lists;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class IteratorBlockingQueue implements IteratorResultHandler {
     private static final long TIMEOUT;
     private static final int BUFFER_BOUNDARY;
     private static final int MAX_QUEUE_BOUNDARY;
-    private static Tracer tracer;
+    private static Logger tracer;
     private static LinkedBlockingQueue<List<Object>> queue;
 
     static {
@@ -36,7 +36,7 @@ public class IteratorBlockingQueue implements IteratorResultHandler {
         BUFFER_BOUNDARY = 10240;
         MAX_QUEUE_BOUNDARY = 1024;
         queue = new LinkedBlockingQueue<>(MAX_QUEUE_BOUNDARY);
-        tracer = Tracer.getTracer(IteratorBlockingQueue.class);
+        tracer = Logger.getLogger(IteratorBlockingQueue.class);
     }
 
     private List<Object> buffer;
@@ -57,7 +57,7 @@ public class IteratorBlockingQueue implements IteratorResultHandler {
         try {
             while ((item = queue.poll(TIMEOUT, TimeUnit.MILLISECONDS)) == null);
         } catch (InterruptedException ex) {
-            tracer.err("Exception during polling the queue.", ex);
+            tracer.error("Exception during polling the queue.", ex);
         }
         return item;
     }
@@ -70,7 +70,7 @@ public class IteratorBlockingQueue implements IteratorResultHandler {
             List<Object> end = new ArrayList<>(0);
             while (!queue.offer(end, TIMEOUT, TimeUnit.MILLISECONDS));
         } catch (InterruptedException ex) {
-            tracer.err("Exception during marking the end of the queue.", ex);
+            tracer.error("Exception during marking the end of the queue.", ex);
         }
     }
 
@@ -83,7 +83,7 @@ public class IteratorBlockingQueue implements IteratorResultHandler {
             try {
                 while (!queue.offer(new ArrayList<>(buffer), TIMEOUT, TimeUnit.MILLISECONDS));
             } catch (InterruptedException e) {
-                tracer.err("offer interrupted", e);
+                tracer.error("offer interrupted", e);
             }
             buffer = Lists.newArrayList();
         }
@@ -101,7 +101,7 @@ public class IteratorBlockingQueue implements IteratorResultHandler {
             }
             buffer = null;
         } catch (InterruptedException e) {
-            tracer.err("flush interrupted", e);
+            tracer.error("flush interrupted", e);
         }
     }
 

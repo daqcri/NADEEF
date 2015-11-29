@@ -15,9 +15,9 @@ package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,7 +42,7 @@ public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
         Connection conn = null;
         PreparedStatement stat = null;
         int[] newTuples = new int[fixes.size()];
-        Tracer tracer = Tracer.getTracer(IncrementalUpdate.class);
+        Logger tracer = Logger.getLogger(IncrementalUpdate.class);
         try {
             conn = DBConnectionPool.createConnection(nadeefConfig, false);
             stat = conn.prepareStatement("DELETE FROM "
@@ -69,7 +69,7 @@ public class IncrementalUpdate extends Operator<Collection<Fix>, int[]> {
             stat.executeBatch();
             conn.commit();
         } catch (Exception ex) {
-            tracer.err("Incremental deletion failed.", ex);
+            tracer.error("Incremental deletion failed.", ex);
         } finally {
             try {
                 if (conn != null) {

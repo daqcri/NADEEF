@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util;
+package qa.qcri.nadeef.core.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
@@ -19,11 +19,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
+
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,6 +41,7 @@ import java.util.concurrent.TimeUnit;
  * CSVTools is a simple tool which dumps CSV data into database given a table name.
  */
 public class CSVTools {
+    private static Logger logger = Logger.getLogger(CSVTools.class);
     // <editor-fold desc="Public methods">
 
     /**
@@ -86,7 +88,6 @@ public class CSVTools {
         Preconditions.checkNotNull(dbConfig);
         Preconditions.checkNotNull(dialectManager);
 
-        Tracer tracer = Tracer.getTracer(CSVTools.class);
         Stopwatch stopwatch = Stopwatch.createStarted();
         HashSet<Integer> result = Sets.newHashSet();
         try {
@@ -109,7 +110,7 @@ public class CSVTools {
                 size = dialectManager.fallbackLoad(dbConfig, tableName, file, true);
             }
 
-            tracer.info(
+            logger.info(
                 "Appended " + size + " bytes in " +
                 stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
             );
@@ -122,7 +123,7 @@ public class CSVTools {
             }
 
         } catch (Exception ex) {
-            tracer.err("Cannot load file " + file.getName(), ex);
+            logger.error("Cannot load file " + file.getName(), ex);
         }
         return result;
     }
@@ -137,8 +138,26 @@ public class CSVTools {
     public static String dump(DBConfig dbConfig, SQLDialectBase dialectManager, File file)
             throws IllegalAccessException, SQLException, IOException {
         String fileName = Files.getNameWithoutExtension(file.getName());
-        String tableName = dump(dbConfig, dialectManager, file, fileName, true);
-        return tableName;
+
+        return dump(dbConfig, dialectManager, file, fileName, true);
+    }
+
+    public static String dump(
+        final DBConfig dbConfig,
+        final SQLDialectBase dialectManager,
+        final File file,
+        final String tableName,
+        final boolean overwrite
+    ) throws SQLException {
+        String header = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            do {
+                header = reader.readLine();
+            } while (Strings.isNullOrEmpty(header));
+        } catch (Exception ex) {
+            logger.error("Reading CSV file header failed.", ex);
+        }
+        return dump(dbConfig, dialectManager, file, tableName, header, overwrite);
     }
 
     /**
@@ -153,22 +172,21 @@ public class CSVTools {
      * @return new created table name.
      */
     public static String dump(
-            DBConfig dbConfig,
-            SQLDialectBase dialectManager,
-            File file,
-            String tableName,
-            boolean overwrite
+        final DBConfig dbConfig,
+        final SQLDialectBase dialectManager,
+        final File file,
+        final String tableName,
+        final String schema,
+        final boolean overwrite
     ) throws SQLException {
         Preconditions.checkNotNull(dbConfig);
         Preconditions.checkNotNull(dialectManager);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(schema));
 
-        Tracer tracer = Tracer.getTracer(CSVTools.class);
         Stopwatch stopwatch = Stopwatch.createStarted();
         String fullTableName = null;
         String sql;
-        BufferedReader reader = null;
-
-        try {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))){
             // overwrites existing tables if necessary
             fullTableName = "TB_" + tableName;
 
@@ -176,37 +194,27 @@ public class CSVTools {
 
             // Create table
             if (hasTableExist && !overwrite) {
-                tracer.info(
+                logger.info(
                     "Found table " + fullTableName + " exists and choose not to overwrite."
                 );
                 return fullTableName;
             } else {
-                Connection conn = null;
                 Statement stat = null;
-                try {
-                    conn = DBConnectionPool.createConnection(dbConfig, true);
+                try (Connection conn = DBConnectionPool.createConnection(dbConfig, true)) {
                     stat = conn.createStatement();
                     if (hasTableExist && overwrite) {
                         sql = dialectManager.dropTable(fullTableName);
-                        tracer.verbose(sql);
+                        logger.fine(sql);
                         stat.execute(sql);
                     }
 
-                    reader = new BufferedReader(new FileReader(file));
-                    // TODO: check whether the header exists.
-                    String line;
-                    while (Strings.isNullOrEmpty(line = reader.readLine()));
-                    sql = dialectManager.createTableFromCSV(fullTableName, line);
-                    tracer.verbose(sql);
+                    sql = dialectManager.createTableFromCSV(fullTableName, schema);
+                    logger.fine(sql);
                     stat.execute(sql);
-                    tracer.info("Successfully created table " + fullTableName);
+                    logger.info("Successfully created table " + fullTableName);
                 } finally {
                     if (stat != null) {
                         stat.close();
-                    }
-
-                    if (conn != null) {
-                        conn.close();
                     }
                 }
 
@@ -224,22 +232,14 @@ public class CSVTools {
                     size = dialectManager.fallbackLoad(dbConfig, fullTableName, file, true);
                 }
 
-                tracer.info(
+                logger.info(
                     "Dumped " + size + " bytes in " +
                     stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms."
                 );
                 stopwatch.stop();
             }
         } catch (Exception ex) {
-            tracer.err("Cannot load file " + file.getName(), ex);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (Exception ex) {
-                // ignore
-            }
+            logger.error("Cannot load file " + file.getName(), ex);
         }
         return fullTableName;
     }

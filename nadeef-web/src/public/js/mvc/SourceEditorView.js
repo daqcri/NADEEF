@@ -18,10 +18,9 @@ define([
 ], function (State, SourceEditor, SourceEditorTemplate) {
     "use strict";
     function start(id) {
-        var html =
-            _.template(SourceEditorTemplate)();
+        var html =  _.template(SourceEditorTemplate)();
         $('#' + id).html(html);
-
+        var schema = "";
         // initialize the filedrop
         $("#dropbox").filedrop({
             maxfiles: 1,
@@ -29,7 +28,12 @@ define([
             queuefiles: 1,
             url: "/do/upload",
             allowedfileextensions: ['.csv'],
-            data: { project: State.get("project") },
+            data: function () {
+                return {
+                    project: State.get("project"),
+                    schema : schema
+                };
+            },
             error: function (err, file) {
                 switch (err) {
                     case 'BrowserNotSupported':
@@ -48,7 +52,6 @@ define([
 
             beforeSend: function (file, fileIndex, e, done) {
                 $("#schema").removeClass("hide");
-                // console.log(e.target.result.length);
                 var content = e.target.result;
                 var i = 0;
                 for (i = 0; i < content.length; i ++) {
@@ -76,15 +79,23 @@ define([
                 }
 
                 tbody.empty().append(html);
-                $("#source-editor-save").on("click", function () {
+                $("#source-editor-save").on("click", function (e) {
                     var attributes = $("#schema").find("tbody input");
                     var types = $("#schema").find("tbody select");
-                    var schema = "";
                     for (var i = 0; i < attributes.length; i ++) {
-                        schema += attributes[i] + ':' + types[i];
+                        var token = "";
+                        if (i != 0)
+                            token = ",";
+                        // TODO: needs to process column name to remove quote or space
+                        token += attributes[i].value.trim() + " ";
+                        if (types[i].value.trim() === "integer")
+                            token += "int";
+                        else if (types[i].value.trim() === "float")
+                            token += "float";
+                        else
+                            token += "string";
+                        schema += token;
                     }
-
-                    e.target.result = schema + '\n' + e.target.result;
 
                     done();
                 });

@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import com.google.common.base.Preconditions;
 import org.stringtemplate.v4.ST;
@@ -28,7 +28,7 @@ import java.sql.Statement;
 public class MySQLDialect extends SQLDialectBase {
     public static STGroupFile template =
         new STGroupFile(
-            "qa*qcri*nadeef*core*util*sql*template*MySQLTemplate.stg".replace(
+            "qa*qcri*nadeef*core*utils*sql*template*MySQLTemplate.stg".replace(
                 "*", "/"), '$', '$');
     /**
      * {@inheritDoc}

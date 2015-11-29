@@ -20,9 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.sql.DBMetaDataTool;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.tools.DBConfig;
 

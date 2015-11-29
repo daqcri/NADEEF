@@ -11,7 +11,7 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import com.google.common.base.Stopwatch;
 import org.postgresql.copy.CopyManager;
@@ -21,7 +21,7 @@ import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.FileReader;
 import java.nio.file.Path;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class PostgresSQLDialect extends SQLDialectBase {
     public static STGroupFile template =
-        new STGroupFile("qa/qcri/nadeef/core/util/sql/template/PostgresTemplate.stg", '$', '$');
+        new STGroupFile("qa/qcri/nadeef/core/utils/sql/template/PostgresTemplate.stg", '$', '$');
 
     /**
      * {@inheritDoc}
@@ -103,7 +103,7 @@ public class PostgresSQLDialect extends SQLDialectBase {
         Path file,
         boolean skipHeader
     ) {
-        Tracer tracer = Tracer.getTracer(PostgresSQLDialect.class);
+        Logger tracer = Logger.getLogger(PostgresSQLDialect.class);
         tracer.info("Bulk load CSV file " + file.toString());
         try (Connection conn = DBConnectionPool.createConnection(dbConfig, true);
              FileReader reader = new FileReader(file.toFile())
@@ -125,11 +125,12 @@ public class PostgresSQLDialect extends SQLDialectBase {
                     tableName,
                     builder.toString(),
                     skipHeader ? "true" : "false");
+            tracer.info(sql);
             copyManager.copyIn(sql, reader);
             watch.stop();
             tracer.info("Bulk load finished in " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms");
         } catch (Exception ex) {
-            tracer.err("Loading csv file " + file.getFileName() + " failed.", ex);
+            tracer.error("Loading csv file " + file.getFileName() + " failed.", ex);
             return 1;
         }
         return 0;

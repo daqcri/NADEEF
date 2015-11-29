@@ -11,14 +11,15 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import com.google.common.collect.Lists;
+import com.mysql.jdbc.log.Log;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.DataType;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.sql.*;
@@ -78,7 +79,7 @@ public final class DBMetaDataTool {
 
         SQLDialectBase dialectManager =
             SQLDialectFactory.getDialectManagerInstance(config.getDialect());
-        Tracer tracer = Tracer.getTracer(DBMetaDataTool.class);
+        Logger tracer = Logger.getLogger(DBMetaDataTool.class);
         Connection conn = null;
         Statement stat = null;
         ResultSet resultSet = null;
@@ -106,7 +107,7 @@ public final class DBMetaDataTool {
 
             result = new Schema(tableName, columns, types);
         } catch (Exception ex) {
-            tracer.err("Cannot get valid schema.", ex);
+            tracer.error("Cannot get valid schema.", ex);
         } finally {
             try {
                 if (resultSet != null) {
@@ -218,7 +219,7 @@ public final class DBMetaDataTool {
         ClassNotFoundException {
         SQLDialectBase dialectManager =
             SQLDialectFactory.getDialectManagerInstance(dbConfig.getDialect());
-        Tracer tracer = Tracer.getTracer(DBMetaDataTool.class);
+        Logger tracer = Logger.getLogger(DBMetaDataTool.class);
         Connection conn = null;
         Statement stat = null;
         ResultSet resultSet = null;
@@ -233,7 +234,7 @@ public final class DBMetaDataTool {
                 result = resultSet.getInt(1);
             }
         } catch (Exception ex) {
-            tracer.err("Cannot get valid schema.", ex);
+            tracer.error("Cannot get valid schema.", ex);
         } finally {
             try {
                 if (resultSet != null) {

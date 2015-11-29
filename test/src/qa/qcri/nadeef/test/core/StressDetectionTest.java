@@ -23,15 +23,14 @@ import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.pipeline.CleanExecutor;
-import qa.qcri.nadeef.core.util.Bootstrap;
-import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
-import qa.qcri.nadeef.core.util.sql.DBInstaller;
+import qa.qcri.nadeef.core.utils.Bootstrap;
+import qa.qcri.nadeef.core.utils.Violations;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBInstaller;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
 import qa.qcri.nadeef.tools.DBConfig;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,8 +51,6 @@ public class StressDetectionTest extends NadeefTestBase {
         try {
             Bootstrap.start(testConfig);
             NadeefConfiguration.setMaxIterationNumber(1);
-            Tracer.setVerbose(true);
-            Tracer.setInfo(true);
             DBInstaller.uninstall(NadeefConfiguration.getDbConfig());
             PerfReport.clear();
         } catch (Exception ex) {
@@ -68,7 +65,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @Test
     public void cleanExecutorTest10k() {
-        Tracer.setVerbose(false);
         CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan10k();
@@ -94,8 +90,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @Test
     public void cleanExecutorTest30k() {
-        Tracer.setVerbose(false);
-        Tracer.setInfo(true);
         CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan30k();
@@ -112,8 +106,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @Test
     public void cleanExecutorTest40k() {
-        Tracer.setVerbose(false);
-        Tracer.setInfo(true);
         CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan40k();
@@ -130,8 +122,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @Test
     public void cleanExecutorTest80k() {
-        Tracer.setVerbose(false);
-        Tracer.setInfo(true);
         CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getStressPlan80k();
@@ -149,8 +139,6 @@ public class StressDetectionTest extends NadeefTestBase {
 
     @Test
     public void cleanExecutorTest500k() {
-        Tracer.setVerbose(false);
-        Tracer.setInfo(true);
         CleanExecutor executor = null;
         try {
             CleanPlan cleanPlan = TestDataRepository.getPlan("benchmark500k.json").get(0);

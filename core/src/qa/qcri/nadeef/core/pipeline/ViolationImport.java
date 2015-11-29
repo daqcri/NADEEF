@@ -17,8 +17,8 @@ import com.google.common.base.Optional;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
 import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Violation;
-import qa.qcri.nadeef.core.util.Violations;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.Violations;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

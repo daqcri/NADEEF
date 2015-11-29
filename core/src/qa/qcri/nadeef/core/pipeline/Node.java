@@ -14,7 +14,7 @@
 package qa.qcri.nadeef.core.pipeline;
 
 import qa.qcri.nadeef.core.datamodel.ProgressReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class Node {
 
     //<editor-fold desc="Private fields">
-    private static Tracer tracer = Tracer.getTracer(Node.class);
+    private static Logger tracer = Logger.getLogger(Node.class);
     private UUID uid;
     private String name;
     private Operator operator;
@@ -71,7 +71,7 @@ public class Node {
                 nodeCache.put(newKey, result, 1);
                 return newKey;
             } catch (Exception ex) {
-                tracer.err("Node has an exception during execution.", ex);
+                tracer.error("Node has an exception during execution.", ex);
             }
         }
 

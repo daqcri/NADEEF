@@ -11,14 +11,14 @@
  * NADEEF is released under the terms of the MIT License, (http://opensource.org/licenses/MIT).
  */
 
-package qa.qcri.nadeef.core.util.sql;
+package qa.qcri.nadeef.core.utils.sql;
 
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Schema;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -33,7 +33,7 @@ import java.sql.*;
 public class DerbySQLDialect extends SQLDialectBase {
     private static STGroupFile template =
         new STGroupFile(
-            "qa*qcri*nadeef*core*util*sql*template*DerbyTemplate.stg".replace(
+            "qa*qcri*nadeef*core*utils*sql*template*DerbyTemplate.stg".replace(
             "*", "/"
             ), '$', '$');
 
@@ -50,7 +50,7 @@ public class DerbySQLDialect extends SQLDialectBase {
      */
     @Override
     public int bulkLoad(DBConfig dbConfig, String tableName, Path file, boolean skipHeader) {
-        Tracer tracer = Tracer.getTracer(DerbySQLDialect.class);
+        Logger tracer = Logger.getLogger(DerbySQLDialect.class);
         Path inputFile = file;
         int lines = 0;
         if (skipHeader) {
@@ -63,7 +63,7 @@ public class DerbySQLDialect extends SQLDialectBase {
                 lines = removeFirstLine(outputFile);
                 inputFile = outputFile;
             } catch (IOException ex)  {
-                tracer.err("Creating temporary file failed.", ex);
+                tracer.error("Creating temporary file failed.", ex);
                 return 0;
             }
         }
@@ -91,13 +91,13 @@ public class DerbySQLDialect extends SQLDialectBase {
             st.add("filename", inputFile.toFile().getAbsolutePath());
             st.add("delimiter", ',');
             String sql = st.render();
-            tracer.verbose("Calling bulk loading : " + sql);
+            tracer.fine("Calling bulk loading : " + sql);
 
             conn = DBConnectionPool.createConnection(dbConfig, true);
             stat = conn.createStatement();
             stat.execute(sql);
         } catch (Exception ex) {
-            tracer.err("Dumping file failed", ex);
+            tracer.error("Dumping file failed", ex);
             return 0;
         } finally {
             try {

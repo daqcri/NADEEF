@@ -21,13 +21,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import qa.qcri.nadeef.core.datamodel.CleanPlan;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.Bootstrap;
+import qa.qcri.nadeef.core.utils.Bootstrap;
 import qa.qcri.nadeef.service.NadeefJobScheduler;
 import qa.qcri.nadeef.service.thrift.TJobStatus;
 import qa.qcri.nadeef.service.thrift.TJobStatusType;
 import qa.qcri.nadeef.test.NadeefTestBase;
 import qa.qcri.nadeef.test.TestDataRepository;
-import qa.qcri.nadeef.tools.Tracer;
 
 import java.net.InetAddress;
 
@@ -45,7 +44,6 @@ public class NadeefJobSchedulerTest extends NadeefTestBase{
     public void setup() {
         try {
             Bootstrap.start(testConfig);
-            Tracer.setVerbose(true);
             NadeefConfiguration.setAlwaysOverride(true);
         } catch (Exception ex) {
             ex.printStackTrace();

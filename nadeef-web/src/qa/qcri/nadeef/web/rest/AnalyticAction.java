@@ -14,7 +14,7 @@
 package qa.qcri.nadeef.web.rest;
 
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ public class AnalyticAction {
         String url = NadeefConfiguration.getNotebookUrl();
         return "http://" + url + "/api/notebooks";
     }
-    private static Tracer tracer = Tracer.getTracer(AnalyticAction.class);
+    private static Logger tracer = Logger.getLogger(AnalyticAction.class);
 
     public static void setup(SQLDialect dialect) {
         post("/analytic/:project", (request, response) -> {
@@ -47,7 +47,7 @@ public class AnalyticAction {
                         + conn.getResponseCode());
                 }
             } catch (Exception ex) {
-                tracer.err(ex.getMessage(), ex);
+                tracer.error(ex.getMessage(), ex);
             } finally {
                 if (conn != null)
                     conn.disconnect();

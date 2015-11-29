@@ -15,14 +15,15 @@ package qa.qcri.nadeef.core.pipeline;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mysql.jdbc.log.Log;
 import qa.qcri.nadeef.core.datamodel.Cell;
 import qa.qcri.nadeef.core.datamodel.Column;
 import qa.qcri.nadeef.core.datamodel.Fix;
 import qa.qcri.nadeef.core.datamodel.NadeefConfiguration;
-import qa.qcri.nadeef.core.util.sql.DBConnectionPool;
+import qa.qcri.nadeef.core.utils.sql.DBConnectionPool;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +36,7 @@ import java.util.concurrent.ConcurrentMap;
  * Updater fixes the source data and exports it in the database.
  */
 public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
-    private static Tracer tracer = Tracer.getTracer(Updater.class);
+    private static Logger tracer = Logger.getLogger(Updater.class);
     private ConcurrentMap<Cell, String> updateHistory;
     private ConcurrentMap<Cell, Boolean> unknownTag;
 
@@ -120,7 +121,7 @@ public class Updater extends Operator<Collection<Fix>, Collection<Fix>> {
                     "UPDATE " + tableName +
                     " SET " + column.getColumnName() + " = " + rightValue +
                     " WHERE tid = " + cell.getTid();
-                tracer.verbose(updateSql);
+                tracer.fine(updateSql);
                 sourceStat.addBatch(updateSql);
                 auditStat.setInt(1, fix.getVid());
                 auditStat.setInt(2, cell.getTid());

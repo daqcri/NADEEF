@@ -20,7 +20,7 @@ import qa.qcri.nadeef.core.datamodel.Rule;
 import qa.qcri.nadeef.core.datamodel.Table;
 import qa.qcri.nadeef.core.datamodel.Violation;
 import qa.qcri.nadeef.tools.PerfReport;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -75,7 +75,7 @@ public class DirectIterator extends Operator<Collection<Table>, java.util.Iterat
 
     @Override
     protected java.util.Iterator<Violation> execute(Collection<Table> blocks) throws Exception {
-        Tracer tracer = Tracer.getTracer(DirectIterator.class);
+        Logger tracer = Logger.getLogger(DirectIterator.class);
         ThreadFactory factory =
             new ThreadFactoryBuilder().setNameFormat("iterator-#" + MAX_THREAD_NUM + "-%d").build();
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD_NUM, factory);
@@ -106,7 +106,7 @@ public class DirectIterator extends Operator<Collection<Table>, java.util.Iterat
             executor.shutdown();
             while (!executor.awaitTermination(10l, TimeUnit.MINUTES));
         } catch (InterruptedException ex) {
-            tracer.err("Iterator is interrupted.", ex);
+            tracer.error("Iterator is interrupted.", ex);
         } finally {
             executor.shutdown();
         }

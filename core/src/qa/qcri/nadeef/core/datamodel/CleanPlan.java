@@ -20,14 +20,14 @@ import com.google.common.io.Files;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import qa.qcri.nadeef.core.util.CSVTools;
-import qa.qcri.nadeef.core.util.RuleBuilder;
-import qa.qcri.nadeef.core.util.sql.DBMetaDataTool;
-import qa.qcri.nadeef.core.util.sql.SQLDialectBase;
-import qa.qcri.nadeef.core.util.sql.SQLDialectFactory;
+import qa.qcri.nadeef.core.utils.CSVTools;
+import qa.qcri.nadeef.core.utils.RuleBuilder;
+import qa.qcri.nadeef.core.utils.sql.DBMetaDataTool;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectBase;
+import qa.qcri.nadeef.core.utils.sql.SQLDialectFactory;
 import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.DBConfig;
-import qa.qcri.nadeef.tools.Tracer;
+import qa.qcri.nadeef.tools.Logger;
 import qa.qcri.nadeef.tools.sql.SQLDialect;
 import qa.qcri.nadeef.tools.sql.SQLDialectTools;
 
@@ -43,7 +43,7 @@ import java.util.List;
 public class CleanPlan {
     private DBConfig source;
     private Rule rule;
-    private static Tracer tracer = Tracer.getTracer(CleanPlan.class);
+    private static Logger tracer = Logger.getLogger(CleanPlan.class);
 
     // <editor-fold desc="Constructor">
     /**
@@ -280,7 +280,7 @@ public class CleanPlan {
                                 .build()
                         );
                     else
-                        tracer.err("Unknown Rule type: " + ruleJson.type, null);
+                        tracer.error("Unknown Rule type: " + ruleJson.type, null);
                     break;
             }
         }
