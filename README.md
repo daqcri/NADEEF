@@ -3,7 +3,7 @@
 
 ### What is NADEEF?
 
-NADEEF (or ''clean'' in Arabic, نظيف) is a generalized data cleaning system developed by the data analytic group at [Qatar Computing Research Institute](da.qcri.org). 
+NADEEF (or ''clean'' in Arabic, نظيف) is a generalized data cleaning system developed by the data analytic group at [Qatar Computing Research Institute](http://da.qcri.org). 
 
 ### See it in Action
 
@@ -15,7 +15,7 @@ Launch NADEEF using command
         dashboard : start the NADEEF dashboard.
 ```
 
-**A demo page can be accessed via [here](http://bit.ly/nadeef0).**
+**A demo page can be accessed via [here](http://nadeef.da.qcridemos.org/).**
 
 More details on the instructions can be found in the [User Guide](https://github.com/daqcri/NADEEF/wiki/User-Guide).
 
@@ -40,14 +40,11 @@ NADEEF is released under the terms of the [MIT License](http://opensource.org/li
 ### Contact
 
 For any issues or enhancement please use the [issue pages](https://github.com/daqcri/NADEEF/issues) in Github, 
-or [contact us](mailto:zyzyis@gmail.com). We will try our best to help you sort it out.
+or [contact us](mailto:nadeef@qcri.org). We will try our best to help you sort it out.
 
 ### Acknowledgement
 
 We would like to thank JetBrains' support for their wonderful IntelliJ IDEA product. We are using it through all the development of NADEEF.
 
 ![IntelliJ](https://www.jetbrains.com/idea/docs/logo_intellij_idea.png)
-
-
-[![githalytics.com alpha](https://cruel-carlota.gopagoda.com/52403ffdf07e8a16ffb06c7ab492e5df "githalytics.com")](http://githalytics.com/daqcri/NADEEF)
 
