@@ -27,7 +27,7 @@ define([], function () {
         }
 
         if (windowHostname.indexOf("qcridemos.org") > -1) {
-            return "http://ruleminer.da.qcridemos.org:1067";
+            return "http://ruleminer.da.qcridemos.org";
         }
 
         return "http://" + window.location.hostname + ":8080";
