@@ -87,6 +87,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
                 <exclude name="qa/qcri/nadeef/web/**" />
                 <exclude name="qa/qcri/nadeef/service/**" />
             </fileset>
+            <file file="log4j.properties"/>
             <manifest>
                 <attribute name="Main-Class" value="${console.class}" />
                 <attribute name="Created-By" value="${ant.java.version}" />
@@ -96,6 +97,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
         <jar destfile="${build.root}/bin/${service.name}.jar">
             <fileset dir="${build.dir}" includes="qa/qcri/nadeef/service/**" />
+            <file file="service/log4j.properties"/>
             <manifest>
                 <attribute name="Main-Class" value="${service.class}" />
                 <attribute name="Created-By" value="${ant.java.version}" />
@@ -105,6 +107,7 @@ NADEEF is released under the terms of the MIT License, (http://opensource.org/li
 
         <jar destfile="${build.root}/bin/${dashboard.name}.jar">
             <fileset dir="${build.dir}" includes="qa/qcri/nadeef/web/**" />
+            <file file="web/log4j.properties"/>
             <manifest>
                 <attribute name="Main-Class" value="${dashboard.class}" />
                 <attribute name="Created-By" value="${ant.java.version}" />
