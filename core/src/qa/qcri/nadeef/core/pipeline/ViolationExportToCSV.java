@@ -20,11 +20,9 @@ import qa.qcri.nadeef.tools.CommonTools;
 import qa.qcri.nadeef.tools.PerfReport;
 import qa.qcri.nadeef.tools.Logger;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 
@@ -48,12 +46,12 @@ public class ViolationExportToCSV extends Operator<java.util.Iterator<Violation>
             );
 
         File file = new File(outputPath.toFile(), filename);
-        tracer.info("Export to " + filename);
+        tracer.info("Export to " + file.getAbsolutePath());
         byte[] result = null;
         int size = 0;
         try (
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            RandomAccessFile memoryMappedFile = new RandomAccessFile(file, "rw")
+            FileOutputStream fs = new FileOutputStream(file);
+            BufferedOutputStream output = new BufferedOutputStream(fs);
         ) {
             while (violations.hasNext()) {
                 Violation violation = violations.next();
@@ -87,15 +85,11 @@ public class ViolationExportToCSV extends Operator<java.util.Iterator<Violation>
                         .append(CommonTools.escapeString(value, CommonTools.DOUBLE_QUOTE))
                         .append("\n");
                     byte[] bytes = line.toString().getBytes();
-                    output.write(bytes, 0, bytes.length);
+                    output.write(bytes);
                 }
                 vid ++;
             }
 
-            result = output.toByteArray();
-            MappedByteBuffer buf =
-                memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, result.length);
-            buf.put(result);
             PerfReport.appendMetric(
                 PerfReport.Metric.ViolationExport,
                 size
