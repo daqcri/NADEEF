@@ -31,7 +31,7 @@ between a programming interface and a core to achieve generality and extensibili
 
 ### Publications
 
-http://da.qcri.org/publications
+http://da.qcri.org/
 
 ### License
 
